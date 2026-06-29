@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useTomStore } from "@/store/useTomStore";
-import { Search, X, ArrowRight, ChevronLeft, ChevronRight, ChevronDown, SlidersHorizontal, Eye } from "lucide-react";
+import { Search, X, ArrowRight, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ChevronDown, SlidersHorizontal, Eye, FileSpreadsheet, Printer } from "lucide-react";
+import * as XLSX from "xlsx";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 import dossiersData from "@/mocks/dossiers.json";
 import eventsByProductData from "@/mocks/eventsByProduct.json";
 import type { Dossier, ProduitTrade, StatutDossier, DeviseTrade } from "@/domain/consultation";
@@ -46,7 +49,7 @@ export default function ConsultationDossiersPage() {
   const [sortKey, setSortKey] = useState<keyof Dossier | "client">("dateCreation");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
-  const pageSize = 20;
+  const pageSize = 3;
 
   // Sync events when products change
   useEffect(() => {
@@ -117,6 +120,32 @@ export default function ConsultationDossiersPage() {
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const rangeStart = filtered.length === 0 ? 0 : (page - 1) * pageSize + 1;
+  const rangeEnd = Math.min(page * pageSize, filtered.length);
+
+  // Revenir à la page 1 quand le nombre de résultats change (filtres/recherche)
+  useEffect(() => {
+    setPage(1);
+  }, [produits, selectedClient, clientQuery, statuts, evenements, montantMin, montantMax, devise, dateDebut, dateFin]);
+
+  // S'assurer que la page courante reste valide
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
+  // Numéros de page à afficher (avec ellipses)
+  const pageNumbers = useMemo(() => {
+    const pages: (number | "...")[] = [];
+    const delta = 1;
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= page - delta && i <= page + delta)) {
+        pages.push(i);
+      } else if (pages[pages.length - 1] !== "...") {
+        pages.push("...");
+      }
+    }
+    return pages;
+  }, [page, totalPages]);
 
   function resetFilters() {
     setProduits([]);
@@ -161,6 +190,54 @@ export default function ConsultationDossiersPage() {
       {sortKey === key && (sortDir === "asc" ? " ▲" : " ▼")}
     </button>
   );
+
+  function exportToExcel() {
+    const data = filtered;
+    const rows = data.map((d) => ({
+      Référence: d.id,
+      Produit: d.produit,
+      Client: d.client.nom,
+      Compte: d.client.compte,
+      Montant: d.montant,
+      Devise: d.devise,
+      "Date création": new Date(d.dateCreation).toLocaleDateString("fr-FR"),
+      Statut: d.statut,
+      "Événement courant": d.evenementCourant ?? "—",
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Dossiers");
+    XLSX.writeFile(wb, `dossiers_trade_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
+
+  function exportToPDF() {
+    const data = filtered;
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.setFontSize(14);
+    doc.text("Résultat de la recherche — Dossiers Trade", 14, 20);
+    doc.setFontSize(10);
+    doc.text(`Exporté le ${new Date().toLocaleDateString("fr-FR")} — ${data.length} dossier(s)`, 14, 28);
+    const body = data.map((d) => [
+      d.id,
+      d.produit,
+      d.client.nom,
+      d.client.compte,
+      d.montant.toLocaleString("fr-FR"),
+      d.devise,
+      new Date(d.dateCreation).toLocaleDateString("fr-FR"),
+      d.statut,
+      d.evenementCourant ?? "—",
+    ]);
+    (doc as any).autoTable({
+      startY: 34,
+      head: [["Référence", "Produit", "Client", "Compte", "Montant", "Devise", "Date création", "Statut", "Événement"]],
+      body,
+      theme: "grid",
+      styles: { fontSize: 9, cellPadding: 2 },
+      headStyles: { fillColor: [232, 114, 42], textColor: 255 },
+    });
+    doc.save(`dossiers_trade_${new Date().toISOString().slice(0, 10)}.pdf`);
+  }
 
   return (
     <div className="space-y-4">
@@ -287,8 +364,30 @@ export default function ConsultationDossiersPage() {
         </div>
       </div>
 
-      {/* Compteur */}
-      <div className="text-xs text-ink-500">{filtered.length} dossier(s)</div>
+      {/* Compteur + Export */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="text-sm text-ink-600">
+          <span className="font-semibold text-ink-800">{filtered.length}</span> dossier(s) trouvé(s)
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={exportToExcel}
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-semibold text-white rounded-lg shadow-sm hover:brightness-105 active:scale-[0.98] transition"
+            style={{ background: "#1D6F42" }}
+            title="Exporter sous Excel (.xlsx)"
+          >
+            <FileSpreadsheet size={15} /> Excel
+          </button>
+          <button
+            onClick={exportToPDF}
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-semibold text-white rounded-lg shadow-sm hover:brightness-105 active:scale-[0.98] transition"
+            style={{ background: "#E8722A" }}
+            title="Imprimer / exporter en PDF"
+          >
+            <Printer size={15} /> Impression
+          </button>
+        </div>
+      </div>
 
       {/* Tableau */}
       <div className="card" style={{ background: "#FFFFFF", borderColor: "#E5E7EB" }}>
@@ -300,7 +399,6 @@ export default function ConsultationDossiersPage() {
               <th>{header("Client / Compte", "client")}</th>
               <th className="text-right">{header("Montant", "montant")}</th>
               <th>{header("Devise", "devise")}</th>
-              <th>Correspondant bancaire</th>
               <th>{header("Date création", "dateCreation")}</th>
               <th>{header("Statut", "statut")}</th>
               <th className="text-center">Action</th>
@@ -319,7 +417,6 @@ export default function ConsultationDossiersPage() {
                 </td>
                 <td className="text-sm font-medium text-ink-800 text-right">{d.montant.toLocaleString("fr-FR")}</td>
                 <td className="text-sm text-ink-700">{d.devise}</td>
-                <td className="text-xs text-ink-700">{d.banqueCorrespondante}</td>
                 <td className="text-xs text-ink-700">{new Date(d.dateCreation).toLocaleDateString("fr-FR")}</td>
                 <td><span className={statutClasses[d.statut]}>{d.statut}</span></td>
                 <td className="text-center">
@@ -331,7 +428,7 @@ export default function ConsultationDossiersPage() {
             ))}
             {paged.length === 0 && (
               <tr>
-                <td colSpan={9} className="text-center text-ink-500 py-10">
+                <td colSpan={8} className="text-center text-ink-500 py-10">
                   <div className="text-sm">Aucun dossier ne correspond à vos critères.</div>
                   <button onClick={resetFilters} className="text-[#E8722A] text-xs hover:underline mt-1">Réinitialiser les filtres</button>
                 </td>
@@ -339,20 +436,72 @@ export default function ConsultationDossiersPage() {
             )}
           </tbody>
         </table>
-
-        {/* Pagination */}
-        {filtered.length > pageSize && (
-          <div className="px-4 py-3 border-t border-ink-100 flex items-center justify-between">
-            <button className="btn-outline h-8 text-xs" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
-              <ChevronLeft size={14} /> Précédent
-            </button>
-            <div className="text-xs text-ink-500">Page {page} / {totalPages}</div>
-            <button className="btn-outline h-8 text-xs" disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
-              Suivant <ChevronRight size={14} />
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Pagination — centrée en bas de la page */}
+      {filtered.length > 0 && (
+        <div className="flex flex-col items-center gap-2 pt-2">
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-1">
+              <button
+                className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-ink-200 text-ink-600 hover:border-[#E8722A] hover:text-[#E8722A] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-ink-200 disabled:hover:text-ink-600 transition"
+                disabled={page === 1}
+                onClick={() => setPage(1)}
+                title="Première page"
+              >
+                <ChevronsLeft size={16} />
+              </button>
+              <button
+                className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-ink-200 text-ink-600 hover:border-[#E8722A] hover:text-[#E8722A] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-ink-200 disabled:hover:text-ink-600 transition"
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                title="Page précédente"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              {pageNumbers.map((p, i) =>
+                p === "..." ? (
+                  <span key={`ellipsis-${i}`} className="px-1.5 text-ink-400 text-xs select-none">…</span>
+                ) : (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    className={`inline-flex items-center justify-center h-8 min-w-8 px-2 rounded-md text-xs font-medium border transition ${
+                      p === page
+                        ? "text-white border-transparent"
+                        : "text-ink-600 border-ink-200 hover:border-[#E8722A] hover:text-[#E8722A]"
+                    }`}
+                    style={p === page ? { background: "#E8722A" } : undefined}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+              <button
+                className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-ink-200 text-ink-600 hover:border-[#E8722A] hover:text-[#E8722A] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-ink-200 disabled:hover:text-ink-600 transition"
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                title="Page suivante"
+              >
+                <ChevronRight size={16} />
+              </button>
+              <button
+                className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-ink-200 text-ink-600 hover:border-[#E8722A] hover:text-[#E8722A] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-ink-200 disabled:hover:text-ink-600 transition"
+                disabled={page === totalPages}
+                onClick={() => setPage(totalPages)}
+                title="Dernière page"
+              >
+                <ChevronsRight size={16} />
+              </button>
+            </div>
+          )}
+          <div className="text-xs text-ink-500">
+            Page <span className="font-semibold text-ink-700">{page}</span> sur <span className="font-semibold text-ink-700">{totalPages}</span>
+            <span className="mx-1.5 text-ink-300">·</span>
+            <span className="font-medium text-ink-700">{rangeStart}</span>–<span className="font-medium text-ink-700">{rangeEnd}</span> sur <span className="font-medium text-ink-700">{filtered.length}</span> dossier(s)
+          </div>
+        </div>
+      )}
 
       {showAdvanced && (
         <AdvancedSearchModal
