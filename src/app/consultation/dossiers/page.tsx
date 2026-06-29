@@ -29,6 +29,17 @@ const statutClasses: Record<StatutDossier, string> = {
   "Annulé": "badge-statut-annule",
 };
 
+// Recherche type SQL LIKE : "%" est un joker (ex. "ILC%" => commence par ILC).
+// Sans "%", on effectue une recherche "contient".
+function likeMatch(value: string, pattern: string): boolean {
+  const p = pattern.trim().toLowerCase();
+  if (!p) return true;
+  const v = value.toLowerCase();
+  if (!p.includes("%")) return v.includes(p);
+  const escaped = p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/%/g, ".*");
+  return new RegExp(`^${escaped}$`).test(v);
+}
+
 export default function ConsultationDossiersPage() {
   const dossiers = dossiersData as Dossier[];
   const agence = useTomStore((s) => s.courriersIrd[0]?.agence_reception ?? "Agence Casablanca");
@@ -36,6 +47,7 @@ export default function ConsultationDossiersPage() {
   const [produits, setProduits] = useState<ProduitTrade[]>([]);
   const [statuts, setStatuts] = useState<StatutDossier[]>([]);
   const [evenements, setEvenements] = useState<string[]>([]);
+  const [refBancaire, setRefBancaire] = useState("");
   const [clientQuery, setClientQuery] = useState("");
   const [selectedClient, setSelectedClient] = useState<ClientSuggestion | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -82,6 +94,7 @@ export default function ConsultationDossiersPage() {
 
   const filtered = useMemo(() => {
     let items = dossiers.filter((d) => {
+      if (refBancaire.trim() && !likeMatch(d.id, refBancaire)) return false;
       if (produits.length > 0 && !produits.includes(d.produit)) return false;
       if (selectedClient) {
         if (d.client.compte !== selectedClient.compte) return false;
@@ -116,17 +129,14 @@ export default function ConsultationDossiersPage() {
     });
 
     return items;
-  }, [dossiers, produits, selectedClient, clientQuery, statuts, evenements, montantMin, montantMax, devise, dateDebut, dateFin, sortKey, sortDir]);
+  }, [dossiers, refBancaire, produits, selectedClient, clientQuery, statuts, evenements, montantMin, montantMax, devise, dateDebut, dateFin, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
-  const rangeStart = filtered.length === 0 ? 0 : (page - 1) * pageSize + 1;
-  const rangeEnd = Math.min(page * pageSize, filtered.length);
-
   // Revenir à la page 1 quand le nombre de résultats change (filtres/recherche)
   useEffect(() => {
     setPage(1);
-  }, [produits, selectedClient, clientQuery, statuts, evenements, montantMin, montantMax, devise, dateDebut, dateFin]);
+  }, [refBancaire, produits, selectedClient, clientQuery, statuts, evenements, montantMin, montantMax, devise, dateDebut, dateFin]);
 
   // S'assurer que la page courante reste valide
   useEffect(() => {
@@ -151,6 +161,7 @@ export default function ConsultationDossiersPage() {
     setProduits([]);
     setStatuts([]);
     setEvenements([]);
+    setRefBancaire("");
     setClientQuery("");
     setSelectedClient(null);
     setMontantMin("");
@@ -173,7 +184,7 @@ export default function ConsultationDossiersPage() {
   }
 
   const hasActiveFilters =
-    produits.length > 0 || statuts.length > 0 || evenements.length > 0 || selectedClient || clientQuery.trim() || montantMin || montantMax || dateDebut || dateFin;
+    refBancaire.trim() || produits.length > 0 || statuts.length > 0 || evenements.length > 0 || selectedClient || clientQuery.trim() || montantMin || montantMax || dateDebut || dateFin;
 
   const header = (label: string, key: keyof Dossier | "client") => (
     <button
@@ -304,6 +315,27 @@ export default function ConsultationDossiersPage() {
           )}
         </div>
 
+        {/* Ligne 1bis — Référence bancaire (recherche LIKE) */}
+        <div>
+          <label className="label">RÉFÉRENCE BANCAIRE</label>
+          <div className="relative flex items-center">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-300" />
+            <input
+              value={refBancaire}
+              onChange={(e) => setRefBancaire(e.target.value.replace(/[^A-Za-z0-9%]/g, "").toUpperCase())}
+              placeholder="Ex. ILC%  (commence par ILC)"
+              className="input pl-10 h-10 w-full focus:border-[#E8722A] focus:ring-[#E8722A]"
+              style={{ borderRadius: 8 }}
+            />
+            {refBancaire && (
+              <button onClick={() => setRefBancaire("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600">
+                <X size={14} />
+              </button>
+            )}
+          </div>
+          <p className="text-[10px] text-ink-400 mt-1">Champ alphanumérique · utilisez « % » comme caractère générique (ex. « ILC% », « %0042 »)</p>
+        </div>
+
         {/* Ligne 2 — Produit + Statut */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <MultiSelect label="PRODUIT" placeholder="Tous les produits" options={PRODUITS.map((p) => ({ value: p, label: PRODUIT_LABELS[p] }))} selected={produits} onChange={setProduits} />
@@ -349,6 +381,7 @@ export default function ConsultationDossiersPage() {
         <div className="flex items-center justify-between flex-wrap gap-3 pt-3 border-t border-ink-100">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[11px] text-ink-500">Filtres actifs :</span>
+            {refBancaire.trim() && <Chip label={`Réf. bancaire : ${refBancaire.trim()}`} onRemove={() => setRefBancaire("")} />}
             {produits.length > 0 && <Chip label={`Produit : ${produits.join(", ")}`} onRemove={() => setProduits([])} />}
             {statuts.length > 0 && <Chip label={`Statut : ${statuts.join(", ")}`} onRemove={() => setStatuts([])} />}
             {evenements.length > 0 && <Chip label={`Événement : ${evenements.join(", ")}`} onRemove={() => setEvenements([])} />}
@@ -497,8 +530,6 @@ export default function ConsultationDossiersPage() {
           )}
           <div className="text-xs text-ink-500">
             Page <span className="font-semibold text-ink-700">{page}</span> sur <span className="font-semibold text-ink-700">{totalPages}</span>
-            <span className="mx-1.5 text-ink-300">·</span>
-            <span className="font-medium text-ink-700">{rangeStart}</span>–<span className="font-medium text-ink-700">{rangeEnd}</span> sur <span className="font-medium text-ink-700">{filtered.length}</span> dossier(s)
           </div>
         </div>
       )}
