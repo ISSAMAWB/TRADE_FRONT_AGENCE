@@ -48,3 +48,9 @@ body {
 }
 .tbl tbody td { @apply px-3 py-2 border-b border-ink-100; }
 .tbl tbody tr:hover { @apply bg-brand-50/40; }
+
+/* Drawer animation */
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
