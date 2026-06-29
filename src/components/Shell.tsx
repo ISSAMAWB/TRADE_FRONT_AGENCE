@@ -126,17 +126,6 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] text-ink-500">Rôle</span>
-            <select
-              value={acteur}
-              onChange={(e) => setActeur(e.target.value as EquipeActeur)}
-              className="input h-9 w-44 text-sm"
-            >
-              {ACTEURS.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
-            </select>
-          </div>
-
           <button className="btn-ghost h-9">
             <Bell size={16} />
           </button>
