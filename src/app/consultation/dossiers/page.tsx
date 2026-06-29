@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState, useMemo, useEffect, useRef } from "react";
-import { useTomStore } from "@/store/useTomStore";
 import { Search, X, ArrowRight, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ChevronDown, SlidersHorizontal, Eye, FileSpreadsheet, Printer } from "lucide-react";
 import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
@@ -42,7 +41,6 @@ function likeMatch(value: string, pattern: string): boolean {
 
 export default function ConsultationDossiersPage() {
   const dossiers = dossiersData as Dossier[];
-  const agence = useTomStore((s) => s.courriersIrd[0]?.agence_reception ?? "Agence Casablanca");
 
   const [produits, setProduits] = useState<ProduitTrade[]>([]);
   const [statuts, setStatuts] = useState<StatutDossier[]>([]);
@@ -252,18 +250,8 @@ export default function ConsultationDossiersPage() {
 
   return (
     <div className="space-y-4">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs text-ink-500">
-        <Link href="/" className="hover:text-brand-600">Tableau de bord</Link>
-        <span>/</span>
-        <span className="text-ink-700 font-medium">Consultation</span>
-      </div>
-
       {/* En-tête */}
-      <div>
-        <h1 className="text-xl font-semibold text-ink-900">Consultation — Vue consolidée</h1>
-        <p className="text-sm text-ink-500 mt-1">Tous clients · Tous produits Trade Finance · {agence}</p>
-      </div>
+      <h1 className="text-xl font-semibold text-ink-900">Liste des dossiers Trade</h1>
 
       {/* Filtres */}
       <div className="card p-4 space-y-4" style={{ background: "#FFFFFF", borderColor: "#E5E7EB" }}>
