@@ -300,6 +300,7 @@ export default function ConsultationDossiersPage() {
               <th>{header("Client / Compte", "client")}</th>
               <th className="text-right">{header("Montant", "montant")}</th>
               <th>{header("Devise", "devise")}</th>
+              <th>Correspondant bancaire</th>
               <th>{header("Date création", "dateCreation")}</th>
               <th>{header("Statut", "statut")}</th>
               <th className="text-center">Action</th>
@@ -318,6 +319,7 @@ export default function ConsultationDossiersPage() {
                 </td>
                 <td className="text-sm font-medium text-ink-800 text-right">{d.montant.toLocaleString("fr-FR")}</td>
                 <td className="text-sm text-ink-700">{d.devise}</td>
+                <td className="text-xs text-ink-700">{d.banqueCorrespondante}</td>
                 <td className="text-xs text-ink-700">{new Date(d.dateCreation).toLocaleDateString("fr-FR")}</td>
                 <td><span className={statutClasses[d.statut]}>{d.statut}</span></td>
                 <td className="text-center">
@@ -329,7 +331,7 @@ export default function ConsultationDossiersPage() {
             ))}
             {paged.length === 0 && (
               <tr>
-                <td colSpan={8} className="text-center text-ink-500 py-10">
+                <td colSpan={9} className="text-center text-ink-500 py-10">
                   <div className="text-sm">Aucun dossier ne correspond à vos critères.</div>
                   <button onClick={resetFilters} className="text-[#E8722A] text-xs hover:underline mt-1">Réinitialiser les filtres</button>
                 </td>
