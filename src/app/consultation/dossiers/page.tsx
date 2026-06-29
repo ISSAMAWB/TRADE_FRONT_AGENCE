@@ -267,73 +267,76 @@ export default function ConsultationDossiersPage() {
 
       {/* Filtres */}
       <div className="card p-4 space-y-4" style={{ background: "#FFFFFF", borderColor: "#E5E7EB" }}>
-        {/* Ligne 1 — Client / Compte + recherche avancée */}
-        <div className="relative">
-          <label className="label">CLIENT / COMPTE</label>
-          <div className="relative flex items-center">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-300" />
-            <input
-              value={clientQuery}
-              onChange={(e) => {
-                setClientQuery(e.target.value);
-                if (selectedClient) setSelectedClient(null);
-                setShowSuggestions(true);
-              }}
-              onFocus={() => setShowSuggestions(true)}
-              placeholder="Rechercher par nom, n° compte ou ICE"
-              className="input pl-10 h-10 w-full focus:border-[#E8722A] focus:ring-[#E8722A]"
-              style={{ borderRadius: "8px 0 0 8px" }}
-            />
-            <button
-              type="button"
-              onClick={() => setShowAdvanced(true)}
-              className="h-10 px-3 text-white flex items-center gap-1"
-              style={{ background: "#E8722A", borderRadius: "0 8px 8px 0" }}
-              title="Recherche client avancée"
-            >
-              <SlidersHorizontal size={16} />
-            </button>
-            {selectedClient && (
-              <button onClick={removeClient} className="absolute right-14 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600">
-                <X size={14} />
-              </button>
-            )}
-          </div>
-          {showSuggestions && clientSuggestions.length > 0 && (
-            <div className="absolute z-20 mt-1 w-full bg-white border border-ink-200 shadow-lg overflow-hidden" style={{ borderRadius: 8 }}>
-              {clientSuggestions.map((c) => (
-                <button
-                  key={c.compte}
-                  onClick={() => selectClient(c)}
-                  className="w-full text-left px-4 py-2 hover:bg-brand-50 border-b border-ink-100 last:border-0"
-                >
-                  <div className="text-sm font-medium text-ink-800">{c.nom}</div>
-                  <div className="text-[11px] text-ink-500">N° compte {c.compte} · ICE {c.ice}</div>
+        {/* Ligne 1 — Référence bancaire (gauche) + Client / Compte (droite) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          {/* Référence bancaire (recherche LIKE) */}
+          <div>
+            <label className="label">RÉFÉRENCE BANCAIRE</label>
+            <div className="relative flex items-center">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-300" />
+              <input
+                value={refBancaire}
+                onChange={(e) => setRefBancaire(e.target.value.replace(/[^A-Za-z0-9%]/g, "").toUpperCase())}
+                placeholder="Ex. ILC%  (commence par ILC)"
+                className="input pl-10 h-10 w-full focus:border-[#E8722A] focus:ring-[#E8722A]"
+                style={{ borderRadius: 8 }}
+              />
+              {refBancaire && (
+                <button onClick={() => setRefBancaire("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600">
+                  <X size={14} />
                 </button>
-              ))}
+              )}
             </div>
-          )}
-        </div>
+            <p className="text-[10px] text-ink-400 mt-1">Champ alphanumérique · utilisez « % » comme caractère générique (ex. « ILC% », « %0042 »)</p>
+          </div>
 
-        {/* Ligne 1bis — Référence bancaire (recherche LIKE) */}
-        <div>
-          <label className="label">RÉFÉRENCE BANCAIRE</label>
-          <div className="relative flex items-center">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-300" />
-            <input
-              value={refBancaire}
-              onChange={(e) => setRefBancaire(e.target.value.replace(/[^A-Za-z0-9%]/g, "").toUpperCase())}
-              placeholder="Ex. ILC%  (commence par ILC)"
-              className="input pl-10 h-10 w-full focus:border-[#E8722A] focus:ring-[#E8722A]"
-              style={{ borderRadius: 8 }}
-            />
-            {refBancaire && (
-              <button onClick={() => setRefBancaire("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600">
-                <X size={14} />
+          {/* Client / Compte + recherche avancée */}
+          <div className="relative">
+            <label className="label">CLIENT / COMPTE</label>
+            <div className="relative flex items-center">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-300" />
+              <input
+                value={clientQuery}
+                onChange={(e) => {
+                  setClientQuery(e.target.value);
+                  if (selectedClient) setSelectedClient(null);
+                  setShowSuggestions(true);
+                }}
+                onFocus={() => setShowSuggestions(true)}
+                placeholder="Rechercher par nom, n° compte ou ICE"
+                className="input pl-10 h-10 w-full focus:border-[#E8722A] focus:ring-[#E8722A]"
+                style={{ borderRadius: "8px 0 0 8px" }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(true)}
+                className="h-10 px-3 text-white flex items-center gap-1"
+                style={{ background: "#E8722A", borderRadius: "0 8px 8px 0" }}
+                title="Recherche client avancée"
+              >
+                <SlidersHorizontal size={16} />
               </button>
+              {selectedClient && (
+                <button onClick={removeClient} className="absolute right-14 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600">
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+            {showSuggestions && clientSuggestions.length > 0 && (
+              <div className="absolute z-20 mt-1 w-full bg-white border border-ink-200 shadow-lg overflow-hidden" style={{ borderRadius: 8 }}>
+                {clientSuggestions.map((c) => (
+                  <button
+                    key={c.compte}
+                    onClick={() => selectClient(c)}
+                    className="w-full text-left px-4 py-2 hover:bg-brand-50 border-b border-ink-100 last:border-0"
+                  >
+                    <div className="text-sm font-medium text-ink-800">{c.nom}</div>
+                    <div className="text-[11px] text-ink-500">N° compte {c.compte} · ICE {c.ice}</div>
+                  </button>
+                ))}
+              </div>
             )}
           </div>
-          <p className="text-[10px] text-ink-400 mt-1">Champ alphanumérique · utilisez « % » comme caractère générique (ex. « ILC% », « %0042 »)</p>
         </div>
 
         {/* Ligne 2 — Produit + Statut */}
@@ -427,7 +430,7 @@ export default function ConsultationDossiersPage() {
         <table className="tbl">
           <thead>
             <tr>
-              <th>{header("Référence", "id")}</th>
+              <th>{header("Référence bancaire", "id")}</th>
               <th>{header("Produit", "produit")}</th>
               <th>{header("Client / Compte", "client")}</th>
               <th className="text-right">{header("Montant", "montant")}</th>
