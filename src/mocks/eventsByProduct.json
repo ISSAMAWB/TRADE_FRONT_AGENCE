@@ -1,0 +1,63 @@
+{
+  "ILC": [
+    "Émission / Ouverture",
+    "Amendement",
+    "Réception documents",
+    "Contrôle documentaire",
+    "Réserves / Irrégularités",
+    "Levée de réserves",
+    "Acceptation / Engagement",
+    "Réalisation / Paiement",
+    "Échéance",
+    "Remboursement",
+    "Clôture / Expiration"
+  ],
+  "IRD": [
+    "Entrée",
+    "Avis / Notification au tiré",
+    "Acceptation & Aval",
+    "Paiement",
+    "Levée des documents",
+    "Correspondance",
+    "Avis de sort / Relance",
+    "Protêt",
+    "Échéance",
+    "Dénouement / Clôture"
+  ],
+  "ELC": [
+    "Réception ouverture",
+    "Notification bénéficiaire",
+    "Confirmation",
+    "Amendement",
+    "Présentation documents",
+    "Contrôle documentaire",
+    "Réserves / Irrégularités",
+    "Envoi documents",
+    "Négociation / Escompte",
+    "Réalisation / Paiement",
+    "Échéance",
+    "Clôture"
+  ],
+  "ERD": [
+    "Réception documents",
+    "Émission & Envoi remise",
+    "Instructions encaissement",
+    "Acceptation & Aval",
+    "Paiement",
+    "Avis de sort / Relance",
+    "Correspondance",
+    "Protêt",
+    "Rapatriement / Crédit compte",
+    "Échéance",
+    "Dénouement / Clôture"
+  ],
+  "FSA": [
+    "Demande",
+    "Octroi / Accord",
+    "Déblocage des fonds",
+    "Échéance",
+    "Remboursement partiel",
+    "Remboursement total",
+    "Clôture"
+  ]
+}

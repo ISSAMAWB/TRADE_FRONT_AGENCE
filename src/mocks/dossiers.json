@@ -1,0 +1,929 @@
+[
+  {
+    "id": "ILC-2026-00142",
+    "produit": "ILC",
+    "client": {
+      "nom": "OCEANIC SHIPPING SARL",
+      "compte": "007 780 0000 042",
+      "ice": "002150042000078",
+      "code": "CLI-0042"
+    },
+    "montant": 1200000,
+    "devise": "USD",
+    "dateCreation": "2026-03-12",
+    "dateEcheance": "2026-06-28",
+    "banqueCorrespondante": "HSBC London",
+    "paysOrigine": "Chine",
+    "statut": "En cours",
+    "refCTN": "CTN-ILC-0142-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Benali",
+      "prenom": "Karim",
+      "code": "KB01"
+    },
+    "datePriseEnCharge": "2026-03-13",
+    "statutOperationnel": "Docs en attente",
+    "controleDocumentaire": "2 réserves actives",
+    "encours": {
+      "utilise": 1200000,
+      "autorise": 2000000,
+      "devise": "USD"
+    },
+    "commission": 0.15,
+    "tauxChange": 9.85,
+    "derniereInteraction": "2026-06-22",
+    "canalInteraction": "mail",
+    "notes": [
+      {
+        "date": "2026-06-22",
+        "auteur": "K. Benali",
+        "texte": "Relance client envoyée, attente documents BL"
+      },
+      {
+        "date": "2026-06-10",
+        "auteur": "K. Benali",
+        "texte": "Documents reçus, contrôle en cours"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-001",
+        "date": "2026-06-24",
+        "type": "Présentation documents",
+        "statut": "Réserves",
+        "montant": null
+      },
+      {
+        "id": "EVT-002",
+        "date": "2026-05-15",
+        "type": "Modification",
+        "statut": "Validé",
+        "montant": null
+      },
+      {
+        "id": "EVT-003",
+        "date": "2026-03-12",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 1200000
+      }
+    ],
+    "evenementCourant": "Réception documents"
+  },
+  {
+    "id": "ILC-2026-00145",
+    "produit": "ILC",
+    "client": {
+      "nom": "MEDITERRANEA TRADING CO",
+      "compte": "007 780 0000 118",
+      "ice": "003470118000078",
+      "code": "CLI-0118"
+    },
+    "montant": 850000,
+    "devise": "EUR",
+    "dateCreation": "2026-04-02",
+    "dateEcheance": "2026-07-15",
+    "banqueCorrespondante": "BNP Paribas Paris",
+    "paysOrigine": "Italie",
+    "statut": "En cours",
+    "refCTN": "CTN-ILC-0145-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Tazi",
+      "prenom": "Fatima",
+      "code": "TF02"
+    },
+    "datePriseEnCharge": "2026-04-03",
+    "statutOperationnel": "En traitement",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 850000,
+      "autorise": 1500000,
+      "devise": "EUR"
+    },
+    "commission": 0.12,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-06-20",
+    "canalInteraction": "email",
+    "notes": [
+      {
+        "date": "2026-06-20",
+        "auteur": "F. Tazi",
+        "texte": "Client informé de l'acceptation banque correspondante"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-004",
+        "date": "2026-06-20",
+        "type": "Acceptation",
+        "statut": "Validé",
+        "montant": null
+      },
+      {
+        "id": "EVT-005",
+        "date": "2026-04-02",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 850000
+      }
+    ],
+    "evenementCourant": "Acceptation / Engagement"
+  },
+  {
+    "id": "ILC-2026-00148",
+    "produit": "ILC",
+    "client": {
+      "nom": "ATLAS TEXTILE SARL",
+      "compte": "007 780 0000 203",
+      "ice": "001250203000078",
+      "code": "CLI-0203"
+    },
+    "montant": 2500000,
+    "devise": "USD",
+    "dateCreation": "2026-02-15",
+    "dateEcheance": "2026-05-30",
+    "banqueCorrespondante": "Citibank New York",
+    "paysOrigine": "USA",
+    "statut": "Expiré",
+    "refCTN": "CTN-ILC-0148-26",
+    "codeAgence": "AGC-RABAT-02",
+    "agentCTN": {
+      "nom": "Alami",
+      "prenom": "Ahmed",
+      "code": "AA03"
+    },
+    "datePriseEnCharge": "2026-02-16",
+    "statutOperationnel": "Échéance dépassée",
+    "controleDocumentaire": "Clôturé",
+    "encours": {
+      "utilise": 0,
+      "autorise": 3000000,
+      "devise": "USD"
+    },
+    "commission": 0.18,
+    "tauxChange": 9.85,
+    "derniereInteraction": "2026-05-28",
+    "canalInteraction": "tel",
+    "notes": [
+      {
+        "date": "2026-05-28",
+        "auteur": "A. Alami",
+        "texte": "Client informé de l'échéance imminente"
+      },
+      {
+        "date": "2026-05-20",
+        "auteur": "A. Alami",
+        "texte": "Relance pour documents manquants"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-006",
+        "date": "2026-05-30",
+        "type": "Échéance",
+        "statut": "Expiré",
+        "montant": null
+      },
+      {
+        "id": "EVT-007",
+        "date": "2026-02-15",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 2500000
+      }
+    ],
+    "evenementCourant": "Échéance"
+  },
+  {
+    "id": "ILC-2026-00152",
+    "produit": "ILC",
+    "client": {
+      "nom": "ROYAL CERAMICS SA",
+      "compte": "007 780 0000 345",
+      "ice": "004320345000078",
+      "code": "CLI-0345"
+    },
+    "montant": 450000,
+    "devise": "GBP",
+    "dateCreation": "2026-05-10",
+    "dateEcheance": "2026-08-20",
+    "banqueCorrespondante": "Barclays London",
+    "paysOrigine": "Royaume-Uni",
+    "statut": "En cours",
+    "refCTN": "CTN-ILC-0152-26",
+    "codeAgence": "AGC-FES-03",
+    "agentCTN": {
+      "nom": "Bennani",
+      "prenom": "Sara",
+      "code": "BS04"
+    },
+    "datePriseEnCharge": "2026-05-11",
+    "statutOperationnel": "En attente documents",
+    "controleDocumentaire": "1 réserve active",
+    "encours": {
+      "utilise": 450000,
+      "autorise": 1000000,
+      "devise": "GBP"
+    },
+    "commission": 0.1,
+    "tauxChange": 12.35,
+    "derniereInteraction": "2026-06-18",
+    "canalInteraction": "email",
+    "notes": [
+      {
+        "date": "2026-06-18",
+        "auteur": "S. Bennani",
+        "texte": "Documents partiels reçus, attente certificat origine"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-008",
+        "date": "2026-06-18",
+        "type": "Réception documents",
+        "statut": "Partiel",
+        "montant": null
+      },
+      {
+        "id": "EVT-009",
+        "date": "2026-05-10",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 450000
+      }
+    ],
+    "evenementCourant": "Réception documents"
+  },
+  {
+    "id": "IRD-2026-00087",
+    "produit": "IRD",
+    "client": {
+      "nom": "MAGHREB STEEL SA",
+      "compte": "007 780 0000 089",
+      "ice": "002890089000078",
+      "code": "CLI-0089"
+    },
+    "montant": 1800000,
+    "devise": "USD",
+    "dateCreation": "2026-01-20",
+    "dateEcheance": "2026-04-25",
+    "banqueCorrespondante": "Deutsche Bank Frankfurt",
+    "paysOrigine": "Allemagne",
+    "statut": "Expiré",
+    "refCTN": "CTN-IRD-0087-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Benali",
+      "prenom": "Karim",
+      "code": "KB01"
+    },
+    "datePriseEnCharge": "2026-01-21",
+    "statutOperationnel": "Clôturé",
+    "controleDocumentaire": "Clôturé",
+    "encours": {
+      "utilise": 0,
+      "autorise": 2500000,
+      "devise": "USD"
+    },
+    "commission": 0.2,
+    "tauxChange": 9.85,
+    "derniereInteraction": "2026-04-23",
+    "canalInteraction": "tel",
+    "notes": [
+      {
+        "date": "2026-04-23",
+        "auteur": "K. Benali",
+        "texte": "Dossier clôturé suite échéance non honorée"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-010",
+        "date": "2026-04-25",
+        "type": "Échéance",
+        "statut": "Expiré",
+        "montant": null
+      },
+      {
+        "id": "EVT-011",
+        "date": "2026-01-20",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 1800000
+      }
+    ],
+    "evenementCourant": "Échéance"
+  },
+  {
+    "id": "IRD-2026-00091",
+    "produit": "IRD",
+    "client": {
+      "nom": "DELICES DU SUD SARL",
+      "compte": "007 780 0000 156",
+      "ice": "003560156000078",
+      "code": "CLI-0156"
+    },
+    "montant": 650000,
+    "devise": "EUR",
+    "dateCreation": "2026-05-05",
+    "dateEcheance": "2026-08-10",
+    "banqueCorrespondante": "Société Générale Paris",
+    "paysOrigine": "France",
+    "statut": "En cours",
+    "refCTN": "CTN-IRD-0091-26",
+    "codeAgence": "AGC-MARRAKECH-04",
+    "agentCTN": {
+      "nom": "Idrissi",
+      "prenom": "Mohammed",
+      "code": "IM05"
+    },
+    "datePriseEnCharge": "2026-05-06",
+    "statutOperationnel": "En traitement",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 650000,
+      "autorise": 1200000,
+      "devise": "EUR"
+    },
+    "commission": 0.15,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-06-19",
+    "canalInteraction": "email",
+    "notes": [
+      {
+        "date": "2026-06-19",
+        "auteur": "M. Idrissi",
+        "texte": "Validation documents complète"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-012",
+        "date": "2026-06-19",
+        "type": "Validation documents",
+        "statut": "Validé",
+        "montant": null
+      },
+      {
+        "id": "EVT-013",
+        "date": "2026-05-05",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 650000
+      }
+    ],
+    "evenementCourant": "Acceptation & Aval"
+  },
+  {
+    "id": "IRD-2026-00095",
+    "produit": "IRD",
+    "client": {
+      "nom": "SAHARA LOGISTICS",
+      "compte": "007 780 0000 278",
+      "ice": "004780278000078",
+      "code": "CLI-0278"
+    },
+    "montant": 950000,
+    "devise": "MAD",
+    "dateCreation": "2026-04-18",
+    "dateEcheance": "2026-07-30",
+    "banqueCorrespondante": "BMCE Bank",
+    "paysOrigine": "Maroc",
+    "statut": "En cours",
+    "refCTN": "CTN-IRD-0095-26",
+    "codeAgence": "AGC-AGADIR-05",
+    "agentCTN": {
+      "nom": "Chaoui",
+      "prenom": "Laila",
+      "code": "CL06"
+    },
+    "datePriseEnCharge": "2026-04-19",
+    "statutOperationnel": "Docs en attente",
+    "controleDocumentaire": "3 réserves actives",
+    "encours": {
+      "utilise": 950000,
+      "autorise": 2000000,
+      "devise": "MAD"
+    },
+    "commission": 0.08,
+    "tauxChange": 1,
+    "derniereInteraction": "2026-06-21",
+    "canalInteraction": "mail",
+    "notes": [
+      {
+        "date": "2026-06-21",
+        "auteur": "L. Chaoui",
+        "texte": "Relance pour facture et BL manquants"
+      },
+      {
+        "date": "2026-06-10",
+        "auteur": "L. Chaoui",
+        "texte": "Documents partiels reçus"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-014",
+        "date": "2026-06-21",
+        "type": "Réception documents",
+        "statut": "Partiel",
+        "montant": null
+      },
+      {
+        "id": "EVT-015",
+        "date": "2026-04-18",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 950000
+      }
+    ],
+    "evenementCourant": "Réception documents"
+  },
+  {
+    "id": "ERD-2026-00062",
+    "produit": "ERD",
+    "client": {
+      "nom": "TANGER MED FREIGHT",
+      "compte": "007 780 0000 389",
+      "ice": "005890389000078",
+      "code": "CLI-0389"
+    },
+    "montant": 3200000,
+    "devise": "USD",
+    "dateCreation": "2026-02-28",
+    "dateEcheance": "2026-06-15",
+    "banqueCorrespondante": "Standard Chartered London",
+    "paysOrigine": "Royaume-Uni",
+    "statut": "Annulé",
+    "refCTN": "CTN-ERD-0062-26",
+    "codeAgence": "AGC-TANGER-06",
+    "agentCTN": {
+      "nom": "El Fassi",
+      "prenom": "Youssef",
+      "code": "EY07"
+    },
+    "datePriseEnCharge": "2026-03-01",
+    "statutOperationnel": "Annulé client",
+    "controleDocumentaire": "Annulé",
+    "encours": {
+      "utilise": 0,
+      "autorise": 5000000,
+      "devise": "USD"
+    },
+    "commission": 0.22,
+    "tauxChange": 9.85,
+    "derniereInteraction": "2026-06-10",
+    "canalInteraction": "email",
+    "notes": [
+      {
+        "date": "2026-06-10",
+        "auteur": "Y. El Fassi",
+        "texte": "Annulation demandée par client"
+      },
+      {
+        "date": "2026-06-05",
+        "auteur": "Y. El Fassi",
+        "texte": "Client contacté pour confirmation"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-016",
+        "date": "2026-06-10",
+        "type": "Annulation",
+        "statut": "Validé",
+        "montant": null
+      },
+      {
+        "id": "EVT-017",
+        "date": "2026-02-28",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 3200000
+      }
+    ],
+    "evenementCourant": "Dénouement / Clôture"
+  },
+  {
+    "id": "ERD-2026-00065",
+    "produit": "ERD",
+    "client": {
+      "nom": "GLOBAL TRADE MAROC",
+      "compte": "007 780 0000 412",
+      "ice": "006120412000078",
+      "code": "CLI-0412"
+    },
+    "montant": 1500000,
+    "devise": "EUR",
+    "dateCreation": "2026-05-22",
+    "dateEcheance": "2026-09-05",
+    "banqueCorrespondante": "Commerzbank Frankfurt",
+    "paysOrigine": "Allemagne",
+    "statut": "En cours",
+    "refCTN": "CTN-ERD-0065-26",
+    "codeAgence": "AGC-RABAT-02",
+    "agentCTN": {
+      "nom": "Alami",
+      "prenom": "Ahmed",
+      "code": "AA03"
+    },
+    "datePriseEnCharge": "2026-05-23",
+    "statutOperationnel": "En traitement",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 1500000,
+      "autorise": 3000000,
+      "devise": "EUR"
+    },
+    "commission": 0.18,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-06-23",
+    "canalInteraction": "email",
+    "notes": [
+      {
+        "date": "2026-06-23",
+        "auteur": "A. Alami",
+        "texte": "Documents validés, transmission au BO"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-018",
+        "date": "2026-06-23",
+        "type": "Validation documents",
+        "statut": "Validé",
+        "montant": null
+      },
+      {
+        "id": "EVT-019",
+        "date": "2026-05-22",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 1500000
+      }
+    ],
+    "evenementCourant": "Acceptation & Aval"
+  },
+  {
+    "id": "ERD-2026-00068",
+    "produit": "ERD",
+    "client": {
+      "nom": "STE ABC IMPORT EXPORT",
+      "compte": "007 780 0000 523",
+      "ice": "007230523000078",
+      "code": "CLI-0523"
+    },
+    "montant": 780000,
+    "devise": "USD",
+    "dateCreation": "2026-03-08",
+    "dateEcheance": "2026-06-20",
+    "banqueCorrespondante": "HSBC Dubai",
+    "paysOrigine": "Émirats",
+    "statut": "Expiré",
+    "refCTN": "CTN-ERD-0068-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Benali",
+      "prenom": "Karim",
+      "code": "KB01"
+    },
+    "datePriseEnCharge": "2026-03-09",
+    "statutOperationnel": "Échéance dépassée",
+    "controleDocumentaire": "Clôturé",
+    "encours": {
+      "utilise": 0,
+      "autorise": 1500000,
+      "devise": "USD"
+    },
+    "commission": 0.15,
+    "tauxChange": 9.85,
+    "derniereInteraction": "2026-06-18",
+    "canalInteraction": "tel",
+    "notes": [
+      {
+        "date": "2026-06-18",
+        "auteur": "K. Benali",
+        "texte": "Relance échéance, client injoignable"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-020",
+        "date": "2026-06-20",
+        "type": "Échéance",
+        "statut": "Expiré",
+        "montant": null
+      },
+      {
+        "id": "EVT-021",
+        "date": "2026-03-08",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 780000
+      }
+    ],
+    "evenementCourant": "Échéance"
+  },
+  {
+    "id": "ELC-2026-00034",
+    "produit": "ELC",
+    "client": {
+      "nom": "NORTH AFRICA IMPORT",
+      "compte": "007 780 0000 634",
+      "ice": "008340634000078",
+      "code": "CLI-0634"
+    },
+    "montant": 1100000,
+    "devise": "USD",
+    "dateCreation": "2026-04-12",
+    "dateEcheance": "2026-07-25",
+    "banqueCorrespondante": "Bank of America New York",
+    "paysOrigine": "USA",
+    "statut": "En cours",
+    "refCTN": "CTN-ELC-0034-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Tazi",
+      "prenom": "Fatima",
+      "code": "TF02"
+    },
+    "datePriseEnCharge": "2026-04-13",
+    "statutOperationnel": "Docs en attente",
+    "controleDocumentaire": "1 réserve active",
+    "encours": {
+      "utilise": 1100000,
+      "autorise": 2000000,
+      "devise": "USD"
+    },
+    "commission": 0.12,
+    "tauxChange": 9.85,
+    "derniereInteraction": "2026-06-25",
+    "canalInteraction": "mail",
+    "notes": [
+      {
+        "date": "2026-06-25",
+        "auteur": "F. Tazi",
+        "texte": "Attente certificat origine"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-022",
+        "date": "2026-06-25",
+        "type": "Réception documents",
+        "statut": "Partiel",
+        "montant": null
+      },
+      {
+        "id": "EVT-023",
+        "date": "2026-04-12",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 1100000
+      }
+    ],
+    "evenementCourant": "Réception documents"
+  },
+  {
+    "id": "ELC-2026-00038",
+    "produit": "ELC",
+    "client": {
+      "nom": "ATLANTIC SHIPPING LTD",
+      "compte": "007 780 0000 745",
+      "ice": "009450745000078",
+      "code": "CLI-0745"
+    },
+    "montant": 580000,
+    "devise": "GBP",
+    "dateCreation": "2026-05-30",
+    "dateEcheance": "2026-09-12",
+    "banqueCorrespondante": "Lloyds Bank London",
+    "paysOrigine": "Royaume-Uni",
+    "statut": "En cours",
+    "refCTN": "CTN-ELC-0038-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Bennani",
+      "prenom": "Sara",
+      "code": "BS04"
+    },
+    "datePriseEnCharge": "2026-05-31",
+    "statutOperationnel": "En traitement",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 580000,
+      "autorise": 1200000,
+      "devise": "GBP"
+    },
+    "commission": 0.1,
+    "tauxChange": 12.35,
+    "derniereInteraction": "2026-06-24",
+    "canalInteraction": "email",
+    "notes": [
+      {
+        "date": "2026-06-24",
+        "auteur": "S. Bennani",
+        "texte": "Validation documents complète"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-024",
+        "date": "2026-06-24",
+        "type": "Validation documents",
+        "statut": "Validé",
+        "montant": null
+      },
+      {
+        "id": "EVT-025",
+        "date": "2026-05-30",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 580000
+      }
+    ],
+    "evenementCourant": "Contrôle documentaire"
+  },
+  {
+    "id": "ELC-2026-00041",
+    "produit": "ELC",
+    "client": {
+      "nom": "MEDITERRANEA LOGISTICS",
+      "compte": "007 780 0000 856",
+      "ice": "010560856000078",
+      "code": "CLI-0856"
+    },
+    "montant": 2100000,
+    "devise": "EUR",
+    "dateCreation": "2026-01-10",
+    "dateEcheance": "2026-04-20",
+    "banqueCorrespondante": "UniCredit Milan",
+    "paysOrigine": "Italie",
+    "statut": "Annulé",
+    "refCTN": "CTN-ELC-0041-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Benali",
+      "prenom": "Karim",
+      "code": "KB01"
+    },
+    "datePriseEnCharge": "2026-01-11",
+    "statutOperationnel": "Annulé client",
+    "controleDocumentaire": "Annulé",
+    "encours": {
+      "utilise": 0,
+      "autorise": 3000000,
+      "devise": "EUR"
+    },
+    "commission": 0.16,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-04-15",
+    "canalInteraction": "email",
+    "notes": [
+      {
+        "date": "2026-04-15",
+        "auteur": "K. Benali",
+        "texte": "Annulation confirmée par client"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-026",
+        "date": "2026-04-15",
+        "type": "Annulation",
+        "statut": "Validé",
+        "montant": null
+      },
+      {
+        "id": "EVT-027",
+        "date": "2026-01-10",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 2100000
+      }
+    ],
+    "evenementCourant": "Clôture"
+  },
+  {
+    "id": "FSA-2026-00019",
+    "produit": "FSA",
+    "client": {
+      "nom": "MOROCCO EXPORT SA",
+      "compte": "007 780 0000 967",
+      "ice": "011670967000078",
+      "code": "CLI-0967"
+    },
+    "montant": 420000,
+    "devise": "USD",
+    "dateCreation": "2026-06-01",
+    "dateEcheance": "2026-09-15",
+    "banqueCorrespondante": "QNB Bank Doha",
+    "paysOrigine": "Qatar",
+    "statut": "En cours",
+    "refCTN": "CTN-FSA-0019-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Idrissi",
+      "prenom": "Mohammed",
+      "code": "IM05"
+    },
+    "datePriseEnCharge": "2026-06-02",
+    "statutOperationnel": "Docs en attente",
+    "controleDocumentaire": "2 réserves actives",
+    "encours": {
+      "utilise": 420000,
+      "autorise": 1000000,
+      "devise": "USD"
+    },
+    "commission": 0.08,
+    "tauxChange": 9.85,
+    "derniereInteraction": "2026-06-26",
+    "canalInteraction": "mail",
+    "notes": [
+      {
+        "date": "2026-06-26",
+        "auteur": "M. Idrissi",
+        "texte": "Attente facture proforma"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-028",
+        "date": "2026-06-26",
+        "type": "Réception documents",
+        "statut": "Partiel",
+        "montant": null
+      },
+      {
+        "id": "EVT-029",
+        "date": "2026-06-01",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 420000
+      }
+    ],
+    "evenementCourant": "Demande"
+  },
+  {
+    "id": "FSA-2026-00022",
+    "produit": "FSA",
+    "client": {
+      "nom": "AFRICAN TRADE CORP",
+      "compte": "007 780 0000 078",
+      "ice": "012780078000078",
+      "code": "CLI-0078"
+    },
+    "montant": 680000,
+    "devise": "EUR",
+    "dateCreation": "2026-05-15",
+    "dateEcheance": "2026-08-30",
+    "banqueCorrespondante": "ABN AMRO Amsterdam",
+    "paysOrigine": "Pays-Bas",
+    "statut": "En cours",
+    "refCTN": "CTN-FSA-0022-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Chaoui",
+      "prenom": "Laila",
+      "code": "CL06"
+    },
+    "datePriseEnCharge": "2026-05-16",
+    "statutOperationnel": "En traitement",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 680000,
+      "autorise": 1500000,
+      "devise": "EUR"
+    },
+    "commission": 0.1,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-06-25",
+    "canalInteraction": "email",
+    "notes": [
+      {
+        "date": "2026-06-25",
+        "auteur": "L. Chaoui",
+        "texte": "Documents validés"
+      }
+    ],
+    "evenements": [
+      {
+        "id": "EVT-030",
+        "date": "2026-06-25",
+        "type": "Validation documents",
+        "statut": "Validé",
+        "montant": null
+      },
+      {
+        "id": "EVT-031",
+        "date": "2026-05-15",
+        "type": "Ouverture",
+        "statut": "Validé",
+        "montant": 680000
+      }
+    ],
+    "evenementCourant": "Octroi / Accord"
+  }
+]

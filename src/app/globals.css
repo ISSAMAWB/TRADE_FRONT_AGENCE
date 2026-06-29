@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { height: 100%; }
+body {
+  background: #f5f6f8;
+  color: #1f2937;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 13px;
+}
+
+/* shared UI classes */
+.label { @apply text-[11px] font-semibold uppercase tracking-wide text-ink-500 mb-1; }
+.input {
+  @apply w-full rounded-md border border-ink-300 bg-white px-3 py-2 text-sm
+         focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-brand-400
+         placeholder:text-ink-300;
+}
+.btn { @apply inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition; }
+.btn-primary { @apply btn bg-brand-500 text-white hover:bg-brand-600 shadow-sm; }
+.btn-outline { @apply btn bg-white border border-ink-300 hover:bg-ink-50; }
+.btn-ghost   { @apply btn bg-transparent hover:bg-ink-100; }
+.card { @apply bg-white rounded-lg shadow-card border border-ink-100; }
+.section-title {
+  @apply text-[11px] font-semibold uppercase tracking-wider text-brand-600
+         border-b border-ink-100 pb-2 mb-4;
+}
+.badge { @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium; }
+.badge-amber { @apply badge bg-amber-100 text-amber-800; }
+.badge-blue  { @apply badge bg-blue-100  text-blue-800;  }
+.badge-green { @apply badge bg-green-100 text-green-800; }
+.badge-red   { @apply badge bg-red-100   text-red-800;   }
+.badge-gray  { @apply badge bg-ink-100   text-ink-700;   }
+.badge-orange{ @apply badge bg-brand-100 text-brand-700; }
+
+/* Consultation — charte exacte */
+.badge-statut-en-cours { @apply badge; background: #E6F1FB; color: #185FA5; }
+.badge-statut-expire   { @apply badge; background: #FCEBEB; color: #A32D2D; }
+.badge-statut-annule   { @apply badge; background: #F1EFE8; color: #5F5E5A; }
+.badge-produit         { @apply badge; background: #F1EFE8; color: #5F5E5A; }
+
+/* table */
+.tbl { @apply w-full text-sm; }
+.tbl thead th {
+  @apply text-left text-[11px] font-semibold uppercase tracking-wider text-ink-500
+         bg-ink-50 px-3 py-2 border-b border-ink-100;
+}
+.tbl tbody td { @apply px-3 py-2 border-b border-ink-100; }
+.tbl tbody tr:hover { @apply bg-brand-50/40; }
