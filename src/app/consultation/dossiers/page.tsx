@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useState, useMemo, useEffect, useRef } from "react";
-import { useTomStore } from "@/store/useTomStore";
-import { Search, X, ArrowRight, ChevronLeft, ChevronRight, ChevronDown, SlidersHorizontal, Eye } from "lucide-react";
+import { Search, X, ArrowRight, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ChevronDown, SlidersHorizontal, Eye, FileSpreadsheet, Printer } from "lucide-react";
+import * as XLSX from "xlsx";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 import dossiersData from "@/mocks/dossiers.json";
 import eventsByProductData from "@/mocks/eventsByProduct.json";
 import type { Dossier, ProduitTrade, StatutDossier, DeviseTrade } from "@/domain/consultation";
@@ -26,13 +28,24 @@ const statutClasses: Record<StatutDossier, string> = {
   "Annulé": "badge-statut-annule",
 };
 
+// Recherche type SQL LIKE : "%" est un joker (ex. "ILC%" => commence par ILC).
+// Sans "%", on effectue une recherche "contient".
+function likeMatch(value: string, pattern: string): boolean {
+  const p = pattern.trim().toLowerCase();
+  if (!p) return true;
+  const v = value.toLowerCase();
+  if (!p.includes("%")) return v.includes(p);
+  const escaped = p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/%/g, ".*");
+  return new RegExp(`^${escaped}$`).test(v);
+}
+
 export default function ConsultationDossiersPage() {
   const dossiers = dossiersData as Dossier[];
-  const agence = useTomStore((s) => s.courriersIrd[0]?.agence_reception ?? "Agence Casablanca");
 
   const [produits, setProduits] = useState<ProduitTrade[]>([]);
   const [statuts, setStatuts] = useState<StatutDossier[]>([]);
   const [evenements, setEvenements] = useState<string[]>([]);
+  const [refBancaire, setRefBancaire] = useState("");
   const [clientQuery, setClientQuery] = useState("");
   const [selectedClient, setSelectedClient] = useState<ClientSuggestion | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -46,7 +59,7 @@ export default function ConsultationDossiersPage() {
   const [sortKey, setSortKey] = useState<keyof Dossier | "client">("dateCreation");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
-  const pageSize = 20;
+  const pageSize = 3;
 
   // Sync events when products change
   useEffect(() => {
@@ -79,6 +92,7 @@ export default function ConsultationDossiersPage() {
 
   const filtered = useMemo(() => {
     let items = dossiers.filter((d) => {
+      if (refBancaire.trim() && !likeMatch(d.id, refBancaire)) return false;
       if (produits.length > 0 && !produits.includes(d.produit)) return false;
       if (selectedClient) {
         if (d.client.compte !== selectedClient.compte) return false;
@@ -113,15 +127,39 @@ export default function ConsultationDossiersPage() {
     });
 
     return items;
-  }, [dossiers, produits, selectedClient, clientQuery, statuts, evenements, montantMin, montantMax, devise, dateDebut, dateFin, sortKey, sortDir]);
+  }, [dossiers, refBancaire, produits, selectedClient, clientQuery, statuts, evenements, montantMin, montantMax, devise, dateDebut, dateFin, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
+  // Revenir à la page 1 quand le nombre de résultats change (filtres/recherche)
+  useEffect(() => {
+    setPage(1);
+  }, [refBancaire, produits, selectedClient, clientQuery, statuts, evenements, montantMin, montantMax, devise, dateDebut, dateFin]);
+
+  // S'assurer que la page courante reste valide
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
+  // Numéros de page à afficher (avec ellipses)
+  const pageNumbers = useMemo(() => {
+    const pages: (number | "...")[] = [];
+    const delta = 1;
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= page - delta && i <= page + delta)) {
+        pages.push(i);
+      } else if (pages[pages.length - 1] !== "...") {
+        pages.push("...");
+      }
+    }
+    return pages;
+  }, [page, totalPages]);
 
   function resetFilters() {
     setProduits([]);
     setStatuts([]);
     setEvenements([]);
+    setRefBancaire("");
     setClientQuery("");
     setSelectedClient(null);
     setMontantMin("");
@@ -144,7 +182,7 @@ export default function ConsultationDossiersPage() {
   }
 
   const hasActiveFilters =
-    produits.length > 0 || statuts.length > 0 || evenements.length > 0 || selectedClient || clientQuery.trim() || montantMin || montantMax || dateDebut || dateFin;
+    refBancaire.trim() || produits.length > 0 || statuts.length > 0 || evenements.length > 0 || selectedClient || clientQuery.trim() || montantMin || montantMax || dateDebut || dateFin;
 
   const header = (label: string, key: keyof Dossier | "client") => (
     <button
@@ -162,69 +200,131 @@ export default function ConsultationDossiersPage() {
     </button>
   );
 
+  function exportToExcel() {
+    const data = filtered;
+    const rows = data.map((d) => ({
+      Référence: d.id,
+      Produit: d.produit,
+      Client: d.client.nom,
+      Compte: d.client.compte,
+      Montant: d.montant,
+      Devise: d.devise,
+      "Date création": new Date(d.dateCreation).toLocaleDateString("fr-FR"),
+      Statut: d.statut,
+      "Événement courant": d.evenementCourant ?? "—",
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Dossiers");
+    XLSX.writeFile(wb, `dossiers_trade_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
+
+  function exportToPDF() {
+    const data = filtered;
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.setFontSize(14);
+    doc.text("Résultat de la recherche — Dossiers Trade", 14, 20);
+    doc.setFontSize(10);
+    doc.text(`Exporté le ${new Date().toLocaleDateString("fr-FR")} — ${data.length} dossier(s)`, 14, 28);
+    const body = data.map((d) => [
+      d.id,
+      d.produit,
+      d.client.nom,
+      d.client.compte,
+      d.montant.toLocaleString("fr-FR"),
+      d.devise,
+      new Date(d.dateCreation).toLocaleDateString("fr-FR"),
+      d.statut,
+      d.evenementCourant ?? "—",
+    ]);
+    (doc as any).autoTable({
+      startY: 34,
+      head: [["Référence", "Produit", "Client", "Compte", "Montant", "Devise", "Date création", "Statut", "Événement"]],
+      body,
+      theme: "grid",
+      styles: { fontSize: 9, cellPadding: 2 },
+      headStyles: { fillColor: [232, 114, 42], textColor: 255 },
+    });
+    doc.save(`dossiers_trade_${new Date().toISOString().slice(0, 10)}.pdf`);
+  }
+
   return (
     <div className="space-y-4">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs text-ink-500">
-        <Link href="/" className="hover:text-brand-600">Tableau de bord</Link>
-        <span>/</span>
-        <span className="text-ink-700 font-medium">Consultation</span>
-      </div>
-
       {/* En-tête */}
-      <div>
-        <h1 className="text-xl font-semibold text-ink-900">Consultation — Vue consolidée</h1>
-        <p className="text-sm text-ink-500 mt-1">Tous clients · Tous produits Trade Finance · {agence}</p>
-      </div>
+      <h1 className="text-xl font-semibold text-ink-900">Liste des dossiers Trade</h1>
 
       {/* Filtres */}
       <div className="card p-4 space-y-4" style={{ background: "#FFFFFF", borderColor: "#E5E7EB" }}>
-        {/* Ligne 1 — Client / Compte + recherche avancée */}
-        <div className="relative">
-          <label className="label">CLIENT / COMPTE</label>
-          <div className="relative flex items-center">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-300" />
-            <input
-              value={clientQuery}
-              onChange={(e) => {
-                setClientQuery(e.target.value);
-                if (selectedClient) setSelectedClient(null);
-                setShowSuggestions(true);
-              }}
-              onFocus={() => setShowSuggestions(true)}
-              placeholder="Rechercher par nom, n° compte ou ICE"
-              className="input pl-10 h-10 w-full focus:border-[#E8722A] focus:ring-[#E8722A]"
-              style={{ borderRadius: "8px 0 0 8px" }}
-            />
-            <button
-              type="button"
-              onClick={() => setShowAdvanced(true)}
-              className="h-10 px-3 text-white flex items-center gap-1"
-              style={{ background: "#E8722A", borderRadius: "0 8px 8px 0" }}
-              title="Recherche client avancée"
-            >
-              <SlidersHorizontal size={16} />
-            </button>
-            {selectedClient && (
-              <button onClick={removeClient} className="absolute right-14 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600">
-                <X size={14} />
+        {/* Ligne 1 — Référence bancaire (gauche) + Client / Compte (droite) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          {/* Référence bancaire (recherche LIKE) */}
+          <div>
+            <label className="label">RÉFÉRENCE BANCAIRE</label>
+            <div className="relative flex items-center">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-300" />
+              <input
+                value={refBancaire}
+                onChange={(e) => setRefBancaire(e.target.value.replace(/[^A-Za-z0-9%]/g, "").toUpperCase())}
+                placeholder="Ex. ILC%  (commence par ILC)"
+                className="input pl-10 h-10 w-full focus:border-[#E8722A] focus:ring-[#E8722A]"
+                style={{ borderRadius: 8 }}
+              />
+              {refBancaire && (
+                <button onClick={() => setRefBancaire("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600">
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+            <p className="text-[10px] text-ink-400 mt-1">Champ alphanumérique · utilisez « % » comme caractère générique (ex. « ILC% », « %0042 »)</p>
+          </div>
+
+          {/* Client / Compte + recherche avancée */}
+          <div className="relative">
+            <label className="label">CLIENT / COMPTE</label>
+            <div className="relative flex items-center">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-300" />
+              <input
+                value={clientQuery}
+                onChange={(e) => {
+                  setClientQuery(e.target.value);
+                  if (selectedClient) setSelectedClient(null);
+                  setShowSuggestions(true);
+                }}
+                onFocus={() => setShowSuggestions(true)}
+                placeholder="Rechercher par nom, n° compte ou ICE"
+                className="input pl-10 h-10 w-full focus:border-[#E8722A] focus:ring-[#E8722A]"
+                style={{ borderRadius: "8px 0 0 8px" }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(true)}
+                className="h-10 px-3 text-white flex items-center gap-1"
+                style={{ background: "#E8722A", borderRadius: "0 8px 8px 0" }}
+                title="Recherche client avancée"
+              >
+                <SlidersHorizontal size={16} />
               </button>
+              {selectedClient && (
+                <button onClick={removeClient} className="absolute right-14 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600">
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+            {showSuggestions && clientSuggestions.length > 0 && (
+              <div className="absolute z-20 mt-1 w-full bg-white border border-ink-200 shadow-lg overflow-hidden" style={{ borderRadius: 8 }}>
+                {clientSuggestions.map((c) => (
+                  <button
+                    key={c.compte}
+                    onClick={() => selectClient(c)}
+                    className="w-full text-left px-4 py-2 hover:bg-brand-50 border-b border-ink-100 last:border-0"
+                  >
+                    <div className="text-sm font-medium text-ink-800">{c.nom}</div>
+                    <div className="text-[11px] text-ink-500">N° compte {c.compte} · ICE {c.ice}</div>
+                  </button>
+                ))}
+              </div>
             )}
           </div>
-          {showSuggestions && clientSuggestions.length > 0 && (
-            <div className="absolute z-20 mt-1 w-full bg-white border border-ink-200 shadow-lg overflow-hidden" style={{ borderRadius: 8 }}>
-              {clientSuggestions.map((c) => (
-                <button
-                  key={c.compte}
-                  onClick={() => selectClient(c)}
-                  className="w-full text-left px-4 py-2 hover:bg-brand-50 border-b border-ink-100 last:border-0"
-                >
-                  <div className="text-sm font-medium text-ink-800">{c.nom}</div>
-                  <div className="text-[11px] text-ink-500">N° compte {c.compte} · ICE {c.ice}</div>
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Ligne 2 — Produit + Statut */}
@@ -272,6 +372,7 @@ export default function ConsultationDossiersPage() {
         <div className="flex items-center justify-between flex-wrap gap-3 pt-3 border-t border-ink-100">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[11px] text-ink-500">Filtres actifs :</span>
+            {refBancaire.trim() && <Chip label={`Réf. bancaire : ${refBancaire.trim()}`} onRemove={() => setRefBancaire("")} />}
             {produits.length > 0 && <Chip label={`Produit : ${produits.join(", ")}`} onRemove={() => setProduits([])} />}
             {statuts.length > 0 && <Chip label={`Statut : ${statuts.join(", ")}`} onRemove={() => setStatuts([])} />}
             {evenements.length > 0 && <Chip label={`Événement : ${evenements.join(", ")}`} onRemove={() => setEvenements([])} />}
@@ -287,15 +388,37 @@ export default function ConsultationDossiersPage() {
         </div>
       </div>
 
-      {/* Compteur */}
-      <div className="text-xs text-ink-500">{filtered.length} dossier(s)</div>
+      {/* Compteur + Export */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="text-sm text-ink-600">
+          <span className="font-semibold text-ink-800">{filtered.length}</span> dossier(s) trouvé(s)
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={exportToExcel}
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-semibold text-white rounded-lg shadow-sm hover:brightness-105 active:scale-[0.98] transition"
+            style={{ background: "#1D6F42" }}
+            title="Exporter sous Excel (.xlsx)"
+          >
+            <FileSpreadsheet size={15} /> Excel
+          </button>
+          <button
+            onClick={exportToPDF}
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-semibold text-white rounded-lg shadow-sm hover:brightness-105 active:scale-[0.98] transition"
+            style={{ background: "#E8722A" }}
+            title="Imprimer / exporter en PDF"
+          >
+            <Printer size={15} /> Impression
+          </button>
+        </div>
+      </div>
 
       {/* Tableau */}
       <div className="card" style={{ background: "#FFFFFF", borderColor: "#E5E7EB" }}>
         <table className="tbl">
           <thead>
             <tr>
-              <th>{header("Référence", "id")}</th>
+              <th>{header("Référence bancaire", "id")}</th>
               <th>{header("Produit", "produit")}</th>
               <th>{header("Client / Compte", "client")}</th>
               <th className="text-right">{header("Montant", "montant")}</th>
@@ -339,20 +462,70 @@ export default function ConsultationDossiersPage() {
             )}
           </tbody>
         </table>
-
-        {/* Pagination */}
-        {filtered.length > pageSize && (
-          <div className="px-4 py-3 border-t border-ink-100 flex items-center justify-between">
-            <button className="btn-outline h-8 text-xs" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
-              <ChevronLeft size={14} /> Précédent
-            </button>
-            <div className="text-xs text-ink-500">Page {page} / {totalPages}</div>
-            <button className="btn-outline h-8 text-xs" disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
-              Suivant <ChevronRight size={14} />
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Pagination — centrée en bas de la page */}
+      {filtered.length > 0 && (
+        <div className="flex flex-col items-center gap-2 pt-2">
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-1">
+              <button
+                className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-ink-200 text-ink-600 hover:border-[#E8722A] hover:text-[#E8722A] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-ink-200 disabled:hover:text-ink-600 transition"
+                disabled={page === 1}
+                onClick={() => setPage(1)}
+                title="Première page"
+              >
+                <ChevronsLeft size={16} />
+              </button>
+              <button
+                className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-ink-200 text-ink-600 hover:border-[#E8722A] hover:text-[#E8722A] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-ink-200 disabled:hover:text-ink-600 transition"
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                title="Page précédente"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              {pageNumbers.map((p, i) =>
+                p === "..." ? (
+                  <span key={`ellipsis-${i}`} className="px-1.5 text-ink-400 text-xs select-none">…</span>
+                ) : (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    className={`inline-flex items-center justify-center h-8 min-w-8 px-2 rounded-md text-xs font-medium border transition ${
+                      p === page
+                        ? "text-white border-transparent"
+                        : "text-ink-600 border-ink-200 hover:border-[#E8722A] hover:text-[#E8722A]"
+                    }`}
+                    style={p === page ? { background: "#E8722A" } : undefined}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+              <button
+                className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-ink-200 text-ink-600 hover:border-[#E8722A] hover:text-[#E8722A] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-ink-200 disabled:hover:text-ink-600 transition"
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                title="Page suivante"
+              >
+                <ChevronRight size={16} />
+              </button>
+              <button
+                className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-ink-200 text-ink-600 hover:border-[#E8722A] hover:text-[#E8722A] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-ink-200 disabled:hover:text-ink-600 transition"
+                disabled={page === totalPages}
+                onClick={() => setPage(totalPages)}
+                title="Dernière page"
+              >
+                <ChevronsRight size={16} />
+              </button>
+            </div>
+          )}
+          <div className="text-xs text-ink-500">
+            Page <span className="font-semibold text-ink-700">{page}</span> sur <span className="font-semibold text-ink-700">{totalPages}</span>
+          </div>
+        </div>
+      )}
 
       {showAdvanced && (
         <AdvancedSearchModal
