@@ -1,0 +1,425 @@
+[
+  {
+    "reference": "ILC0012483Q-0151",
+    "produit": "ILC",
+    "produitLibelle": "Crédit documentaire import",
+    "client": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-26T16:33:00",
+    "clientInfo": {
+      "raisonSociale": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
+      "numeroCompte": "007 780 0000 042",
+      "ice": "002150042000078",
+      "codeClient": "CLI-0042",
+      "agenceRattachement": "Agence Casablanca",
+      "roleOperation": "Donneur d'ordre (Importateur)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ILC-0142-26",
+      "agenceTraitante": "AGC-CASA-01",
+      "gestionnaire": "Karim Benali",
+      "datePriseEnCharge": "13/03/2026",
+      "statutOperationnel": "Documents en attente",
+      "controleDocumentaire": "2 réserves actives",
+      "prochaineAction": "Relance documents transport",
+      "noteInterne": "Client habituel, suivi régulier recommandé."
+    },
+    "donnees": {
+      "donneurOrdre": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
+      "beneficiaire": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
+      "banqueNotification": "CREDIT INDUSTRIEL ET COMMERCIAL",
+      "banqueConfirmation": "CREDIT INDUSTRIEL ET COMMERCIAL",
+      "montantCredit": { "valeur": 20000, "devise": "EUR" },
+      "tolerance": "+/- 0,00 %",
+      "montantEnAttente": { "valeur": 5000, "devise": "EUR" },
+      "montantReclame": { "valeur": 2000, "devise": "EUR" },
+      "montantDisponible": { "valeur": 14000, "devise": "EUR" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "ILC0012483Q-0151",
+      "modeRealisation": "Acceptation",
+      "creditConfirme": "Confirmé",
+      "natureOperation": "Financière",
+      "dateExpiration": "2026-07-19",
+      "lieuExpiration": "France",
+      "referencesTitresImportation": [
+        "TI-2025-08847",
+        "TI-2025-08848",
+        "TI-2025-08912"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0112",
+        "nature": "Ouverture du dossier",
+        "montant": 20000,
+        "devise": "EUR",
+        "dateCreation": "2026-01-10T09:30:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0125",
+        "nature": "Notification bénéficiaire",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-01-12T14:15:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0148",
+        "nature": "Documents en attente",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-01-15T11:00:00",
+        "statut": "EN_COURS"
+      },
+      {
+        "reference": "EVT-2026-0160",
+        "nature": "Paiement partiel",
+        "montant": 5000,
+        "devise": "EUR",
+        "dateCreation": "2026-05-16T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "123a4567-e89b-12d3-a456-426614174000",
+        "datePaiement": "2026-05-16"
+      },
+      {
+        "reference": "EVT-2026-0175",
+        "nature": "Paiement partiel",
+        "montant": 10000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-01T09:00:00",
+        "statut": "VALIDE",
+        "uetr": "987f6543-a21c-45d6-b789-012345678901",
+        "datePaiement": "2026-06-01"
+      }
+    ]
+  },
+  {
+    "reference": "ELC-2026-00034",
+    "produit": "ELC",
+    "produitLibelle": "Crédit documentaire export",
+    "client": "STE PAKISTAN MAROC PHOSPHORE",
+    "statut": "VALIDE",
+    "dateMiseAJour": "2026-04-01T16:15:00",
+    "clientInfo": {
+      "raisonSociale": "STE PAKISTAN MAROC PHOSPHORE",
+      "numeroCompte": "007 780 0000 089",
+      "ice": "001234567890123",
+      "codeClient": "CLI-0089",
+      "agenceRattachement": "Agence Jorf Lasfar",
+      "roleOperation": "Bénéficiaire (Exportateur)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ELC-0234-26",
+      "agenceTraitante": "AGC-JORF-02",
+      "gestionnaire": "Fatima Zahra",
+      "datePriseEnCharge": "15/02/2026",
+      "statutOperationnel": "En cours de traitement",
+      "controleDocumentaire": "Aucune réserve",
+      "prochaineAction": "Vérification conformité documents",
+      "noteInterne": "Exportateur fiable, procédure standard."
+    },
+    "donnees": {
+      "client": "STE PAKISTAN MAROC PHOSPHORE",
+      "donneurOrdre": "BRAZIL TRADING INTERNATIONAL",
+      "banqueEmettrice": "BANQUE MAROCAINE DU COMMERCE EXTERIEUR",
+      "banqueConfirmation": "Non applicable",
+      "montantCredit": { "valeur": 350000, "devise": "USD" },
+      "tolerance": "+/- 5,00 %",
+      "montantEnAttente": { "valeur": 75000, "devise": "USD" },
+      "montantReclame": { "valeur": 100000, "devise": "USD" },
+      "montantDisponible": { "valeur": 200000, "devise": "USD" },
+      "typeFrais": "À notre charge",
+      "referenceOperation": "ELC0098741A-0023",
+      "modeRealisation": "Paiement à vue",
+      "operationConfirmee": "Non confirmé",
+      "natureOperation": "Commerciale",
+      "dateExpiration": "2028-03-10",
+      "lieuExpiration": "Maroc",
+      "referencesCourrier": [
+        { "reference": "DHL7842941234", "dateEnvoi": "2026-03-10" },
+        { "reference": "DHL7842981238", "dateEnvoi": "2026-03-22" },
+        { "reference": "DHL7843011241", "dateEnvoi": "2026-04-05" },
+        { "reference": "DHL7843051245", "dateEnvoi": "2026-04-18" },
+        { "reference": "DHL7843091249", "dateEnvoi": "2026-05-02" }
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0201",
+        "nature": "Ouverture du dossier",
+        "montant": 12821930.55,
+        "devise": "USD",
+        "dateCreation": "2026-02-01T08:45:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0215",
+        "nature": "Envoi documents bénéficiaire",
+        "montant": null,
+        "devise": "USD",
+        "dateCreation": "2026-02-05T16:20:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0234",
+        "nature": "Paiement différé programmé",
+        "montant": 9620517.35,
+        "devise": "USD",
+        "dateCreation": "2026-02-18T10:00:00",
+        "statut": "EN_COURS"
+      },
+      {
+        "reference": "EVT-2026-0249",
+        "nature": "Validation documents",
+        "montant": null,
+        "devise": "USD",
+        "dateCreation": "2026-02-25T13:30:00",
+        "statut": "VALIDE"
+      }
+    ]
+  },
+  {
+    "reference": "IRD-2026-00047",
+    "produit": "IRD",
+    "produitLibelle": "Remise documentaire import",
+    "client": "STE VIVO ENERGY MAROC",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-05-20T16:45:00",
+    "clientInfo": {
+      "raisonSociale": "STE VIVO ENERGY MAROC",
+      "numeroCompte": "007 780 0000 156",
+      "ice": "003456789012345",
+      "codeClient": "CLI-0156",
+      "agenceRattachement": "Agence Tanger Med",
+      "roleOperation": "Importateur (Tiré)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-IRD-0347-26",
+      "agenceTraitante": "AGC-TGM-03",
+      "gestionnaire": "Ahmed Alami",
+      "datePriseEnCharge": "20/04/2026",
+      "statutOperationnel": "Documents reçus",
+      "controleDocumentaire": "1 réserve mineure",
+      "prochaineAction": "Validation finale avant paiement",
+      "noteInterne": "Dossier prioritaire, client stratégique."
+    },
+    "donnees": {
+      "client": "STE VIVO ENERGY MAROC",
+      "tireur": "CAVAGNA GROUP SPA",
+      "partieRemettante": "INTESA SANPAOLO SPA",
+      "montantRemise": { "valeur": 21000, "devise": "EUR" },
+      "encours": { "valeur": 5200, "devise": "EUR" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "IRD00302609-0145",
+      "conditionsRemiseDocuments": "Documents contre acceptation",
+      "dateEcheance": "2026-08-15",
+      "referencesTitresImportation": [
+        "TI-2025-09162",
+        "TI-2025-09215",
+        "TI-2025-09330",
+        "TI-2025-09441",
+        "TI-2025-09558",
+        "TI-2025-09612",
+        "TI-2025-09689"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0301",
+        "nature": "Réception documents",
+        "montant": 21000,
+        "devise": "EUR",
+        "dateCreation": "2026-03-01T11:10:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0312",
+        "nature": "Remise au client",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-03-05T09:45:00",
+        "statut": "EN_COURS"
+      },
+      {
+        "reference": "EVT-2026-0325",
+        "nature": "Paiement effectué",
+        "montant": 21000,
+        "devise": "EUR",
+        "dateCreation": "2026-03-08T15:20:00",
+        "statut": "VALIDE",
+        "uetr": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "datePaiement": "2026-04-20"
+      },
+      {
+        "reference": "EVT-2026-0335",
+        "nature": "Paiement effectué",
+        "montant": 5800,
+        "devise": "EUR",
+        "dateCreation": "2026-04-12T08:30:00",
+        "statut": "VALIDE",
+        "uetr": "f9e8d7c6-b5a4-3210-fedc-ba09876543210",
+        "datePaiement": "2026-05-10"
+      }
+    ]
+  },
+  {
+    "reference": "ERD-2026-00065",
+    "produit": "ERD",
+    "produitLibelle": "Remise documentaire export",
+    "client": "SARL BLED CONSERVES",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-26T10:48:00",
+    "clientInfo": {
+      "raisonSociale": "SARL BLED CONSERVES",
+      "numeroCompte": "007 780 0000 203",
+      "ice": "004567890123456",
+      "codeClient": "CLI-0203",
+      "agenceRattachement": "Agence Meknès",
+      "roleOperation": "Exportateur (Donneur d'ordre)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ERD-0465-26",
+      "agenceTraitante": "AGC-MEK-01",
+      "gestionnaire": "Samira Berrada",
+      "datePriseEnCharge": "22/05/2026",
+      "statutOperationnel": "En attente acceptation",
+      "controleDocumentaire": "Documents conformes",
+      "prochaineAction": "Suivi correspondant étranger",
+      "noteInterne": "Exportateur agroalimentaire, suivi régulier."
+    },
+    "donnees": {
+      "client": "SARL BLED CONSERVES",
+      "tire": "EQUARHIM BIDAT",
+      "partieRemettante": "CAISSE D'EPARGNE ROMILLY ORMES",
+      "montantRemise": { "valeur": 6904.88, "devise": "EUR" },
+      "encours": { "valeur": 6904.88, "devise": "EUR" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "E-10-1-17-EQUARHIM",
+      "conditionsRemiseDocuments": "Remise contre acceptation",
+      "dateEcheance": "2026-09-05",
+      "referencesCourrier": [
+        { "reference": "DHL7756234891", "dateEnvoi": "2026-05-23" },
+        { "reference": "DHL7756234892", "dateEnvoi": "2026-06-02" }
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0231",
+        "nature": "Ouverture du dossier",
+        "montant": 1500000,
+        "devise": "EUR",
+        "dateCreation": "2026-05-22T09:14:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0244",
+        "nature": "Réception des documents",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-05-28T11:02:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0258",
+        "nature": "Envoi à la banque correspondante",
+        "montant": 1500000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-02T15:40:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0271",
+        "nature": "Acceptation correspondant",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-06-12T08:25:00",
+        "statut": "EN_COURS"
+      },
+      {
+        "reference": "EVT-2026-0289",
+        "nature": "Validation documents",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-06-23T14:11:00",
+        "statut": "EN_COURS"
+      },
+      {
+        "reference": "EVT-2026-0301",
+        "nature": "Demande de paiement",
+        "montant": 1500000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-26T10:48:00",
+        "statut": "EN_ATTENTE"
+      }
+    ]
+  },
+  {
+    "reference": "FIL-2026-00088",
+    "produit": "FIN",
+    "produitLibelle": "Financement",
+    "client": "STE IMPORT MAROC SARL",
+    "statut": "VALIDE",
+    "dateMiseAJour": "2026-03-10T14:30:00",
+    "clientInfo": {
+      "raisonSociale": "STE IMPORT MAROC SARL",
+      "numeroCompte": "007 780 0000 334",
+      "ice": "005678901234567",
+      "codeClient": "CLI-0334",
+      "agenceRattachement": "Agence Rabat Agdal",
+      "roleOperation": "Bénéficiaire du financement"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-FIN-0588-26",
+      "agenceTraitante": "AGC-RAB-05",
+      "gestionnaire": "Mohammed Kabbaj",
+      "datePriseEnCharge": "10/09/2025",
+      "statutOperationnel": "Financement en cours",
+      "controleDocumentaire": "Dossier complet",
+      "prochaineAction": "Suivi échéance mars 2026",
+      "noteInterne": "Client importateur, financement post-importation standard."
+    },
+    "donnees": {
+      "client": "STE IMPORT MAROC SARL",
+      "partieDebitee": "Agence Rabat Agdal",
+      "contrepartie": "CHINA STEEL CORPORATION",
+      "montantFinancement": { "valeur": 250000, "devise": "EUR" },
+      "montantFinance": { "valeur": 250000, "devise": "EUR" },
+      "encoursRestant": { "valeur": 2625000, "devise": "MAD" },
+      "montantTotalRembourser": { "valeur": 2650000, "devise": "MAD" },
+      "montantInterets": { "valeur": 125000, "devise": "MAD" },
+      "typeFinancement": "Financement post-importation",
+      "tauxInteret": "5,8 %",
+      "referenceFinancement": "FIL00045678",
+      "referenceDossierFinance": "ILC00045821",
+      "dateMiseEnPlace": "2025-09-15",
+      "dateEcheance": "2026-03-15"
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0401",
+        "nature": "Mise en place du financement",
+        "montant": 250000,
+        "devise": "EUR",
+        "dateCreation": "2025-09-15T10:00:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0412",
+        "nature": "Échéance à venir",
+        "montant": 2650000,
+        "devise": "MAD",
+        "dateCreation": "2026-02-15T09:00:00",
+        "statut": "EN_COURS"
+      },
+      {
+        "reference": "EVT-2026-0425",
+        "nature": "Remboursement programmé",
+        "montant": 2650000,
+        "devise": "MAD",
+        "dateCreation": "2026-03-10T14:30:00",
+        "statut": "VALIDE"
+      }
+    ]
+  }
+]

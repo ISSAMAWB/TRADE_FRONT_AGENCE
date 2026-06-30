@@ -6,7 +6,7 @@ import { Clock, Filter, X } from "lucide-react";
 import dossiersData from "@/mocks/dossiers.json";
 import type { Dossier, ProduitTrade } from "@/domain/consultation";
 
-const PRODUITS: ProduitTrade[] = ["ILC", "IRD", "ERD", "ELC", "FSA"];
+const PRODUITS: ProduitTrade[] = ["ILC", "IRD", "ERD", "ELC", "FIN"];
 
 export default function EvenementsPage() {
   const dossiers = dossiersData as Dossier[];
