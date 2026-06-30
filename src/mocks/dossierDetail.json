@@ -16,93 +16,200 @@
   "evenements": [
     {
       "reference": "EVT-2026-0231",
-      "nature": "Ouverture du dossier",
+      "nature": "OUVERTURE",
+      "natureLibelle": "Ouverture du dossier",
       "montant": 1500000,
       "devise": "EUR",
       "dateCreation": "2026-05-22T09:14:00",
       "statut": "VALIDE",
-      "description": "Création du dossier de remise documentaire export suite à la demande du client.",
-      "canal": "MANUEL",
-      "refSwift": null,
-      "emetteur": "Agent agence",
-      "entite": "Agence Casablanca",
-      "dateEcheance": null,
-      "piecesJointes": 2
+      "detailsGeneraux": {
+        "referenceOperation": "OP-2026-0231",
+        "dossierRattache": "ERD-2026-00065",
+        "dateEcheance": null,
+        "canal": "MANUEL",
+        "refSwift": null,
+        "emetteur": "Agent agence",
+        "entite": "Agence Casablanca"
+      },
+      "detailsOperation": {
+        "typeRemise": "Documents contre acceptation (D/A)",
+        "donneurOrdre": "GLOBAL TRADE MAROC",
+        "beneficiaire": "Siemens AG",
+        "banquePresentatrice": "Commerzbank Frankfurt",
+        "conditionsRemise": "CAD à 90 jours",
+        "instructionsReglement": "Règlement à échéance"
+      },
+      "notes": "Création du dossier de remise documentaire export suite à la demande du client.",
+      "documents": [
+        { "nom": "Dossier_ouverture.pdf", "type": "PDF", "taille": "245 Ko" },
+        { "nom": "Lettre_engagement.docx", "type": "Word", "taille": "42 Ko" }
+      ]
+    },
+    {
+      "reference": "EVT-2026-0242",
+      "nature": "MODIFICATION",
+      "natureLibelle": "Modification",
+      "montant": null,
+      "devise": "EUR",
+      "dateCreation": "2026-05-25T16:30:00",
+      "statut": "VALIDE",
+      "detailsGeneraux": {
+        "referenceOperation": "OP-2026-0242",
+        "dossierRattache": "ERD-2026-00065",
+        "dateEcheance": null,
+        "canal": "MANUEL",
+        "refSwift": null,
+        "emetteur": "S. Bennani",
+        "entite": "Agence Casablanca"
+      },
+      "detailsOperation": {
+        "champModifie": "Bénéficiaire",
+        "valeurAvant": "Siemens AG",
+        "valeurApres": "Siemens France S.A.S.",
+        "motif": "Modification demandée par le client suite à réorganisation du groupe.",
+        "demandeur": "GLOBAL TRADE MAROC"
+      },
+      "documents": [{ "nom": "Courrier_modification.pdf", "type": "PDF", "taille": "38 Ko" }]
     },
     {
       "reference": "EVT-2026-0244",
-      "nature": "Réception des documents",
+      "nature": "CENTRALISATION",
+      "natureLibelle": "Centralisation des courriers",
       "montant": null,
       "devise": "EUR",
       "dateCreation": "2026-05-28T11:02:00",
       "statut": "VALIDE",
-      "description": "Réception des documents commerciaux et vérification initiale.",
-      "canal": "MANUEL",
-      "refSwift": null,
-      "emetteur": "S. Bennani",
-      "entite": "Agence Casablanca",
-      "dateEcheance": null,
-      "piecesJointes": 4
+      "detailsGeneraux": {
+        "referenceOperation": "CR-2026-0987",
+        "dossierRattache": "ERD-2026-00065",
+        "dateEcheance": null,
+        "canal": "MANUEL",
+        "refSwift": null,
+        "emetteur": "S. Bennani",
+        "entite": "Agence Casablanca"
+      },
+      "detailsOperation": {
+        "referenceCourrier": "CR-2026-0987",
+        "dateReception": "2026-05-28",
+        "nbDocuments": 6,
+        "modeReception": "Porteur",
+        "conformite": "Conforme"
+      },
+      "notes": "Réception des documents commerciaux et vérification initiale.",
+      "documents": [
+        { "nom": "Connaissement.pdf", "type": "PDF", "taille": "520 Ko" },
+        { "nom": "Facture_commerciale.pdf", "type": "PDF", "taille": "180 Ko" },
+        { "nom": "Liste_colisage.pdf", "type": "PDF", "taille": "95 Ko" },
+        { "nom": "Certificat_origine.pdf", "type": "PDF", "taille": "112 Ko" }
+      ]
     },
     {
       "reference": "EVT-2026-0258",
-      "nature": "Envoi à la banque correspondante",
+      "nature": "ACCEPTATION",
+      "natureLibelle": "Envoi à la banque correspondante",
       "montant": 1500000,
       "devise": "EUR",
       "dateCreation": "2026-06-02T15:40:00",
       "statut": "VALIDE",
-      "description": "Envoi des documents à la banque correspondante via SWIFT.",
-      "canal": "SWIFT",
-      "refSwift": "MT 410",
-      "emetteur": "K. Wadie",
-      "entite": "CTN Devise",
-      "dateEcheance": null,
-      "piecesJointes": 1
+      "detailsGeneraux": {
+        "referenceOperation": "OP-2026-0258",
+        "dossierRattache": "ERD-2026-00065",
+        "dateEcheance": null,
+        "canal": "SWIFT",
+        "refSwift": "MT 410",
+        "emetteur": "K. Wadie",
+        "entite": "CTN Devise"
+      },
+      "detailsOperation": {
+        "tireCorrespondant": "Siemens AG",
+        "dateAcceptation": "2026-06-02",
+        "echeanceAcceptee": "2026-09-05",
+        "montantAccepte": 1500000
+      },
+      "documents": [{ "nom": "MT410.swift", "type": "SWIFT", "taille": "4 Ko" }]
     },
     {
       "reference": "EVT-2026-0271",
-      "nature": "Acceptation correspondant",
+      "nature": "LEVEE_RESERVE",
+      "natureLibelle": "Acceptation correspondant",
       "montant": null,
       "devise": "EUR",
       "dateCreation": "2026-06-12T08:25:00",
       "statut": "EN_COURS",
-      "description": "Attente de l'acceptation définitive de la banque correspondante.",
-      "canal": "SWIFT",
-      "refSwift": "MT 412",
-      "emetteur": "K. Wadie",
-      "entite": "Commerzbank AG Frankfurt",
-      "dateEcheance": null,
-      "piecesJointes": 1
+      "detailsGeneraux": {
+        "referenceOperation": "OP-2026-0271",
+        "dossierRattache": "ERD-2026-00065",
+        "dateEcheance": null,
+        "canal": "SWIFT",
+        "refSwift": "MT 412",
+        "emetteur": "K. Wadie",
+        "entite": "Commerzbank AG Frankfurt"
+      },
+      "detailsOperation": {
+        "reserves": "Connaissement non endossé",
+        "dateLevee": "2026-06-12",
+        "decision": "Levée",
+        "montantConcerne": 1500000,
+        "validePar": "S. El Amrani"
+      },
+      "documents": [{ "nom": "MT412.swift", "type": "SWIFT", "taille": "4 Ko" }]
     },
     {
       "reference": "EVT-2026-0289",
-      "nature": "Validation documents",
+      "nature": "REGLEMENT",
+      "natureLibelle": "Validation documents",
       "montant": null,
       "devise": "EUR",
       "dateCreation": "2026-06-23T14:11:00",
       "statut": "EN_COURS",
-      "description": "Contrôle documentaire en cours au back-office.",
-      "canal": "MANUEL",
-      "refSwift": null,
-      "emetteur": "Système",
-      "entite": "Back-Office IRD",
-      "dateEcheance": null,
-      "piecesJointes": 0
+      "detailsGeneraux": {
+        "referenceOperation": "OP-2026-0289",
+        "dossierRattache": "ERD-2026-00065",
+        "dateEcheance": "2026-09-05",
+        "canal": "MANUEL",
+        "refSwift": null,
+        "emetteur": "Système",
+        "entite": "Back-Office IRD"
+      },
+      "detailsOperation": {
+        "montantRegle": 1500000,
+        "dateValeur": "2026-09-05",
+        "modeReglement": "Virement SWIFT",
+        "compteDebite": null,
+        "compteCredite": "007 780 0000 412",
+        "coursChange": null,
+        "commissions": 1250
+      },
+      "notes": "Contrôle documentaire en cours au back-office.",
+      "documents": []
     },
     {
       "reference": "EVT-2026-0301",
-      "nature": "Demande de paiement",
+      "nature": "AVIS_SORT",
+      "natureLibelle": "Demande de paiement",
       "montant": 1500000,
       "devise": "EUR",
       "dateCreation": "2026-06-26T10:48:00",
       "statut": "EN_ATTENTE",
-      "description": "Demande de paiement transmise en attente de réglement.",
-      "canal": "SWIFT",
-      "refSwift": "MT 422",
-      "emetteur": "K. Wadie",
-      "entite": "CTN Devise",
-      "dateEcheance": "2026-09-05",
-      "piecesJointes": 2
+      "detailsGeneraux": {
+        "referenceOperation": "OP-2026-0301",
+        "dossierRattache": "ERD-2026-00065",
+        "dateEcheance": "2026-09-05",
+        "canal": "SWIFT",
+        "refSwift": "MT 422",
+        "emetteur": "K. Wadie",
+        "entite": "CTN Devise"
+      },
+      "detailsOperation": {
+        "sort": "Payé",
+        "dateAvis": "2026-06-26",
+        "motif": null
+      },
+      "notes": "Demande de paiement transmise en attente de règlement.",
+      "documents": [
+        { "nom": "MT422.swift", "type": "SWIFT", "taille": "4 Ko" },
+        { "nom": "Avis_paiement.pdf", "type": "PDF", "taille": "64 Ko" }
+      ]
     }
   ]
 }

@@ -6,7 +6,7 @@ import Link from "next/link";
 import DossierHeader from "@/components/consultation/DossierHeader";
 import InformationsGenerales from "@/components/consultation/InformationsGenerales";
 import EvenementsTable from "@/components/consultation/EvenementsTable";
-import EvenementDetailDrawer from "@/components/consultation/EvenementDetailDrawer";
+import OperationDetail from "@/components/consultation/OperationDetail";
 import dossierDetail from "@/mocks/dossierDetail.json";
 import type { DossierTrade, EvenementTrade } from "@/domain/consultation-detail";
 
@@ -39,7 +39,7 @@ export default function ConsultationDossierDetailPage() {
       <InformationsGenerales dossier={dossier} />
       <EvenementsTable evenements={dossier.evenements} onSelect={setSelectedEvent} />
 
-      <EvenementDetailDrawer evenement={selectedEvent} onClose={() => setSelectedEvent(null)} />
+      <OperationDetail event={selectedEvent} onClose={() => setSelectedEvent(null)} />
     </div>
   );
 }
