@@ -3,7 +3,7 @@
    Vue read-only des dossiers Trade Finance pour l'agence
    ============================================================ */
 
-export type ProduitTrade = "ILC" | "IRD" | "ERD" | "ELC" | "FSA";
+export type ProduitTrade = "ILC" | "IRD" | "ERD" | "ELC" | "FIN";
 
 export type StatutDossier = "En cours" | "Expiré" | "Annulé";
 

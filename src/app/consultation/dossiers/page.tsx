@@ -10,13 +10,13 @@ import dossiersData from "@/mocks/dossiers.json";
 import eventsByProductData from "@/mocks/eventsByProduct.json";
 import type { Dossier, ProduitTrade, StatutDossier, DeviseTrade } from "@/domain/consultation";
 
-const PRODUITS: ProduitTrade[] = ["ILC", "IRD", "ERD", "ELC", "FSA"];
+const PRODUITS: ProduitTrade[] = ["ILC", "IRD", "ERD", "ELC", "FIN"];
 const PRODUIT_LABELS: Record<ProduitTrade, string> = {
   ILC: "ILC — Crédoc Import",
   IRD: "IRD — Remdoc Import",
   ERD: "ERD — Remdoc Export",
   ELC: "ELC — Crédoc Export",
-  FSA: "FSA",
+  FIN: "FIN — Financement",
 };
 const DEVISES: DeviseTrade[] = ["EUR", "USD", "GBP", "MAD", "JPY", "CHF"];
 const STATUTS: StatutDossier[] = ["En cours", "Expiré", "Annulé"];
@@ -59,7 +59,7 @@ export default function ConsultationDossiersPage() {
   const [sortKey, setSortKey] = useState<keyof Dossier | "client">("dateCreation");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
-  const pageSize = 3;
+  const pageSize = 10;
 
   // Sync events when products change
   useEffect(() => {
