@@ -1,16 +1,15 @@
 {
   "ILC": [
-    "Émission / Ouverture",
-    "Amendement",
-    "Réception documents",
-    "Contrôle documentaire",
-    "Réserves / Irrégularités",
-    "Levée de réserves",
-    "Acceptation / Engagement",
-    "Réalisation / Paiement",
-    "Échéance",
-    "Remboursement",
-    "Clôture / Expiration"
+    "Création",
+    "Réception des documents",
+    "Modification",
+    "Ajustement",
+    "Paiement à vue",
+    "Paiement à échéance",
+    "Gestion des commissions",
+    "Correspondance",
+    "Annulation",
+    "Expiration"
   ],
   "IRD": [
     "Entrée",
