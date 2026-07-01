@@ -198,20 +198,31 @@ function renderValeur(champ: ChampSchema, dossier: DossierTrade): React.ReactNod
   return String(raw);
 }
 
-function Bloc({ bloc, dossier }: { bloc: BlocSchema; dossier: DossierTrade }) {
-  const Icone = ICONES[bloc.icone] ?? Info;
+function DetailsDossierBloc({ blocs, dossier }: { blocs: BlocSchema[]; dossier: DossierTrade }) {
   return (
     <div className="bg-white rounded-xl border border-ink-100 p-5">
       <div className="text-[11px] font-semibold uppercase tracking-wider text-[#E8590C] border-b border-ink-100 pb-2 mb-4 flex items-center gap-2">
-        <Icone size={14} /> {bloc.titre}
+        <FileText size={14} /> Détails du dossier
       </div>
-      <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
-        {bloc.champs.map((champ) => (
-          <div key={champ.cle}>
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-ink-500 mb-1">{champ.label}</div>
-            <div className="text-sm font-medium text-ink-800">{renderValeur(champ, dossier)}</div>
-          </div>
-        ))}
+      <div className="space-y-6">
+        {blocs.map((bloc) => {
+          const Icone = ICONES[bloc.icone] ?? Info;
+          return (
+            <div key={bloc.titre}>
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-[#E8590C] border-b border-ink-100 pb-2 mb-3 flex items-center gap-2">
+                <Icone size={14} /> {bloc.titre}
+              </div>
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {bloc.champs.map((champ) => (
+                  <div key={champ.cle}>
+                    <div className="text-[10px] font-semibold uppercase tracking-wider text-ink-500 mb-1">{champ.label}</div>
+                    <div className="text-sm font-medium text-ink-800">{renderValeur(champ, dossier)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -219,7 +230,7 @@ function Bloc({ bloc, dossier }: { bloc: BlocSchema; dossier: DossierTrade }) {
 
 function EvenementsTable({ evenements }: { evenements: DossierTrade["evenements"] }) {
   return (
-    <div className="bg-white rounded-xl border border-ink-100 p-5">
+    <div className="bg-gradient-to-br from-white via-[#FFFBF8] to-[#FDF8F5] rounded-xl border border-ink-100 p-5 shadow-md ring-1 ring-ink-100/50">
       <div className="flex items-center justify-between border-b border-ink-100 pb-2 mb-4">
         <div className="text-[11px] font-semibold uppercase tracking-wider text-[#E8590C] flex items-center gap-2">
           <History size={14} /> Événements du dossier
@@ -281,11 +292,7 @@ export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
       {dossier.clientInfo && <BandeauClient clientInfo={dossier.clientInfo} />}
 
       {schema ? (
-        <div className="space-y-4">
-          {schema.blocs.map((bloc) => (
-            <Bloc key={bloc.titre} bloc={bloc} dossier={dossier} />
-          ))}
-        </div>
+        <DetailsDossierBloc blocs={schema.blocs} dossier={dossier} />
       ) : (
         <div className="bg-white rounded-xl border border-ink-100 p-5 text-sm text-ink-500">
           Schéma inconnu pour le produit {dossier.produit}.
