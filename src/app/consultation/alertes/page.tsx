@@ -5,6 +5,8 @@ import { useMemo } from "react";
 import { Bell } from "lucide-react";
 import dossiersData from "@/mocks/dossiers.json";
 import type { Dossier } from "@/domain/consultation";
+import Shell from "@/components/Shell";
+import Card from "@/components/ui/Card";
 
 export default function AlertesPage() {
   const dossiers = dossiersData as Dossier[];
@@ -33,29 +35,23 @@ export default function AlertesPage() {
   }, [dossiers, today]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 text-xs text-ink-500">
-        <Link href="/" className="hover:text-brand-600">Tableau de bord</Link>
-        <span>/</span>
-        <Link href="/consultation/dossiers" className="hover:text-brand-600">Consultation</Link>
-        <span>/</span>
-        <span className="text-ink-700 font-medium">Alertes & échéances</span>
+    <Shell>
+      <div className="space-y-6">
+        <h1 className="text-display flex items-center gap-2">
+          <Bell className="text-orange-500" size={24} /> Alertes & échéances
+        </h1>
+
+        <div className="space-y-4">
+          <AlertSection title="Urgences" alertes={urgences} color="red" />
+          <AlertSection title="Attention" alertes={attention} color="orange" />
+          <AlertSection title="À surveiller" alertes={aSurveiller} color="blue" />
+        </div>
+
+        {urgences.length === 0 && attention.length === 0 && aSurveiller.length === 0 && (
+          <Card className="p-8 text-center text-gray-400">Aucune alerte à afficher.</Card>
+        )}
       </div>
-
-      <h1 className="text-xl font-semibold flex items-center gap-2">
-        <Bell className="text-brand-500" size={20} /> Alertes & échéances
-      </h1>
-
-      <div className="space-y-4">
-        <AlertSection title="Urgences" alertes={urgences} color="red" />
-        <AlertSection title="Attention" alertes={attention} color="orange" />
-        <AlertSection title="À surveiller" alertes={aSurveiller} color="blue" />
-      </div>
-
-      {urgences.length === 0 && attention.length === 0 && aSurveiller.length === 0 && (
-        <div className="card p-8 text-center text-ink-500">Aucune alerte à afficher.</div>
-      )}
-    </div>
+    </Shell>
   );
 }
 
@@ -69,33 +65,33 @@ function AlertSection({
   color: "red" | "orange" | "blue";
 }) {
   const colorMap = {
-    red: { border: "#F5A0A0", bg: "#FCEBEB" },
-    orange: { border: "#F5C7A0", bg: "#FDF0E8" },
-    blue: { border: "#A0C5F5", bg: "#E6F1FB" },
+    red: { border: "border-red-300", bg: "bg-red-50" },
+    orange: { border: "border-orange-300", bg: "bg-orange-50" },
+    blue: { border: "border-blue-300", bg: "bg-blue-50" },
   };
   if (alertes.length === 0) return null;
   const c = colorMap[color];
 
   return (
-    <div className="rounded-lg p-4 border" style={{ borderColor: c.border, background: c.bg }}>
-      <h2 className="text-lg font-semibold text-ink-900 mb-4">{title} ({alertes.length})</h2>
+    <Card className={`p-4 ${c.bg} ${c.border}`}>
+      <h2 className="text-title mb-4">{title} ({alertes.length})</h2>
       <div className="space-y-2">
         {alertes.map((a, idx) => (
-          <div key={idx} className="bg-white border border-[#E5E7EB] rounded-md p-3 flex items-center gap-4" style={{ borderRadius: 8 }}>
+          <div key={idx} className="bg-white border border-gray-300 rounded-lg p-3 flex items-center gap-4">
             <div>
-              <Link href={`/consultation/dossiers/${a.dossierId}`} className="font-medium hover:underline" style={{ color: "#E8722A" }}>
+              <Link href={`/consultation/dossiers/${a.dossierId}`} className="font-medium hover:underline text-orange-500">
                 {a.dossierId}
               </Link>
-              <div className="text-sm text-ink-600">{a.clientNom}</div>
+              <div className="text-sm text-gray-600">{a.clientNom}</div>
             </div>
             <span className="badge-produit">{a.produit}</span>
-            <div className="text-sm text-ink-600">{a.nature}</div>
-            <div className="text-sm font-medium text-ink-900 ml-auto">
+            <div className="text-sm text-gray-600">{a.nature}</div>
+            <div className="text-sm font-medium text-gray-900 ml-auto">
               {new Date(a.dateLimite).toLocaleDateString("fr-FR")}
             </div>
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Shell from "@/components/Shell";
 
 export const metadata: Metadata = {
   title: "Trade Portal",
@@ -11,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr">
       <body>
-        <Shell>{children}</Shell>
+        {children}
       </body>
     </html>
   );

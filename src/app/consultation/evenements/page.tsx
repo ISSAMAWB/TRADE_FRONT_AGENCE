@@ -5,6 +5,9 @@ import { useState, useMemo } from "react";
 import { Clock, Filter, X } from "lucide-react";
 import dossiersData from "@/mocks/dossiers.json";
 import type { Dossier, ProduitTrade } from "@/domain/consultation";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import Shell from "@/components/Shell";
 
 const PRODUITS: ProduitTrade[] = ["ILC", "IRD", "ERD", "ELC", "FIN"];
 
@@ -36,89 +39,84 @@ export default function EvenementsPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 text-xs text-ink-500">
-        <Link href="/" className="hover:text-brand-600">Tableau de bord</Link>
-        <span>/</span>
-        <Link href="/consultation/dossiers" className="hover:text-brand-600">Consultation</Link>
-        <span>/</span>
-        <span className="text-ink-700 font-medium">Événements récents</span>
-      </div>
+    <Shell>
+      <div className="space-y-6">
+        <h1 className="text-display flex items-center gap-2">
+          <Clock className="text-orange-500" size={24} /> Événements récents
+        </h1>
 
-      <h1 className="text-xl font-semibold flex items-center gap-2">
-        <Clock className="text-brand-500" size={20} /> Événements récents
-      </h1>
+        <Card>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Filter size={14} className="text-gray-400" />
+            <div className="flex items-center gap-1 flex-wrap">
+              {PRODUITS.map((p) => (
+                <button
+                  key={p}
+                  onClick={() => toggleProduit(p)}
+                  className={
+                    "px-2 py-1 rounded-lg text-xs border transition " +
+                    (produits.includes(p)
+                      ? "text-white border-orange-500 bg-orange-500"
+                      : "bg-white border-gray-300 text-gray-900 hover:border-orange-500")
+                  }
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+            <input
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              placeholder="Type d'événement"
+              className="input w-48"
+            />
+            <Button variant="secondary" size="sm" onClick={() => { setProduits([]); setTypeFilter(""); }}>
+              <X size={14} /> Réinitialiser
+            </Button>
+          </div>
+        </Card>
 
-      <div className="card p-3 flex items-center gap-2 flex-wrap">
-        <Filter size={14} className="text-ink-500" />
-        <div className="flex items-center gap-1 flex-wrap">
-          {PRODUITS.map((p) => (
-            <button
-              key={p}
-              onClick={() => toggleProduit(p)}
-              className={
-                "px-2 py-1 rounded text-xs border transition " +
-                (produits.includes(p)
-                  ? "text-white border-[#E8722A]"
-                  : "bg-white border-[#E5E7EB] text-ink-700 hover:border-[#E8722A]")
-              }
-              style={produits.includes(p) ? { background: "#E8722A" } : undefined}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-        <input
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          placeholder="Type d'événement"
-          className="input h-9 w-48"
-        />
-        <button className="btn-outline h-9 text-xs" onClick={() => { setProduits([]); setTypeFilter(""); }}>
-          <X size={14} /> Réinitialiser
-        </button>
-      </div>
-
-      <div className="card">
-        <div className="px-4 py-3 border-b border-ink-100 text-xs text-ink-500">{evenements.length} événement(s)</div>
-        <table className="tbl">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Dossier</th>
-              <th>Produit</th>
-              <th>Client</th>
-              <th>Type</th>
-              <th>Statut</th>
-              <th>Montant</th>
-            </tr>
-          </thead>
-          <tbody>
-            {evenements.map((e, idx) => (
-              <tr key={`${e.id}-${idx}`}>
-                <td className="text-xs">{new Date(e.date).toLocaleDateString("fr-FR")}</td>
-                <td>
-                  <Link href={`/consultation/dossiers/${e.dossierId}`} className="text-brand-600 font-medium hover:underline">
-                    {e.dossierId}
-                  </Link>
-                </td>
-                <td>
-                  <span className="badge-produit">{e.produit}</span>
-                </td>
-                <td className="text-sm">{e.clientNom}</td>
-                <td>{e.type}</td>
-                <td>{e.statut}</td>
-                <td>{e.montant ? e.montant.toLocaleString("fr-FR") : "—"}</td>
-              </tr>
-            ))}
-            {evenements.length === 0 && (
+        <div className="table-container">
+          <div className="px-4 py-3 border-b border-gray-200 text-caption">{evenements.length} événement(s)</div>
+          <table className="table">
+            <thead>
               <tr>
-                <td colSpan={7} className="text-center text-ink-500 py-8">Aucun événement.</td>
+                <th>Date</th>
+                <th>Dossier</th>
+                <th>Produit</th>
+                <th>Client</th>
+                <th>Type</th>
+                <th>Statut</th>
+                <th>Montant</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {evenements.map((e) => (
+                <tr key={`${e.dossierId}-${e.date}`}>
+                  <td className="text-sm text-gray-600">{new Date(e.date).toLocaleDateString("fr-FR")}</td>
+                  <td>
+                    <Link href={`/consultation/dossiers/${e.dossierId}`} className="font-medium hover:underline text-orange-500">
+                      {e.dossierId}
+                    </Link>
+                  </td>
+                  <td>
+                    <span className="badge-produit">{e.produit}</span>
+                  </td>
+                  <td className="text-sm">{e.clientNom}</td>
+                  <td>{e.type}</td>
+                  <td>{e.statut}</td>
+                  <td>{e.montant ? e.montant.toLocaleString("fr-FR") : "—"}</td>
+                </tr>
+              ))}
+              {evenements.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="text-center text-gray-400 py-8">Aucun événement.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </Shell>
   );
 }
