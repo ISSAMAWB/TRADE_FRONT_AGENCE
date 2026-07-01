@@ -4,7 +4,7 @@ import DossierHeader from "./DossierHeader";
 import StatutBadge from "./StatutBadge";
 import BandeauClient from "./BandeauClient";
 import { getProduitSchema } from "@/lib/produits";
-import type { DossierTrade, BlocSchema, ChampSchema, MontantAvecDevise, Paiement, Courrier } from "@/domain/consultation-detail";
+import type { DossierTrade, BlocSchema, ChampSchema, MontantAvecDevise, Paiement, Courrier, ProduitCode } from "@/domain/consultation-detail";
 
 const ICONES: Record<string, React.ComponentType<{ size?: number | string }>> = {
   Building2,
@@ -91,7 +91,7 @@ function renderValeur(champ: ChampSchema, dossier: DossierTrade): React.ReactNod
     return (
       <div className="flex items-center gap-2">
         <span>{String(raw)}</span>
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-[#E8722A] text-white rounded-full">
+        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider bg-brand-500 text-white rounded-md">
           Client
         </span>
       </div>
@@ -110,10 +110,10 @@ function renderValeur(champ: ChampSchema, dossier: DossierTrade): React.ReactNod
 
   if (champ.format === "montant-emphase") {
     if (isMontantAvecDevise(raw)) {
-      return <span className="font-semibold text-[#E8590C]">{formatMontant(raw.valeur, raw.devise)}</span>;
+      return <span className="font-medium text-brand-500">{formatMontant(raw.valeur, raw.devise)}</span>;
     }
     if (typeof raw === "number") {
-      return <span className="font-semibold text-[#E8590C]">{formatMontant(raw, "")}</span>;
+      return <span className="font-medium text-brand-500">{formatMontant(raw, "")}</span>;
     }
     return String(raw);
   }
@@ -142,14 +142,7 @@ function renderValeur(champ: ChampSchema, dossier: DossierTrade): React.ReactNod
   if (champ.format === "badge-confirmation") {
     const confirme = String(raw).toLowerCase() === "confirme" || String(raw).toLowerCase() === "confirmé";
     return (
-      <span
-        className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium"
-        style={{
-          background: confirme ? "#E1F5EE" : "#F1EFE8",
-          color: confirme ? "#0F6E56" : "#5F5E5A",
-          borderRadius: 20,
-        }}
-      >
+      <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-md ${confirme ? "bg-green-100 text-green-800" : "bg-ink-100 text-ink-700"}`}>
         {confirme ? "Confirmé" : "Non confirmé"}
       </span>
     );
@@ -170,12 +163,12 @@ function renderValeur(champ: ChampSchema, dossier: DossierTrade): React.ReactNod
     return (
       <div className="flex flex-wrap gap-2">
         {visible.map((item, idx) => (
-          <span key={idx} className="inline-flex items-center px-2 py-1 text-xs font-medium bg-ink-100 text-ink-700 rounded-md">
+          <span key={idx} className="inline-flex items-center px-2 py-1 text-xs font-medium bg-ink-50 text-ink-700 border border-ink-200 rounded-lg">
             {String(item)}
           </span>
         ))}
         {remaining > 0 && (
-          <button className="text-xs text-[#E8590C] hover:underline font-medium">
+          <button className="text-xs text-brand-500 hover:underline font-medium">
             +{remaining} Voir plus
           </button>
         )}
@@ -187,7 +180,7 @@ function renderValeur(champ: ChampSchema, dossier: DossierTrade): React.ReactNod
     return (
       <div className="flex flex-wrap gap-2">
         {raw.map((item, idx) => (
-          <span key={idx} className="inline-flex items-center px-2 py-1 text-xs font-medium bg-ink-100 text-ink-700 rounded-md">
+          <span key={idx} className="inline-flex items-center px-2 py-1 text-xs font-medium bg-ink-50 text-ink-700 border border-ink-200 rounded-lg">
             {String(item)}
           </span>
         ))}
@@ -198,73 +191,224 @@ function renderValeur(champ: ChampSchema, dossier: DossierTrade): React.ReactNod
   return String(raw);
 }
 
-function Bloc({ bloc, dossier }: { bloc: BlocSchema; dossier: DossierTrade }) {
-  const Icone = ICONES[bloc.icone] ?? Info;
+function SectionHeader({ titre, icone }: { titre: string; icone: string }) {
+  const Icone = ICONES[icone] ?? Info;
   return (
-    <div className="bg-white rounded-xl border border-ink-100 p-5">
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-[#E8590C] border-b border-ink-100 pb-2 mb-4 flex items-center gap-2">
-        <Icone size={14} /> {bloc.titre}
+    <div className="flex items-center gap-2.5 mb-3">
+      <div className="w-[30px] h-[30px] rounded-lg bg-brand-100/40 flex items-center justify-center">
+        <Icone size={16} className="text-brand-500" />
       </div>
-      <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
-        {bloc.champs.map((champ) => (
-          <div key={champ.cle}>
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-ink-500 mb-1">{champ.label}</div>
-            <div className="text-sm font-medium text-ink-800">{renderValeur(champ, dossier)}</div>
+      <span className="text-xs font-medium uppercase tracking-[0.06em] text-ink-900">{titre}</span>
+    </div>
+  );
+}
+
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="text-xs font-medium uppercase tracking-[0.05em] text-ink-500 mb-1">{children}</div>
+  );
+}
+
+function FieldValue({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="text-[15px] font-medium text-ink-900 leading-snug">{children}</div>
+  );
+}
+
+function Field({ champ, dossier }: { champ: ChampSchema; dossier: DossierTrade }) {
+  return (
+    <div className="min-w-0">
+      <FieldLabel>{champ.label}</FieldLabel>
+      <FieldValue>{renderValeur(champ, dossier)}</FieldValue>
+    </div>
+  );
+}
+
+function FieldGrid({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="grid gap-x-5 gap-y-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+      {children}
+    </div>
+  );
+}
+
+function PastilleEcheance({ date }: { date: string }) {
+  const expiration = new Date(date);
+  const aujourdhui = new Date();
+  aujourdhui.setHours(0, 0, 0, 0);
+  expiration.setHours(0, 0, 0, 0);
+  const diff = expiration.getTime() - aujourdhui.getTime();
+  const jours = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  if (jours < 0) {
+    return <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800">Expiré</span>;
+  }
+  if (jours < 30) {
+    return <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-800">J-{jours}</span>;
+  }
+  return null;
+}
+
+function BarreConsommation({ montantCredit, montantDisponible, devise }: { montantCredit: number; montantDisponible: number; devise: string }) {
+  if (!montantCredit || montantCredit <= 0) return null;
+  const consomme = Math.max(0, montantCredit - montantDisponible);
+  const pctConsomme = Math.min(100, Math.max(0, Math.round((consomme / montantCredit) * 100)));
+  const pctDisponible = Math.max(0, 100 - pctConsomme);
+  return (
+    <div className="mt-4">
+      <div className="flex justify-between text-xs text-ink-500 mb-1.5">
+        <span className="uppercase tracking-[0.05em]">Consommation du crédit</span>
+        <span>{pctDisponible} % disponible · {formatMontant(consomme, devise)} utilisés</span>
+      </div>
+      <div className="h-2 rounded-full bg-ink-100 border border-ink-200 overflow-hidden">
+        <div
+          className="h-full rounded-full bg-brand-500"
+          style={{ width: `${pctConsomme}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function CarteStat({ label, valeur, devise, accent = false, subtext }: { label: string; valeur: number; devise: string; accent?: boolean; subtext?: string }) {
+  return (
+    <div className={`rounded-xl border p-4 ${accent ? "border-brand-200 bg-brand-50/30" : "border-ink-200 bg-ink-50/50"}`}>
+      <div className="text-xs font-medium uppercase tracking-[0.05em] text-ink-500 mb-1">{label}</div>
+      <div className={`text-[22px] font-medium leading-tight ${accent ? "text-brand-500" : "text-ink-900"}`}>
+        {formatMontant(valeur, devise)}
+      </div>
+      {subtext && <div className="text-xs text-ink-500 mt-1">{subtext}</div>}
+    </div>
+  );
+}
+
+function BlocFinancierILC({ dossier }: { dossier: DossierTrade }) {
+  const credit = dossier.donnees["montantCredit"];
+  const disponible = dossier.donnees["montantDisponible"];
+  const reclame = dossier.donnees["montantReclame"];
+  const attente = dossier.donnees["montantEnAttente"];
+  const tolerance = dossier.donnees["tolerance"];
+  const typeFrais = dossier.donnees["typeFrais"];
+
+  const creditOk = isMontantAvecDevise(credit) ? credit : null;
+  const disponibleOk = isMontantAvecDevise(disponible) ? disponible : null;
+  const reclameOk = isMontantAvecDevise(reclame) ? reclame : null;
+
+  return (
+    <div className="rounded-xl border border-ink-100 bg-ink-50/50 p-5">
+      <SectionHeader titre="Informations financières" icone="Banknote" />
+      <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+        {creditOk && <CarteStat label="Montant du crédit" valeur={creditOk.valeur} devise={creditOk.devise} />}
+        {disponibleOk && <CarteStat label="Montant disponible" valeur={disponibleOk.valeur} devise={disponibleOk.devise} accent />}
+        {reclameOk && (
+          <CarteStat
+            label="Montant réclamé"
+            valeur={reclameOk.valeur}
+            devise={reclameOk.devise}
+            subtext={isMontantAvecDevise(attente) ? `Dont ${formatMontant(attente.valeur, attente.devise)} en attente` : undefined}
+          />
+        )}
+      </div>
+      {creditOk && disponibleOk && (
+        <BarreConsommation montantCredit={creditOk.valeur} montantDisponible={disponibleOk.valeur} devise={creditOk.devise} />
+      )}
+      <div className="mt-4 grid gap-x-5 gap-y-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+        {tolerance !== undefined && tolerance !== null && tolerance !== "" && (
+          <div className="min-w-0">
+            <FieldLabel>Tolérance</FieldLabel>
+            <FieldValue>{String(tolerance)}</FieldValue>
           </div>
-        ))}
+        )}
+        {typeFrais !== undefined && typeFrais !== null && typeFrais !== "" && (
+          <div className="min-w-0">
+            <FieldLabel>Type de frais</FieldLabel>
+            <FieldValue>{String(typeFrais)}</FieldValue>
+          </div>
+        )}
       </div>
+    </div>
+  );
+}
+
+function DetailsDossierBloc({ blocs, dossier }: { blocs: BlocSchema[]; dossier: DossierTrade }) {
+  return (
+    <div className="space-y-4">
+      {blocs.map((bloc) => {
+        if (dossier.produit === "ILC" && bloc.titre === "Informations financières") {
+          return <BlocFinancierILC key={bloc.titre} dossier={dossier} />;
+        }
+        return (
+          <div key={bloc.titre} className="rounded-xl border border-ink-100 bg-ink-50/50 p-5">
+            <SectionHeader titre={bloc.titre} icone={bloc.icone} />
+            <FieldGrid>
+              {bloc.champs.map((champ) => {
+                if (champ.cle === "dateExpiration" && (dossier.produit === "ILC" || dossier.produit === "ELC")) {
+                  const raw = dossier.donnees[champ.cle];
+                  return (
+                    <div key={champ.cle} className="min-w-0">
+                      <FieldLabel>{champ.label}</FieldLabel>
+                      <FieldValue>
+                        <span className="inline-flex items-center gap-2">
+                          {raw ? formatDate(String(raw)) : <span className="text-ink-300">—</span>}
+                          {typeof raw === "string" && <PastilleEcheance date={raw} />}
+                        </span>
+                      </FieldValue>
+                    </div>
+                  );
+                }
+                return <Field key={champ.cle} champ={champ} dossier={dossier} />;
+              })}
+            </FieldGrid>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
 function EvenementsTable({ evenements }: { evenements: DossierTrade["evenements"] }) {
   return (
-    <>
-      {/* Séparateur visuel */}
-      <div className="h-px bg-gradient-to-r from-transparent via-[#E8590C] to-transparent my-6" />
-      
-      <div className="bg-[#FDF0E8] rounded-xl border-2 border-[#E8590C] shadow-lg p-5">
-        <div className="flex items-center justify-between bg-[#E8590C] -mx-5 -mt-5 px-5 py-3 rounded-t-xl mb-4">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-white flex items-center gap-2">
-            <History size={16} /> Événements du dossier
-          </div>
-          <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-medium bg-white text-[#E8590C] rounded-full">{evenements.length}</span>
+    <div className="bg-gradient-to-br from-white via-brand-50/30 to-brand-50/20 rounded-xl border border-ink-100 p-5 shadow-card">
+      <div className="flex items-center justify-between border-b-2 border-ink-200 pb-3 mb-5">
+        <div className="text-sm font-medium uppercase tracking-wider text-brand-500 flex items-center gap-2">
+          <History size={16} /> Événements du dossier
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-ink-700 bg-white/60">
-                <th className="px-3 py-2 rounded-tl-md">Référence</th>
-                <th className="px-3 py-2">Nature</th>
-                <th className="px-3 py-2 text-right">Montant</th>
-                <th className="px-3 py-2">Date de création</th>
-                <th className="px-3 py-2">Statut</th>
-                <th className="px-3 py-2 rounded-tr-md"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {evenements.map((e, idx) => (
-                <tr key={e.reference} className={`border-b border-[#E8590C]/20 transition ${idx % 2 === 0 ? 'bg-white/40' : 'bg-white/80'}`}>
-                  <td className="px-3 py-2 font-mono text-xs">{e.reference}</td>
-                  <td className="px-3 py-2 font-medium text-ink-800">{e.nature}</td>
-                  <td className="px-3 py-2 text-right text-ink-700">
-                    {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-ink-300">—</span>}
-                  </td>
-                  <td className="px-3 py-2 text-xs text-ink-700">{formatDate(e.dateCreation)}</td>
-                  <td className="px-3 py-2"><StatutBadge statut={e.statut} /></td>
-                  <td className="px-3 py-2 text-right">
-                    <button className="text-ink-400 hover:text-[#E8590C] transition">
-                      <Eye size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium bg-ink-900 text-white rounded-full">{evenements.length}</span>
       </div>
-    </>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-ink-500 bg-ink-50">
+              <th className="px-3 py-2 rounded-tl-md">Référence</th>
+              <th className="px-3 py-2">Nature</th>
+              <th className="px-3 py-2 text-right">Montant</th>
+              <th className="px-3 py-2">Date de création</th>
+              <th className="px-3 py-2">Statut</th>
+              <th className="px-3 py-2 rounded-tr-md"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {evenements.map((e) => (
+              <tr key={e.reference} className="border-b border-ink-100 transition">
+                <td className="px-3 py-2 font-mono text-xs">{e.reference}</td>
+                <td className="px-3 py-2 font-medium text-ink-800">{e.nature}</td>
+                <td className="px-3 py-2 text-right text-ink-700">
+                  {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-ink-300">—</span>}
+                </td>
+                <td className="px-3 py-2 text-xs text-ink-700">{formatDate(e.dateCreation)}</td>
+                <td className="px-3 py-2"><StatutBadge statut={e.statut} /></td>
+                <td className="px-3 py-2 text-right">
+                  <button className="text-ink-400 hover:text-brand-500 transition">
+                    <Eye size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 
@@ -286,11 +430,7 @@ export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
       {dossier.clientInfo && <BandeauClient clientInfo={dossier.clientInfo} />}
 
       {schema ? (
-        <div className="space-y-4">
-          {schema.blocs.map((bloc) => (
-            <Bloc key={bloc.titre} bloc={bloc} dossier={dossier} />
-          ))}
-        </div>
+        <DetailsDossierBloc blocs={schema.blocs} dossier={dossier} />
       ) : (
         <div className="bg-white rounded-xl border border-ink-100 p-5 text-sm text-ink-500">
           Schéma inconnu pour le produit {dossier.produit}.

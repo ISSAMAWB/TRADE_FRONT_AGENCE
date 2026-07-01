@@ -6,6 +6,16 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Crédit documentaire import",
     blocs: [
       {
+        titre: "Caractéristiques de l'opération",
+        icone: "FileText",
+        champs: [
+          { cle: "referenceOperation", label: "Référence de l'opération" },
+          { cle: "modeRealisation", label: "Mode de réalisation" },
+          { cle: "creditConfirme", label: "Crédit confirmé", format: "badge-confirmation" },
+          { cle: "natureOperation", label: "Nature de l'opération" },
+        ],
+      },
+      {
         titre: "Parties impliquées",
         icone: "Building2",
         champs: [
@@ -24,16 +34,6 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
           { cle: "montantReclame", label: "Montant réclamé", format: "montant-declare" },
           { cle: "montantDisponible", label: "Montant disponible", format: "montant-emphase" },
           { cle: "typeFrais", label: "Type de frais" },
-        ],
-      },
-      {
-        titre: "Détails de l'opération",
-        icone: "FileText",
-        champs: [
-          { cle: "referenceOperation", label: "Référence de l'opération" },
-          { cle: "modeRealisation", label: "Mode de réalisation" },
-          { cle: "creditConfirme", label: "Crédit confirmé", format: "badge-confirmation" },
-          { cle: "natureOperation", label: "Nature de l'opération" },
         ],
       },
       {
@@ -58,6 +58,16 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Crédit documentaire export",
     blocs: [
       {
+        titre: "Caractéristiques de l'opération",
+        icone: "FileText",
+        champs: [
+          { cle: "referenceOperation", label: "Référence de l'opération" },
+          { cle: "modeRealisation", label: "Mode de réalisation" },
+          { cle: "operationConfirmee", label: "Opération confirmée ?", format: "badge-confirmation" },
+          { cle: "natureOperation", label: "Nature de l'opération" },
+        ],
+      },
+      {
         titre: "Parties impliquées",
         icone: "Building2",
         champs: [
@@ -76,16 +86,6 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
           { cle: "montantReclame", label: "Montant réclamé", format: "montant-declare" },
           { cle: "montantDisponible", label: "Montant disponible", format: "montant-emphase" },
           { cle: "typeFrais", label: "Type de frais" },
-        ],
-      },
-      {
-        titre: "Détails de l'opération",
-        icone: "FileText",
-        champs: [
-          { cle: "referenceOperation", label: "Référence de l'opération" },
-          { cle: "modeRealisation", label: "Mode de réalisation" },
-          { cle: "operationConfirmee", label: "Opération confirmée ?", format: "badge-confirmation" },
-          { cle: "natureOperation", label: "Nature de l'opération" },
         ],
       },
       {
@@ -110,6 +110,15 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Remise documentaire import",
     blocs: [
       {
+        titre: "Caractéristiques de l'opération",
+        icone: "FileText",
+        champs: [
+          { cle: "referenceOperation", label: "Référence" },
+          { cle: "conditionsRemiseDocuments", label: "Conditions de remise des documents" },
+          { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
+        ],
+      },
+      {
         titre: "Parties impliquées",
         icone: "Building2",
         champs: [
@@ -128,15 +137,6 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
         ],
       },
       {
-        titre: "Détails de l'opération",
-        icone: "FileText",
-        champs: [
-          { cle: "referenceOperation", label: "Référence" },
-          { cle: "conditionsRemiseDocuments", label: "Conditions de remise des documents" },
-          { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
-        ],
-      },
-      {
         titre: "Informations complémentaires",
         icone: "Info",
         champs: [
@@ -149,6 +149,15 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     code: "ERD",
     libelle: "Remise documentaire export",
     blocs: [
+      {
+        titre: "Caractéristiques de l'opération",
+        icone: "FileText",
+        champs: [
+          { cle: "referenceOperation", label: "Référence" },
+          { cle: "conditionsRemiseDocuments", label: "Conditions de remise des documents" },
+          { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
+        ],
+      },
       {
         titre: "Parties impliquées",
         icone: "Building2",
@@ -168,15 +177,6 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
         ],
       },
       {
-        titre: "Détails de l'opération",
-        icone: "FileText",
-        champs: [
-          { cle: "referenceOperation", label: "Référence" },
-          { cle: "conditionsRemiseDocuments", label: "Conditions de remise des documents" },
-          { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
-        ],
-      },
-      {
         titre: "Informations complémentaires",
         icone: "Info",
         champs: [
@@ -189,6 +189,15 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     code: "FIN",
     libelle: "Financement",
     blocs: [
+      {
+        titre: "Caractéristiques de l'opération",
+        icone: "TrendingUp",
+        champs: [
+          { cle: "typeFinancement", label: "Type de financement" },
+          { cle: "referenceFinancement", label: "Référence du financement" },
+          { cle: "referenceDossierFinance", label: "Référence du dossier financé" },
+        ],
+      },
       {
         titre: "Parties impliquées",
         icone: "Building2",
@@ -208,15 +217,6 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
           { cle: "montantTotalRembourser", label: "Montant total à rembourser", format: "montant" },
           { cle: "montantInterets", label: "Montant des intérêts", format: "montant" },
           { cle: "tauxInteret", label: "Taux d'intérêt" },
-        ],
-      },
-      {
-        titre: "Détails du financement",
-        icone: "TrendingUp",
-        champs: [
-          { cle: "typeFinancement", label: "Type de financement" },
-          { cle: "referenceFinancement", label: "Référence du financement" },
-          { cle: "referenceDossierFinance", label: "Référence du dossier financé" },
         ],
       },
       {
