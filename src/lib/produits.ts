@@ -6,7 +6,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Crédit documentaire import",
     blocs: [
       {
-        titre: "Caractéristiques de l'opération",
+        titre: "Détails de l'opération",
         icone: "FileText",
         champs: [
           { cle: "referenceOperation", label: "Référence de l'opération" },
@@ -58,7 +58,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Crédit documentaire export",
     blocs: [
       {
-        titre: "Caractéristiques de l'opération",
+        titre: "Détails de l'opération",
         icone: "FileText",
         champs: [
           { cle: "referenceOperation", label: "Référence de l'opération" },
@@ -110,7 +110,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Remise documentaire import",
     blocs: [
       {
-        titre: "Caractéristiques de l'opération",
+        titre: "Détails de l'opération",
         icone: "FileText",
         champs: [
           { cle: "referenceOperation", label: "Référence" },
@@ -150,7 +150,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Remise documentaire export",
     blocs: [
       {
-        titre: "Caractéristiques de l'opération",
+        titre: "Détails de l'opération",
         icone: "FileText",
         champs: [
           { cle: "referenceOperation", label: "Référence" },
@@ -190,7 +190,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Financement",
     blocs: [
       {
-        titre: "Caractéristiques de l'opération",
+        titre: "Détails de l'opération",
         icone: "TrendingUp",
         champs: [
           { cle: "typeFinancement", label: "Type de financement" },
