@@ -2,17 +2,27 @@
 
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
-import { Eye, FileSpreadsheet, Printer } from "lucide-react";
+import { Eye, FileSpreadsheet, Printer, Search } from "lucide-react";
 import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import dossiersData from "@/mocks/dossiers.json";
-import type { Dossier, StatutDossier } from "@/domain/consultation";
+import type { Dossier, StatutDossier, DeviseTrade } from "@/domain/consultation";
 import Button from "@/components/ui/Button";
 import CollapsibleFilterPanel from "@/components/ui/CollapsibleFilterPanel";
 import Shell from "@/components/Shell";
+import ClientSearchModal from "@/components/ui/ClientSearchModal";
 
 const STATUTS: StatutDossier[] = ["En cours", "Expiré", "Annulé"];
+const DEVISES: DeviseTrade[] = ["EUR", "USD", "GBP", "MAD", "JPY", "CHF"];
+
+const PRODUIT_LABELS: Record<string, string> = {
+  ILC: "CREDOC IMPORT",
+  IRD: "REMDOC IMPORT",
+  ERD: "REMDOC EXPORT",
+  ELC: "CREDOC EXPORT",
+  FIN: "FINANCEMENT",
+};
 
 const statutClasses: Record<StatutDossier, string> = {
   "En cours": "badge-statut-en-cours",
@@ -28,6 +38,11 @@ export default function ConsultationDossiersPage() {
   const [clientQuery, setClientQuery] = useState("");
   const [dateDebut, setDateDebut] = useState("");
   const [dateFin, setDateFin] = useState("");
+  const [montantMin, setMontantMin] = useState("");
+  const [montantMax, setMontantMax] = useState("");
+  const [devise, setDevise] = useState<DeviseTrade | "">("");
+  const [refClient, setRefClient] = useState("");
+  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [sortKey, setSortKey] = useState<keyof Dossier>("dateCreation");
@@ -42,6 +57,10 @@ export default function ConsultationDossiersPage() {
       if (clientQuery.trim() && !d.client.nom.toLowerCase().includes(clientQuery.toLowerCase())) return false;
       if (dateDebut && new Date(d.dateCreation) < new Date(dateDebut)) return false;
       if (dateFin && new Date(d.dateCreation) > new Date(dateFin)) return false;
+      if (montantMin && d.montant < parseFloat(montantMin)) return false;
+      if (montantMax && d.montant > parseFloat(montantMax)) return false;
+      if (devise && d.devise !== devise) return false;
+      if (refClient.trim() && !d.client.compte.toLowerCase().includes(refClient.toLowerCase())) return false;
       return true;
     });
 
@@ -56,14 +75,14 @@ export default function ConsultationDossiersPage() {
     });
 
     return items;
-  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, sortKey, sortDir]);
+  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   useEffect(() => {
     setPage(1);
-  }, [refBancaire, statut, clientQuery, dateDebut, dateFin]);
+  }, [refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -75,6 +94,10 @@ export default function ConsultationDossiersPage() {
     setClientQuery("");
     setDateDebut("");
     setDateFin("");
+    setMontantMin("");
+    setMontantMax("");
+    setDevise("");
+    setRefClient("");
     setPage(1);
   }
 
@@ -98,7 +121,8 @@ export default function ConsultationDossiersPage() {
     const data = filtered;
     const rows = data.map((d) => ({
       Référence: d.id,
-      Produit: d.produit,
+      "Référence Client": d.client.compte,
+      Produit: PRODUIT_LABELS[d.produit] || d.produit,
       Client: d.client.nom,
       Compte: d.client.compte,
       Montant: d.montant,
@@ -121,7 +145,8 @@ export default function ConsultationDossiersPage() {
     doc.text(`Exporté le ${new Date().toLocaleDateString("fr-FR")} — ${data.length} dossier(s)`, 14, 28);
     const body = data.map((d) => [
       d.id,
-      d.produit,
+      d.client.compte,
+      PRODUIT_LABELS[d.produit] || d.produit,
       d.client.nom,
       d.client.compte,
       d.montant.toLocaleString("fr-FR"),
@@ -131,7 +156,7 @@ export default function ConsultationDossiersPage() {
     ]);
     (doc as any).autoTable({
       startY: 34,
-      head: [["Référence", "Produit", "Client", "Compte", "Montant", "Devise", "Date création", "Statut"]],
+      head: [["Référence", "Référence Client", "Produit", "Client", "Compte", "Montant", "Devise", "Date création", "Statut"]],
       body,
       theme: "grid",
       styles: { fontSize: 9, cellPadding: 2 },
@@ -197,10 +222,69 @@ export default function ConsultationDossiersPage() {
           {/* Client / Compte */}
           <div>
             <label className="text-label">CLIENT / COMPTE</label>
+            <div className="flex gap-2">
+              <input
+                value={clientQuery}
+                onChange={(e) => setClientQuery(e.target.value)}
+                placeholder="Rechercher par nom, n° compte"
+                className="input flex-1"
+              />
+              <button
+                onClick={() => setIsClientModalOpen(true)}
+                className="h-10 w-10 rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 flex items-center justify-center"
+                title="Rechercher un client"
+              >
+                <Search size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Référence client */}
+          <div>
+            <label className="text-label">RÉFÉRENCE CLIENT</label>
             <input
-              value={clientQuery}
-              onChange={(e) => setClientQuery(e.target.value)}
-              placeholder="Rechercher par nom, n° compte"
+              value={refClient}
+              onChange={(e) => setRefClient(e.target.value)}
+              placeholder="Ex. CL%  (commence par CL)"
+              className="input w-full"
+            />
+          </div>
+
+          {/* Devise */}
+          <div>
+            <label className="text-label">DEVISE</label>
+            <select
+              className="input w-full"
+              value={devise}
+              onChange={(e) => setDevise(e.target.value as DeviseTrade | "")}
+            >
+              <option value="">Toutes les devises</option>
+              {DEVISES.map((d) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Montant minimum */}
+          <div>
+            <label className="text-label">MONTANT MINIMUM</label>
+            <input
+              type="number"
+              value={montantMin}
+              onChange={(e) => setMontantMin(e.target.value)}
+              placeholder="Montant minimum"
+              className="input w-full"
+            />
+          </div>
+
+          {/* Montant maximum */}
+          <div>
+            <label className="text-label">MONTANT MAXIMUM</label>
+            <input
+              type="number"
+              value={montantMax}
+              onChange={(e) => setMontantMax(e.target.value)}
+              placeholder="Montant maximum"
               className="input w-full"
             />
           </div>
@@ -241,6 +325,7 @@ export default function ConsultationDossiersPage() {
             <thead>
               <tr>
                 <th>{header("Référence bancaire", "id")}</th>
+                <th>{header("Référence client", "client")}</th>
                 <th>{header("Produit", "produit")}</th>
                 <th>{header("Client / Compte", "client")}</th>
                 <th className="text-right">{header("Montant", "montant")}</th>
@@ -257,7 +342,10 @@ export default function ConsultationDossiersPage() {
                   <td>
                     <Link href={`/consultation/dossiers/${d.id}`} className="font-medium hover:underline text-orange-500">{d.id}</Link>
                   </td>
-                  <td><span className="badge-produit">{d.produit}</span></td>
+                  <td>
+                    <Link href={`/consultation/dossiers/${d.id}`} className="font-medium hover:underline text-orange-500">{d.client.compte}</Link>
+                  </td>
+                  <td><span className="badge-produit">{PRODUIT_LABELS[d.produit] || d.produit}</span></td>
                   <td>
                     <div className="text-sm font-medium text-gray-900">{d.client.nom}</div>
                     <div className="text-xs text-gray-600">{d.client.compte}</div>
@@ -276,7 +364,7 @@ export default function ConsultationDossiersPage() {
               ))}
               {paged.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="text-center text-gray-400 py-8">
+                  <td colSpan={10} className="text-center text-gray-400 py-8">
                     <div className="text-sm">Aucun dossier ne correspond à vos critères.</div>
                     <button onClick={resetFilters} className="text-orange-500 text-xs hover:underline mt-1">Réinitialiser les filtres</button>
                   </td>
@@ -331,6 +419,15 @@ export default function ConsultationDossiersPage() {
           </div>
         )}
       </div>
+
+      <ClientSearchModal
+        isOpen={isClientModalOpen}
+        onClose={() => setIsClientModalOpen(false)}
+        onClientSelect={(client) => {
+          setClientQuery(client.nom);
+          setRefClient(client.compte);
+        }}
+      />
     </Shell>
   );
 }
