@@ -219,47 +219,52 @@ function Bloc({ bloc, dossier }: { bloc: BlocSchema; dossier: DossierTrade }) {
 
 function EvenementsTable({ evenements }: { evenements: DossierTrade["evenements"] }) {
   return (
-    <div className="bg-white rounded-xl border border-ink-100 p-5">
-      <div className="flex items-center justify-between border-b border-ink-100 pb-2 mb-4">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-[#E8590C] flex items-center gap-2">
-          <History size={14} /> Événements du dossier
+    <>
+      {/* Séparateur visuel */}
+      <div className="h-px bg-gradient-to-r from-transparent via-[#E8590C] to-transparent my-6" />
+      
+      <div className="bg-[#FDF0E8] rounded-xl border-2 border-[#E8590C] shadow-lg p-5">
+        <div className="flex items-center justify-between bg-[#E8590C] -mx-5 -mt-5 px-5 py-3 rounded-t-xl mb-4">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-white flex items-center gap-2">
+            <History size={16} /> Événements du dossier
+          </div>
+          <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-medium bg-white text-[#E8590C] rounded-full">{evenements.length}</span>
         </div>
-        <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-medium bg-ink-100 text-ink-700 rounded-full">{evenements.length}</span>
-      </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-ink-500 bg-ink-50">
-              <th className="px-3 py-2 rounded-tl-md">Référence</th>
-              <th className="px-3 py-2">Nature</th>
-              <th className="px-3 py-2 text-right">Montant</th>
-              <th className="px-3 py-2">Date de création</th>
-              <th className="px-3 py-2">Statut</th>
-              <th className="px-3 py-2 rounded-tr-md"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {evenements.map((e) => (
-              <tr key={e.reference} className="border-b border-ink-100 transition">
-                <td className="px-3 py-2 font-mono text-xs">{e.reference}</td>
-                <td className="px-3 py-2 font-medium text-ink-800">{e.nature}</td>
-                <td className="px-3 py-2 text-right text-ink-700">
-                  {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-ink-300">—</span>}
-                </td>
-                <td className="px-3 py-2 text-xs text-ink-700">{formatDate(e.dateCreation)}</td>
-                <td className="px-3 py-2"><StatutBadge statut={e.statut} /></td>
-                <td className="px-3 py-2 text-right">
-                  <button className="text-ink-400 hover:text-[#E8590C] transition">
-                    <Eye size={16} />
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-ink-700 bg-white/60">
+                <th className="px-3 py-2 rounded-tl-md">Référence</th>
+                <th className="px-3 py-2">Nature</th>
+                <th className="px-3 py-2 text-right">Montant</th>
+                <th className="px-3 py-2">Date de création</th>
+                <th className="px-3 py-2">Statut</th>
+                <th className="px-3 py-2 rounded-tr-md"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {evenements.map((e, idx) => (
+                <tr key={e.reference} className={`border-b border-[#E8590C]/20 transition ${idx % 2 === 0 ? 'bg-white/40' : 'bg-white/80'}`}>
+                  <td className="px-3 py-2 font-mono text-xs">{e.reference}</td>
+                  <td className="px-3 py-2 font-medium text-ink-800">{e.nature}</td>
+                  <td className="px-3 py-2 text-right text-ink-700">
+                    {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-ink-300">—</span>}
+                  </td>
+                  <td className="px-3 py-2 text-xs text-ink-700">{formatDate(e.dateCreation)}</td>
+                  <td className="px-3 py-2"><StatutBadge statut={e.statut} /></td>
+                  <td className="px-3 py-2 text-right">
+                    <button className="text-ink-400 hover:text-[#E8590C] transition">
+                      <Eye size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
