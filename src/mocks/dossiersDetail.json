@@ -299,6 +299,7 @@
       "encours": { "valeur": 6904.88, "devise": "EUR" },
       "typeFrais": "Partagés",
       "referenceOperation": "E-10-1-17-EQUARHIM",
+      "autreReference": "EXT928290",
       "conditionsRemiseDocuments": "Remise contre acceptation",
       "dateEcheance": "2026-09-05",
       "referencesCourrier": [

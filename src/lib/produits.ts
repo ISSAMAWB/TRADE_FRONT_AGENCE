@@ -156,6 +156,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
         icone: "FileText",
         champs: [
           { cle: "referenceOperation", label: "Référence" },
+          { cle: "autreReference", label: "Autre référence" },
           { cle: "conditionsRemiseDocuments", label: "Conditions de remise des documents" },
           { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
         ],
@@ -164,9 +165,9 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
         titre: "Parties impliquées",
         icone: "Building2",
         champs: [
-          { cle: "client", label: "Exportateur (Donneur d'ordre)", estClient: true },
-          { cle: "tire", label: "Tiré (Importateur)" },
-          { cle: "partieRemettante", label: "Partie présentatrice" },
+          { cle: "client", label: "Tireur", estClient: true },
+          { cle: "tire", label: "Tiré" },
+          { cle: "partieRemettante", label: "Banque d'encaissement" },
         ],
       },
       {
