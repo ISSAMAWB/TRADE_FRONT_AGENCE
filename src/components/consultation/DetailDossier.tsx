@@ -356,32 +356,35 @@ function BlocFinancierIRD({ dossier }: { dossier: DossierTrade }) {
   const fraisAuMaroc = dossier.donnees["fraisAuMaroc"];
   const fraisAEtranger = dossier.donnees["fraisAEtranger"];
 
+  const showRemise = isMontantAvecDevise(montantRemise);
+  const showEncours = isMontantAvecDevise(encours);
+  const showFraisMaroc = fraisAuMaroc !== undefined && fraisAuMaroc !== null && fraisAuMaroc !== "";
+  const showFraisEtranger = fraisAEtranger !== undefined && fraisAEtranger !== null && fraisAEtranger !== "";
+
   return (
     <div className="rounded-xl border border-ink-100 bg-ink-50/50 p-5">
       <SectionHeader titre="Informations financières" icone="Banknote" />
-      <div className="grid gap-x-5 gap-y-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
-        {isMontantAvecDevise(montantRemise) && (
+      <div className="grid gap-x-5 gap-y-4 md:grid-cols-3">
+        {showRemise && (
           <div className="min-w-0">
             <FieldLabel>Montant de la remise</FieldLabel>
             <FieldValue>{formatMontant(montantRemise.valeur, montantRemise.devise)}</FieldValue>
           </div>
         )}
-        {isMontantAvecDevise(encours) && (
+        {showEncours && (
           <div className="min-w-0">
             <FieldLabel>Encours</FieldLabel>
             <FieldValue>{formatMontant(encours.valeur, encours.devise)}</FieldValue>
           </div>
         )}
-      </div>
-      <div className="mt-4 flex flex-col gap-3">
-        {(fraisAuMaroc !== undefined && fraisAuMaroc !== null && fraisAuMaroc !== "") && (
+        {showFraisMaroc && (
           <div className="min-w-0">
             <FieldLabel>Frais au Maroc</FieldLabel>
             <FieldValue>{String(fraisAuMaroc)}</FieldValue>
           </div>
         )}
-        {(fraisAEtranger !== undefined && fraisAEtranger !== null && fraisAEtranger !== "") && (
-          <div className="min-w-0">
+        {showFraisEtranger && (
+          <div className="min-w-0 md:col-start-3">
             <FieldLabel>Frais à l'étranger</FieldLabel>
             <FieldValue>{String(fraisAEtranger)}</FieldValue>
           </div>
