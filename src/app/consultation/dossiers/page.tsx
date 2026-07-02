@@ -17,6 +17,19 @@ const STATUTS: StatutDossier[] = ["En cours", "Expiré", "Annulé"];
 const DEVISES: DeviseTrade[] = ["EUR", "USD", "GBP", "MAD", "JPY", "CHF"];
 const PRODUITS: ProduitTrade[] = ["ILC", "IRD", "ERD", "ELC", "FIN"];
 
+const EVENEMENTS = [
+  "Création",
+  "Réception des documents",
+  "Modification",
+  "Ajustement",
+  "Paiement à vue",
+  "Paiement à échéance",
+  "Gestion des commissions",
+  "Correspondance",
+  "Annulation",
+  "Expiration",
+];
+
 const PRODUIT_LABELS: Record<string, string> = {
   ILC: "CREDOC IMPORT",
   IRD: "REMDOC IMPORT",
@@ -44,6 +57,7 @@ export default function ConsultationDossiersPage() {
   const [devise, setDevise] = useState<DeviseTrade | "">("");
   const [refClient, setRefClient] = useState("");
   const [produit, setProduit] = useState<ProduitTrade | "">("");
+  const [evenement, setEvenement] = useState("");
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -64,6 +78,7 @@ export default function ConsultationDossiersPage() {
       if (devise && d.devise !== devise) return false;
       if (refClient.trim() && !d.client.compte.toLowerCase().includes(refClient.toLowerCase())) return false;
       if (produit && d.produit !== produit) return false;
+      if (evenement && !d.evenements.some((e: any) => e.type.toLowerCase().includes(evenement.toLowerCase()))) return false;
       return true;
     });
 
@@ -78,14 +93,14 @@ export default function ConsultationDossiersPage() {
     });
 
     return items;
-  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit, sortKey, sortDir]);
+  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit, evenement, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   useEffect(() => {
     setPage(1);
-  }, [refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit]);
+  }, [refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit, evenement]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -102,6 +117,7 @@ export default function ConsultationDossiersPage() {
     setDevise("");
     setRefClient("");
     setProduit("");
+    setEvenement("");
     setPage(1);
   }
 
@@ -285,8 +301,8 @@ export default function ConsultationDossiersPage() {
               </div>
             </div>
 
-            {/* Ligne 3: Montant min, Montant max, Date début, Date fin */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Ligne 3: Montant min, Montant max, Date début, Date fin, Événement */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               <div>
                 <label className="text-label">MONTANT MIN</label>
                 <input
@@ -327,6 +343,20 @@ export default function ConsultationDossiersPage() {
                   onChange={(e) => setDateFin(e.target.value)}
                   className="input w-full"
                 />
+              </div>
+
+              <div>
+                <label className="text-label">ÉVÉNEMENT</label>
+                <select
+                  className="input w-full"
+                  value={evenement}
+                  onChange={(e) => setEvenement(e.target.value)}
+                >
+                  <option value="">Tous les événements</option>
+                  {EVENEMENTS.map((e) => (
+                    <option key={e} value={e}>{e}</option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
