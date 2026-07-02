@@ -27,9 +27,11 @@ export default function CompactSidebar({ groups, onReset }: CompactSidebarProps)
     <aside className="w-20 flex flex-col bg-slate-900 border-r border-slate-800">
       {/* Logo Section */}
       <div className="h-16 flex items-center justify-center border-b border-slate-800">
-        <div className="h-10 w-10 rounded-lg bg-orange-500 text-white grid place-items-center font-bold text-lg">
-          T
-        </div>
+        <img
+          src="/logo-attijariwafa.png"
+          alt="Attijariwafa"
+          className="h-10 w-10 object-contain"
+        />
       </div>
 
       {/* Navigation */}

@@ -16,10 +16,8 @@ export default function CollapsibleFilterPanel({ isOpen, children, onSearch, onR
       }`}
     >
       <div className="card mt-4 p-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-          {children}
-        </div>
-        <div className="flex justify-end gap-2">
+        {children}
+        <div className="flex justify-end gap-2 mt-4">
           <Button variant="secondary" onClick={onReset}>
             Reset
           </Button>

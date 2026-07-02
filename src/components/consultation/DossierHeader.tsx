@@ -53,7 +53,7 @@ export default function DossierHeader({ dossier }: { dossier: DossierTrade }) {
           <div className="text-[11px] font-semibold uppercase tracking-wider text-[#E8590C] mt-2 mb-1">Synthèse du dossier</div>
           <h1 className="text-xl font-semibold text-ink-900">{dossier.produitLibelle} – {dossier.reference}</h1>
           <div className="text-xs text-ink-500 mt-1">
-            <span className="font-medium text-ink-700">Date de mise à jour :</span> {dossier.dateMiseAJour ? formatDateTime(dossier.dateMiseAJour) : "—"}
+            <span className="font-medium text-ink-700">Dernière mise à jour :</span> {dossier.dateMiseAJour ? formatDateTime(dossier.dateMiseAJour) : "—"}
           </div>
           <div className="text-sm text-ink-500 mt-2">
             {dossier.client}

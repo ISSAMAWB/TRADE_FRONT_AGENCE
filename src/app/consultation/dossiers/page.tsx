@@ -7,7 +7,7 @@ import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import dossiersData from "@/mocks/dossiers.json";
-import type { Dossier, StatutDossier, DeviseTrade } from "@/domain/consultation";
+import type { Dossier, StatutDossier, DeviseTrade, ProduitTrade } from "@/domain/consultation";
 import Button from "@/components/ui/Button";
 import CollapsibleFilterPanel from "@/components/ui/CollapsibleFilterPanel";
 import Shell from "@/components/Shell";
@@ -15,6 +15,7 @@ import ClientSearchModal from "@/components/ui/ClientSearchModal";
 
 const STATUTS: StatutDossier[] = ["En cours", "Expiré", "Annulé"];
 const DEVISES: DeviseTrade[] = ["EUR", "USD", "GBP", "MAD", "JPY", "CHF"];
+const PRODUITS: ProduitTrade[] = ["ILC", "IRD", "ERD", "ELC", "FIN"];
 
 const PRODUIT_LABELS: Record<string, string> = {
   ILC: "CREDOC IMPORT",
@@ -42,6 +43,7 @@ export default function ConsultationDossiersPage() {
   const [montantMax, setMontantMax] = useState("");
   const [devise, setDevise] = useState<DeviseTrade | "">("");
   const [refClient, setRefClient] = useState("");
+  const [produit, setProduit] = useState<ProduitTrade | "">("");
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -61,6 +63,7 @@ export default function ConsultationDossiersPage() {
       if (montantMax && d.montant > parseFloat(montantMax)) return false;
       if (devise && d.devise !== devise) return false;
       if (refClient.trim() && !d.client.compte.toLowerCase().includes(refClient.toLowerCase())) return false;
+      if (produit && d.produit !== produit) return false;
       return true;
     });
 
@@ -75,14 +78,14 @@ export default function ConsultationDossiersPage() {
     });
 
     return items;
-  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, sortKey, sortDir]);
+  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   useEffect(() => {
     setPage(1);
-  }, [refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient]);
+  }, [refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -98,6 +101,7 @@ export default function ConsultationDossiersPage() {
     setMontantMax("");
     setDevise("");
     setRefClient("");
+    setProduit("");
     setPage(1);
   }
 
@@ -193,122 +197,138 @@ export default function ConsultationDossiersPage() {
           onSearch={() => {}}
           onReset={resetFilters}
         >
-          {/* Référence bancaire */}
-          <div>
-            <label className="text-label">RÉFÉRENCE BANCAIRE</label>
-            <input
-              value={refBancaire}
-              onChange={(e) => setRefBancaire(e.target.value)}
-              placeholder="Ex. ILC%  (commence par ILC)"
-              className="input w-full"
-            />
-          </div>
+          <div className="space-y-4">
+            {/* Ligne 1: Référence bancaire, Référence client, Client / Compte */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-label">RÉFÉRENCE BANCAIRE</label>
+                <input
+                  value={refBancaire}
+                  onChange={(e) => setRefBancaire(e.target.value)}
+                  placeholder="Ex. ILC%  (commence par ILC)"
+                  className="input w-full"
+                />
+              </div>
 
-          {/* Statut */}
-          <div>
-            <label className="text-label">STATUT</label>
-            <select
-              className="input w-full"
-              value={statut}
-              onChange={(e) => setStatut(e.target.value as StatutDossier | "")}
-            >
-              <option value="">Tous les statuts</option>
-              {STATUTS.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
+              <div>
+                <label className="text-label">RÉFÉRENCE CLIENT</label>
+                <input
+                  value={refClient}
+                  onChange={(e) => setRefClient(e.target.value)}
+                  placeholder="Ex. CL%  (commence par CL)"
+                  className="input w-full"
+                />
+              </div>
 
-          {/* Client / Compte */}
-          <div>
-            <label className="text-label">CLIENT / COMPTE</label>
-            <div className="flex gap-2">
-              <input
-                value={clientQuery}
-                onChange={(e) => setClientQuery(e.target.value)}
-                placeholder="Rechercher par nom, n° compte"
-                className="input flex-1"
-              />
-              <button
-                onClick={() => setIsClientModalOpen(true)}
-                className="h-10 w-10 rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 flex items-center justify-center"
-                title="Rechercher un client"
-              >
-                <Search size={16} />
-              </button>
+              <div>
+                <label className="text-label">CLIENT / COMPTE</label>
+                <div className="flex gap-2">
+                  <input
+                    value={clientQuery}
+                    onChange={(e) => setClientQuery(e.target.value)}
+                    placeholder="Rechercher par nom, n° compte"
+                    className="input flex-1"
+                  />
+                  <button
+                    onClick={() => setIsClientModalOpen(true)}
+                    className="h-10 w-10 rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 flex items-center justify-center"
+                    title="Rechercher un client"
+                  >
+                    <Search size={16} />
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* Référence client */}
-          <div>
-            <label className="text-label">RÉFÉRENCE CLIENT</label>
-            <input
-              value={refClient}
-              onChange={(e) => setRefClient(e.target.value)}
-              placeholder="Ex. CL%  (commence par CL)"
-              className="input w-full"
-            />
-          </div>
+            {/* Ligne 2: Produit, Devise, Statut */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-label">PRODUIT</label>
+                <select
+                  className="input w-full"
+                  value={produit}
+                  onChange={(e) => setProduit(e.target.value as ProduitTrade | "")}
+                >
+                  <option value="">Tous les produits</option>
+                  {PRODUITS.map((p) => (
+                    <option key={p} value={p}>{PRODUIT_LABELS[p]}</option>
+                  ))}
+                </select>
+              </div>
 
-          {/* Devise */}
-          <div>
-            <label className="text-label">DEVISE</label>
-            <select
-              className="input w-full"
-              value={devise}
-              onChange={(e) => setDevise(e.target.value as DeviseTrade | "")}
-            >
-              <option value="">Toutes les devises</option>
-              {DEVISES.map((d) => (
-                <option key={d} value={d}>{d}</option>
-              ))}
-            </select>
-          </div>
+              <div>
+                <label className="text-label">DEVISE</label>
+                <select
+                  className="input w-full"
+                  value={devise}
+                  onChange={(e) => setDevise(e.target.value as DeviseTrade | "")}
+                >
+                  <option value="">Toutes les devises</option>
+                  {DEVISES.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+              </div>
 
-          {/* Montant minimum */}
-          <div>
-            <label className="text-label">MONTANT MINIMUM</label>
-            <input
-              type="number"
-              value={montantMin}
-              onChange={(e) => setMontantMin(e.target.value)}
-              placeholder="Montant minimum"
-              className="input w-full"
-            />
-          </div>
+              <div>
+                <label className="text-label">STATUT</label>
+                <select
+                  className="input w-full"
+                  value={statut}
+                  onChange={(e) => setStatut(e.target.value as StatutDossier | "")}
+                >
+                  <option value="">Tous les statuts</option>
+                  {STATUTS.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-          {/* Montant maximum */}
-          <div>
-            <label className="text-label">MONTANT MAXIMUM</label>
-            <input
-              type="number"
-              value={montantMax}
-              onChange={(e) => setMontantMax(e.target.value)}
-              placeholder="Montant maximum"
-              className="input w-full"
-            />
-          </div>
+            {/* Ligne 3: Montant min, Montant max, Date début, Date fin */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label className="text-label">MONTANT MIN</label>
+                <input
+                  type="number"
+                  value={montantMin}
+                  onChange={(e) => setMontantMin(e.target.value)}
+                  placeholder="Min"
+                  className="input w-full"
+                />
+              </div>
 
-          {/* Date début */}
-          <div>
-            <label className="text-label">DATE DÉBUT</label>
-            <input
-              type="date"
-              value={dateDebut}
-              onChange={(e) => setDateDebut(e.target.value)}
-              className="input w-full"
-            />
-          </div>
+              <div>
+                <label className="text-label">MONTANT MAX</label>
+                <input
+                  type="number"
+                  value={montantMax}
+                  onChange={(e) => setMontantMax(e.target.value)}
+                  placeholder="Max"
+                  className="input w-full"
+                />
+              </div>
 
-          {/* Date fin */}
-          <div>
-            <label className="text-label">DATE FIN</label>
-            <input
-              type="date"
-              value={dateFin}
-              onChange={(e) => setDateFin(e.target.value)}
-              className="input w-full"
-            />
+              <div>
+                <label className="text-label">DATE DÉBUT</label>
+                <input
+                  type="date"
+                  value={dateDebut}
+                  onChange={(e) => setDateDebut(e.target.value)}
+                  className="input w-full"
+                />
+              </div>
+
+              <div>
+                <label className="text-label">DATE FIN</label>
+                <input
+                  type="date"
+                  value={dateFin}
+                  onChange={(e) => setDateFin(e.target.value)}
+                  className="input w-full"
+                />
+              </div>
+            </div>
           </div>
         </CollapsibleFilterPanel>
 
