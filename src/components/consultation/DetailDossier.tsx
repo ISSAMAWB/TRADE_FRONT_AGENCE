@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye, ChevronRight } from "lucide-react";
+import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye } from "lucide-react";
 import DossierHeader from "./DossierHeader";
 import StatutBadge from "./StatutBadge";
 import BandeauClient from "./BandeauClient";
@@ -433,71 +433,22 @@ function DetailsDossierBloc({ blocs, dossier }: { blocs: BlocSchema[]; dossier: 
   );
 }
 
-function CarteSynthese({ label, value, subValue }: { label: string; value: React.ReactNode; subValue?: React.ReactNode }) {
+function CarteInfo({ titre, children }: { titre: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-ink-100 p-3 flex flex-col justify-between min-h-[80px]">
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-ink-500">{label}</div>
-      <div className="mt-1">
-        <div className="text-lg font-semibold text-ink-900">{value}</div>
-        {subValue && <div className="text-[11px] text-ink-500 mt-0.5">{subValue}</div>}
-      </div>
-    </div>
-  );
-}
-
-function GroupeInfos({ titre, children }: { titre: string; children: React.ReactNode }) {
-  return (
-    <div className="bg-white rounded-xl border border-ink-100 p-4">
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-brand-500 mb-3 pb-2 border-b border-ink-100">
+    <div className="bg-white rounded-xl border border-ink-100 p-3 flex flex-col justify-between h-full">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-brand-500 mb-2 pb-1 border-b border-ink-100">
         {titre}
       </div>
-      <div className="grid gap-x-4 gap-y-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
-        {children}
-      </div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 }
 
-function ChampInfo({ label, value }: { label: string; value: React.ReactNode }) {
+function ChampCarte({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="min-w-0">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-ink-500 mb-0.5">{label}</div>
-      <div className="text-[14px] font-medium text-ink-900">{value}</div>
-    </div>
-  );
-}
-
-function EvenementsCards({ evenements }: { evenements: DossierTrade["evenements"] }) {
-  return (
-    <div className="bg-white rounded-xl border border-ink-100 p-4">
-      <div className="flex items-center justify-between border-b border-ink-100 pb-2 mb-3">
-        <div className="text-xs font-semibold uppercase tracking-wider text-brand-500 flex items-center gap-2">
-          <History size={14} /> Événements du dossier
-        </div>
-        <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-ink-900 text-white rounded-full">{evenements.length}</span>
-      </div>
-      <div className="space-y-1.5">
-        {evenements.map((e) => (
-          <div key={e.reference} className="flex items-center justify-between p-2.5 rounded-lg border border-ink-100 hover:border-brand-300 hover:bg-brand-50/20 transition cursor-pointer">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-medium text-ink-800">{formatDate(e.dateCreation)}</span>
-                <span className="text-xs font-medium text-ink-900 truncate">{e.nature}</span>
-              </div>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] text-ink-500 font-mono">{e.reference}</span>
-                {e.montant !== null && (
-                  <span className="text-[11px] font-medium text-ink-700">{formatMontant(e.montant, e.devise)}</span>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-2 ml-3">
-              <StatutBadge statut={e.statut} />
-              <ChevronRight size={16} className="text-ink-400" />
-            </div>
-          </div>
-        ))}
-      </div>
+      <div className="text-[13px] font-medium text-ink-900 leading-tight">{value}</div>
     </div>
   );
 }
@@ -507,78 +458,92 @@ function DetailIRD({ dossier }: { dossier: DossierTrade }) {
   const encours = dossier.donnees["encours"];
   const conditionsRemise = dossier.donnees["conditionsRemiseDocuments"];
   const dateEcheance = dossier.donnees["dateEcheance"];
+  const titresImportation = dossier.donnees["referencesTitresImportation"];
 
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <CarteSynthese
-          label="Montant de la remise"
-          value={isMontantAvecDevise(montantRemise) ? formatMontant(montantRemise.valeur, montantRemise.devise) : <span className="text-ink-300">—</span>}
-        />
-        <CarteSynthese
-          label="Encours"
-          value={isMontantAvecDevise(encours) ? formatMontant(encours.valeur, encours.devise) : <span className="text-ink-300">—</span>}
-        />
-        <CarteSynthese
-          label="Conditions de remise"
-          value={conditionsRemise ? String(conditionsRemise) : <span className="text-ink-300">—</span>}
-        />
-        <CarteSynthese
-          label="Date d'échéance"
-          value={dateEcheance ? formatDate(String(dateEcheance)) : <span className="text-ink-300">—</span>}
-        />
+        <CarteInfo titre="Montant de la remise">
+          <div className="text-lg font-semibold text-ink-900">
+            {isMontantAvecDevise(montantRemise) ? formatMontant(montantRemise.valeur, montantRemise.devise) : <span className="text-ink-300">—</span>}
+          </div>
+        </CarteInfo>
+        <CarteInfo titre="Encours">
+          <div className="text-lg font-semibold text-ink-900">
+            {isMontantAvecDevise(encours) ? formatMontant(encours.valeur, encours.devise) : <span className="text-ink-300">—</span>}
+          </div>
+        </CarteInfo>
+        <CarteInfo titre="Conditions de remise">
+          <div className="text-[13px] font-medium text-ink-900 leading-tight">
+            {conditionsRemise ? String(conditionsRemise) : <span className="text-ink-300">—</span>}
+          </div>
+        </CarteInfo>
+        <CarteInfo titre="Date d'échéance">
+          <div className="text-lg font-semibold text-ink-900">
+            {dateEcheance ? formatDate(String(dateEcheance)) : <span className="text-ink-300">—</span>}
+          </div>
+        </CarteInfo>
       </div>
 
-      <GroupeInfos titre="Références">
-        <ChampInfo label="Référence" value={dossier.donnees["referenceOperation"] ? String(dossier.donnees["referenceOperation"]) : <span className="text-ink-300">—</span>} />
-        <ChampInfo label="Autre référence" value={dossier.donnees["autreReference"] ? String(dossier.donnees["autreReference"]) : <span className="text-ink-300">—</span>} />
-      </GroupeInfos>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <CarteInfo titre="Références">
+          <div className="space-y-2">
+            <ChampCarte label="Référence" value={dossier.donnees["referenceOperation"] ? String(dossier.donnees["referenceOperation"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Autre référence" value={dossier.donnees["autreReference"] ? String(dossier.donnees["autreReference"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
 
-      <GroupeInfos titre="Parties impliquées">
-        <ChampInfo label="Tiré" value={dossier.donnees["client"] ? String(dossier.donnees["client"]) : <span className="text-ink-300">—</span>} />
-        <ChampInfo label="Tireur" value={dossier.donnees["tireur"] ? String(dossier.donnees["tireur"]) : <span className="text-ink-300">—</span>} />
-        <ChampInfo label="Partie remettante" value={dossier.donnees["partieRemettante"] ? String(dossier.donnees["partieRemettante"]) : <span className="text-ink-300">—</span>} />
-      </GroupeInfos>
+        <CarteInfo titre="Parties impliquées">
+          <div className="space-y-2">
+            <ChampCarte label="Tiré" value={dossier.donnees["client"] ? String(dossier.donnees["client"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Tireur" value={dossier.donnees["tireur"] ? String(dossier.donnees["tireur"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Partie remettante" value={dossier.donnees["partieRemettante"] ? String(dossier.donnees["partieRemettante"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
 
-      <GroupeInfos titre="Frais">
-        <ChampInfo label="Frais au Maroc" value={dossier.donnees["fraisAuMaroc"] ? String(dossier.donnees["fraisAuMaroc"]) : <span className="text-ink-300">—</span>} />
-        <ChampInfo label="Frais à l'étranger" value={dossier.donnees["fraisAEtranger"] ? String(dossier.donnees["fraisAEtranger"]) : <span className="text-ink-300">—</span>} />
-      </GroupeInfos>
+        <CarteInfo titre="Frais">
+          <div className="space-y-2">
+            <ChampCarte label="Frais au Maroc" value={dossier.donnees["fraisAuMaroc"] ? String(dossier.donnees["fraisAuMaroc"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Frais à l'étranger" value={dossier.donnees["fraisAEtranger"] ? String(dossier.donnees["fraisAEtranger"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
 
-      <GroupeInfos titre="Titres d'importation">
-        <div className="col-span-full">
+        <CarteInfo titre="Titres d'importation">
           {(() => {
-            const raw = dossier.donnees["referencesTitresImportation"];
-            if (!Array.isArray(raw) || raw.length === 0) return <span className="text-ink-300">—</span>;
+            if (!Array.isArray(titresImportation) || titresImportation.length === 0) return <span className="text-ink-300">—</span>;
             const MAX_VISIBLE = 3;
-            const visible = raw.slice(0, MAX_VISIBLE);
-            const remaining = raw.length - MAX_VISIBLE;
+            const visible = titresImportation.slice(0, MAX_VISIBLE);
+            const remaining = titresImportation.length - MAX_VISIBLE;
             return (
-              <div className="flex flex-wrap gap-2 items-center">
+              <div className="flex flex-wrap gap-1.5 items-center">
                 {visible.map((item, idx) => (
-                  <span key={idx} className="inline-flex items-center px-2 py-1 text-xs font-medium bg-ink-50 text-ink-700 border border-ink-200 rounded-lg">
+                  <span key={idx} className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium bg-ink-50 text-ink-700 border border-ink-200 rounded-md">
                     {String(item)}
                   </span>
                 ))}
                 {remaining > 0 && (
-                  <button className="text-sm text-brand-500 hover:underline font-medium px-1">...</button>
+                  <button className="text-xs text-brand-500 hover:underline font-medium px-1">...</button>
                 )}
               </div>
             );
           })()}
-        </div>
-      </GroupeInfos>
+        </CarteInfo>
+      </div>
 
       {dossier.agenceInfo && (
-        <GroupeInfos titre="Agence">
-          <ChampInfo label="Référence CTN" value={dossier.agenceInfo.referenceCTN} />
-          <ChampInfo label="Gestionnaire" value={dossier.agenceInfo.gestionnaire} />
-          <ChampInfo label="Statut opérationnel" value={dossier.agenceInfo.statutOperationnel} />
-          <ChampInfo label="Prochaine action" value={dossier.agenceInfo.prochaineAction} />
-        </GroupeInfos>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <CarteInfo titre="Agence">
+            <div className="grid grid-cols-2 gap-2">
+              <ChampCarte label="CTN" value={dossier.agenceInfo.referenceCTN} />
+              <ChampCarte label="Gestionnaire" value={dossier.agenceInfo.gestionnaire} />
+              <ChampCarte label="Statut" value={dossier.agenceInfo.statutOperationnel} />
+              <ChampCarte label="Prochaine action" value={dossier.agenceInfo.prochaineAction} />
+            </div>
+          </CarteInfo>
+        </div>
       )}
 
-      <EvenementsCards evenements={dossier.evenements} />
+      <EvenementsTable evenements={dossier.evenements} />
     </div>
   );
 }
