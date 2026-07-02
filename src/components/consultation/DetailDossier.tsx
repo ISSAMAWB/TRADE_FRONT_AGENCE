@@ -435,11 +435,11 @@ function DetailsDossierBloc({ blocs, dossier }: { blocs: BlocSchema[]; dossier: 
 
 function CarteSynthese({ label, value, subValue }: { label: string; value: React.ReactNode; subValue?: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-ink-100 p-4 flex flex-col justify-between min-h-[100px]">
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-500">{label}</div>
-      <div className="mt-2">
-        <div className="text-xl font-semibold text-ink-900">{value}</div>
-        {subValue && <div className="text-xs text-ink-500 mt-1">{subValue}</div>}
+    <div className="bg-white rounded-xl border border-ink-100 p-3 flex flex-col justify-between min-h-[80px]">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-ink-500">{label}</div>
+      <div className="mt-1">
+        <div className="text-lg font-semibold text-ink-900">{value}</div>
+        {subValue && <div className="text-[11px] text-ink-500 mt-0.5">{subValue}</div>}
       </div>
     </div>
   );
@@ -447,11 +447,11 @@ function CarteSynthese({ label, value, subValue }: { label: string; value: React
 
 function GroupeInfos({ titre, children }: { titre: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-ink-100 p-5">
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-brand-500 mb-4 pb-2 border-b border-ink-100">
+    <div className="bg-white rounded-xl border border-ink-100 p-4">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-brand-500 mb-3 pb-2 border-b border-ink-100">
         {titre}
       </div>
-      <div className="grid gap-x-5 gap-y-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+      <div className="grid gap-x-4 gap-y-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
         {children}
       </div>
     </div>
@@ -461,39 +461,39 @@ function GroupeInfos({ titre, children }: { titre: string; children: React.React
 function ChampInfo({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="min-w-0">
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-500 mb-1">{label}</div>
-      <div className="text-[15px] font-medium text-ink-900">{value}</div>
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-ink-500 mb-0.5">{label}</div>
+      <div className="text-[14px] font-medium text-ink-900">{value}</div>
     </div>
   );
 }
 
 function EvenementsCards({ evenements }: { evenements: DossierTrade["evenements"] }) {
   return (
-    <div className="bg-white rounded-xl border border-ink-100 p-5">
-      <div className="flex items-center justify-between border-b border-ink-100 pb-3 mb-4">
-        <div className="text-sm font-semibold uppercase tracking-wider text-brand-500 flex items-center gap-2">
-          <History size={16} /> Événements du dossier
+    <div className="bg-white rounded-xl border border-ink-100 p-4">
+      <div className="flex items-center justify-between border-b border-ink-100 pb-2 mb-3">
+        <div className="text-xs font-semibold uppercase tracking-wider text-brand-500 flex items-center gap-2">
+          <History size={14} /> Événements du dossier
         </div>
-        <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium bg-ink-900 text-white rounded-full">{evenements.length}</span>
+        <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-ink-900 text-white rounded-full">{evenements.length}</span>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {evenements.map((e) => (
-          <div key={e.reference} className="flex items-center justify-between p-3 rounded-lg border border-ink-100 hover:border-brand-300 hover:bg-brand-50/20 transition cursor-pointer">
+          <div key={e.reference} className="flex items-center justify-between p-2.5 rounded-lg border border-ink-100 hover:border-brand-300 hover:bg-brand-50/20 transition cursor-pointer">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-medium text-ink-800">{formatDate(e.dateCreation)}</span>
-                <span className="text-sm font-medium text-ink-900 truncate">{e.nature}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-medium text-ink-800">{formatDate(e.dateCreation)}</span>
+                <span className="text-xs font-medium text-ink-900 truncate">{e.nature}</span>
               </div>
-              <div className="flex items-center gap-3 mt-1">
-                <span className="text-xs text-ink-500 font-mono">{e.reference}</span>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-[10px] text-ink-500 font-mono">{e.reference}</span>
                 {e.montant !== null && (
-                  <span className="text-xs font-medium text-ink-700">{formatMontant(e.montant, e.devise)}</span>
+                  <span className="text-[11px] font-medium text-ink-700">{formatMontant(e.montant, e.devise)}</span>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-3 ml-4">
+            <div className="flex items-center gap-2 ml-3">
               <StatutBadge statut={e.statut} />
-              <ChevronRight size={18} className="text-ink-400" />
+              <ChevronRight size={16} className="text-ink-400" />
             </div>
           </div>
         ))}
@@ -509,8 +509,8 @@ function DetailIRD({ dossier }: { dossier: DossierTrade }) {
   const dateEcheance = dossier.donnees["dateEcheance"];
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <CarteSynthese
           label="Montant de la remise"
           value={isMontantAvecDevise(montantRemise) ? formatMontant(montantRemise.valeur, montantRemise.devise) : <span className="text-ink-300">—</span>}
