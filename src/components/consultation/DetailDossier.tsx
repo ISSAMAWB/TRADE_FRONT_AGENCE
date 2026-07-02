@@ -350,12 +350,56 @@ function BlocFinancierILC({ dossier }: { dossier: DossierTrade }) {
   );
 }
 
+function BlocFinancierIRD({ dossier }: { dossier: DossierTrade }) {
+  const montantRemise = dossier.donnees["montantRemise"];
+  const encours = dossier.donnees["encours"];
+  const fraisAuMaroc = dossier.donnees["fraisAuMaroc"];
+  const fraisAEtranger = dossier.donnees["fraisAEtranger"];
+
+  return (
+    <div className="rounded-xl border border-ink-100 bg-ink-50/50 p-5">
+      <SectionHeader titre="Informations financières" icone="Banknote" />
+      <div className="grid gap-x-5 gap-y-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+        {isMontantAvecDevise(montantRemise) && (
+          <div className="min-w-0">
+            <FieldLabel>Montant de la remise</FieldLabel>
+            <FieldValue>{formatMontant(montantRemise.valeur, montantRemise.devise)}</FieldValue>
+          </div>
+        )}
+        {isMontantAvecDevise(encours) && (
+          <div className="min-w-0">
+            <FieldLabel>Encours</FieldLabel>
+            <FieldValue>{formatMontant(encours.valeur, encours.devise)}</FieldValue>
+          </div>
+        )}
+      </div>
+      <div className="mt-4 flex flex-col gap-3">
+        {(fraisAuMaroc !== undefined && fraisAuMaroc !== null && fraisAuMaroc !== "") && (
+          <div className="min-w-0">
+            <FieldLabel>Frais au Maroc</FieldLabel>
+            <FieldValue>{String(fraisAuMaroc)}</FieldValue>
+          </div>
+        )}
+        {(fraisAEtranger !== undefined && fraisAEtranger !== null && fraisAEtranger !== "") && (
+          <div className="min-w-0">
+            <FieldLabel>Frais à l'étranger</FieldLabel>
+            <FieldValue>{String(fraisAEtranger)}</FieldValue>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function DetailsDossierBloc({ blocs, dossier }: { blocs: BlocSchema[]; dossier: DossierTrade }) {
   return (
     <div className="space-y-4">
       {blocs.map((bloc) => {
         if (dossier.produit === "ILC" && bloc.titre === "Informations financières") {
           return <BlocFinancierILC key={bloc.titre} dossier={dossier} />;
+        }
+        if (dossier.produit === "IRD" && bloc.titre === "Informations financières") {
+          return <BlocFinancierIRD key={bloc.titre} dossier={dossier} />;
         }
         return (
           <div key={bloc.titre} className="rounded-xl border border-ink-100 bg-ink-50/50 p-5">
