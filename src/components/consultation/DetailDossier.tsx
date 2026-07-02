@@ -176,6 +176,26 @@ function renderValeur(champ: ChampSchema, dossier: DossierTrade): React.ReactNod
     );
   }
 
+  if (champ.format === "multi-valeurs-ird" && Array.isArray(raw)) {
+    const MAX_VISIBLE = 3;
+    const visible = raw.slice(0, MAX_VISIBLE);
+    const remaining = raw.length - MAX_VISIBLE;
+    return (
+      <div className="flex flex-wrap gap-2 items-center">
+        {visible.map((item, idx) => (
+          <span key={idx} className="inline-flex items-center px-2 py-1 text-xs font-medium bg-ink-50 text-ink-700 border border-ink-200 rounded-lg">
+            {String(item)}
+          </span>
+        ))}
+        {remaining > 0 && (
+          <button className="text-sm text-brand-500 hover:underline font-medium px-1">
+            ...
+          </button>
+        )}
+      </div>
+    );
+  }
+
   if (Array.isArray(raw)) {
     return (
       <div className="flex flex-wrap gap-2">

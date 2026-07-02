@@ -12,7 +12,8 @@ export type FormatChamp =
   | "texte"
   | "tableau-paiements"
   | "tableau-courriers"
-  | "multi-valeurs";
+  | "multi-valeurs"
+  | "multi-valeurs-ird";
 
 export interface Paiement {
   uetr: string;
