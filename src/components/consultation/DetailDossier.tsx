@@ -527,51 +527,81 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
   const montantRemise = dossier.donnees["montantRemise"];
   const encours = dossier.donnees["encours"];
   const typeFrais = dossier.donnees["typeFrais"];
-  const conditionsRemise = dossier.donnees["conditionsRemiseDocuments"];
-  const dateEcheance = dossier.donnees["dateEcheance"];
   const referencesCourrier = dossier.donnees["referencesCourrier"];
 
   return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <CarteInfo titre="Montant & Frais">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[14px]">
+        <div className="bg-white rounded-lg border border-[#e5e8ec] p-4">
+          <div className="text-[10.5px] font-semibold uppercase tracking-wider text-[#e8632b] mb-3">Montant & frais</div>
           <div className="space-y-2">
-            <ChampCarte label="Montant de la remise" value={isMontantAvecDevise(montantRemise) ? formatMontant(montantRemise.valeur, montantRemise.devise) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Encours" value={isMontantAvecDevise(encours) ? formatMontant(encours.valeur, encours.devise) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Type de frais" value={typeFrais ? String(typeFrais) : <span className="text-ink-300">—</span>} />
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-[#94a3b8]">Remise</span>
+              <span className="text-[12.5px] font-medium text-ink-900 tabular-nums">{isMontantAvecDevise(montantRemise) ? formatMontant(montantRemise.valeur, montantRemise.devise) : "—"}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-[#94a3b8]">Encours</span>
+              <span className="text-[12.5px] font-medium text-ink-900 tabular-nums">{isMontantAvecDevise(encours) ? formatMontant(encours.valeur, encours.devise) : "—"}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-[#94a3b8]">Type de frais</span>
+              <span className="text-[12.5px] font-medium text-ink-900">{typeFrais ? String(typeFrais) : "—"}</span>
+            </div>
           </div>
-        </CarteInfo>
-
-        <CarteInfo titre="Conditions & Échéance">
-          <div className="space-y-2">
-            <ChampCarte label="Conditions de remise" value={conditionsRemise ? String(conditionsRemise) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Date d'échéance" value={dateEcheance ? formatDate(String(dateEcheance)) : <span className="text-ink-300">—</span>} />
-          </div>
-        </CarteInfo>
-
-        <CarteInfo titre="Références">
-          <div className="space-y-2">
-            <ChampCarte label="Référence" value={dossier.donnees["referenceOperation"] ? String(dossier.donnees["referenceOperation"]) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Autre référence" value={dossier.donnees["autreReference"] ? String(dossier.donnees["autreReference"]) : <span className="text-ink-300">—</span>} />
-          </div>
-        </CarteInfo>
-
-        <CarteInfo titre="Parties impliquées">
-          <div className="space-y-2">
-            <ChampCarte label="Tireur" value={dossier.donnees["client"] ? String(dossier.donnees["client"]) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Tiré" value={dossier.donnees["tire"] ? String(dossier.donnees["tire"]) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Banque d'encaissement" value={dossier.donnees["partieRemettante"] ? String(dossier.donnees["partieRemettante"]) : <span className="text-ink-300">—</span>} />
-          </div>
-        </CarteInfo>
-      </div>
-
-      {referencesCourrier && isCourrierArray(referencesCourrier) && referencesCourrier.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <CarteInfo titre="Références de courrier">
-            <TableauCourriers courriers={referencesCourrier} />
-          </CarteInfo>
         </div>
-      )}
+
+        <div className="bg-white rounded-lg border border-[#e5e8ec] p-4">
+          <div className="text-[10.5px] font-semibold uppercase tracking-wider text-[#e8632b] mb-3">Client</div>
+          <div className="space-y-2">
+            <div>
+              <div className="text-xs text-[#94a3b8] mb-1">Raison sociale</div>
+              <div className="text-[12.5px] font-medium text-ink-900">{dossier.clientInfo?.raisonSociale || "—"}</div>
+            </div>
+            <div>
+              <div className="text-xs text-[#94a3b8] mb-1">N° de compte</div>
+              <div className="text-[12.5px] font-medium text-ink-900 font-mono">{dossier.clientInfo?.numeroCompte || "—"}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-[#e5e8ec] p-4">
+          <div className="text-[10.5px] font-semibold uppercase tracking-wider text-[#e8632b] mb-3">Parties</div>
+          <div className="space-y-2">
+            <div>
+              <div className="text-xs text-[#94a3b8] mb-1">Tireur</div>
+              <div className="text-[12.5px] font-medium text-ink-900">{dossier.donnees["client"] ? String(dossier.donnees["client"]) : "—"}</div>
+            </div>
+            <div>
+              <div className="text-xs text-[#94a3b8] mb-1">Tiré</div>
+              <div className="text-[12.5px] font-medium text-ink-900">{dossier.donnees["tire"] ? String(dossier.donnees["tire"]) : "—"}</div>
+            </div>
+            <div>
+              <div className="text-xs text-[#94a3b8] mb-1">Banque d'encaissement</div>
+              <div className="text-[12.5px] font-medium text-ink-900">{dossier.donnees["partieRemettante"] ? String(dossier.donnees["partieRemettante"]) : "—"}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-[#e5e8ec] p-4">
+          <div className="text-[10.5px] font-semibold uppercase tracking-wider text-[#e8632b] mb-3">Références</div>
+          <div className="space-y-2">
+            <div>
+              <div className="text-xs text-[#94a3b8] mb-1">Référence</div>
+              <div className="text-[12.5px] font-medium text-ink-900 font-mono">{dossier.donnees["referenceOperation"] ? String(dossier.donnees["referenceOperation"]) : "—"}</div>
+            </div>
+            <div>
+              <div className="text-xs text-[#94a3b8] mb-1">Autre référence</div>
+              <div className="text-[12.5px] font-medium text-ink-900 font-mono">{dossier.donnees["autreReference"] ? String(dossier.donnees["autreReference"]) : "—"}</div>
+            </div>
+            {referencesCourrier && isCourrierArray(referencesCourrier) && referencesCourrier.length > 0 && (
+              <div>
+                <div className="text-xs text-[#94a3b8] mb-1">Réf. courrier</div>
+                <div className="text-[12.5px] font-medium text-ink-900">{referencesCourrier.length} courrier(s)</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       <EvenementsTable evenements={dossier.evenements} />
     </div>
@@ -652,40 +682,47 @@ function DetailIRD({ dossier }: { dossier: DossierTrade }) {
 
 function EvenementsTable({ evenements }: { evenements: DossierTrade["evenements"] }) {
   return (
-    <div className="bg-gradient-to-br from-white via-brand-50/30 to-brand-50/20 rounded-xl border border-ink-100 p-5 shadow-card">
-      <div className="flex items-center justify-between border-b-2 border-ink-200 pb-3 mb-5">
-        <div className="text-sm font-medium uppercase tracking-wider text-brand-500 flex items-center gap-2">
-          <History size={16} /> Événements du dossier
+    <div className="bg-white rounded-lg border border-[#e5e8ec] p-4">
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-[10.5px] font-semibold uppercase tracking-wider text-[#e8632b] flex items-center gap-2">
+          Événements
         </div>
-        <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium bg-ink-900 text-white rounded-full">{evenements.length}</span>
+        <span className="bg-ink-900 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+          {evenements.length}
+        </span>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-ink-500 bg-ink-50">
-              <th className="px-3 py-2 rounded-tl-md">Référence</th>
-              <th className="px-3 py-2">Nature</th>
-              <th className="px-3 py-2 text-right">Montant</th>
-              <th className="px-3 py-2">Date de création</th>
-              <th className="px-3 py-2">Statut</th>
-              <th className="px-3 py-2 rounded-tr-md"></th>
+            <tr className="border-b border-[#e5e8ec]">
+              <th className="text-left py-2 px-3 font-semibold text-ink-700 text-xs uppercase tracking-wider">Référence</th>
+              <th className="text-left py-2 px-3 font-semibold text-ink-700 text-xs uppercase tracking-wider">Nature</th>
+              <th className="text-right py-2 px-3 font-semibold text-ink-700 text-xs uppercase tracking-wider">Montant</th>
+              <th className="text-left py-2 px-3 font-semibold text-ink-700 text-xs uppercase tracking-wider">Date de création</th>
+              <th className="text-left py-2 px-3 font-semibold text-ink-700 text-xs uppercase tracking-wider">Statut</th>
             </tr>
           </thead>
           <tbody>
             {evenements.map((e) => (
-              <tr key={e.reference} className="border-b border-ink-100 transition">
-                <td className="px-3 py-2 font-mono text-xs">{e.reference}</td>
-                <td className="px-3 py-2 font-medium text-ink-800">{e.nature}</td>
-                <td className="px-3 py-2 text-right text-ink-700">
+              <tr key={e.reference} className="border-b border-[#e5e8ec] hover:bg-[#f8fafc] transition-colors cursor-pointer">
+                <td className="py-2 px-3 font-mono text-xs text-ink-600">{e.reference}</td>
+                <td className="py-2 px-3 font-semibold text-ink-900">{e.nature}</td>
+                <td className="py-2 px-3 text-right font-mono text-ink-900 tabular-nums">
                   {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-ink-300">—</span>}
                 </td>
-                <td className="px-3 py-2 text-xs text-ink-700">{formatDate(e.dateCreation)}</td>
-                <td className="px-3 py-2"><StatutBadge statut={e.statut} /></td>
-                <td className="px-3 py-2 text-right">
-                  <button className="text-ink-400 hover:text-brand-500 transition">
-                    <Eye size={16} />
-                  </button>
+                <td className="py-2 px-3 text-ink-600">{formatDate(e.dateCreation)}</td>
+                <td className="py-2 px-3">
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                    e.statut === "VALIDE" ? "bg-[#e6f6ee] text-[#177a52]" :
+                    e.statut === "EN_COURS" ? "bg-[#eef4ff] text-[#2a5bd7]" :
+                    e.statut === "EN_ATTENTE" ? "bg-[#fef3e2] text-[#b45309]" :
+                    "bg-ink-100 text-ink-600"
+                  }`}>
+                    {e.statut === "VALIDE" ? "Validé" :
+                     e.statut === "EN_COURS" ? "En cours" :
+                     e.statut === "EN_ATTENTE" ? "En attente" : e.statut}
+                  </span>
                 </td>
               </tr>
             ))}
@@ -696,29 +733,120 @@ function EvenementsTable({ evenements }: { evenements: DossierTrade["evenements"
   );
 }
 
+function BandeauEcheance({ dossier }: { dossier: DossierTrade }) {
+  const dateEcheance = dossier.donnees["dateEcheance"] || dossier.donnees["dateExpiration"];
+  const conditions = dossier.donnees["conditionsRemiseDocuments"];
+  const dateOuverture = dossier.dateMiseAJour;
+
+  const today = new Date();
+  const echeance = dateEcheance ? new Date(String(dateEcheance)) : null;
+  const ouverture = dateOuverture ? new Date(dateOuverture) : null;
+
+  let joursRestants = null;
+  let isAlerte = false;
+
+  if (echeance) {
+    const diffTime = echeance.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    joursRestants = diffDays;
+    isAlerte = diffDays < 15 && diffDays > 0;
+  }
+
+  const progress = ouverture && echeance ? Math.min(100, Math.max(0, ((today.getTime() - ouverture.getTime()) / (echeance.getTime() - ouverture.getTime())) * 100)) : 0;
+
+  return (
+    <div className={`rounded-lg border p-4 ${isAlerte ? "bg-[#fef2f2] border-[#fecaca]" : "bg-[#fffaf4] border-[#f3ddc2]"}`}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-4">
+          <span className={`text-[10.5px] font-semibold uppercase tracking-wider ${isAlerte ? "text-[#dc2626]" : "text-[#c2410c]"}`}>ÉCHÉANCE</span>
+          {echeance && (
+            <span className={`text-[20px] font-extrabold tabular-nums ${isAlerte ? "text-[#dc2626]" : "text-[#9a3412]"}`}>
+              {formatDate(String(dateEcheance))}
+            </span>
+          )}
+          {joursRestants !== null && (
+            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${isAlerte ? "bg-[#dc2626] text-white" : "bg-[#f97316] text-white"}`}>
+              {joursRestants > 0 ? `dans ${joursRestants} jours` : joursRestants === 0 ? "Aujourd'hui" : "Échéance dépassée"}
+            </span>
+          )}
+        </div>
+        {conditions && (
+          <div className="text-sm text-ink-600">{String(conditions)}</div>
+        )}
+      </div>
+
+      {ouverture && echeance && (
+        <>
+          <div className="relative h-1.5 bg-ink-200 rounded-full mb-2">
+            <div
+              className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-green-500 to-orange-500"
+              style={{ width: `${progress}%` }}
+            />
+            <div
+              className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-orange-500 rounded-full border-2 border-white shadow-sm"
+              style={{ left: `${progress}%` }}
+            />
+          </div>
+          <div className="flex justify-between text-xs text-ink-500">
+            <span>Ouverture · {ouverture ? formatDate(ouverture.toISOString()) : "—"}</span>
+            <span className={`font-semibold ${isAlerte ? "text-[#dc2626]" : "text-[#f97316]"}`}>Aujourd'hui · {formatDate(today.toISOString())}</span>
+            <span>Échéance · {formatDate(String(dateEcheance))}</span>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function EnTeteCompact({ dossier }: { dossier: DossierTrade }) {
+  const montant = dossier.donnees["montantRemise"] || dossier.donnees["montantCredit"];
+  const montantValeur = isMontantAvecDevise(montant) ? formatMontant(montant.valeur, montant.devise) : "—";
+
+  return (
+    <div className="bg-white rounded-lg border border-[#e5e8ec] p-4 flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <Link href="/consultation/dossiers" className="text-sm text-ink-500 hover:text-brand-600 flex items-center gap-1">
+          ‹ Liste
+        </Link>
+        <div className="h-6 w-px bg-ink-200" />
+        <div>
+          <h1 className="text-[18px] font-bold text-ink-900">{dossier.produitLibelle}</h1>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="font-mono text-sm text-ink-600">{dossier.reference}</span>
+            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+              dossier.statut === "EN_COURS" ? "bg-[#eef4ff] text-[#2a5bd7]" :
+              dossier.statut === "VALIDE" ? "bg-[#e6f6ee] text-[#177a52]" :
+              dossier.statut === "EN_ATTENTE" ? "bg-[#fef3e2] text-[#b45309]" :
+              "bg-ink-100 text-ink-600"
+            }`}>
+              {dossier.statut === "EN_COURS" ? "En cours" :
+               dossier.statut === "VALIDE" ? "Validé" :
+               dossier.statut === "EN_ATTENTE" ? "En attente" : dossier.statut}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-6">
+        <div className="text-right">
+          <div className="text-[10.5px] font-semibold uppercase tracking-wider text-ink-500 mb-1">Montant</div>
+          <div className="text-[26px] font-extrabold text-ink-900 tabular-nums">{montantValeur}</div>
+        </div>
+        <button className="px-4 py-2 bg-[#e8632b] text-white rounded-lg text-sm font-semibold hover:bg-[#d45524] transition-colors">
+          Nouvel événement
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
   const schema = getProduitSchema(dossier.produit);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 text-xs text-ink-500">
-        <Link href="/" className="hover:text-brand-600">Consultation</Link>
-        <span>/</span>
-        <Link href="/consultation/dossiers" className="hover:text-brand-600">Dossiers Trade</Link>
-        <span>/</span>
-        <span className="text-ink-700 font-medium">{dossier.reference}</span>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <DossierHeader dossier={dossier} />
-        </div>
-        {dossier.clientInfo && (
-          <div>
-            <BandeauClient clientInfo={dossier.clientInfo} />
-          </div>
-        )}
-      </div>
+    <div className="bg-[#f6f7f9] min-h-screen py-6">
+      <div className="max-w-[1240px] mx-auto space-y-4">
+        <EnTeteCompact dossier={dossier} />
+        <BandeauEcheance dossier={dossier} />
 
       {schema ? (
         dossier.produit === "IRD" ? (
@@ -737,6 +865,7 @@ export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
       )}
 
       {dossier.produit !== "IRD" && dossier.produit !== "ERD" && dossier.produit !== "ILC" && <EvenementsTable evenements={dossier.evenements} />}
+      </div>
     </div>
   );
 }
