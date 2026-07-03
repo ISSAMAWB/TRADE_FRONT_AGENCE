@@ -465,7 +465,7 @@ function DetailILC({ dossier }: { dossier: DossierTrade }) {
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         <CarteInfo titre="Montant & Frais">
           <div className="space-y-2">
             <ChampCarte label="Montant du crédit" value={isMontantAvecDevise(montantCredit) ? formatMontant(montantCredit.valeur, montantCredit.devise) : <span className="text-ink-300">—</span>} />
@@ -502,7 +502,7 @@ function DetailILC({ dossier }: { dossier: DossierTrade }) {
       </div>
 
       {titresImportation && Array.isArray(titresImportation) && titresImportation.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           <CarteInfo titre="Titres d'importation">
             <div className="flex flex-wrap gap-1.5 items-center">
               {titresImportation.slice(0, 3).map((item, idx) => (
