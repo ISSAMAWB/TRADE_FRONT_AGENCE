@@ -453,6 +453,76 @@ function ChampCarte({ label, value }: { label: string; value: React.ReactNode })
   );
 }
 
+function DetailILC({ dossier }: { dossier: DossierTrade }) {
+  const montantCredit = dossier.donnees["montantCredit"];
+  const montantDisponible = dossier.donnees["montantDisponible"];
+  const montantReclame = dossier.donnees["montantReclame"];
+  const tolerance = dossier.donnees["tolerance"];
+  const typeFrais = dossier.donnees["typeFrais"];
+  const dateExpiration = dossier.donnees["dateExpiration"];
+  const lieuExpiration = dossier.donnees["lieuExpiration"];
+  const titresImportation = dossier.donnees["referencesTitresImportation"];
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <CarteInfo titre="Montant & Frais">
+          <div className="space-y-2">
+            <ChampCarte label="Montant du crédit" value={isMontantAvecDevise(montantCredit) ? formatMontant(montantCredit.valeur, montantCredit.devise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Montant disponible" value={isMontantAvecDevise(montantDisponible) ? formatMontant(montantDisponible.valeur, montantDisponible.devise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Montant réclamé" value={isMontantAvecDevise(montantReclame) ? formatMontant(montantReclame.valeur, montantReclame.devise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Tolérance" value={tolerance ? String(tolerance) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Type de frais" value={typeFrais ? String(typeFrais) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Expiration">
+          <div className="space-y-2">
+            <ChampCarte label="Date d'expiration" value={dateExpiration ? formatDate(String(dateExpiration)) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Lieu d'expiration" value={lieuExpiration ? String(lieuExpiration) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Références">
+          <div className="space-y-2">
+            <ChampCarte label="Référence de l'opération" value={dossier.donnees["referenceOperation"] ? String(dossier.donnees["referenceOperation"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Mode de réalisation" value={dossier.donnees["modeRealisation"] ? String(dossier.donnees["modeRealisation"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Nature de l'opération" value={dossier.donnees["natureOperation"] ? String(dossier.donnees["natureOperation"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Parties impliquées">
+          <div className="space-y-2">
+            <ChampCarte label="Donneur d'ordre" value={dossier.donnees["donneurOrdre"] ? String(dossier.donnees["donneurOrdre"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Bénéficiaire" value={dossier.donnees["beneficiaire"] ? String(dossier.donnees["beneficiaire"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Banque de notification" value={dossier.donnees["banqueNotification"] ? String(dossier.donnees["banqueNotification"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Banque de confirmation" value={dossier.donnees["banqueConfirmation"] ? String(dossier.donnees["banqueConfirmation"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+      </div>
+
+      {titresImportation && Array.isArray(titresImportation) && titresImportation.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <CarteInfo titre="Titres d'importation">
+            <div className="flex flex-wrap gap-1.5 items-center">
+              {titresImportation.slice(0, 3).map((item, idx) => (
+                <span key={idx} className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium bg-ink-50 text-ink-700 border border-ink-200 rounded-md">
+                  {String(item)}
+                </span>
+              ))}
+              {titresImportation.length > 3 && (
+                <button className="text-xs text-brand-500 hover:underline font-medium px-1">...</button>
+              )}
+            </div>
+          </CarteInfo>
+        </div>
+      )}
+
+      <EvenementsTable evenements={dossier.evenements} />
+    </div>
+  );
+}
+
 function DetailERD({ dossier }: { dossier: DossierTrade }) {
   const montantRemise = dossier.donnees["montantRemise"];
   const encours = dossier.donnees["encours"];
@@ -655,6 +725,8 @@ export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
           <DetailIRD dossier={dossier} />
         ) : dossier.produit === "ERD" ? (
           <DetailERD dossier={dossier} />
+        ) : dossier.produit === "ILC" ? (
+          <DetailILC dossier={dossier} />
         ) : (
           <DetailsDossierBloc blocs={schema.blocs} dossier={dossier} />
         )
@@ -664,7 +736,7 @@ export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
         </div>
       )}
 
-      {dossier.produit !== "IRD" && dossier.produit !== "ERD" && <EvenementsTable evenements={dossier.evenements} />}
+      {dossier.produit !== "IRD" && dossier.produit !== "ERD" && dossier.produit !== "ILC" && <EvenementsTable evenements={dossier.evenements} />}
     </div>
   );
 }
