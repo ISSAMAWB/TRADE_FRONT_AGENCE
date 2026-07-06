@@ -817,31 +817,20 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
-              <SectionLabel>Caractéristiques de l'opération</SectionLabel>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <SectionLabel>Parties impliquées</SectionLabel>
+              <div className="space-y-4">
                 <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">Réf. de l'opération</div>
-                  <div className="text-[13px] font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceOperation"] || "—")}</div>
+                  <div className="text-[13px] font-semibold text-[#0f172a]">{client?.raisonSociale || String(dossier.donnees[isILC ? "donneurOrdre" : "client"] || "—")}</div>
+                  <div className="text-[11px] text-[#64748b]">Client · {isILC ? "Donneur d'ordre" : "Tiré"}</div>
+                  <div className="text-[12px] font-mono text-[#0f172a]">{client?.numeroCompte || "—"}</div>
                 </div>
                 <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Réf. correspondant" : "Autre référence"}</div>
-                  <div className="text-[13px] font-medium text-[#0f172a] font-mono">
-                    {String(dossier.donnees[isILC ? "referenceCorrespondant" : "autreReference"] || "—")}
-                  </div>
+                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Bénéficiaire" : "Tireur"}</div>
+                  <div className="text-[13px] font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "beneficiaire" : "tireur"] || "—")}</div>
                 </div>
                 <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">Type d'opération</div>
-                  <div className="text-[13px] font-medium text-[#0f172a]">{String(dossier.donnees["natureOperation"] || "Opération commerciale")}</div>
-                </div>
-                <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Mode de réalisation" : "Conditions de remise"}</div>
-                  <div className="text-[13px] font-medium text-[#0f172a]">{String(isILC ? modeRealisation : conditionsRemise || "—")}</div>
-                </div>
-                <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Nature de la confirmation" : "Échéance"}</div>
-                  <div className={`text-[13px] font-semibold ${isILC ? (isConfirme ? "text-[#177a52]" : "text-[#6d4fc4]") : "text-[#0f172a]"}`}>
-                    {isILC ? (isConfirme ? "Confirmed" : "Unconfirmed") : (dateEcheance ? formatDate(String(dateEcheance)) : "—")}
-                  </div>
+                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Banque notificatrice" : "Partie remettante"}</div>
+                  <div className="text-[13px] font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "banqueNotification" : "partieRemettante"] || "—")}</div>
                 </div>
               </div>
             </Card>
@@ -900,20 +889,31 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
 
         <div>
           <Card className="border-l-[3px] border-l-[#e8632b] h-full">
-            <SectionLabel>Parties impliquées</SectionLabel>
+            <SectionLabel>Caractéristiques de l'opération</SectionLabel>
             <div className="space-y-4">
               <div>
-                <div className="text-[13px] font-semibold text-[#0f172a]">{client?.raisonSociale || String(dossier.donnees[isILC ? "donneurOrdre" : "client"] || "—")}</div>
-                <div className="text-[11px] text-[#64748b]">Client · {isILC ? "Donneur d'ordre" : "Tiré"}</div>
-                <div className="text-[12px] font-mono text-[#0f172a]">{client?.numeroCompte || "—"}</div>
+                <div className="text-[11.5px] text-[#94a3b8] mb-1">Réf. de l'opération</div>
+                <div className="text-[13px] font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceOperation"] || "—")}</div>
               </div>
               <div>
-                <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Bénéficiaire" : "Tireur"}</div>
-                <div className="text-[13px] font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "beneficiaire" : "tireur"] || "—")}</div>
+                <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Réf. correspondant" : "Autre référence"}</div>
+                <div className="text-[13px] font-medium text-[#0f172a] font-mono">
+                  {String(dossier.donnees[isILC ? "referenceCorrespondant" : "autreReference"] || "—")}
+                </div>
               </div>
               <div>
-                <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Banque notificatrice" : "Partie remettante"}</div>
-                <div className="text-[13px] font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "banqueNotification" : "partieRemettante"] || "—")}</div>
+                <div className="text-[11.5px] text-[#94a3b8] mb-1">Type d'opération</div>
+                <div className="text-[13px] font-medium text-[#0f172a]">{String(dossier.donnees["natureOperation"] || "Opération commerciale")}</div>
+              </div>
+              <div>
+                <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Mode de réalisation" : "Conditions de remise"}</div>
+                <div className="text-[13px] font-medium text-[#0f172a]">{String(isILC ? modeRealisation : conditionsRemise || "—")}</div>
+              </div>
+              <div>
+                <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Nature de la confirmation" : "Échéance"}</div>
+                <div className={`text-[13px] font-semibold ${isILC ? (isConfirme ? "text-[#177a52]" : "text-[#6d4fc4]") : "text-[#0f172a]"}`}>
+                  {isILC ? (isConfirme ? "Confirmed" : "Unconfirmed") : (dateEcheance ? formatDate(String(dateEcheance)) : "—")}
+                </div>
               </div>
             </div>
           </Card>
