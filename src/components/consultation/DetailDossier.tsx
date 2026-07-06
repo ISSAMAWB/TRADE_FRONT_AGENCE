@@ -465,13 +465,13 @@ function DetailsDossierBloc({ blocs, dossier }: { blocs: BlocSchema[]; dossier: 
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b] mb-3">{children}</div>
+    <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b] mb-2.5">{children}</div>
   );
 }
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-white rounded-[10px] border border-[#e5e8ec] p-4 ${className}`}>{children}</div>
+    <div className={`bg-white rounded-[10px] border border-[#e5e8ec] p-3.5 ${className}`}>{children}</div>
   );
 }
 
@@ -561,12 +561,12 @@ function BandeauEcheanceV2({
   const progress = debut && fin ? Math.min(100, Math.max(0, ((now.getTime() - debut.getTime()) / (fin.getTime() - debut.getTime())) * 100)) : 0;
 
   return (
-    <div className={`rounded-[10px] border p-4 ${isAlerte ? "bg-[#fef2f2] border-[#fecaca]" : "bg-[#fffaf4] border-[#f3ddc2]"}`}>
-      <div className="flex items-center justify-between mb-3">
+    <div className={`rounded-[10px] border px-3.5 py-2.5 ${isAlerte ? "bg-[#fef2f2] border-[#fecaca]" : "bg-[#fffaf4] border-[#f3ddc2]"}`}>
+      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
           <span className={`text-[10.5px] font-semibold uppercase tracking-[0.08em] ${isAlerte ? "text-[#dc2626]" : "text-[#c2410c]"}`}>{label}</span>
           {date && (
-            <span className={`text-[21px] font-extrabold tabular-nums ${isAlerte ? "text-[#dc2626]" : "text-[#9a3412]"}`}>
+            <span className={`text-[19px] font-extrabold tabular-nums ${isAlerte ? "text-[#dc2626]" : "text-[#9a3412]"}`}>
               {formatDate(date)}
             </span>
           )}
@@ -581,7 +581,7 @@ function BandeauEcheanceV2({
 
       {date && (
         <>
-          <div className="relative h-1.5 bg-[#e5e8ec] rounded-full mb-3">
+          <div className="relative h-1.5 bg-[#e5e8ec] rounded-full mb-2">
             <div
               className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-[#2a9d6f] to-[#f97316]"
               style={{ width: `${progress}%` }}
@@ -605,7 +605,7 @@ function BandeauEcheanceV2({
 function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenements"] }) {
   return (
     <Card>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-2.5">
         <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b] flex items-center gap-2">
           Événements du dossier
         </div>
@@ -628,13 +628,13 @@ function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenement
           <tbody>
             {evenements.map((e) => (
               <tr key={e.reference} className="border-b border-[#e5e8ec] hover:bg-[#f8fafc] transition-colors cursor-pointer">
-                <td className="py-[9px] px-3 font-mono text-[11px] text-[#64748b]">{e.reference}</td>
-                <td className="py-[9px] px-3 font-semibold text-[#0f172a]">{e.nature}</td>
-                <td className="py-[9px] px-3 text-right font-mono text-[#0f172a] tabular-nums">
+                <td className="py-[7px] px-3 font-mono text-[11px] text-[#64748b]">{e.reference}</td>
+                <td className="py-[7px] px-3 font-semibold text-[#0f172a]">{e.nature}</td>
+                <td className="py-[7px] px-3 text-right font-mono text-[#0f172a] tabular-nums">
                   {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-[#94a3b8]">—</span>}
                 </td>
-                <td className="py-[9px] px-3 text-[#64748b]">{formatDate(e.dateCreation)}</td>
-                <td className="py-[9px] px-3">
+                <td className="py-[7px] px-3 text-[#64748b]">{formatDate(e.dateCreation)}</td>
+                <td className="py-[7px] px-3">
                   <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
                     e.statut === "VALIDE" ? "bg-[#e6f6ee] text-[#177a52]" :
                     e.statut === "EN_COURS" ? "bg-[#eef4ff] text-[#2a5bd7]" :
@@ -646,9 +646,9 @@ function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenement
                      e.statut === "EN_ATTENTE" ? "En attente" : e.statut}
                   </span>
                 </td>
-                <td className="py-[9px] px-3 text-right">
+                <td className="py-[7px] px-3 text-right">
                   <button className="text-[#94a3b8] hover:text-[#e8632b] transition">
-                    <Eye size={16} />
+                    <Eye size={15} />
                   </button>
                 </td>
               </tr>
@@ -689,17 +689,17 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
   const dateEmission = dossier.donnees["dateEmission"] || dossier.dateMiseAJour;
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 space-y-4">
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="lg:col-span-2">
           <Card>
             <div className="flex justify-between items-start">
               <div>
-                <Link href="/consultation/dossiers" className="text-xs text-[#64748b] hover:text-[#e8632b] flex items-center gap-1 mb-2">
+                <Link href="/consultation/dossiers" className="text-[11px] text-[#64748b] hover:text-[#e8632b] flex items-center gap-1 mb-1.5">
                   ‹ Retour à la liste
                 </Link>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[11.5px] text-[#64748b]">{isILC ? "ILC · Import" : "IRD · Import"}</span>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="text-[11px] text-[#64748b]">{isILC ? "ILC · Import" : "IRD · Import"}</span>
                   {isILC && (
                     <>
                       <Badge color={isConfirme ? "green" : "purple"}>
@@ -720,10 +720,10 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
                   )}
                   <Badge color="blue">En cours</Badge>
                 </div>
-                <h1 className="text-[19px] font-bold text-[#0f172a] leading-tight">
+                <h1 className="text-[17px] font-bold text-[#0f172a] leading-tight">
                   {dossier.produitLibelle} <span className="font-mono text-[#64748b] font-normal">{dossier.reference}</span>
                 </h1>
-                <div className="text-[11.5px] text-[#64748b] mt-1">
+                <div className="text-[11px] text-[#64748b] mt-0.5">
                   {String(dossier.donnees["natureOperation"] || "Opération commerciale")}
                   {dossier.donnees["referenceCorrespondant"] && (
                     <span> · Réf. correspondant {String(dossier.donnees["referenceCorrespondant"])}</span>
@@ -732,17 +732,17 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
               </div>
             </div>
 
-            <div className="border-t border-[#e5e8ec] mt-4 pt-4">
-              <div className="flex items-center gap-6">
+            <div className="border-t border-[#e5e8ec] mt-3 pt-3">
+              <div className="flex items-center gap-5">
                 <div>
-                  <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94a3b8]">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#94a3b8]">
                     {isILC ? "Montant du crédit" : "Montant de la remise"}
                   </div>
-                  <div className="text-[28px] font-extrabold text-[#0f172a] tabular-nums leading-tight">
+                  <div className="text-[24px] font-extrabold text-[#0f172a] tabular-nums leading-tight">
                     {montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}
                   </div>
                   {montantPrincipalOk && (
-                    <div className="text-[11px] text-[#64748b]">
+                    <div className="text-[10.5px] text-[#64748b]">
                       {isILC ? `Tolérance ${dossier.donnees["tolerance"] || "—"}` : `Frais Maroc : ${dossier.donnees["fraisAuMaroc"] || "—"} · Étranger : ${dossier.donnees["fraisAEtranger"] || "—"}`}
                     </div>
                   )}
@@ -803,121 +803,93 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
               </div>
             </div>
           </Card>
-
-          <BandeauEcheanceV2
-            date={dateEcheanceOuExpiration}
-            dateDebut={dateEmission ? String(dateEmission) : undefined}
-            contexte={isILC ? String(dossier.donnees["lieuExpiration"] || "") : String(conditionsRemise || "")}
-            label={isILC ? "DATE D'EXPIRATION" : "DATE D'ÉCHÉANCE"}
-            labelDebut={isILC ? "Émission" : "Ouverture"}
-            labelFin={isILC ? "Expiration" : "Échéance"}
-            isPaiementAVue={isPaiementAVue}
-            documentsRecusLe={isIRD ? dossier.donnees["dateReceptionDocuments"] : undefined}
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
-              <SectionLabel>Parties impliquées</SectionLabel>
-              <div className="space-y-4">
-                <div>
-                  <div className="text-[13px] font-semibold text-[#0f172a]">{client?.raisonSociale || String(dossier.donnees[isILC ? "donneurOrdre" : "client"] || "—")}</div>
-                  <div className="text-[11px] text-[#64748b]">Client · {isILC ? "Donneur d'ordre" : "Tiré"}</div>
-                  <div className="text-[12px] font-mono text-[#0f172a]">{client?.numeroCompte || "—"}</div>
-                </div>
-                <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Bénéficiaire" : "Tireur"}</div>
-                  <div className="text-[13px] font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "beneficiaire" : "tireur"] || "—")}</div>
-                </div>
-                <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Banque notificatrice" : "Partie remettante"}</div>
-                  <div className="text-[13px] font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "banqueNotification" : "partieRemettante"] || "—")}</div>
-                </div>
-              </div>
-            </Card>
-
-            <Card>
-              <SectionLabel>Informations financières</SectionLabel>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Montant du crédit" : "Montant de la remise"}</div>
-                  <div className="text-[13px] font-semibold text-[#0f172a]">
-                    {montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Tolérance" : "Encours"}</div>
-                  <div className={`text-[13px] font-semibold ${isILC ? "text-[#0f172a]" : "text-[#e8632b]"}`}>
-                    {isILC ? String(dossier.donnees["tolerance"] || "—") : (isMontantAvecDevise(dossier.donnees["encours"]) ? formatMontant(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) : "—")}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Montant réclamé" : "Contre-valeur MAD"}</div>
-                  <div className={`text-[13px] font-semibold ${isILC ? "text-[#e8632b]" : "text-[#0f172a]"}`}>
-                    {isILC
-                      ? (isMontantAvecDevise(dossier.donnees["montantReclame"]) ? formatMontant(dossier.donnees["montantReclame"].valeur, dossier.donnees["montantReclame"].devise) : "—")
-                      : (montantPrincipalOk && formatContreValeurMAD(montantPrincipalOk.valeur, montantPrincipalOk.devise) ? formatContreValeurMAD(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—")}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Montant disponible" : "Frais au Maroc"}</div>
-                  <div className={`text-[13px] font-semibold ${isILC ? "text-[#2a9d6f]" : "text-[#0f172a]"}`}>
-                    {isILC
-                      ? (isMontantAvecDevise(dossier.donnees["montantDisponible"]) ? formatMontant(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise) : "—")
-                      : String(dossier.donnees["fraisAuMaroc"] || "—")}
-                  </div>
-                </div>
-                {isILC && (
-                  <div className="sm:col-span-2">
-                    <div className="text-[11.5px] text-[#94a3b8] mb-1">Contre-valeur MAD</div>
-                    <div className="text-[13px] font-semibold text-[#0f172a]">
-                      {isMontantAvecDevise(dossier.donnees["montantDisponible"]) && formatContreValeurMAD(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise)
-                        ? formatContreValeurMAD(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise)
-                        : "—"}
-                    </div>
-                  </div>
-                )}
-                {!isILC && (
-                  <div>
-                    <div className="text-[11.5px] text-[#94a3b8] mb-1">Frais à l'étranger</div>
-                    <div className="text-[13px] font-semibold text-[#0f172a]">{String(dossier.donnees["fraisAEtranger"] || "—")}</div>
-                  </div>
-                )}
-              </div>
-            </Card>
-          </div>
         </div>
 
         <div>
           <Card className="border-l-[3px] border-l-[#e8632b] h-full">
-            <SectionLabel>Caractéristiques de l'opération</SectionLabel>
-            <div className="space-y-4">
+            <SectionLabel>Parties impliquées</SectionLabel>
+            <div className="space-y-2.5">
               <div>
-                <div className="text-[11.5px] text-[#94a3b8] mb-1">Réf. de l'opération</div>
-                <div className="text-[13px] font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceOperation"] || "—")}</div>
+                <div className="text-[12.5px] font-semibold text-[#0f172a] leading-tight">{client?.raisonSociale || String(dossier.donnees[isILC ? "donneurOrdre" : "client"] || "—")}</div>
+                <div className="text-[10.5px] text-[#64748b]">Client · {isILC ? "Donneur d'ordre" : "Tiré"} · <span className="font-mono">{client?.numeroCompte || "—"}</span></div>
               </div>
-              <div>
-                <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Réf. correspondant" : "Autre référence"}</div>
-                <div className="text-[13px] font-medium text-[#0f172a] font-mono">
-                  {String(dossier.donnees[isILC ? "referenceCorrespondant" : "autreReference"] || "—")}
-                </div>
-              </div>
-              <div>
-                <div className="text-[11.5px] text-[#94a3b8] mb-1">Type d'opération</div>
-                <div className="text-[13px] font-medium text-[#0f172a]">{String(dossier.donnees["natureOperation"] || "Opération commerciale")}</div>
-              </div>
-              <div>
-                <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Mode de réalisation" : "Conditions de remise"}</div>
-                <div className="text-[13px] font-medium text-[#0f172a]">{String(isILC ? modeRealisation : conditionsRemise || "—")}</div>
-              </div>
-              <div>
-                <div className="text-[11.5px] text-[#94a3b8] mb-1">{isILC ? "Nature de la confirmation" : "Échéance"}</div>
-                <div className={`text-[13px] font-semibold ${isILC ? (isConfirme ? "text-[#177a52]" : "text-[#6d4fc4]") : "text-[#0f172a]"}`}>
-                  {isILC ? (isConfirme ? "Confirmed" : "Unconfirmed") : (dateEcheance ? formatDate(String(dateEcheance)) : "—")}
-                </div>
+              <div className="border-t border-[#e5e8ec] pt-2.5 grid grid-cols-[92px_1fr] gap-y-2 gap-x-2 text-[12px]">
+                <span className="text-[#94a3b8]">{isILC ? "Bénéficiaire" : "Tireur"}</span>
+                <span className="font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "beneficiaire" : "tireur"] || "—")}</span>
+                <span className="text-[#94a3b8]">{isILC ? "Bq notificatrice" : "P. remettante"}</span>
+                <span className="font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "banqueNotification" : "partieRemettante"] || "—")}</span>
               </div>
             </div>
           </Card>
         </div>
+      </div>
+
+      <BandeauEcheanceV2
+        date={dateEcheanceOuExpiration}
+        dateDebut={dateEmission ? String(dateEmission) : undefined}
+        contexte={isILC ? `Lieu d'expiration : ${dossier.donnees["lieuExpiration"] || "—"}` : String(conditionsRemise || "")}
+        label={isILC ? "DATE D'EXPIRATION" : "DATE D'ÉCHÉANCE"}
+        labelDebut={isILC ? "Émission" : "Ouverture"}
+        labelFin={isILC ? "Expiration" : "Échéance"}
+        isPaiementAVue={isPaiementAVue}
+        documentsRecusLe={isIRD ? dossier.donnees["dateReceptionDocuments"] : undefined}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <Card>
+          <SectionLabel>Caractéristiques de l'opération</SectionLabel>
+          <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
+            <span className="text-[#94a3b8]">Réf. de l'opération</span>
+            <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceOperation"] || "—")}</span>
+            <span className="text-[#94a3b8]">{isILC ? "Réf. correspondant" : "Autre référence"}</span>
+            <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees[isILC ? "referenceCorrespondant" : "autreReference"] || "—")}</span>
+            <span className="text-[#94a3b8]">Type d'opération</span>
+            <span className="font-medium text-[#0f172a]">{String(dossier.donnees["natureOperation"] || "Opération commerciale")}</span>
+            <span className="text-[#94a3b8]">{isILC ? "Mode de réalisation" : "Conditions de remise"}</span>
+            <span className="font-medium text-[#0f172a]">{String(isILC ? modeRealisation : conditionsRemise || "—")}</span>
+            <span className="text-[#94a3b8]">{isILC ? "Confirmation" : "Échéance"}</span>
+            <span className={`font-semibold ${isILC ? (isConfirme ? "text-[#177a52]" : "text-[#6d4fc4]") : "text-[#e8632b]"}`}>
+              {isILC ? (isConfirme ? "Confirmed" : "Unconfirmed") : (dateEcheance ? formatDate(String(dateEcheance)) : "—")}
+            </span>
+          </div>
+        </Card>
+
+        <Card>
+          <SectionLabel>Informations financières</SectionLabel>
+          <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
+            <span className="text-[#94a3b8]">{isILC ? "Montant du crédit" : "Montant de la remise"}</span>
+            <span className="font-semibold text-[#0f172a]">{montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}</span>
+            <span className="text-[#94a3b8]">{isILC ? "Tolérance" : "Encours"}</span>
+            <span className={`font-semibold ${isILC ? "text-[#0f172a]" : "text-[#e8632b]"}`}>
+              {isILC ? String(dossier.donnees["tolerance"] || "—") : (isMontantAvecDevise(dossier.donnees["encours"]) ? formatMontant(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) : "—")}
+            </span>
+            {isILC && (
+              <>
+                <span className="text-[#94a3b8]">Montant réclamé</span>
+                <span className="font-semibold text-[#e8632b]">{isMontantAvecDevise(dossier.donnees["montantReclame"]) ? formatMontant(dossier.donnees["montantReclame"].valeur, dossier.donnees["montantReclame"].devise) : "—"}</span>
+                <span className="text-[#94a3b8]">Montant disponible</span>
+                <span className="font-semibold text-[#2a9d6f]">{isMontantAvecDevise(dossier.donnees["montantDisponible"]) ? formatMontant(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise) : "—"}</span>
+              </>
+            )}
+            {!isILC && (
+              <>
+                <span className="text-[#94a3b8]">Frais au Maroc</span>
+                <span className="font-medium text-[#0f172a]">{String(dossier.donnees["fraisAuMaroc"] || "—")}</span>
+                <span className="text-[#94a3b8]">Frais à l'étranger</span>
+                <span className="font-medium text-[#0f172a]">{String(dossier.donnees["fraisAEtranger"] || "—")}</span>
+              </>
+            )}
+            <span className="text-[#94a3b8]">Contre-valeur MAD</span>
+            <span className="font-semibold text-[#0f172a]">
+              {(() => {
+                const m = isILC ? dossier.donnees["montantDisponible"] : montantPrincipal;
+                return isMontantAvecDevise(m) && formatContreValeurMAD(m.valeur, m.devise)
+                  ? formatContreValeurMAD(m.valeur, m.devise)
+                  : "—";
+              })()}
+            </span>
+          </div>
+        </Card>
       </div>
 
       <EvenementsTableV2 evenements={dossier.evenements} />
@@ -1030,8 +1002,8 @@ export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
   const schema = getProduitSchema(dossier.produit);
 
   return (
-    <div className="bg-[#f6f7f9] min-h-screen py-6">
-      <div className="max-w-[1240px] mx-auto space-y-4">
+    <div className="bg-[#f6f7f9] min-h-screen py-4">
+      <div className="max-w-[1240px] mx-auto px-4 space-y-3">
         <div className="flex items-center gap-2 text-xs text-[#64748b]">
           <Link href="/" className="hover:text-[#e8632b]">Consultation</Link>
           <span>/</span>
