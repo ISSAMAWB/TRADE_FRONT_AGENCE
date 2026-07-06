@@ -176,6 +176,26 @@ function renderValeur(champ: ChampSchema, dossier: DossierTrade): React.ReactNod
     );
   }
 
+  if (champ.format === "multi-valeurs-ird" && Array.isArray(raw)) {
+    const MAX_VISIBLE = 3;
+    const visible = raw.slice(0, MAX_VISIBLE);
+    const remaining = raw.length - MAX_VISIBLE;
+    return (
+      <div className="flex flex-wrap gap-2 items-center">
+        {visible.map((item, idx) => (
+          <span key={idx} className="inline-flex items-center px-2 py-1 text-xs font-medium bg-ink-50 text-ink-700 border border-ink-200 rounded-lg">
+            {String(item)}
+          </span>
+        ))}
+        {remaining > 0 && (
+          <button className="text-sm text-brand-500 hover:underline font-medium px-1">
+            ...
+          </button>
+        )}
+      </div>
+    );
+  }
+
   if (Array.isArray(raw)) {
     return (
       <div className="flex flex-wrap gap-2">
@@ -330,12 +350,59 @@ function BlocFinancierILC({ dossier }: { dossier: DossierTrade }) {
   );
 }
 
+function BlocFinancierIRD({ dossier }: { dossier: DossierTrade }) {
+  const montantRemise = dossier.donnees["montantRemise"];
+  const encours = dossier.donnees["encours"];
+  const fraisAuMaroc = dossier.donnees["fraisAuMaroc"];
+  const fraisAEtranger = dossier.donnees["fraisAEtranger"];
+
+  const showRemise = isMontantAvecDevise(montantRemise);
+  const showEncours = isMontantAvecDevise(encours);
+  const showFraisMaroc = fraisAuMaroc !== undefined && fraisAuMaroc !== null && fraisAuMaroc !== "";
+  const showFraisEtranger = fraisAEtranger !== undefined && fraisAEtranger !== null && fraisAEtranger !== "";
+
+  return (
+    <div className="rounded-xl border border-ink-100 bg-ink-50/50 p-5">
+      <SectionHeader titre="Informations financières" icone="Banknote" />
+      <div className="grid gap-x-5 gap-y-4 md:grid-cols-3">
+        {showRemise && (
+          <div className="min-w-0">
+            <FieldLabel>Montant de la remise</FieldLabel>
+            <FieldValue>{formatMontant(montantRemise.valeur, montantRemise.devise)}</FieldValue>
+          </div>
+        )}
+        {showEncours && (
+          <div className="min-w-0">
+            <FieldLabel>Encours</FieldLabel>
+            <FieldValue>{formatMontant(encours.valeur, encours.devise)}</FieldValue>
+          </div>
+        )}
+        {showFraisMaroc && (
+          <div className="min-w-0">
+            <FieldLabel>Frais au Maroc</FieldLabel>
+            <FieldValue>{String(fraisAuMaroc)}</FieldValue>
+          </div>
+        )}
+        {showFraisEtranger && (
+          <div className="min-w-0 md:col-start-3">
+            <FieldLabel>Frais à l'étranger</FieldLabel>
+            <FieldValue>{String(fraisAEtranger)}</FieldValue>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function DetailsDossierBloc({ blocs, dossier }: { blocs: BlocSchema[]; dossier: DossierTrade }) {
   return (
     <div className="space-y-4">
       {blocs.map((bloc) => {
         if (dossier.produit === "ILC" && bloc.titre === "Informations financières") {
           return <BlocFinancierILC key={bloc.titre} dossier={dossier} />;
+        }
+        if (dossier.produit === "IRD" && bloc.titre === "Informations financières") {
+          return <BlocFinancierIRD key={bloc.titre} dossier={dossier} />;
         }
         return (
           <div key={bloc.titre} className="rounded-xl border border-ink-100 bg-ink-50/50 p-5">
@@ -362,6 +429,223 @@ function DetailsDossierBloc({ blocs, dossier }: { blocs: BlocSchema[]; dossier: 
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function CarteInfo({ titre, children }: { titre: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-white rounded-xl border border-ink-100 p-3 flex flex-col justify-between h-full">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-brand-500 mb-2 pb-1 border-b border-ink-100">
+        {titre}
+      </div>
+      <div className="flex-1">{children}</div>
+    </div>
+  );
+}
+
+function ChampCarte({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-ink-500 mb-0.5">{label}</div>
+      <div className="text-[13px] font-medium text-ink-900 leading-tight">{value}</div>
+    </div>
+  );
+}
+
+function DetailILC({ dossier }: { dossier: DossierTrade }) {
+  const montantCredit = dossier.donnees["montantCredit"];
+  const montantDisponible = dossier.donnees["montantDisponible"];
+  const montantReclame = dossier.donnees["montantReclame"];
+  const tolerance = dossier.donnees["tolerance"];
+  const typeFrais = dossier.donnees["typeFrais"];
+  const dateExpiration = dossier.donnees["dateExpiration"];
+  const lieuExpiration = dossier.donnees["lieuExpiration"];
+  const titresImportation = dossier.donnees["referencesTitresImportation"];
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <CarteInfo titre="Montant & Frais">
+          <div className="space-y-2">
+            <ChampCarte label="Montant du crédit" value={isMontantAvecDevise(montantCredit) ? formatMontant(montantCredit.valeur, montantCredit.devise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Montant disponible" value={isMontantAvecDevise(montantDisponible) ? formatMontant(montantDisponible.valeur, montantDisponible.devise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Montant réclamé" value={isMontantAvecDevise(montantReclame) ? formatMontant(montantReclame.valeur, montantReclame.devise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Tolérance" value={tolerance ? String(tolerance) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Type de frais" value={typeFrais ? String(typeFrais) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Expiration">
+          <div className="space-y-2">
+            <ChampCarte label="Date d'expiration" value={dateExpiration ? formatDate(String(dateExpiration)) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Lieu d'expiration" value={lieuExpiration ? String(lieuExpiration) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Références">
+          <div className="space-y-2">
+            <ChampCarte label="Référence de l'opération" value={dossier.donnees["referenceOperation"] ? String(dossier.donnees["referenceOperation"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Mode de réalisation" value={dossier.donnees["modeRealisation"] ? String(dossier.donnees["modeRealisation"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Nature de l'opération" value={dossier.donnees["natureOperation"] ? String(dossier.donnees["natureOperation"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Parties impliquées">
+          <div className="space-y-2">
+            <ChampCarte label="Donneur d'ordre" value={dossier.donnees["donneurOrdre"] ? String(dossier.donnees["donneurOrdre"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Bénéficiaire" value={dossier.donnees["beneficiaire"] ? String(dossier.donnees["beneficiaire"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Banque de notification" value={dossier.donnees["banqueNotification"] ? String(dossier.donnees["banqueNotification"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Banque de confirmation" value={dossier.donnees["banqueConfirmation"] ? String(dossier.donnees["banqueConfirmation"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+      </div>
+
+      {titresImportation && Array.isArray(titresImportation) && titresImportation.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <CarteInfo titre="Titres d'importation">
+            <div className="flex flex-wrap gap-1.5 items-center">
+              {titresImportation.slice(0, 3).map((item, idx) => (
+                <span key={idx} className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium bg-ink-50 text-ink-700 border border-ink-200 rounded-md">
+                  {String(item)}
+                </span>
+              ))}
+              {titresImportation.length > 3 && (
+                <button className="text-xs text-brand-500 hover:underline font-medium px-1">...</button>
+              )}
+            </div>
+          </CarteInfo>
+        </div>
+      )}
+
+      <EvenementsTable evenements={dossier.evenements} />
+    </div>
+  );
+}
+
+function DetailERD({ dossier }: { dossier: DossierTrade }) {
+  const montantRemise = dossier.donnees["montantRemise"];
+  const encours = dossier.donnees["encours"];
+  const typeFrais = dossier.donnees["typeFrais"];
+  const conditionsRemise = dossier.donnees["conditionsRemiseDocuments"];
+  const dateEcheance = dossier.donnees["dateEcheance"];
+  const referencesCourrier = dossier.donnees["referencesCourrier"];
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <CarteInfo titre="Montant & Frais">
+          <div className="space-y-2">
+            <ChampCarte label="Montant de la remise" value={isMontantAvecDevise(montantRemise) ? formatMontant(montantRemise.valeur, montantRemise.devise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Encours" value={isMontantAvecDevise(encours) ? formatMontant(encours.valeur, encours.devise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Type de frais" value={typeFrais ? String(typeFrais) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Conditions & Échéance">
+          <div className="space-y-2">
+            <ChampCarte label="Conditions de remise" value={conditionsRemise ? String(conditionsRemise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Date d'échéance" value={dateEcheance ? formatDate(String(dateEcheance)) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Références">
+          <div className="space-y-2">
+            <ChampCarte label="Référence" value={dossier.donnees["referenceOperation"] ? String(dossier.donnees["referenceOperation"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Autre référence" value={dossier.donnees["autreReference"] ? String(dossier.donnees["autreReference"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Parties impliquées">
+          <div className="space-y-2">
+            <ChampCarte label="Tireur" value={dossier.donnees["client"] ? String(dossier.donnees["client"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Tiré" value={dossier.donnees["tire"] ? String(dossier.donnees["tire"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Banque d'encaissement" value={dossier.donnees["partieRemettante"] ? String(dossier.donnees["partieRemettante"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+      </div>
+
+      {referencesCourrier && isCourrierArray(referencesCourrier) && referencesCourrier.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <CarteInfo titre="Références de courrier">
+            <TableauCourriers courriers={referencesCourrier} />
+          </CarteInfo>
+        </div>
+      )}
+
+      <EvenementsTable evenements={dossier.evenements} />
+    </div>
+  );
+}
+
+function DetailIRD({ dossier }: { dossier: DossierTrade }) {
+  const montantRemise = dossier.donnees["montantRemise"];
+  const encours = dossier.donnees["encours"];
+  const fraisAuMaroc = dossier.donnees["fraisAuMaroc"];
+  const fraisAEtranger = dossier.donnees["fraisAEtranger"];
+  const conditionsRemise = dossier.donnees["conditionsRemiseDocuments"];
+  const dateEcheance = dossier.donnees["dateEcheance"];
+  const titresImportation = dossier.donnees["referencesTitresImportation"];
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <CarteInfo titre="Montant & Frais">
+          <div className="space-y-2">
+            <ChampCarte label="Montant de la remise" value={isMontantAvecDevise(montantRemise) ? formatMontant(montantRemise.valeur, montantRemise.devise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Encours" value={isMontantAvecDevise(encours) ? formatMontant(encours.valeur, encours.devise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Frais au Maroc" value={fraisAuMaroc ? String(fraisAuMaroc) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Frais à l'étranger" value={fraisAEtranger ? String(fraisAEtranger) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Conditions & Échéance">
+          <div className="space-y-2">
+            <ChampCarte label="Conditions de remise" value={conditionsRemise ? String(conditionsRemise) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Date d'échéance" value={dateEcheance ? formatDate(String(dateEcheance)) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Références">
+          <div className="space-y-2">
+            <ChampCarte label="Référence" value={dossier.donnees["referenceOperation"] ? String(dossier.donnees["referenceOperation"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Autre référence" value={dossier.donnees["autreReference"] ? String(dossier.donnees["autreReference"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+
+        <CarteInfo titre="Parties impliquées">
+          <div className="space-y-2">
+            <ChampCarte label="Tiré" value={dossier.donnees["client"] ? String(dossier.donnees["client"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Tireur" value={dossier.donnees["tireur"] ? String(dossier.donnees["tireur"]) : <span className="text-ink-300">—</span>} />
+            <ChampCarte label="Partie remettante" value={dossier.donnees["partieRemettante"] ? String(dossier.donnees["partieRemettante"]) : <span className="text-ink-300">—</span>} />
+          </div>
+        </CarteInfo>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <CarteInfo titre="Titres d'importation">
+          {(() => {
+            if (!Array.isArray(titresImportation) || titresImportation.length === 0) return <span className="text-ink-300">—</span>;
+            const MAX_VISIBLE = 3;
+            const visible = titresImportation.slice(0, MAX_VISIBLE);
+            const remaining = titresImportation.length - MAX_VISIBLE;
+            return (
+              <div className="flex flex-wrap gap-1.5 items-center">
+                {visible.map((item, idx) => (
+                  <span key={idx} className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium bg-ink-50 text-ink-700 border border-ink-200 rounded-md">
+                    {String(item)}
+                  </span>
+                ))}
+                {remaining > 0 && (
+                  <button className="text-xs text-brand-500 hover:underline font-medium px-1">...</button>
+                )}
+              </div>
+            );
+          })()}
+        </CarteInfo>
+      </div>
+
+      <EvenementsTable evenements={dossier.evenements} />
     </div>
   );
 }
@@ -425,19 +709,34 @@ export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
         <span className="text-ink-700 font-medium">{dossier.reference}</span>
       </div>
 
-      <DossierHeader dossier={dossier} />
-
-      {dossier.clientInfo && <BandeauClient clientInfo={dossier.clientInfo} />}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
+          <DossierHeader dossier={dossier} />
+        </div>
+        {dossier.clientInfo && (
+          <div>
+            <BandeauClient clientInfo={dossier.clientInfo} />
+          </div>
+        )}
+      </div>
 
       {schema ? (
-        <DetailsDossierBloc blocs={schema.blocs} dossier={dossier} />
+        dossier.produit === "IRD" ? (
+          <DetailIRD dossier={dossier} />
+        ) : dossier.produit === "ERD" ? (
+          <DetailERD dossier={dossier} />
+        ) : dossier.produit === "ILC" ? (
+          <DetailILC dossier={dossier} />
+        ) : (
+          <DetailsDossierBloc blocs={schema.blocs} dossier={dossier} />
+        )
       ) : (
         <div className="bg-white rounded-xl border border-ink-100 p-5 text-sm text-ink-500">
           Schéma inconnu pour le produit {dossier.produit}.
         </div>
       )}
 
-      <EvenementsTable evenements={dossier.evenements} />
+      {dossier.produit !== "IRD" && dossier.produit !== "ERD" && dossier.produit !== "ILC" && <EvenementsTable evenements={dossier.evenements} />}
     </div>
   );
 }

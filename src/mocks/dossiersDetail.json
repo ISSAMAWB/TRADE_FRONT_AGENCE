@@ -211,9 +211,12 @@
       "montantRemise": { "valeur": 21000, "devise": "EUR" },
       "encours": { "valeur": 5200, "devise": "EUR" },
       "typeFrais": "Partagés",
-      "referenceOperation": "IRD00302609-0145",
+      "referenceOperation": "IRD93903039",
+      "autreReference": "EXT928289",
       "conditionsRemiseDocuments": "Documents contre acceptation",
       "dateEcheance": "2026-08-15",
+      "fraisAuMaroc": "Tiré",
+      "fraisAEtranger": "Tiré",
       "referencesTitresImportation": [
         "TI-2025-09162",
         "TI-2025-09215",
@@ -296,6 +299,7 @@
       "encours": { "valeur": 6904.88, "devise": "EUR" },
       "typeFrais": "Partagés",
       "referenceOperation": "E-10-1-17-EQUARHIM",
+      "autreReference": "EXT928290",
       "conditionsRemiseDocuments": "Remise contre acceptation",
       "dateEcheance": "2026-09-05",
       "referencesCourrier": [

@@ -6,7 +6,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Crédit documentaire import",
     blocs: [
       {
-        titre: "Caractéristiques de l'opération",
+        titre: "Détails de l'opération",
         icone: "FileText",
         champs: [
           { cle: "referenceOperation", label: "Référence de l'opération" },
@@ -58,7 +58,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Crédit documentaire export",
     blocs: [
       {
-        titre: "Caractéristiques de l'opération",
+        titre: "Détails de l'opération",
         icone: "FileText",
         champs: [
           { cle: "referenceOperation", label: "Référence de l'opération" },
@@ -110,10 +110,11 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Remise documentaire import",
     blocs: [
       {
-        titre: "Caractéristiques de l'opération",
+        titre: "Détails de l'opération",
         icone: "FileText",
         champs: [
           { cle: "referenceOperation", label: "Référence" },
+          { cle: "autreReference", label: "Autre référence" },
           { cle: "conditionsRemiseDocuments", label: "Conditions de remise des documents" },
           { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
         ],
@@ -122,7 +123,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
         titre: "Parties impliquées",
         icone: "Building2",
         champs: [
-          { cle: "client", label: "Tiré (Importateur)", estClient: true },
+          { cle: "client", label: "Tiré", estClient: true },
           { cle: "tireur", label: "Tireur" },
           { cle: "partieRemettante", label: "Partie remettante" },
         ],
@@ -133,14 +134,15 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
         champs: [
           { cle: "montantRemise", label: "Montant de la remise", format: "montant" },
           { cle: "encours", label: "Encours", format: "montant" },
-          { cle: "typeFrais", label: "Type de frais" },
+          { cle: "fraisAuMaroc", label: "Frais au Maroc" },
+          { cle: "fraisAEtranger", label: "Frais à l'étranger" },
         ],
       },
       {
         titre: "Informations complémentaires",
         icone: "Info",
         champs: [
-          { cle: "referencesTitresImportation", label: "Titres d'importation" },
+          { cle: "referencesTitresImportation", label: "Titres d'importation", format: "multi-valeurs-ird" },
         ],
       },
     ],
@@ -150,10 +152,11 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Remise documentaire export",
     blocs: [
       {
-        titre: "Caractéristiques de l'opération",
+        titre: "Détails de l'opération",
         icone: "FileText",
         champs: [
           { cle: "referenceOperation", label: "Référence" },
+          { cle: "autreReference", label: "Autre référence" },
           { cle: "conditionsRemiseDocuments", label: "Conditions de remise des documents" },
           { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
         ],
@@ -162,9 +165,9 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
         titre: "Parties impliquées",
         icone: "Building2",
         champs: [
-          { cle: "client", label: "Exportateur (Donneur d'ordre)", estClient: true },
-          { cle: "tire", label: "Tiré (Importateur)" },
-          { cle: "partieRemettante", label: "Partie présentatrice" },
+          { cle: "client", label: "Tireur", estClient: true },
+          { cle: "tire", label: "Tiré" },
+          { cle: "partieRemettante", label: "Banque d'encaissement" },
         ],
       },
       {
@@ -190,7 +193,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
     libelle: "Financement",
     blocs: [
       {
-        titre: "Caractéristiques de l'opération",
+        titre: "Détails de l'opération",
         icone: "TrendingUp",
         champs: [
           { cle: "typeFinancement", label: "Type de financement" },
