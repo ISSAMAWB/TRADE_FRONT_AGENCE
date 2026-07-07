@@ -672,8 +672,8 @@ function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenement
             className="fixed inset-0 bg-black/30 z-40"
             onClick={() => setSelectedEvent(null)}
           />
-          <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl z-50 max-h-[70vh] overflow-y-auto">
-            <div className="p-5 max-w-[1240px] mx-auto px-4">
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100%-2rem)] sm:max-w-[1240px] bg-white rounded-t-2xl shadow-2xl z-50 max-h-[70vh] overflow-y-auto">
+            <div className="p-5">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b]">Détail de l'événement</div>
