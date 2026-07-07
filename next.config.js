@@ -6,15 +6,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  exportPathMap: async function (
-    defaultPathMap,
-    { dev, dir, outDir, distDir, buildId }
-  ) {
-    const onlyStatic = Object.fromEntries(
-      Object.entries(defaultPathMap).filter(([path]) => !path.includes("["))
-    );
-    return onlyStatic;
-  },
 };
 
 module.exports = nextConfig;
