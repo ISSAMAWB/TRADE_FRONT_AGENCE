@@ -711,23 +711,77 @@
         "montant": 250000,
         "devise": "EUR",
         "dateCreation": "2025-09-15T10:00:00",
-        "statut": "VALIDE"
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0401-01",
+            "type": "MT103",
+            "dateEmission": "2025-09-15T10:00:00",
+            "contenu": "Ordre de déblocage du financement FIL-2026-00088 pour 250 000,00 EUR. Bénéficiaire : CHINA STEEL CORPORATION.",
+            "fichier": "MT103_FIL-2026-00088_20250915.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0405",
+        "nature": "Amendement du financement",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2025-10-02T14:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0405-01",
+            "type": "MT799",
+            "dateEmission": "2025-10-02T14:30:00",
+            "contenu": "Amendement du financement FIL-2026-00088 : modification de la date de remboursement et ajustement des conditions.",
+            "fichier": "MT799_FIL-2026-00088_20251002.pdf"
+          }
+        ]
       },
       {
         "reference": "EVT-2026-0412",
-        "nature": "Échéance à venir",
-        "montant": 2650000,
-        "devise": "MAD",
-        "dateCreation": "2026-02-15T09:00:00",
-        "statut": "EN_COURS"
+        "nature": "Ajustement du financement",
+        "montant": 50000,
+        "devise": "EUR",
+        "dateCreation": "2025-11-10T09:00:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0412-01",
+            "type": "MT799",
+            "dateEmission": "2025-11-10T09:00:00",
+            "contenu": "Ajustement du montant du financement FIL-2026-00088. Augmentation de 50 000,00 EUR sur la ligne de financement.",
+            "fichier": "MT799_FIL-2026-00088_20251110.pdf"
+          }
+        ]
       },
       {
         "reference": "EVT-2026-0425",
-        "nature": "Remboursement programmé",
+        "nature": "Remboursement du financement",
         "montant": 2650000,
         "devise": "MAD",
         "dateCreation": "2026-03-10T14:30:00",
-        "statut": "VALIDE"
+        "statut": "VALIDE",
+        "uetr": "111a2222-b33c-44d5-e666-777f888g999h",
+        "datePaiement": "2026-03-10",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0425-01",
+            "type": "MT103",
+            "dateEmission": "2026-03-10T14:30:00",
+            "contenu": "Remboursement du financement FIL-2026-00088 pour 2 650 000,00 MAD. UETR : 111a2222-b33c-44d5-e666-777f888g999h.",
+            "fichier": "MT103_FIL-2026-00088_20260310.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0430",
+        "nature": "Expiration du financement",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-03-15T00:00:00",
+        "statut": "EN_COURS"
       }
     ]
   }
