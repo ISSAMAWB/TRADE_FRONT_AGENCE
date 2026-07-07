@@ -78,7 +78,7 @@ export default function ConsultationDossiersPage() {
       if (devise && d.devise !== devise) return false;
       if (refClient.trim() && !d.client.compte.toLowerCase().includes(refClient.toLowerCase())) return false;
       if (produit && d.produit !== produit) return false;
-      if (produit === "FIN" && typeFinancement && (d as any).typeFinancement !== typeFinancement) return false;
+      if (produit === "FIN" && typeFinancement && d.typeFinancement !== typeFinancement) return false;
       if (evenement && !d.evenements.some((e: any) => e.type.toLowerCase().includes(evenement.toLowerCase()))) return false;
       return true;
     });

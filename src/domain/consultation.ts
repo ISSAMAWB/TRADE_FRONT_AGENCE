@@ -47,6 +47,7 @@ export interface Evenement {
 export interface Dossier {
   id: string;
   produit: ProduitTrade;
+  typeFinancement?: string;
   client: Client;
   montant: number;
   devise: DeviseTrade;
