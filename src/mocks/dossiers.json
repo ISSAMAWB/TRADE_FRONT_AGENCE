@@ -965,6 +965,7 @@
   {
     "id": "FIL-2026-00088",
     "produit": "FIN",
+    "typeFinancement": "Refinancement à l'import",
     "client": {
       "nom": "STE IMPORT MAROC SARL",
       "compte": "007 780 0000 334",

@@ -39,6 +39,13 @@ const PRODUIT_LABELS: Record<string, string> = {
   FIN: "FINANCEMENT",
 };
 
+const TYPES_FINANCEMENT = [
+  "Refinancement à l'import",
+  "Préfinancement à l'export",
+  "ACNEE",
+  "Mobilisation en devises",
+];
+
 const statutClasses: Record<StatutDossier, string> = {
   "En cours": "badge-statut-en-cours",
   "Expiré": "badge-statut-expire",
@@ -58,6 +65,7 @@ export default function ConsultationDossiersPage() {
   const [devise, setDevise] = useState<DeviseTrade | "">("");
   const [refClient, setRefClient] = useState("");
   const [produit, setProduit] = useState<ProduitTrade | "">("");
+  const [typeFinancement, setTypeFinancement] = useState("");
   const [evenement, setEvenement] = useState("");
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -79,6 +87,7 @@ export default function ConsultationDossiersPage() {
       if (devise && d.devise !== devise) return false;
       if (refClient.trim() && !d.client.compte.toLowerCase().includes(refClient.toLowerCase())) return false;
       if (produit && d.produit !== produit) return false;
+      if (produit === "FIN" && typeFinancement && (d as any).typeFinancement !== typeFinancement) return false;
       if (evenement && !d.evenements.some((e: any) => e.type.toLowerCase().includes(evenement.toLowerCase()))) return false;
       return true;
     });
@@ -94,14 +103,14 @@ export default function ConsultationDossiersPage() {
     });
 
     return items;
-  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit, evenement, sortKey, sortDir]);
+  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit, typeFinancement, evenement, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   useEffect(() => {
     setPage(1);
-  }, [refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit, evenement]);
+  }, [refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit, typeFinancement, evenement]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -118,6 +127,7 @@ export default function ConsultationDossiersPage() {
     setDevise("");
     setRefClient("");
     setProduit("");
+    setTypeFinancement("");
     setEvenement("");
     setPage(1);
   }
@@ -258,13 +268,17 @@ export default function ConsultationDossiersPage() {
             </div>
 
             {/* Ligne 2: Produit, Devise, Statut */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className={`grid grid-cols-1 gap-4 ${produit === "FIN" ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
               <div>
                 <label className="text-label">PRODUIT</label>
                 <select
                   className="input w-full"
                   value={produit}
-                  onChange={(e) => setProduit(e.target.value as ProduitTrade | "")}
+                  onChange={(e) => {
+                    const value = e.target.value as ProduitTrade | "";
+                    setProduit(value);
+                    if (value !== "FIN") setTypeFinancement("");
+                  }}
                 >
                   <option value="">Tous les produits</option>
                   {PRODUITS.map((p) => (
@@ -272,6 +286,22 @@ export default function ConsultationDossiersPage() {
                   ))}
                 </select>
               </div>
+
+              {produit === "FIN" && (
+                <div>
+                  <label className="text-label">TYPE DU FINANCEMENT</label>
+                  <select
+                    className="input w-full"
+                    value={typeFinancement}
+                    onChange={(e) => setTypeFinancement(e.target.value)}
+                  >
+                    <option value="">Tous les types</option>
+                    {TYPES_FINANCEMENT.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div>
                 <label className="text-label">DEVISE</label>
