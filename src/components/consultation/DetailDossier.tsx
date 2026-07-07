@@ -1,8 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye, Clock, Check, Circle, Diamond, AlertCircle } from "lucide-react";
+import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye, Clock, Check, Circle, Diamond, AlertCircle, X, Download } from "lucide-react";
 import StatutBadge from "./StatutBadge";
 import { getProduitSchema } from "@/lib/produits";
-import type { DossierTrade, BlocSchema, ChampSchema, MontantAvecDevise, Paiement, Courrier } from "@/domain/consultation-detail";
+import type { DossierTrade, BlocSchema, ChampSchema, MontantAvecDevise, Paiement, Courrier, EvenementTrade, SwiftMessage } from "@/domain/consultation-detail";
 
 const ICONES: Record<string, React.ComponentType<{ size?: number | string }>> = {
   Building2,
@@ -603,6 +606,20 @@ function BandeauEcheanceV2({
 }
 
 function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenements"] }) {
+  const [selectedEvent, setSelectedEvent] = useState<EvenementTrade | null>(null);
+
+  function downloadSwift(swift: SwiftMessage) {
+    const blob = new Blob([swift.contenu], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = swift.fichier || `${swift.reference}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <Card>
       <div className="flex items-center justify-between mb-2.5">
@@ -621,8 +638,7 @@ function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenement
               <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Nature</th>
               <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant</th>
               <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Date de création</th>
-              <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Statut</th>
-              <th className="text-left py-2 px-3"></th>
+              <th className="text-center py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider"></th>
             </tr>
           </thead>
           <tbody>
@@ -634,20 +650,12 @@ function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenement
                   {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-[#94a3b8]">—</span>}
                 </td>
                 <td className="py-[7px] px-3 text-[#64748b]">{formatDate(e.dateCreation)}</td>
-                <td className="py-[7px] px-3">
-                  <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
-                    e.statut === "VALIDE" ? "bg-[#e6f6ee] text-[#177a52]" :
-                    e.statut === "EN_COURS" ? "bg-[#eef4ff] text-[#2a5bd7]" :
-                    e.statut === "EN_ATTENTE" ? "bg-[#fef3e2] text-[#b45309]" :
-                    "bg-[#f3f4f6] text-[#64748b]"
-                  }`}>
-                    {e.statut === "VALIDE" ? "Validé" :
-                     e.statut === "EN_COURS" ? "En cours" :
-                     e.statut === "EN_ATTENTE" ? "En attente" : e.statut}
-                  </span>
-                </td>
-                <td className="py-[7px] px-3 text-right">
-                  <button className="text-[#94a3b8] hover:text-[#e8632b] transition">
+                <td className="py-[7px] px-3 text-center">
+                  <button
+                    className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                    onClick={() => setSelectedEvent(e)}
+                    title="Voir le détail et les SWIFT"
+                  >
                     <Eye size={15} />
                   </button>
                 </td>
@@ -656,20 +664,102 @@ function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenement
           </tbody>
         </table>
       </div>
+
+      {/* Drawer détail événement + SWIFT */}
+      {selectedEvent && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/30 z-40"
+            onClick={() => setSelectedEvent(null)}
+          />
+          <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl z-50 max-h-[80vh] overflow-y-auto">
+            <div className="p-5 max-w-5xl mx-auto">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b]">Détail de l'événement</div>
+                  <div className="text-lg font-semibold text-[#0f172a]">{selectedEvent.nature}</div>
+                  <div className="text-xs text-[#64748b]">{selectedEvent.reference} · {formatDate(selectedEvent.dateCreation)}</div>
+                </div>
+                <button
+                  className="h-8 w-8 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center"
+                  onClick={() => setSelectedEvent(null)}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4 mb-5">
+                <div className="rounded-lg border border-[#e5e8ec] p-3">
+                  <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Nature</div>
+                  <div className="text-sm font-medium text-[#0f172a]">{selectedEvent.nature}</div>
+                </div>
+                <div className="rounded-lg border border-[#e5e8ec] p-3">
+                  <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Montant</div>
+                  <div className="text-sm font-medium text-[#0f172a]">
+                    {selectedEvent.montant !== null ? formatMontant(selectedEvent.montant, selectedEvent.devise) : <span className="text-[#94a3b8]">—</span>}
+                  </div>
+                </div>
+                <div className="rounded-lg border border-[#e5e8ec] p-3">
+                  <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Statut</div>
+                  <div className="text-sm font-medium text-[#0f172a]">
+                    {selectedEvent.statut === "VALIDE" ? "Validé" :
+                     selectedEvent.statut === "EN_COURS" ? "En cours" :
+                     selectedEvent.statut === "EN_ATTENTE" ? "En attente" : selectedEvent.statut}
+                  </div>
+                </div>
+              </div>
+
+              {selectedEvent.swifts && selectedEvent.swifts.length > 0 ? (
+                <div>
+                  <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b] mb-3">SWIFT associés</div>
+                  <div className="space-y-3">
+                    {selectedEvent.swifts.map((swift) => (
+                      <div key={swift.reference} className="rounded-lg border border-[#e5e8ec] p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 rounded bg-[#0f172a] text-white text-[11px] font-medium">{swift.type}</span>
+                            <span className="text-sm font-medium text-[#0f172a]">{swift.reference}</span>
+                            <span className="text-xs text-[#64748b]">{new Date(swift.dateEmission).toLocaleDateString("fr-FR")}</span>
+                          </div>
+                          <button
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#e8632b] text-[#e8632b] hover:bg-[#e8632b] hover:text-white transition text-xs font-medium"
+                            onClick={() => downloadSwift(swift)}
+                          >
+                            <Download size={13} /> Télécharger
+                          </button>
+                        </div>
+                        <div className="text-sm text-[#334155] bg-[#f8fafc] rounded-lg p-3 border border-[#e5e8ec]">
+                          {swift.contenu}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-[#e5e8ec] p-4 text-sm text-[#64748b] bg-[#f8fafc]">
+                  Aucun message SWIFT associé à cet événement.
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </Card>
   );
 }
 
 function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
   const isILC = dossier.produit === "ILC";
+  const isELC = dossier.produit === "ELC";
   const isIRD = dossier.produit === "IRD";
+  const isCredoc = isILC || isELC;
   const client = dossier.clientInfo;
 
-  const montantPrincipal = isILC ? dossier.donnees["montantCredit"] : dossier.donnees["montantRemise"];
+  const montantPrincipal = isCredoc ? dossier.donnees["montantCredit"] : dossier.donnees["montantRemise"];
   const montantPrincipalOk = isMontantAvecDevise(montantPrincipal) ? montantPrincipal : null;
 
   const dateEcheance = isIRD ? dossier.donnees["dateEcheance"] : null;
-  const dateExpiration = isILC ? dossier.donnees["dateExpiration"] : null;
+  const dateExpiration = isCredoc ? dossier.donnees["dateExpiration"] : null;
   const dateEcheanceOuExpiration = String(dateEcheance || dateExpiration || "");
   const jours = dateEcheanceOuExpiration ? joursRestants(dateEcheanceOuExpiration) : null;
   const isAlerte = jours !== null && jours < 15 && jours >= 0;
@@ -679,12 +769,12 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
   const isContreAcceptation = isIRD && String(conditionsRemise).toLowerCase().includes("acceptation");
 
   const modeRealisation = dossier.donnees["modeRealisation"];
-  const isSightPayment = isILC && String(modeRealisation).toLowerCase().includes("vue");
-  const isAcceptation = isILC && String(modeRealisation).toLowerCase().includes("acceptation");
+  const isSightPayment = isCredoc && String(modeRealisation).toLowerCase().includes("vue");
+  const isAcceptation = isCredoc && String(modeRealisation).toLowerCase().includes("acceptation");
 
-  const confirmation = dossier.donnees["creditConfirme"];
-  const isConfirme = isILC && String(confirmation).toLowerCase() === "confirmé";
-  const isUnconfirmed = isILC && !isConfirme;
+  const confirmation = isCredoc ? dossier.donnees[isILC ? "creditConfirme" : "operationConfirmee"] : null;
+  const isConfirme = isCredoc && String(confirmation).toLowerCase() === "confirmé";
+  const isUnconfirmed = isCredoc && !isConfirme;
 
   const dateEmission = dossier.donnees["dateEmission"] || dossier.dateMiseAJour;
 
@@ -699,8 +789,8 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
                   ‹ Retour à la liste
                 </Link>
                 <div className="flex items-center gap-1.5 mb-1">
-                  <span className="text-[11px] text-[#64748b]">{isILC ? "ILC · Import" : "IRD · Import"}</span>
-                  {isILC && (
+                  <span className="text-[11px] text-[#64748b]">{isILC ? "ILC · Import" : isELC ? "ELC · Export" : "IRD · Import"}</span>
+                  {isCredoc && (
                     <>
                       <Badge color={isConfirme ? "green" : "purple"}>
                         {isConfirme ? <Check size={11} /> : <Circle size={11} />}
@@ -723,12 +813,14 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
                 <h1 className="text-[17px] font-bold text-[#0f172a] leading-tight">
                   {dossier.produitLibelle} <span className="font-mono text-[#64748b] font-normal">{dossier.reference}</span>
                 </h1>
-                <div className="text-[11px] text-[#64748b] mt-0.5">
-                  {String(dossier.donnees["natureOperation"] || "Opération commerciale")}
-                  {dossier.donnees["referenceCorrespondant"] && (
-                    <span> · Réf. correspondant {String(dossier.donnees["referenceCorrespondant"])}</span>
-                  )}
-                </div>
+                {!isELC && (
+                  <div className="text-[11px] text-[#64748b] mt-0.5">
+                    {String(dossier.donnees["natureOperation"] || "Opération commerciale")}
+                    {dossier.donnees["referenceCorrespondant"] && (
+                      <span> · Réf. correspondant {String(dossier.donnees["referenceCorrespondant"])}</span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -736,21 +828,21 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
               <div className="flex items-center gap-5">
                 <div>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#94a3b8]">
-                    {isILC ? "Montant du crédit" : "Montant de la remise"}
+                    {isCredoc ? "Montant du crédit" : "Montant de la remise"}
                   </div>
                   <div className="text-[24px] font-extrabold text-[#0f172a] tabular-nums leading-tight">
                     {montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}
                   </div>
                   {montantPrincipalOk && (
                     <div className="text-[10.5px] text-[#64748b]">
-                      {isILC ? `Tolérance ${dossier.donnees["tolerance"] || "—"}` : `Frais Maroc : ${dossier.donnees["fraisAuMaroc"] || "—"} · Étranger : ${dossier.donnees["fraisAEtranger"] || "—"}`}
+                      {isCredoc ? `Tolérance ${dossier.donnees["tolerance"] || "—"}` : `Frais Maroc : ${dossier.donnees["fraisAuMaroc"] || "—"} · Étranger : ${dossier.donnees["fraisAEtranger"] || "—"}`}
                     </div>
                   )}
                 </div>
 
                 <div className="flex-1">
                   <div className="h-[10px] rounded-[6px] overflow-hidden flex">
-                    {isILC ? (
+                    {isCredoc ? (
                       <>
                         <div
                           className="h-full bg-[#e8632b]"
@@ -769,7 +861,7 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
                     )}
                   </div>
                   <div className="flex justify-between text-[11px] mt-2">
-                    {isILC ? (
+                    {isCredoc ? (
                       <>
                         <span className="flex items-center gap-1 text-[#e8632b]">
                           <span className="w-2 h-2 rounded-full bg-[#e8632b]" />
@@ -811,13 +903,13 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
             <div className="space-y-2.5">
               <div>
                 <div className="text-[12.5px] font-semibold text-[#0f172a] leading-tight">{client?.raisonSociale || String(dossier.donnees[isILC ? "donneurOrdre" : "client"] || "—")}</div>
-                <div className="text-[10.5px] text-[#64748b]">Client · {isILC ? "Donneur d'ordre" : "Tiré"} · <span className="font-mono">{client?.numeroCompte || "—"}</span></div>
+                <div className="text-[10.5px] text-[#64748b]">Client · {isILC ? "Donneur d'ordre" : isELC ? "Bénéficiaire" : "Tiré"} · <span className="font-mono">{client?.numeroCompte || "—"}</span></div>
               </div>
               <div className="border-t border-[#e5e8ec] pt-2.5 grid grid-cols-[92px_1fr] gap-y-2 gap-x-2 text-[12px]">
-                <span className="text-[#94a3b8]">{isILC ? "Bénéficiaire" : "Tireur"}</span>
-                <span className="font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "beneficiaire" : "tireur"] || "—")}</span>
-                <span className="text-[#94a3b8]">{isILC ? "Bq notificatrice" : "P. remettante"}</span>
-                <span className="font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "banqueNotification" : "partieRemettante"] || "—")}</span>
+                <span className="text-[#94a3b8]">{isILC ? "Bénéficiaire" : isELC ? "Donneur d'ordre" : "Tireur"}</span>
+                <span className="font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "beneficiaire" : isELC ? "donneurOrdre" : "tireur"] || "—")}</span>
+                <span className="text-[#94a3b8]">{isILC ? "Bq notificatrice" : isELC ? "Banque émettrice" : "P. remettante"}</span>
+                <span className="font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "banqueNotification" : isELC ? "banqueEmettrice" : "partieRemettante"] || "—")}</span>
               </div>
             </div>
           </Card>
@@ -827,10 +919,10 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
       <BandeauEcheanceV2
         date={dateEcheanceOuExpiration}
         dateDebut={dateEmission ? String(dateEmission) : undefined}
-        contexte={isILC ? `Lieu d'expiration : ${dossier.donnees["lieuExpiration"] || "—"}` : String(conditionsRemise || "")}
-        label={isILC ? "DATE D'EXPIRATION" : "DATE D'ÉCHÉANCE"}
-        labelDebut={isILC ? "Émission" : "Ouverture"}
-        labelFin={isILC ? "Expiration" : "Échéance"}
+        contexte={isCredoc ? `Lieu d'expiration : ${dossier.donnees["lieuExpiration"] || "—"}` : String(conditionsRemise || "")}
+        label={isCredoc ? "DATE D'EXPIRATION" : "DATE D'ÉCHÉANCE"}
+        labelDebut={isCredoc ? "Émission" : "Ouverture"}
+        labelFin={isCredoc ? "Expiration" : "Échéance"}
         isPaiementAVue={isPaiementAVue}
         documentsRecusLe={isIRD ? dossier.donnees["dateReceptionDocuments"] : undefined}
       />
@@ -841,15 +933,19 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
           <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
             <span className="text-[#94a3b8]">Réf. de l'opération</span>
             <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceOperation"] || "—")}</span>
-            <span className="text-[#94a3b8]">{isILC ? "Réf. correspondant" : "Autre référence"}</span>
-            <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees[isILC ? "referenceCorrespondant" : "autreReference"] || "—")}</span>
-            <span className="text-[#94a3b8]">Type d'opération</span>
-            <span className="font-medium text-[#0f172a]">{String(dossier.donnees["natureOperation"] || "Opération commerciale")}</span>
-            <span className="text-[#94a3b8]">{isILC ? "Mode de réalisation" : "Conditions de remise"}</span>
-            <span className="font-medium text-[#0f172a]">{String(isILC ? modeRealisation : conditionsRemise || "—")}</span>
-            <span className="text-[#94a3b8]">{isILC ? "Confirmation" : "Échéance"}</span>
-            <span className={`font-semibold ${isILC ? (isConfirme ? "text-[#177a52]" : "text-[#6d4fc4]") : "text-[#e8632b]"}`}>
-              {isILC ? (isConfirme ? "Confirmed" : "Unconfirmed") : (dateEcheance ? formatDate(String(dateEcheance)) : "—")}
+            <span className="text-[#94a3b8]">{isCredoc ? "Réf. correspondant" : "Autre référence"}</span>
+            <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees[isCredoc ? "referenceCorrespondant" : "autreReference"] || "—")}</span>
+            {!isELC && (
+              <>
+                <span className="text-[#94a3b8]">Type d'opération</span>
+                <span className="font-medium text-[#0f172a]">{String(dossier.donnees["natureOperation"] || "Opération commerciale")}</span>
+              </>
+            )}
+            <span className="text-[#94a3b8]">{isCredoc ? "Mode de réalisation" : "Conditions de remise"}</span>
+            <span className="font-medium text-[#0f172a]">{String(isCredoc ? modeRealisation : conditionsRemise || "—")}</span>
+            <span className="text-[#94a3b8]">{isCredoc ? "Confirmation" : "Échéance"}</span>
+            <span className={`font-semibold ${isCredoc ? (isConfirme ? "text-[#177a52]" : "text-[#6d4fc4]") : "text-[#e8632b]"}`}>
+              {isCredoc ? (isConfirme ? "Confirmed" : "Unconfirmed") : (dateEcheance ? formatDate(String(dateEcheance)) : "—")}
             </span>
           </div>
         </Card>
@@ -857,13 +953,13 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
         <Card>
           <SectionLabel>Informations financières</SectionLabel>
           <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
-            <span className="text-[#94a3b8]">{isILC ? "Montant du crédit" : "Montant de la remise"}</span>
+            <span className="text-[#94a3b8]">{isCredoc ? "Montant du crédit" : "Montant de la remise"}</span>
             <span className="font-semibold text-[#0f172a]">{montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}</span>
-            <span className="text-[#94a3b8]">{isILC ? "Tolérance" : "Encours"}</span>
-            <span className={`font-semibold ${isILC ? "text-[#0f172a]" : "text-[#e8632b]"}`}>
-              {isILC ? String(dossier.donnees["tolerance"] || "—") : (isMontantAvecDevise(dossier.donnees["encours"]) ? formatMontant(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) : "—")}
+            <span className="text-[#94a3b8]">{isCredoc ? "Tolérance" : "Encours"}</span>
+            <span className={`font-semibold ${isCredoc ? "text-[#0f172a]" : "text-[#e8632b]"}`}>
+              {isCredoc ? String(dossier.donnees["tolerance"] || "—") : (isMontantAvecDevise(dossier.donnees["encours"]) ? formatMontant(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) : "—")}
             </span>
-            {isILC && (
+            {isCredoc && (
               <>
                 <span className="text-[#94a3b8]">Montant réclamé</span>
                 <span className="font-semibold text-[#e8632b]">{isMontantAvecDevise(dossier.donnees["montantReclame"]) ? formatMontant(dossier.donnees["montantReclame"].valeur, dossier.donnees["montantReclame"].devise) : "—"}</span>
@@ -871,7 +967,7 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
                 <span className="font-semibold text-[#2a9d6f]">{isMontantAvecDevise(dossier.donnees["montantDisponible"]) ? formatMontant(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise) : "—"}</span>
               </>
             )}
-            {!isILC && (
+            {!isCredoc && (
               <>
                 <span className="text-[#94a3b8]">Frais au Maroc</span>
                 <span className="font-medium text-[#0f172a]">{String(dossier.donnees["fraisAuMaroc"] || "—")}</span>
@@ -882,7 +978,7 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
             <span className="text-[#94a3b8]">Contre-valeur MAD</span>
             <span className="font-semibold text-[#0f172a]">
               {(() => {
-                const m = isILC ? dossier.donnees["montantDisponible"] : montantPrincipal;
+                const m = isCredoc ? dossier.donnees["montantDisponible"] : montantPrincipal;
                 return isMontantAvecDevise(m) && formatContreValeurMAD(m.valeur, m.devise)
                   ? formatContreValeurMAD(m.valeur, m.devise)
                   : "—";
@@ -1013,7 +1109,7 @@ export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
         </div>
 
         {schema ? (
-          dossier.produit === "IRD" || dossier.produit === "ILC" ? (
+          dossier.produit === "ILC" || dossier.produit === "ELC" || dossier.produit === "IRD" ? (
             <DetailILCIRD dossier={dossier} />
           ) : dossier.produit === "ERD" ? (
             <DetailERD dossier={dossier} />

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Clock, Filter, X } from "lucide-react";
 import dossiersData from "@/mocks/dossiers.json";
 import type { Dossier, ProduitTrade } from "@/domain/consultation";
@@ -15,6 +15,8 @@ export default function EvenementsPage() {
   const dossiers = dossiersData as Dossier[];
   const [produits, setProduits] = useState<ProduitTrade[]>([]);
   const [typeFilter, setTypeFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   const evenements = useMemo(() => {
     const all = dossiers.flatMap((d) =>
@@ -34,8 +36,25 @@ export default function EvenementsPage() {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [dossiers, produits, typeFilter]);
 
+  const totalPages = Math.max(1, Math.ceil(evenements.length / pageSize));
+  const paged = evenements.slice((page - 1) * pageSize, page * pageSize);
+
+  useEffect(() => {
+    setPage(1);
+  }, [produits, typeFilter]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
   function toggleProduit(p: ProduitTrade) {
     setProduits((arr) => (arr.includes(p) ? arr.filter((x) => x !== p) : [...arr, p]));
+  }
+
+  function resetFilters() {
+    setProduits([]);
+    setTypeFilter("");
+    setPage(1);
   }
 
   return (
@@ -70,7 +89,7 @@ export default function EvenementsPage() {
               placeholder="Type d'événement"
               className="input w-48"
             />
-            <Button variant="secondary" size="sm" onClick={() => { setProduits([]); setTypeFilter(""); }}>
+            <Button variant="secondary" size="sm" onClick={resetFilters}>
               <X size={14} /> Réinitialiser
             </Button>
           </div>
@@ -91,8 +110,8 @@ export default function EvenementsPage() {
               </tr>
             </thead>
             <tbody>
-              {evenements.map((e) => (
-                <tr key={`${e.dossierId}-${e.date}`}>
+              {paged.map((e) => (
+                <tr key={`${e.dossierId}-${e.date}-${e.type}`}>
                   <td className="text-sm text-gray-600">{new Date(e.date).toLocaleDateString("fr-FR")}</td>
                   <td>
                     <Link href={`/consultation/dossiers/${e.dossierId}`} className="font-medium hover:underline text-orange-500">
@@ -108,7 +127,7 @@ export default function EvenementsPage() {
                   <td>{e.montant ? e.montant.toLocaleString("fr-FR") : "—"}</td>
                 </tr>
               ))}
-              {evenements.length === 0 && (
+              {paged.length === 0 && (
                 <tr>
                   <td colSpan={7} className="text-center text-gray-400 py-8">Aucun événement.</td>
                 </tr>
@@ -116,6 +135,54 @@ export default function EvenementsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {evenements.length > 0 && (
+          <div className="flex flex-col items-center gap-2 pt-4">
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-1">
+                <button
+                  className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-gray-300 text-gray-600 hover:border-orange-500 hover:text-orange-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-600 transition"
+                  disabled={page === 1}
+                  onClick={() => setPage(1)}
+                  title="Première page"
+                >
+                  «
+                </button>
+                <button
+                  className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-gray-300 text-gray-600 hover:border-orange-500 hover:text-orange-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-600 transition"
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  title="Page précédente"
+                >
+                  ‹
+                </button>
+                <span className="px-3 text-sm text-gray-900">
+                  Page {page} sur {totalPages}
+                </span>
+                <button
+                  className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-gray-300 text-gray-600 hover:border-orange-500 hover:text-orange-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-600 transition"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  title="Page suivante"
+                >
+                  ›
+                </button>
+                <button
+                  className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-gray-300 text-gray-600 hover:border-orange-500 hover:text-orange-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-600 transition"
+                  disabled={page === totalPages}
+                  onClick={() => setPage(totalPages)}
+                  title="Dernière page"
+                >
+                  »
+                </button>
+              </div>
+            )}
+            <div className="text-xs text-gray-500">
+              {evenements.length} événement(s) — {paged.length} sur cette page
+            </div>
+          </div>
+        )}
       </div>
     </Shell>
   );

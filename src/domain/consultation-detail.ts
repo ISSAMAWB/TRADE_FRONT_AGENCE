@@ -66,6 +66,14 @@ export interface ProduitSchema {
   blocs: BlocSchema[];
 }
 
+export interface SwiftMessage {
+  reference: string;
+  type: string;
+  dateEmission: string;
+  contenu: string;
+  fichier?: string;
+}
+
 export interface EvenementTrade {
   reference: string;
   nature: string;
@@ -75,6 +83,7 @@ export interface EvenementTrade {
   statut: StatutEvenement;
   uetr?: string;
   datePaiement?: string;
+  swifts?: SwiftMessage[];
 }
 
 export type MontantAvecDevise = { valeur: number; devise: string };

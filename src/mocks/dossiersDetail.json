@@ -54,7 +54,16 @@
         "montant": 20000,
         "devise": "EUR",
         "dateCreation": "2026-01-10T09:30:00",
-        "statut": "VALIDE"
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0112-01",
+            "type": "MT700",
+            "dateEmission": "2026-01-10T09:30:00",
+            "contenu": "Message d'ouverture de crédit documentaire import ILC0012483Q-0151 pour 20 000,00 EUR. Bénéficiaire : SOCIETE NOUVELLE HYDRAULIQUE-SNH. Banque notificatrice : CREDIT INDUSTRIEL ET COMMERCIAL.",
+            "fichier": "MT700_ILC0012483Q-0151_20260110.pdf"
+          }
+        ]
       },
       {
         "reference": "EVT-2026-0125",
@@ -62,7 +71,16 @@
         "montant": null,
         "devise": "EUR",
         "dateCreation": "2026-01-12T14:15:00",
-        "statut": "VALIDE"
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0125-01",
+            "type": "MT707",
+            "dateEmission": "2026-01-12T14:15:00",
+            "contenu": "Amendement au crédit documentaire ILC0012483Q-0151. Modification des conditions de livraison et extension de la date d'expédition.",
+            "fichier": "MT707_ILC0012483Q-0151_20260112.pdf"
+          }
+        ]
       },
       {
         "reference": "EVT-2026-0148",
@@ -70,7 +88,50 @@
         "montant": null,
         "devise": "EUR",
         "dateCreation": "2026-01-15T11:00:00",
-        "statut": "EN_COURS"
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0148-01",
+            "type": "MT734",
+            "dateEmission": "2026-01-15T11:00:00",
+            "contenu": "Avis de refus avec réserves sur la présentation de documents pour ILC0012483Q-0151. Réserves : connaissement maritime non conforme, date de embarquement antérieure au crédit documentaire.",
+            "fichier": "MT734_ILC0012483Q-0151_20260115.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0151",
+        "nature": "Acceptation des documents",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-01-20T16:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0151-01",
+            "type": "MT732",
+            "dateEmission": "2026-01-20T16:30:00",
+            "contenu": "Avis de désistement des réserves et acceptation des documents pour ILC0012483Q-0151. Documents conformes après correction.",
+            "fichier": "MT732_ILC0012483Q-0151_20260120.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0152",
+        "nature": "Refus des documents",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-02-05T09:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0152-01",
+            "type": "MT734",
+            "dateEmission": "2026-02-05T09:15:00",
+            "contenu": "Refus définitif des documents pour ILC0012483Q-0151. Motif : documents non corrigés dans les délais impartis.",
+            "fichier": "MT734_ILC0012483Q-0151_20260205.pdf"
+          }
+        ]
       },
       {
         "reference": "EVT-2026-0160",
@@ -80,7 +141,16 @@
         "dateCreation": "2026-05-16T10:00:00",
         "statut": "VALIDE",
         "uetr": "123a4567-e89b-12d3-a456-426614174000",
-        "datePaiement": "2026-05-16"
+        "datePaiement": "2026-05-16",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0160-01",
+            "type": "MT103",
+            "dateEmission": "2026-05-16T10:00:00",
+            "contenu": "Ordre de paiement à vue de 5 000,00 EUR au titre du crédit documentaire ILC0012483Q-0151. UETR : 123a4567-e89b-12d3-a456-426614174000.",
+            "fichier": "MT103_ILC0012483Q-0151_20260516.pdf"
+          }
+        ]
       },
       {
         "reference": "EVT-2026-0175",
@@ -90,7 +160,75 @@
         "dateCreation": "2026-06-01T09:00:00",
         "statut": "VALIDE",
         "uetr": "987f6543-a21c-45d6-b789-012345678901",
-        "datePaiement": "2026-06-01"
+        "datePaiement": "2026-06-01",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0175-01",
+            "type": "MT202",
+            "dateEmission": "2026-06-01T09:00:00",
+            "contenu": "Paiement à échéance de 10 000,00 EUR au titre du crédit documentaire ILC0012483Q-0151. UETR : 987f6543-a21c-45d6-b789-012345678901.",
+            "fichier": "MT202_ILC0012483Q-0151_20260601.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0180",
+        "nature": "Correspondance",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-02-10T11:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0180-01",
+            "type": "MT799",
+            "dateEmission": "2026-02-10T11:30:00",
+            "contenu": "Message de correspondance libre concernant le crédit documentaire ILC0012483Q-0151. Demande de clarification sur les documents de transport.",
+            "fichier": "MT799_ILC0012483Q-0151_20260210.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0185",
+        "nature": "Gestion des frais et commission",
+        "montant": 150,
+        "devise": "EUR",
+        "dateCreation": "2026-02-15T14:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0185-01",
+            "type": "MT191",
+            "dateEmission": "2026-02-15T14:00:00",
+            "contenu": "Débit de frais et commissions de 150,00 EUR sur le crédit documentaire ILC0012483Q-0151. Frais d'ouverture et notification.",
+            "fichier": "MT191_ILC0012483Q-0151_20260215.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0188",
+        "nature": "Annulation",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-06-15T10:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0188-01",
+            "type": "MT707",
+            "dateEmission": "2026-06-15T10:00:00",
+            "contenu": "Annulation du crédit documentaire ILC0012483Q-0151 à la demande du donneur d'ordre. Référence d'annulation : CAN-ILC-0012483Q-0151-26.",
+            "fichier": "MT707_ILC0012483Q-0151_20260615.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0190",
+        "nature": "Expiration",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-07-19T00:00:00",
+        "statut": "EN_COURS"
       }
     ]
   },
@@ -147,35 +285,185 @@
     "evenements": [
       {
         "reference": "EVT-2026-0201",
-        "nature": "Ouverture du dossier",
-        "montant": 12821930.55,
+        "nature": "Création",
+        "montant": 350000,
         "devise": "USD",
         "dateCreation": "2026-02-01T08:45:00",
-        "statut": "VALIDE"
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0201-01",
+            "type": "MT700",
+            "dateEmission": "2026-02-01T08:45:00",
+            "contenu": "Message d'ouverture de crédit documentaire export ELC0098741A-0023 pour 350 000,00 USD. Bénéficiaire : STE PAKISTAN MAROC PHOSPHORE. Banque émettrice : BANQUE MAROCAINE DU COMMERCE EXTERIEUR.",
+            "fichier": "MT700_ELC0098741A-0023_20260201.pdf"
+          }
+        ]
       },
       {
         "reference": "EVT-2026-0215",
-        "nature": "Envoi documents bénéficiaire",
+        "nature": "Modification",
         "montant": null,
         "devise": "USD",
         "dateCreation": "2026-02-05T16:20:00",
-        "statut": "VALIDE"
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0215-01",
+            "type": "MT707",
+            "dateEmission": "2026-02-05T16:20:00",
+            "contenu": "Amendement au crédit documentaire export ELC0098741A-0023. Augmentation du montant et modification de la date d'expiration.",
+            "fichier": "MT707_ELC0098741A-0023_20260205.pdf"
+          }
+        ]
       },
       {
         "reference": "EVT-2026-0234",
-        "nature": "Paiement différé programmé",
-        "montant": 9620517.35,
-        "devise": "USD",
-        "dateCreation": "2026-02-18T10:00:00",
-        "statut": "EN_COURS"
-      },
-      {
-        "reference": "EVT-2026-0249",
-        "nature": "Validation documents",
+        "nature": "Présentation de documents avec réserves",
         "montant": null,
         "devise": "USD",
-        "dateCreation": "2026-02-25T13:30:00",
-        "statut": "VALIDE"
+        "dateCreation": "2026-02-18T10:00:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0234-01",
+            "type": "MT734",
+            "dateEmission": "2026-02-18T10:00:00",
+            "contenu": "Avis de refus avec réserves sur la présentation de documents pour ELC0098741A-0023. Réserves : facture commerciale non signée, certificat d'origine manquant.",
+            "fichier": "MT734_ELC0098741A-0023_20260218.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0240",
+        "nature": "Acceptation des documents",
+        "montant": null,
+        "devise": "USD",
+        "dateCreation": "2026-02-20T11:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0240-01",
+            "type": "MT732",
+            "dateEmission": "2026-02-20T11:00:00",
+            "contenu": "Avis de désistement des réserves et acceptation des documents pour ELC0098741A-0023. Documents conformes après correction.",
+            "fichier": "MT732_ELC0098741A-0023_20260220.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0245",
+        "nature": "Refus des documents",
+        "montant": null,
+        "devise": "USD",
+        "dateCreation": "2026-02-22T14:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0245-01",
+            "type": "MT734",
+            "dateEmission": "2026-02-22T14:30:00",
+            "contenu": "Refus définitif des documents pour ELC0098741A-0023. Motif : documents non corrigés dans les délais impartis.",
+            "fichier": "MT734_ELC0098741A-0023_20260222.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0250",
+        "nature": "Paiement à vue",
+        "montant": 100000,
+        "devise": "USD",
+        "dateCreation": "2026-03-01T09:00:00",
+        "statut": "VALIDE",
+        "uetr": "abc12345-6789-0123-4567-890123456789",
+        "datePaiement": "2026-03-01",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0250-01",
+            "type": "MT103",
+            "dateEmission": "2026-03-01T09:00:00",
+            "contenu": "Ordre de paiement à vue de 100 000,00 USD au titre du crédit documentaire export ELC0098741A-0023. UETR : abc12345-6789-0123-4567-890123456789.",
+            "fichier": "MT103_ELC0098741A-0023_20260301.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0260",
+        "nature": "Paiement à échéance",
+        "montant": 200000,
+        "devise": "USD",
+        "dateCreation": "2026-03-15T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "def67890-1234-5678-9012-345678901234",
+        "datePaiement": "2026-03-15",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0260-01",
+            "type": "MT202",
+            "dateEmission": "2026-03-15T10:00:00",
+            "contenu": "Paiement à échéance de 200 000,00 USD au titre du crédit documentaire export ELC0098741A-0023. UETR : def67890-1234-5678-9012-345678901234.",
+            "fichier": "MT202_ELC0098741A-0023_20260315.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0270",
+        "nature": "Correspondance",
+        "montant": null,
+        "devise": "USD",
+        "dateCreation": "2026-03-05T16:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0270-01",
+            "type": "MT799",
+            "dateEmission": "2026-03-05T16:00:00",
+            "contenu": "Message de correspondance libre concernant le crédit documentaire export ELC0098741A-0023. Demande de clarification sur les documents de transport.",
+            "fichier": "MT799_ELC0098741A-0023_20260305.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0280",
+        "nature": "Gestion des frais et commission",
+        "montant": 2500,
+        "devise": "USD",
+        "dateCreation": "2026-03-10T11:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0280-01",
+            "type": "MT191",
+            "dateEmission": "2026-03-10T11:30:00",
+            "contenu": "Débit de frais et commissions de 2 500,00 USD sur le crédit documentaire export ELC0098741A-0023. Frais d'ouverture et notification.",
+            "fichier": "MT191_ELC0098741A-0023_20260310.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0290",
+        "nature": "Annulation",
+        "montant": null,
+        "devise": "USD",
+        "dateCreation": "2026-04-01T10:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0290-01",
+            "type": "MT707",
+            "dateEmission": "2026-04-01T10:00:00",
+            "contenu": "Annulation du crédit documentaire export ELC0098741A-0023 à la demande du donneur d'ordre. Référence d'annulation : CAN-ELC-0098741A-0023-26.",
+            "fichier": "MT707_ELC0098741A-0023_20260401.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0300",
+        "nature": "Expiration",
+        "montant": null,
+        "devise": "USD",
+        "dateCreation": "2028-03-10T00:00:00",
+        "statut": "EN_COURS"
       }
     ]
   },
