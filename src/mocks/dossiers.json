@@ -1001,5 +1001,125 @@
     "notes": [],
     "evenements": [],
     "evenementCourant": "Remboursement programmé"
+  },
+  {
+    "id": "FIL-2026-00092",
+    "produit": "FIN",
+    "typeFinancement": "Préfinancement à l'export",
+    "client": {
+      "nom": "AGRO EXPORT MAROC",
+      "compte": "007 780 0000 512",
+      "ice": "001512789000078",
+      "code": "CLI-0512"
+    },
+    "montant": 1800000,
+    "devise": "USD",
+    "dateCreation": "2025-11-20",
+    "dateEcheance": "2026-11-20",
+    "banqueCorrespondante": "CitiBank New York",
+    "paysOrigine": "États-Unis",
+    "statut": "En cours",
+    "refCTN": "CTN-FIL-00092-26",
+    "codeAgence": "AGC-CASA-02",
+    "agentCTN": {
+      "nom": "Bennani",
+      "prenom": "Sara",
+      "code": "BS04"
+    },
+    "datePriseEnCharge": "2025-11-21",
+    "statutOperationnel": "Déblocage partiel",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 900000,
+      "autorise": 1800000,
+      "devise": "USD"
+    },
+    "commission": 0.08,
+    "tauxChange": 9.85,
+    "derniereInteraction": "2026-06-28",
+    "canalInteraction": "email",
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Ajustement du financement"
+  },
+  {
+    "id": "FIL-2026-00105",
+    "produit": "FIN",
+    "typeFinancement": "ACNEE",
+    "client": {
+      "nom": "INDUSTRIES DU SUD",
+      "compte": "007 780 0000 289",
+      "ice": "002289456000078",
+      "code": "CLI-0289"
+    },
+    "montant": 950000,
+    "devise": "MAD",
+    "dateCreation": "2026-01-10",
+    "dateEcheance": "2027-01-10",
+    "banqueCorrespondante": "BMCE Bank",
+    "paysOrigine": "Maroc",
+    "statut": "En cours",
+    "refCTN": "CTN-FIL-00105-26",
+    "codeAgence": "AGC-RAB-05",
+    "agentCTN": {
+      "nom": "Kabbaj",
+      "prenom": "Mohammed",
+      "code": "MK09"
+    },
+    "datePriseEnCharge": "2026-01-11",
+    "statutOperationnel": "Mise en place validée",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 475000,
+      "autorise": 950000,
+      "devise": "MAD"
+    },
+    "commission": 0.06,
+    "tauxChange": 1,
+    "derniereInteraction": "2026-06-25",
+    "canalInteraction": "email",
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Mise en place du financement"
+  },
+  {
+    "id": "FIL-2026-00118",
+    "produit": "FIN",
+    "typeFinancement": "Mobilisation en devises",
+    "client": {
+      "nom": "TEXTILES ATLANTIC",
+      "compte": "007 780 0000 671",
+      "ice": "003671123000078",
+      "code": "CLI-0671"
+    },
+    "montant": 3200000,
+    "devise": "EUR",
+    "dateCreation": "2026-02-05",
+    "dateEcheance": "2026-08-05",
+    "banqueCorrespondante": "Deutsche Bank Frankfurt",
+    "paysOrigine": "Allemagne",
+    "statut": "En cours",
+    "refCTN": "CTN-FIL-00118-26",
+    "codeAgence": "AGC-TGM-03",
+    "agentCTN": {
+      "nom": "Alami",
+      "prenom": "Ahmed",
+      "code": "AA03"
+    },
+    "datePriseEnCharge": "2026-02-06",
+    "statutOperationnel": "Remboursement attendu",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 3200000,
+      "autorise": 3200000,
+      "devise": "EUR"
+    },
+    "commission": 0.04,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-06-30",
+    "canalInteraction": "email",
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Remboursement du financement"
   }
 ]
