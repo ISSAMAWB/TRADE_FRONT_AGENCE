@@ -55,7 +55,7 @@ export default function ConsultationDossiersPage() {
   const [montantMax, setMontantMax] = useState("");
   const [devise, setDevise] = useState<DeviseTrade | "">("");
   const [refClient, setRefClient] = useState("");
-  const [produit, setProduit] = useState<ProduitTrade | "">("");
+  const [produit, setProduit] = useState<ProduitTrade | "">("FIN");
   const [typeFinancement, setTypeFinancement] = useState("");
   const [evenement, setEvenement] = useState("");
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
@@ -422,7 +422,12 @@ export default function ConsultationDossiersPage() {
                   <td>
                     <Link href={`/consultation/dossiers/${d.id}`} className="font-medium hover:underline text-orange-500">{d.client.compte}</Link>
                   </td>
-                  <td><span className="badge-produit">{PRODUIT_LABELS[d.produit] || d.produit}</span></td>
+                  <td>
+                    <span className="badge-produit">{PRODUIT_LABELS[d.produit] || d.produit}</span>
+                    {d.typeFinancement && (
+                      <div className="text-[10px] text-gray-500 mt-0.5">{d.typeFinancement}</div>
+                    )}
+                  </td>
                   <td>
                     <div className="text-sm font-medium text-gray-900">{d.client.nom}</div>
                     <div className="text-xs text-gray-600">{d.client.compte}</div>
