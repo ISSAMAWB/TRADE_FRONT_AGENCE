@@ -748,6 +748,161 @@ function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenement
   );
 }
 
+function DetailFIN({ dossier }: { dossier: DossierTrade }) {
+  const clientInfo = dossier.clientInfo;
+  const montantFinancement = dossier.donnees["montantFinancement"];
+  const montantFinancementOk = isMontantAvecDevise(montantFinancement) ? montantFinancement : null;
+  const montantFinance = dossier.donnees["montantFinance"];
+  const montantFinanceOk = isMontantAvecDevise(montantFinance) ? montantFinance : null;
+  const montantTotalRembourser = dossier.donnees["montantTotalRembourser"];
+  const montantTotalRembourserOk = isMontantAvecDevise(montantTotalRembourser) ? montantTotalRembourser : null;
+  const tauxInteret = dossier.donnees["tauxInteret"];
+  const dateEcheance = dossier.donnees["dateEcheance"];
+  const dateMiseEnPlace = dossier.donnees["dateMiseEnPlace"];
+  const dateEcheanceStr = dateEcheance ? String(dateEcheance) : "";
+  const referenceFinancement = dossier.donnees["referenceFinancement"];
+  const referenceDossierFinance = dossier.donnees["referenceDossierFinance"];
+  const typeFinancement = dossier.donnees["typeFinancement"];
+  const clientDebite = dossier.donnees["client"];
+  const beneficiaire = dossier.donnees["contrepartie"];
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="lg:col-span-2">
+          <Card>
+            <div className="flex justify-between items-start">
+              <div>
+                <Link href="/consultation/dossiers" className="text-[11px] text-[#64748b] hover:text-[#e8632b] flex items-center gap-1 mb-1.5">
+                  ‹ Retour à la liste
+                </Link>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="text-[11px] text-[#64748b]">FIN · Financement</span>
+                  {typeFinancement && (
+                    <Badge color="blue">{String(typeFinancement)}</Badge>
+                  )}
+                </div>
+                <div className="text-[22px] font-bold text-[#0f172a] leading-tight">
+                  Dossier de financement {dossier.reference}
+                </div>
+                <div className="text-[13px] text-[#64748b]">
+                  <span>Client débité : {String(clientDebite || "—")}</span>
+                  {referenceDossierFinance && (
+                    <span> · Réf. financée {String(referenceDossierFinance)}</span>
+                  )}
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#e7f6ef] text-[#177a52]">
+                  {dossier.statut}
+                </span>
+              </div>
+            </div>
+
+            <div className="border-t border-[#e5e8ec] mt-3 pt-3">
+              <div className="flex items-center gap-5">
+                <div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#94a3b8]">Montant du financement</div>
+                  <div className="text-[24px] font-extrabold text-[#0f172a] tabular-nums leading-tight">
+                    {montantFinancementOk ? formatMontant(montantFinancementOk.valeur, montantFinancementOk.devise) : "—"}
+                  </div>
+                  {montantFinancementOk && (
+                    <div className="text-[10.5px] text-[#64748b]">
+                      Taux appliqué : {String(tauxInteret || "—")}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1">
+                  <div className="h-[10px] rounded-[6px] overflow-hidden flex">
+                    <div className="h-full bg-[#2a9d6f]" style={{ width: "100%" }} />
+                  </div>
+                  <div className="flex justify-between text-[11px] mt-2">
+                    <span className="flex items-center gap-1 text-[#2a9d6f]">
+                      <span className="w-2 h-2 rounded-full bg-[#2a9d6f]" />
+                      Montant financé {montantFinanceOk ? formatMontant(montantFinanceOk.valeur, montantFinanceOk.devise) : "—"}
+                    </span>
+                    <span className="flex items-center gap-1 text-[#e8632b]">
+                      <span className="w-2 h-2 rounded-full bg-[#e8632b]" />
+                      Montant total à rembourser {montantTotalRembourserOk ? formatMontant(montantTotalRembourserOk.valeur, montantTotalRembourserOk.devise) : "—"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <div>
+          <Card className="border-l-[3px] border-l-[#e8632b] h-full">
+            <SectionLabel>Parties impliquées</SectionLabel>
+            <div className="space-y-2.5">
+              <div>
+                <div className="text-[12.5px] font-semibold text-[#0f172a] leading-tight">{String(clientDebite || "—")}</div>
+                <div className="text-[10.5px] text-[#64748b]">
+                  Client débité · {clientInfo?.numeroCompte ? <span className="font-mono">{clientInfo.numeroCompte}</span> : "—"}
+                </div>
+              </div>
+              <div className="border-t border-[#e5e8ec] pt-2.5 grid grid-cols-[92px_1fr] gap-y-2 gap-x-2 text-[12px]">
+                <span className="text-[#94a3b8]">Bénéficiaire du financement</span>
+                <span className="font-medium text-[#0f172a]">{String(beneficiaire || "—")}</span>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      <BandeauEcheanceV2
+        date={dateEcheanceStr}
+        dateDebut={dateMiseEnPlace ? String(dateMiseEnPlace) : undefined}
+        contexte={String(typeFinancement || "")}
+        label="DATE DE REMBOURSEMENT"
+        labelDebut="Mise en place"
+        labelFin="Remboursement"
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <Card>
+          <SectionLabel>Caractéristiques de l'opération</SectionLabel>
+          <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
+            <span className="text-[#94a3b8]">Réf. de l'opération</span>
+            <span className="font-medium text-[#0f172a] font-mono">{String(referenceFinancement || "—")}</span>
+            <span className="text-[#94a3b8]">Réf. financée</span>
+            <span className="font-medium text-[#0f172a] font-mono">{String(referenceDossierFinance || "—")}</span>
+            <span className="text-[#94a3b8]">Type du financement</span>
+            <span className="font-medium text-[#0f172a]">{String(typeFinancement || "—")}</span>
+          </div>
+        </Card>
+
+        <Card>
+          <SectionLabel>Informations financières</SectionLabel>
+          <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
+            <span className="text-[#94a3b8]">Montant du financement</span>
+            <span className="font-semibold text-[#0f172a]">{montantFinancementOk ? formatMontant(montantFinancementOk.valeur, montantFinancementOk.devise) : "—"}</span>
+            <span className="text-[#94a3b8]">Taux appliqué</span>
+            <span className="font-semibold text-[#0f172a]">{String(tauxInteret || "—")}</span>
+            <span className="text-[#94a3b8]">Montant disponible</span>
+            <span className="font-semibold text-[#2a9d6f]">{montantFinanceOk ? formatMontant(montantFinanceOk.valeur, montantFinanceOk.devise) : "—"}</span>
+            <span className="text-[#94a3b8]">Montant du financement, plus intérêt</span>
+            <span className="font-semibold text-[#e8632b]">{montantTotalRembourserOk ? formatMontant(montantTotalRembourserOk.valeur, montantTotalRembourserOk.devise) : "—"}</span>
+            <span className="text-[#94a3b8]">Contrevaleur en MAD</span>
+            <span className="font-semibold text-[#0f172a]">
+              {(() => {
+                const m = montantFinancementOk;
+                return m && formatContreValeurMAD(m.valeur, m.devise)
+                  ? formatContreValeurMAD(m.valeur, m.devise)
+                  : "—";
+              })()}
+            </span>
+          </div>
+        </Card>
+      </div>
+
+      <EvenementsTableV2 evenements={dossier.evenements} />
+    </div>
+  );
+}
+
 function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
   const isILC = dossier.produit === "ILC";
   const isELC = dossier.produit === "ELC";
@@ -1111,6 +1266,8 @@ export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
         {schema ? (
           dossier.produit === "ILC" || dossier.produit === "ELC" || dossier.produit === "IRD" ? (
             <DetailILCIRD dossier={dossier} />
+          ) : dossier.produit === "FIN" ? (
+            <DetailFIN dossier={dossier} />
           ) : dossier.produit === "ERD" ? (
             <DetailERD dossier={dossier} />
           ) : (
