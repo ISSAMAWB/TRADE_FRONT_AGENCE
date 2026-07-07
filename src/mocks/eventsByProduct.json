@@ -52,12 +52,10 @@
     "Dénouement / Clôture"
   ],
   "FIN": [
-    "Demande",
-    "Octroi / Accord",
-    "Déblocage des fonds",
-    "Échéance",
-    "Remboursement partiel",
-    "Remboursement total",
-    "Clôture"
+    "Mise en place du financement",
+    "Amendement du financement",
+    "Ajustement du financement",
+    "Remboursement du financement",
+    "Expiration du financement"
   ]
 }

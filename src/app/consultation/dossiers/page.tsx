@@ -7,6 +7,7 @@ import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import dossiersData from "@/mocks/dossiers.json";
+import eventsByProduct from "@/mocks/eventsByProduct.json";
 import type { Dossier, StatutDossier, DeviseTrade, ProduitTrade } from "@/domain/consultation";
 import Button from "@/components/ui/Button";
 import CollapsibleFilterPanel from "@/components/ui/CollapsibleFilterPanel";
@@ -17,19 +18,9 @@ const STATUTS: StatutDossier[] = ["En cours", "Expiré", "Annulé"];
 const DEVISES: DeviseTrade[] = ["EUR", "USD", "GBP", "MAD", "JPY", "CHF"];
 const PRODUITS: ProduitTrade[] = ["ILC", "IRD", "ERD", "ELC", "FIN"];
 
-const EVENEMENTS = [
-  "Création",
-  "Modification",
-  "Présentation de documents avec réserves",
-  "Acceptation des documents",
-  "Refus des documents",
-  "Paiement à vue",
-  "Paiement à échéance",
-  "Correspondance",
-  "Gestion des frais et commission",
-  "Annulation",
-  "Expiration",
-];
+const ALL_EVENEMENTS = Array.from(
+  new Set(Object.values(eventsByProduct).flat())
+);
 
 const PRODUIT_LABELS: Record<string, string> = {
   ILC: "CREDOC IMPORT",
@@ -278,6 +269,7 @@ export default function ConsultationDossiersPage() {
                     const value = e.target.value as ProduitTrade | "";
                     setProduit(value);
                     if (value !== "FIN") setTypeFinancement("");
+                    if (evenement) setEvenement("");
                   }}
                 >
                   <option value="">Tous les produits</option>
@@ -384,7 +376,11 @@ export default function ConsultationDossiersPage() {
                   onChange={(e) => setEvenement(e.target.value)}
                 >
                   <option value="">Tous les événements</option>
-                  {EVENEMENTS.map((e) => (
+                  {(
+                    produit && produit in eventsByProduct
+                      ? eventsByProduct[produit as keyof typeof eventsByProduct]
+                      : ALL_EVENEMENTS
+                  ).map((e) => (
                     <option key={e} value={e}>{e}</option>
                   ))}
                 </select>
