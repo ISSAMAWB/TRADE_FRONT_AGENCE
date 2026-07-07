@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import DetailDossier from "@/components/consultation/DetailDossier";
 import dossiersDetail from "@/mocks/dossiersDetail.json";
+import eventsByProduct from "@/mocks/eventsByProduct.json";
 import type { DossierTrade } from "@/domain/consultation-detail";
 import Shell from "@/components/Shell";
 import CollapsibleFilterPanel from "@/components/ui/CollapsibleFilterPanel";
@@ -22,19 +23,10 @@ export default function ConsultationDossierDetailPage() {
   const [dateDebut, setDateDebut] = useState("");
   const [dateFin, setDateFin] = useState("");
 
-  const EVENEMENTS = [
-    "Création",
-    "Modification",
-    "Présentation de documents avec réserves",
-    "Acceptation des documents",
-    "Refus des documents",
-    "Paiement à vue",
-    "Paiement à échéance",
-    "Correspondance",
-    "Gestion des frais et commission",
-    "Annulation",
-    "Expiration",
-  ];
+  const EVENEMENTS =
+    dossier && dossier.produit in eventsByProduct
+      ? eventsByProduct[dossier.produit as keyof typeof eventsByProduct]
+      : [];
 
   function resetFilters() {
     setEvenement("");

@@ -285,7 +285,7 @@
     "evenements": [
       {
         "reference": "EVT-2026-0201",
-        "nature": "Création",
+        "nature": "Notification",
         "montant": 350000,
         "devise": "USD",
         "dateCreation": "2026-02-01T08:45:00",
@@ -314,6 +314,23 @@
             "dateEmission": "2026-02-05T16:20:00",
             "contenu": "Amendement au crédit documentaire export ELC0098741A-0023. Augmentation du montant et modification de la date d'expiration.",
             "fichier": "MT707_ELC0098741A-0023_20260205.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0230",
+        "nature": "Présentation des documents",
+        "montant": null,
+        "devise": "USD",
+        "dateCreation": "2026-02-15T09:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0230-01",
+            "type": "MT734",
+            "dateEmission": "2026-02-15T09:00:00",
+            "contenu": "Avis de présentation de documents conformes pour le crédit documentaire export ELC0098741A-0023. Documents reçus sans réserves.",
+            "fichier": "MT734_ELC0098741A-0023_20260215.pdf"
           }
         ]
       },
