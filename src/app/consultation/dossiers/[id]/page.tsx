@@ -25,7 +25,7 @@ export default function ConsultationDossierDetailPage() {
   const EVENEMENTS = [
     "Création",
     "Modification",
-    "Réception document avec réserve",
+    "Présentation de documents avec réserves",
     "Acceptation/Refus des documents",
     "Paiement à vue",
     "Paiement à échéance",
