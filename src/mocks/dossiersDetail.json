@@ -50,7 +50,7 @@
     "evenements": [
       {
         "reference": "EVT-2026-0112",
-        "nature": "Ouverture du dossier",
+        "nature": "Création",
         "montant": 20000,
         "devise": "EUR",
         "dateCreation": "2026-01-10T09:30:00",
@@ -58,7 +58,7 @@
       },
       {
         "reference": "EVT-2026-0125",
-        "nature": "Notification bénéficiaire",
+        "nature": "Modification",
         "montant": null,
         "devise": "EUR",
         "dateCreation": "2026-01-12T14:15:00",
@@ -66,7 +66,7 @@
       },
       {
         "reference": "EVT-2026-0148",
-        "nature": "Documents en attente",
+        "nature": "Réception document avec réserve",
         "montant": null,
         "devise": "EUR",
         "dateCreation": "2026-01-15T11:00:00",
@@ -74,7 +74,7 @@
       },
       {
         "reference": "EVT-2026-0160",
-        "nature": "Paiement partiel",
+        "nature": "Paiement à vue",
         "montant": 5000,
         "devise": "EUR",
         "dateCreation": "2026-05-16T10:00:00",
@@ -84,7 +84,7 @@
       },
       {
         "reference": "EVT-2026-0175",
-        "nature": "Paiement partiel",
+        "nature": "Paiement à échéance",
         "montant": 10000,
         "devise": "EUR",
         "dateCreation": "2026-06-01T09:00:00",

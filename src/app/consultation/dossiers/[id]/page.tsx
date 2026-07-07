@@ -24,13 +24,13 @@ export default function ConsultationDossierDetailPage() {
 
   const EVENEMENTS = [
     "Création",
-    "Réception des documents",
     "Modification",
-    "Ajustement",
+    "Réception document avec réserve",
+    "Acceptation/Refus des documents",
     "Paiement à vue",
     "Paiement à échéance",
-    "Gestion des commissions",
     "Correspondance",
+    "Gestion des frais et commission",
     "Annulation",
     "Expiration",
   ];
