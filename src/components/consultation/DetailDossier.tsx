@@ -908,7 +908,7 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
               <div className="border-t border-[#e5e8ec] pt-2.5 grid grid-cols-[92px_1fr] gap-y-2 gap-x-2 text-[12px]">
                 <span className="text-[#94a3b8]">{isILC ? "Bénéficiaire" : isELC ? "Donneur d'ordre" : "Tireur"}</span>
                 <span className="font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "beneficiaire" : isELC ? "donneurOrdre" : "tireur"] || "—")}</span>
-                <span className="text-[#94a3b8]">{isILC ? "Bq notificatrice" : isELC ? "Banque émettrice" : "P. remettante"}</span>
+                <span className="text-[#94a3b8]">{isILC ? "Banque notificatrice" : isELC ? "Banque émettrice" : "P. remettante"}</span>
                 <span className="font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "banqueNotification" : isELC ? "banqueEmettrice" : "partieRemettante"] || "—")}</span>
               </div>
             </div>
