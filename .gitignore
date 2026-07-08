@@ -1,4 +1,6 @@
 node_modules/
 .next/
 dist/
+build-log.txt
+build-output.txt
 
