@@ -1,9 +1,9 @@
+"use client";
+
+import { useParams } from "next/navigation";
 import ClientPage from "./ClientPage";
 
-export function generateStaticParams() {
-  return [];
-}
-
-export default function Page({ params }: { params: { id: string } }) {
-  return <ClientPage id={params.id} />;
+export default function Page() {
+  const params = useParams<{ id: string }>();
+  return <ClientPage id={params?.id as string} />;
 }
