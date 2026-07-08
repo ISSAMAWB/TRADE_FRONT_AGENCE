@@ -1,36 +1,36 @@
 "use client";
 
-import Link from "next/link";
+import { ReactNode, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Mail, Inbox, FolderOpen, FileSpreadsheet,
-  Settings, ChevronDown, Bell, Search, CircleUser, Lock,
-  FolderOpen as FolderOpenIcon, Clock,
+  LayoutDashboard, Mail, FileSpreadsheet, FolderOpen, Clock, Bell, Settings, Lock,
+  FolderOpen as FolderOpenIcon,
 } from "lucide-react";
-import clsx from "clsx";
 import { useTomStore } from "@/store/useTomStore";
 import type { EquipeActeur } from "@/domain/types";
+import CompactSidebar from "@/components/ui/CompactSidebar";
+import FilterToggleButton from "@/components/ui/FilterToggleButton";
 
-type NavItem = { href: string; label: string; icon: any; disabled?: boolean };
+type NavItem = { href: string; label: string; icon: ReactNode; disabled?: boolean };
 type NavGroup = { title?: string; items: NavItem[] };
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    items: [{ href: "/", label: "Tableau de bord", icon: LayoutDashboard }],
+    items: [{ href: "/", label: "Tableau de bord", icon: <LayoutDashboard size={18} /> }],
   },
   {
     title: "Remise Documentaire Import",
     items: [
-      { href: "/courriers",  label: "Centralisation des courriers IRD", icon: Mail },
-      { href: "/operations", label: "Gestion des opérations IRD",        icon: FileSpreadsheet, disabled: true },
+      { href: "/courriers",  label: "Centralisation des courriers IRD", icon: <Mail size={18} /> },
+      { href: "/operations", label: "Gestion des opérations IRD",        icon: <FileSpreadsheet size={18} />, disabled: true },
     ],
   },
   {
     title: "Consultation",
     items: [
-      { href: "/consultation/dossiers",  label: "Dossiers Trade",       icon: FolderOpenIcon },
-      { href: "/consultation/evenements", label: "Événements récents",  icon: Clock },
-      { href: "/consultation/alertes",    label: "Alertes & échéances", icon: Bell },
+      { href: "/consultation/dossiers",  label: "Dossiers Trade",       icon: <FolderOpen size={18} /> },
+      { href: "/consultation/evenements", label: "Événements récents",  icon: <Clock size={18} /> },
+      { href: "/consultation/alertes",    label: "Alertes & échéances", icon: <Bell size={18} /> },
     ],
   },
 ];
@@ -43,114 +43,64 @@ const ACTEURS: { value: EquipeActeur; label: string }[] = [
   { value: "BO_IRD",              label: "Gestionnaire BO" },
 ];
 
-export default function Shell({ children }: { children: React.ReactNode }) {
+interface ShellProps {
+  children: ReactNode;
+  showFilterButton?: boolean;
+  onFilterToggle?: () => void;
+  isFilterOpen?: boolean;
+}
+
+export default function Shell({ children, showFilterButton = false, onFilterToggle, isFilterOpen = false }: ShellProps) {
   const pathname = usePathname();
   const acteur = useTomStore(s => s.acteurCourant);
-  const setActeur = useTomStore(s => s.setActeur);
   const reset = useTomStore(s => s.resetSeed);
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-64 flex flex-col" style={{ background: "#1E2128" }}>
-        <div className="h-14 px-4 flex items-center gap-2 border-b" style={{ borderColor: "#2C2F36" }}>
-          <div className="h-8 w-8 rounded-md text-white grid place-items-center font-bold" style={{ background: "#E8722A" }}>T</div>
-          <div>
-            <div className="text-sm font-semibold leading-none text-white">Trade Portal</div>
-            <div className="text-[11px]" style={{ color: "#A0A5B0" }}>Orchestration Trade</div>
-          </div>
-        </div>
-
-        <nav className="flex-1 px-2 py-2 overflow-auto">
-          {NAV_GROUPS.map((g, gi) => (
-            <div key={gi} className="mb-2">
-              {g.title && (
-                <div className="px-3 py-2 text-[10px] uppercase tracking-wider" style={{ color: "#A0A5B0" }}>{g.title}</div>
-              )}
-              {g.items.map(n => {
-                const active = pathname === n.href || (n.href !== "/" && pathname?.startsWith(n.href));
-                const Icon = n.icon;
-                if (n.disabled) {
-                  return (
-                    <div
-                      key={n.href}
-                      className="flex items-center gap-3 px-3 py-2 rounded-md text-sm mb-0.5 cursor-not-allowed"
-                      style={{ color: "#6B707A" }}
-                      title="Hors périmètre MVP actuel"
-                    >
-                      <Icon size={16} />
-                      <span className="flex-1">{n.label}</span>
-                      <Lock size={11} />
-                    </div>
-                  );
-                }
-                return (
-                  <Link
-                    key={n.href}
-                    href={n.href}
-                    className={clsx(
-                      "flex items-center gap-3 px-3 py-2 rounded-md text-sm mb-0.5 transition",
-                      active
-                        ? "font-semibold border-l-2"
-                        : "hover:bg-white/5"
-                    )}
-                    style={active ? { color: "#E8722A", borderColor: "#E8722A", background: "rgba(232,114,42,0.10)" } : { color: "#A0A5B0" }}
-                  >
-                    <Icon size={16} />
-                    <span>{n.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          ))}
-        </nav>
-
-        <div className="p-3 border-t text-[11px]" style={{ borderColor: "#2C2F36", color: "#A0A5B0" }}>
-          <button onClick={reset} className="flex items-center gap-2 hover:text-white transition">
-            <Settings size={14} /> Réinitialiser démo
-          </button>
-        </div>
-      </aside>
+      {/* Compact Sidebar */}
+      <CompactSidebar groups={NAV_GROUPS} onReset={reset} />
 
       {/* Main column */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Topbar */}
-        <header className="h-14 bg-white border-b border-ink-100 flex items-center px-6 gap-4">
-          <div className="flex items-center gap-2 flex-1 max-w-xl">
+        <header className="h-16 bg-slate-900 border-b border-slate-800 flex items-center px-6 gap-4">
+          <div className="flex items-center gap-3 flex-1 max-w-xl">
             <div className="relative w-full">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-300" />
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              </div>
               <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Rechercher un dossier, client, référence..."
-                className="input pl-8 h-9"
+                className="input-lg pl-12 w-full"
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] text-ink-500">Rôle</span>
-            <select
-              value={acteur}
-              onChange={(e) => setActeur(e.target.value as EquipeActeur)}
-              className="input h-9 w-44 text-sm"
-            >
-              {ACTEURS.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
-            </select>
-          </div>
+          {showFilterButton && onFilterToggle && (
+            <FilterToggleButton isOpen={isFilterOpen} onClick={onFilterToggle} className="flex-shrink-0" />
+          )}
 
-          <button className="btn-ghost h-9">
-            <Bell size={16} />
+          <button className="btn-ghost text-white hover:bg-slate-700 h-10 w-10 rounded-lg">
+            <Bell size={20} />
           </button>
-          <div className="flex items-center gap-2">
-            <CircleUser size={26} className="text-ink-500" />
-            <div className="text-xs leading-tight">
-              <div className="font-semibold">{ACTEURS.find(a => a.value === acteur)?.label}</div>
-              <div className="text-ink-500">Agence Casablanca</div>
+          <div className="flex items-center gap-3 pl-4 border-l border-slate-800">
+            <div className="h-8 w-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-semibold">
+              {ACTEURS.find(a => a.value === acteur)?.label?.charAt(0) || "A"}
             </div>
-            <ChevronDown size={14} className="text-ink-500" />
+            <div className="text-sm leading-tight">
+              <div className="font-semibold text-white">{ACTEURS.find(a => a.value === acteur)?.label}</div>
+              <div className="text-xs text-slate-400">Agence Casablanca</div>
+            </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-6" style={{ background: "#F5F5F5" }}>{children}</main>
+        <main className="flex-1 overflow-auto p-6 bg-gray-50">{children}</main>
       </div>
     </div>
   );

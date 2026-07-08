@@ -3,7 +3,7 @@
    Vue read-only des dossiers Trade Finance pour l'agence
    ============================================================ */
 
-export type ProduitTrade = "ILC" | "IRD" | "ERD" | "ELC" | "FSA";
+export type ProduitTrade = "ILC" | "IRD" | "ERD" | "ELC" | "FIN";
 
 export type StatutDossier = "En cours" | "Expiré" | "Annulé";
 
@@ -47,6 +47,7 @@ export interface Evenement {
 export interface Dossier {
   id: string;
   produit: ProduitTrade;
+  typeFinancement?: string;
   client: Client;
   montant: number;
   devise: DeviseTrade;

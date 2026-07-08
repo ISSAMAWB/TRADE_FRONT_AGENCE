@@ -1,0 +1,2286 @@
+[
+  {
+    "reference": "ILC0012483Q-0151",
+    "produit": "ILC",
+    "produitLibelle": "Crédit documentaire import",
+    "client": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-26T16:33:00",
+    "clientInfo": {
+      "raisonSociale": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
+      "numeroCompte": "007 780 0000 042",
+      "ice": "002150042000078",
+      "codeClient": "CLI-0042",
+      "agenceRattachement": "Agence Casablanca",
+      "roleOperation": "Donneur d'ordre (Importateur)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ILC-0142-26",
+      "agenceTraitante": "AGC-CASA-01",
+      "gestionnaire": "Karim Benali",
+      "datePriseEnCharge": "13/03/2026",
+      "statutOperationnel": "Documents en attente",
+      "controleDocumentaire": "2 réserves actives",
+      "prochaineAction": "Relance documents transport",
+      "noteInterne": "Client habituel, suivi régulier recommandé."
+    },
+    "donnees": {
+      "donneurOrdre": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
+      "beneficiaire": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
+      "banqueNotification": "CREDIT INDUSTRIEL ET COMMERCIAL",
+      "banqueConfirmation": "CREDIT INDUSTRIEL ET COMMERCIAL",
+      "montantCredit": { "valeur": 20000, "devise": "EUR" },
+      "tolerance": "+/- 0,00 %",
+      "montantEnAttente": { "valeur": 5000, "devise": "EUR" },
+      "montantReclame": { "valeur": 2000, "devise": "EUR" },
+      "montantDisponible": { "valeur": 14000, "devise": "EUR" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "ILC0012483Q-0151",
+      "modeRealisation": "Acceptation",
+      "creditConfirme": "Confirmé",
+      "natureOperation": "Financière",
+      "dateExpiration": "2026-07-19",
+      "lieuExpiration": "France",
+      "referencesTitresImportation": [
+        "TI-2025-08847",
+        "TI-2025-08848",
+        "TI-2025-08912"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0112",
+        "nature": "Création",
+        "montant": 20000,
+        "devise": "EUR",
+        "dateCreation": "2026-01-10T09:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0112-01",
+            "type": "MT700",
+            "dateEmission": "2026-01-10T09:30:00",
+            "contenu": "Message d'ouverture de crédit documentaire import ILC0012483Q-0151 pour 20 000,00 EUR. Bénéficiaire : SOCIETE NOUVELLE HYDRAULIQUE-SNH. Banque notificatrice : CREDIT INDUSTRIEL ET COMMERCIAL.",
+            "fichier": "MT700_ILC0012483Q-0151_20260110.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0125",
+        "nature": "Modification",
+        "montant": 20000,
+        "devise": "EUR",
+        "dateCreation": "2026-01-12T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0125-01",
+            "type": "MT707",
+            "dateEmission": "2026-01-12T14:15:00",
+            "contenu": "Amendement au crédit documentaire ILC0012483Q-0151. Modification des conditions de livraison et extension de la date d'expédition.",
+            "fichier": "MT707_ILC0012483Q-0151_20260112.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0148",
+        "nature": "Présentation de documents avec réserves",
+        "montant": 20000,
+        "devise": "EUR",
+        "dateCreation": "2026-01-15T11:00:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0148-01",
+            "type": "MT734",
+            "dateEmission": "2026-01-15T11:00:00",
+            "contenu": "Avis de refus avec réserves sur la présentation de documents pour ILC0012483Q-0151. Réserves : connaissement maritime non conforme, date de embarquement antérieure au crédit documentaire.",
+            "fichier": "MT734_ILC0012483Q-0151_20260115.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0151",
+        "nature": "Acceptation des documents",
+        "montant": 20000,
+        "devise": "EUR",
+        "dateCreation": "2026-01-20T16:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0151-01",
+            "type": "MT732",
+            "dateEmission": "2026-01-20T16:30:00",
+            "contenu": "Avis de désistement des réserves et acceptation des documents pour ILC0012483Q-0151. Documents conformes après correction.",
+            "fichier": "MT732_ILC0012483Q-0151_20260120.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0152",
+        "nature": "Refus des documents",
+        "montant": 20000,
+        "devise": "EUR",
+        "dateCreation": "2026-02-05T09:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0152-01",
+            "type": "MT734",
+            "dateEmission": "2026-02-05T09:15:00",
+            "contenu": "Refus définitif des documents pour ILC0012483Q-0151. Motif : documents non corrigés dans les délais impartis.",
+            "fichier": "MT734_ILC0012483Q-0151_20260205.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0160",
+        "nature": "Paiement à vue",
+        "montant": 5000,
+        "devise": "EUR",
+        "dateCreation": "2026-05-16T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "123a4567-e89b-12d3-a456-426614174000",
+        "datePaiement": "2026-05-16",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0160-01",
+            "type": "MT103",
+            "dateEmission": "2026-05-16T10:00:00",
+            "contenu": "Ordre de paiement à vue de 5 000,00 EUR au titre du crédit documentaire ILC0012483Q-0151. UETR : 123a4567-e89b-12d3-a456-426614174000.",
+            "fichier": "MT103_ILC0012483Q-0151_20260516.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0175",
+        "nature": "Paiement à échéance",
+        "montant": 10000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-01T09:00:00",
+        "statut": "VALIDE",
+        "uetr": "987f6543-a21c-45d6-b789-012345678901",
+        "datePaiement": "2026-06-01",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0175-01",
+            "type": "MT202",
+            "dateEmission": "2026-06-01T09:00:00",
+            "contenu": "Paiement à échéance de 10 000,00 EUR au titre du crédit documentaire ILC0012483Q-0151. UETR : 987f6543-a21c-45d6-b789-012345678901.",
+            "fichier": "MT202_ILC0012483Q-0151_20260601.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0180",
+        "nature": "Correspondance",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-02-10T11:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0180-01",
+            "type": "MT799",
+            "dateEmission": "2026-02-10T11:30:00",
+            "contenu": "Message de correspondance libre concernant le crédit documentaire ILC0012483Q-0151. Demande de clarification sur les documents de transport.",
+            "fichier": "MT799_ILC0012483Q-0151_20260210.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0185",
+        "nature": "Gestion des frais et commission",
+        "montant": 150,
+        "devise": "EUR",
+        "dateCreation": "2026-02-15T14:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0185-01",
+            "type": "MT191",
+            "dateEmission": "2026-02-15T14:00:00",
+            "contenu": "Débit de frais et commissions de 150,00 EUR sur le crédit documentaire ILC0012483Q-0151. Frais d'ouverture et notification.",
+            "fichier": "MT191_ILC0012483Q-0151_20260215.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0188",
+        "nature": "Annulation",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-06-15T10:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0188-01",
+            "type": "MT707",
+            "dateEmission": "2026-06-15T10:00:00",
+            "contenu": "Annulation du crédit documentaire ILC0012483Q-0151 à la demande du donneur d'ordre. Référence d'annulation : CAN-ILC-0012483Q-0151-26.",
+            "fichier": "MT707_ILC0012483Q-0151_20260615.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0190",
+        "nature": "Expiration",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-07-19T00:00:00",
+        "statut": "EN_COURS"
+      }
+    ]
+  },
+  {
+    "reference": "ELC-2026-00034",
+    "produit": "ELC",
+    "produitLibelle": "Crédit documentaire export",
+    "client": "STE PAKISTAN MAROC PHOSPHORE",
+    "statut": "VALIDE",
+    "dateMiseAJour": "2026-04-01T16:15:00",
+    "clientInfo": {
+      "raisonSociale": "STE PAKISTAN MAROC PHOSPHORE",
+      "numeroCompte": "007 780 0000 089",
+      "ice": "001234567890123",
+      "codeClient": "CLI-0089",
+      "agenceRattachement": "Agence Jorf Lasfar",
+      "roleOperation": "Bénéficiaire (Exportateur)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ELC-0234-26",
+      "agenceTraitante": "AGC-JORF-02",
+      "gestionnaire": "Fatima Zahra",
+      "datePriseEnCharge": "15/02/2026",
+      "statutOperationnel": "En cours de traitement",
+      "controleDocumentaire": "Aucune réserve",
+      "prochaineAction": "Vérification conformité documents",
+      "noteInterne": "Exportateur fiable, procédure standard."
+    },
+    "donnees": {
+      "client": "STE PAKISTAN MAROC PHOSPHORE",
+      "donneurOrdre": "BRAZIL TRADING INTERNATIONAL",
+      "banqueEmettrice": "BANQUE MAROCAINE DU COMMERCE EXTERIEUR",
+      "banqueConfirmation": "Non applicable",
+      "montantCredit": { "valeur": 350000, "devise": "USD" },
+      "tolerance": "+/- 5,00 %",
+      "montantEnAttente": { "valeur": 75000, "devise": "USD" },
+      "montantReclame": { "valeur": 100000, "devise": "USD" },
+      "montantDisponible": { "valeur": 200000, "devise": "USD" },
+      "typeFrais": "À notre charge",
+      "referenceOperation": "ELC0098741A-0023",
+      "modeRealisation": "Paiement à vue",
+      "operationConfirmee": "Non confirmé",
+      "natureOperation": "Commerciale",
+      "dateExpiration": "2028-03-10",
+      "lieuExpiration": "Maroc",
+      "referencesCourrier": [
+        { "reference": "DHL7842941234", "dateEnvoi": "2026-03-10" },
+        { "reference": "DHL7842981238", "dateEnvoi": "2026-03-22" },
+        { "reference": "DHL7843011241", "dateEnvoi": "2026-04-05" },
+        { "reference": "DHL7843051245", "dateEnvoi": "2026-04-18" },
+        { "reference": "DHL7843091249", "dateEnvoi": "2026-05-02" }
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0201",
+        "nature": "Notification",
+        "montant": 350000,
+        "devise": "USD",
+        "dateCreation": "2026-02-01T08:45:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0201-01",
+            "type": "MT700",
+            "dateEmission": "2026-02-01T08:45:00",
+            "contenu": "Message d'ouverture de crédit documentaire export ELC0098741A-0023 pour 350 000,00 USD. Bénéficiaire : STE PAKISTAN MAROC PHOSPHORE. Banque émettrice : BANQUE MAROCAINE DU COMMERCE EXTERIEUR.",
+            "fichier": "MT700_ELC0098741A-0023_20260201.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0215",
+        "nature": "Modification",
+        "montant": 50000,
+        "devise": "USD",
+        "dateCreation": "2026-02-05T16:20:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0215-01",
+            "type": "MT707",
+            "dateEmission": "2026-02-05T16:20:00",
+            "contenu": "Amendement au crédit documentaire export ELC0098741A-0023. Augmentation du montant et modification de la date d'expiration.",
+            "fichier": "MT707_ELC0098741A-0023_20260205.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0230",
+        "nature": "Présentation des documents",
+        "montant": 50000,
+        "devise": "USD",
+        "dateCreation": "2026-02-15T09:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0230-01",
+            "type": "MT734",
+            "dateEmission": "2026-02-15T09:00:00",
+            "contenu": "Avis de présentation de documents conformes pour le crédit documentaire export ELC0098741A-0023. Documents reçus sans réserves.",
+            "fichier": "MT734_ELC0098741A-0023_20260215.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0234",
+        "nature": "Présentation de documents avec réserves",
+        "montant": 50000,
+        "devise": "USD",
+        "dateCreation": "2026-02-18T10:00:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0234-01",
+            "type": "MT734",
+            "dateEmission": "2026-02-18T10:00:00",
+            "contenu": "Avis de refus avec réserves sur la présentation de documents pour ELC0098741A-0023. Réserves : facture commerciale non signée, certificat d'origine manquant.",
+            "fichier": "MT734_ELC0098741A-0023_20260218.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0240",
+        "nature": "Acceptation des documents",
+        "montant": 50000,
+        "devise": "USD",
+        "dateCreation": "2026-02-20T11:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0240-01",
+            "type": "MT732",
+            "dateEmission": "2026-02-20T11:00:00",
+            "contenu": "Avis de désistement des réserves et acceptation des documents pour ELC0098741A-0023. Documents conformes après correction.",
+            "fichier": "MT732_ELC0098741A-0023_20260220.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0245",
+        "nature": "Refus des documents",
+        "montant": 50000,
+        "devise": "USD",
+        "dateCreation": "2026-02-22T14:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0245-01",
+            "type": "MT734",
+            "dateEmission": "2026-02-22T14:30:00",
+            "contenu": "Refus définitif des documents pour ELC0098741A-0023. Motif : documents non corrigés dans les délais impartis.",
+            "fichier": "MT734_ELC0098741A-0023_20260222.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0250",
+        "nature": "Paiement à vue",
+        "montant": 100000,
+        "devise": "USD",
+        "dateCreation": "2026-03-01T09:00:00",
+        "statut": "VALIDE",
+        "uetr": "abc12345-6789-0123-4567-890123456789",
+        "datePaiement": "2026-03-01",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0250-01",
+            "type": "MT103",
+            "dateEmission": "2026-03-01T09:00:00",
+            "contenu": "Ordre de paiement à vue de 100 000,00 USD au titre du crédit documentaire export ELC0098741A-0023. UETR : abc12345-6789-0123-4567-890123456789.",
+            "fichier": "MT103_ELC0098741A-0023_20260301.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0260",
+        "nature": "Paiement à échéance",
+        "montant": 200000,
+        "devise": "USD",
+        "dateCreation": "2026-03-15T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "def67890-1234-5678-9012-345678901234",
+        "datePaiement": "2026-03-15",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0260-01",
+            "type": "MT202",
+            "dateEmission": "2026-03-15T10:00:00",
+            "contenu": "Paiement à échéance de 200 000,00 USD au titre du crédit documentaire export ELC0098741A-0023. UETR : def67890-1234-5678-9012-345678901234.",
+            "fichier": "MT202_ELC0098741A-0023_20260315.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0270",
+        "nature": "Correspondance",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-03-05T16:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0270-01",
+            "type": "MT799",
+            "dateEmission": "2026-03-05T16:00:00",
+            "contenu": "Message de correspondance libre concernant le crédit documentaire export ELC0098741A-0023. Demande de clarification sur les documents de transport.",
+            "fichier": "MT799_ELC0098741A-0023_20260305.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0280",
+        "nature": "Gestion des frais et commission",
+        "montant": 2500,
+        "devise": "USD",
+        "dateCreation": "2026-03-10T11:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0280-01",
+            "type": "MT191",
+            "dateEmission": "2026-03-10T11:30:00",
+            "contenu": "Débit de frais et commissions de 2 500,00 USD sur le crédit documentaire export ELC0098741A-0023. Frais d'ouverture et notification.",
+            "fichier": "MT191_ELC0098741A-0023_20260310.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0290",
+        "nature": "Annulation",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-04-01T10:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0290-01",
+            "type": "MT707",
+            "dateEmission": "2026-04-01T10:00:00",
+            "contenu": "Annulation du crédit documentaire export ELC0098741A-0023 à la demande du donneur d'ordre. Référence d'annulation : CAN-ELC-0098741A-0023-26.",
+            "fichier": "MT707_ELC0098741A-0023_20260401.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0300",
+        "nature": "Expiration",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2028-03-10T00:00:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0300-01",
+            "type": "MT799",
+            "dateEmission": "2028-03-10T00:00:00",
+            "contenu": "Notification d'expiration du crédit documentaire export ELC0098741A-0023. Date d'expiration atteinte.",
+            "fichier": "MT799_ELC0098741A-0023_20280310.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "IRD-2026-00047",
+    "produit": "IRD",
+    "produitLibelle": "Remise documentaire import",
+    "client": "STE VIVO ENERGY MAROC",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-05-20T16:45:00",
+    "clientInfo": {
+      "raisonSociale": "STE VIVO ENERGY MAROC",
+      "numeroCompte": "007 780 0000 156",
+      "ice": "003456789012345",
+      "codeClient": "CLI-0156",
+      "agenceRattachement": "Agence Tanger Med",
+      "roleOperation": "Importateur (Tiré)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-IRD-0347-26",
+      "agenceTraitante": "AGC-TGM-03",
+      "gestionnaire": "Ahmed Alami",
+      "datePriseEnCharge": "20/04/2026",
+      "statutOperationnel": "Documents reçus",
+      "controleDocumentaire": "1 réserve mineure",
+      "prochaineAction": "Validation finale avant paiement",
+      "noteInterne": "Dossier prioritaire, client stratégique."
+    },
+    "donnees": {
+      "client": "STE VIVO ENERGY MAROC",
+      "tireur": "CAVAGNA GROUP SPA",
+      "partieRemettante": "INTESA SANPAOLO SPA",
+      "montantRemise": { "valeur": 21000, "devise": "EUR" },
+      "encours": { "valeur": 5200, "devise": "EUR" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "IRD93903039",
+      "autreReference": "EXT928289",
+      "conditionsRemiseDocuments": "Documents contre acceptation",
+      "dateEcheance": "2026-08-15",
+      "fraisAuMaroc": "Tiré",
+      "fraisAEtranger": "Tiré",
+      "referencesTitresImportation": [
+        "TI-2025-09162",
+        "TI-2025-09215",
+        "TI-2025-09330",
+        "TI-2025-09441",
+        "TI-2025-09558",
+        "TI-2025-09612",
+        "TI-2025-09689"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0301",
+        "nature": "Réception documents",
+        "montant": 21000,
+        "devise": "EUR",
+        "dateCreation": "2026-03-01T11:10:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0301-01",
+            "type": "MT400",
+            "dateEmission": "2026-03-01T11:10:00",
+            "contenu": "Réception de documents pour la remise documentaire import IRD93903039. Montant : 21 000,00 EUR. Tireur : CAVAGNA GROUP SPA.",
+            "fichier": "MT400_IRD93903039_20260301.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0312",
+        "nature": "Remise au client",
+        "montant": 50000,
+        "devise": "EUR",
+        "dateCreation": "2026-03-05T09:45:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0312-01",
+            "type": "MT410",
+            "dateEmission": "2026-03-05T09:45:00",
+            "contenu": "Remise des documents au client pour la remise documentaire import IRD93903039. Documents transmis pour acceptation.",
+            "fichier": "MT410_IRD93903039_20260305.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0325",
+        "nature": "Paiement effectué",
+        "montant": 21000,
+        "devise": "EUR",
+        "dateCreation": "2026-03-08T15:20:00",
+        "statut": "VALIDE",
+        "uetr": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "datePaiement": "2026-04-20",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0325-01",
+            "type": "MT103",
+            "dateEmission": "2026-03-08T15:20:00",
+            "contenu": "Paiement de 21 000,00 EUR au titre de la remise documentaire import IRD93903039. UETR : a1b2c3d4-e5f6-7890-abcd-ef1234567890.",
+            "fichier": "MT103_IRD93903039_20260308.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0335",
+        "nature": "Paiement effectué",
+        "montant": 5800,
+        "devise": "EUR",
+        "dateCreation": "2026-04-12T08:30:00",
+        "statut": "VALIDE",
+        "uetr": "f9e8d7c6-b5a4-3210-fedc-ba09876543210",
+        "datePaiement": "2026-05-10",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0335-01",
+            "type": "MT103",
+            "dateEmission": "2026-04-12T08:30:00",
+            "contenu": "Paiement partiel de 5 800,00 EUR au titre de la remise documentaire import IRD93903039. UETR : f9e8d7c6-b5a4-3210-fedc-ba09876543210.",
+            "fichier": "MT103_IRD93903039_20260412.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "ERD-2026-00065",
+    "produit": "ERD",
+    "produitLibelle": "Remise documentaire export",
+    "client": "SARL BLED CONSERVES",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-26T10:48:00",
+    "clientInfo": {
+      "raisonSociale": "SARL BLED CONSERVES",
+      "numeroCompte": "007 780 0000 203",
+      "ice": "004567890123456",
+      "codeClient": "CLI-0203",
+      "agenceRattachement": "Agence Meknès",
+      "roleOperation": "Exportateur (Donneur d'ordre)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ERD-0465-26",
+      "agenceTraitante": "AGC-MEK-01",
+      "gestionnaire": "Samira Berrada",
+      "datePriseEnCharge": "22/05/2026",
+      "statutOperationnel": "En attente acceptation",
+      "controleDocumentaire": "Documents conformes",
+      "prochaineAction": "Suivi correspondant étranger",
+      "noteInterne": "Exportateur agroalimentaire, suivi régulier."
+    },
+    "donnees": {
+      "client": "SARL BLED CONSERVES",
+      "tire": "EQUARHIM BIDAT",
+      "partieRemettante": "CAISSE D'EPARGNE ROMILLY ORMES",
+      "montantRemise": { "valeur": 6904.88, "devise": "EUR" },
+      "encours": { "valeur": 6904.88, "devise": "EUR" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "E-10-1-17-EQUARHIM",
+      "autreReference": "EXT928290",
+      "conditionsRemiseDocuments": "Remise contre acceptation",
+      "dateEcheance": "2026-09-05",
+      "referencesCourrier": [
+        { "reference": "DHL7756234891", "dateEnvoi": "2026-05-23" },
+        { "reference": "DHL7756234892", "dateEnvoi": "2026-06-02" }
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0231",
+        "nature": "Ouverture du dossier",
+        "montant": 1500000,
+        "devise": "EUR",
+        "dateCreation": "2026-05-22T09:14:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0231-01",
+            "type": "MT400",
+            "dateEmission": "2026-05-22T09:14:00",
+            "contenu": "Ouverture de la remise documentaire export E-10-1-17-EQUARHIM pour 1 500 000,00 EUR. Tireur : SARL BLED CONSERVES.",
+            "fichier": "MT400_E-10-1-17-EQUARHIM_20260522.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0244",
+        "nature": "Réception des documents",
+        "montant": 50000,
+        "devise": "EUR",
+        "dateCreation": "2026-05-28T11:02:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0244-01",
+            "type": "MT410",
+            "dateEmission": "2026-05-28T11:02:00",
+            "contenu": "Réception des documents pour la remise documentaire export E-10-1-17-EQUARHIM. Documents transmis pour vérification.",
+            "fichier": "MT410_E-10-1-17-EQUARHIM_20260528.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0258",
+        "nature": "Envoi à la banque correspondante",
+        "montant": 1500000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-02T15:40:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0258-01",
+            "type": "MT400",
+            "dateEmission": "2026-06-02T15:40:00",
+            "contenu": "Envoi des documents à la banque correspondante pour la remise documentaire export E-10-1-17-EQUARHIM. CAISSE D'EPARGNE ROMILLY ORMES.",
+            "fichier": "MT400_E-10-1-17-EQUARHIM_20260602.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0271",
+        "nature": "Acceptation correspondant",
+        "montant": 50000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-12T08:25:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0271-01",
+            "type": "MT799",
+            "dateEmission": "2026-06-12T08:25:00",
+            "contenu": "Notification d'acceptation par la banque correspondante pour la remise documentaire export E-10-1-17-EQUARHIM.",
+            "fichier": "MT799_E-10-1-17-EQUARHIM_20260612.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0289",
+        "nature": "Validation documents",
+        "montant": 50000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-23T14:11:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0289-01",
+            "type": "MT799",
+            "dateEmission": "2026-06-23T14:11:00",
+            "contenu": "Validation des documents pour la remise documentaire export E-10-1-17-EQUARHIM. Documents conformes.",
+            "fichier": "MT799_E-10-1-17-EQUARHIM_20260623.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0301",
+        "nature": "Demande de paiement",
+        "montant": 1500000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-26T10:48:00",
+        "statut": "EN_ATTENTE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0301-01",
+            "type": "MT799",
+            "dateEmission": "2026-06-26T10:48:00",
+            "contenu": "Demande de paiement pour la remise documentaire export E-10-1-17-EQUARHIM. Montant : 1 500 000,00 EUR.",
+            "fichier": "MT799_E-10-1-17-EQUARHIM_20260626.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "FSA2600001",
+    "produit": "FIN",
+    "produitLibelle": "Financement",
+    "client": "STE IMPORT MAROC SARL",
+    "statut": "VALIDE",
+    "dateMiseAJour": "2026-03-10T14:30:00",
+    "clientInfo": {
+      "raisonSociale": "STE IMPORT MAROC SARL",
+      "numeroCompte": "007 780 0000 334",
+      "ice": "005678901234567",
+      "codeClient": "CLI-0334",
+      "agenceRattachement": "Agence Rabat Agdal",
+      "roleOperation": "Bénéficiaire du financement"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-FIN-0588-26",
+      "agenceTraitante": "AGC-RAB-05",
+      "gestionnaire": "Mohammed Kabbaj",
+      "datePriseEnCharge": "10/09/2025",
+      "statutOperationnel": "Financement en cours",
+      "controleDocumentaire": "Dossier complet",
+      "prochaineAction": "Suivi échéance mars 2026",
+      "noteInterne": "Client importateur, refinancement à l'import standard."
+    },
+    "donnees": {
+      "client": "STE IMPORT MAROC SARL",
+      "partieDebitee": "Agence Rabat Agdal",
+      "contrepartie": "CHINA STEEL CORPORATION",
+      "montantFinancement": { "valeur": 250000, "devise": "EUR" },
+      "montantFinance": { "valeur": 250000, "devise": "EUR" },
+      "encoursRestant": { "valeur": 243056, "devise": "EUR" },
+      "montantTotalRembourser": { "valeur": 245370, "devise": "EUR" },
+      "montantInterets": { "valeur": 11574, "devise": "EUR" },
+      "typeFinancement": "Refinancement à l'import",
+      "tauxInteret": "5,8 %",
+      "referenceFinancement": "FSA2600001",
+      "referenceDossierFinance": "ILC00045821",
+      "dateMiseEnPlace": "2025-09-15",
+      "dateEcheance": "2026-03-15"
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0401",
+        "nature": "Mise en place du financement",
+        "montant": 250000,
+        "devise": "EUR",
+        "dateCreation": "2025-09-15T10:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0401-01",
+            "type": "MT103",
+            "dateEmission": "2025-09-15T10:00:00",
+            "contenu": "Ordre de déblocage du financement FSA2600001 pour 250 000,00 EUR. Bénéficiaire : CHINA STEEL CORPORATION.",
+            "fichier": "MT103_FSA2600001_20250915.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0405",
+        "nature": "Amendement du financement",
+        "montant": 250000,
+        "devise": "EUR",
+        "dateCreation": "2025-10-02T14:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0405-01",
+            "type": "MT799",
+            "dateEmission": "2025-10-02T14:30:00",
+            "contenu": "Amendement du financement FSA2600001 : modification de la date de remboursement et ajustement des conditions.",
+            "fichier": "MT799_FSA2600001_20251002.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0412",
+        "nature": "Ajustement du financement",
+        "montant": 50000,
+        "devise": "EUR",
+        "dateCreation": "2025-11-10T09:00:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0412-01",
+            "type": "MT799",
+            "dateEmission": "2025-11-10T09:00:00",
+            "contenu": "Ajustement du montant du financement FSA2600001. Augmentation de 50 000,00 EUR sur la ligne de financement.",
+            "fichier": "MT799_FSA2600001_20251110.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0425",
+        "nature": "Remboursement du financement",
+        "montant": 245370,
+        "devise": "EUR",
+        "dateCreation": "2026-03-10T14:30:00",
+        "statut": "VALIDE",
+        "uetr": "111a2222-b33c-44d5-e666-777f888g999h",
+        "datePaiement": "2026-03-10",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0425-01",
+            "type": "MT103",
+            "dateEmission": "2026-03-10T14:30:00",
+            "contenu": "Remboursement du financement FSA2600001 pour 245 370,00 EUR. UETR : 111a2222-b33c-44d5-e666-777f888g999h.",
+            "fichier": "MT103_FSA2600001_20260310.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0430",
+        "nature": "Expiration du financement",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-03-15T00:00:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0430-01",
+            "type": "MT799",
+            "dateEmission": "2026-03-15T00:00:00",
+            "contenu": "Notification d'expiration du financement FSA2600001. Date d'échéance atteinte.",
+            "fichier": "MT799_FSA2600001_20260315.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "FSA2600002",
+    "produit": "FIN",
+    "produitLibelle": "Financement",
+    "client": "AGRO EXPORT MAROC",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-28T09:15:00",
+    "clientInfo": {
+      "raisonSociale": "AGRO EXPORT MAROC",
+      "numeroCompte": "007 780 0000 512",
+      "ice": "001512789000078",
+      "codeClient": "CLI-0512",
+      "agenceRattachement": "Agence Casablanca Centre",
+      "roleOperation": "Bénéficiaire du financement"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-FIL-00092-26",
+      "agenceTraitante": "AGC-CASA-02",
+      "gestionnaire": "Sara Bennani",
+      "datePriseEnCharge": "21/11/2025",
+      "statutOperationnel": "Déblocage partiel",
+      "controleDocumentaire": "Dossier complet",
+      "prochaineAction": "Suivi déblocage second tranche",
+      "noteInterne": "Client exportateur, préfinancement à l'export en cours."
+    },
+    "donnees": {
+      "client": "AGRO EXPORT MAROC",
+      "partieDebitee": "AGRO EXPORT MAROC",
+      "contrepartie": "AGRO EXPORT MAROC",
+      "montantFinancement": { "valeur": 1800000, "devise": "USD" },
+      "montantFinance": { "valeur": 900000, "devise": "USD" },
+      "encoursRestant": { "valeur": 900000, "devise": "USD" },
+      "montantTotalRembourser": { "valeur": 1800000, "devise": "USD" },
+      "montantInterets": { "valeur": 90000, "devise": "USD" },
+      "typeFinancement": "Préfinancement à l'export",
+      "tauxInteret": "5,0 %",
+      "referenceFinancement": "FSA2600002",
+      "referenceDossierFinance": "ELC00045822",
+      "dateMiseEnPlace": "2025-11-20",
+      "dateEcheance": "2026-11-20"
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0501",
+        "nature": "Mise en place du financement",
+        "montant": 900000,
+        "devise": "USD",
+        "dateCreation": "2025-11-20T10:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0501-01",
+            "type": "MT103",
+            "dateEmission": "2025-11-20T10:00:00",
+            "contenu": "Ordre de déblocage du financement FSA2600002 pour 900 000,00 USD. Première tranche du préfinancement à l'export.",
+            "fichier": "MT103_FSA2600002_20251120.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0515",
+        "nature": "Ajustement du financement",
+        "montant": 900000,
+        "devise": "USD",
+        "dateCreation": "2026-02-15T14:00:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0515-01",
+            "type": "MT799",
+            "dateEmission": "2026-02-15T14:00:00",
+            "contenu": "Ajustement du financement FSA2600002 : demande de déblocage supplémentaire de 100 000,00 USD.",
+            "fichier": "MT799_FSA2600002_20260215.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "FSA2600003",
+    "produit": "FIN",
+    "produitLibelle": "Financement",
+    "client": "INDUSTRIES DU SUD",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-25T11:20:00",
+    "clientInfo": {
+      "raisonSociale": "INDUSTRIES DU SUD",
+      "numeroCompte": "007 780 0000 289",
+      "ice": "002289456000078",
+      "codeClient": "CLI-0289",
+      "agenceRattachement": "Agence Rabat Agdal",
+      "roleOperation": "Bénéficiaire du financement"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-FIL-00105-26",
+      "agenceTraitante": "AGC-RAB-05",
+      "gestionnaire": "Mohammed Kabbaj",
+      "datePriseEnCharge": "11/01/2026",
+      "statutOperationnel": "Mise en place validée",
+      "controleDocumentaire": "Dossier complet",
+      "prochaineAction": "Suivi remboursement échéance janvier 2027",
+      "noteInterne": "Client industriel, financement ACNEE pour investissement."
+    },
+    "donnees": {
+      "client": "INDUSTRIES DU SUD",
+      "partieDebitee": "INDUSTRIES DU SUD",
+      "contrepartie": "INDUSTRIES DU SUD",
+      "montantFinancement": { "valeur": 950000, "devise": "MAD" },
+      "montantFinance": { "valeur": 475000, "devise": "MAD" },
+      "encoursRestant": { "valeur": 475000, "devise": "MAD" },
+      "montantTotalRembourser": { "valeur": 1026000, "devise": "MAD" },
+      "montantInterets": { "valeur": 76000, "devise": "MAD" },
+      "typeFinancement": "ACNEE",
+      "tauxInteret": "8,0 %",
+      "referenceFinancement": "FSA2600003",
+      "referenceDossierFinance": null,
+      "dateMiseEnPlace": "2026-01-10",
+      "dateEcheance": "2027-01-10"
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0601",
+        "nature": "Mise en place du financement",
+        "montant": 475000,
+        "devise": "MAD",
+        "dateCreation": "2026-01-10T09:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0601-01",
+            "type": "MT103",
+            "dateEmission": "2026-01-10T09:00:00",
+            "contenu": "Ordre de déblocage du financement FSA2600003 pour 475 000,00 MAD. Première tranche ACNEE.",
+            "fichier": "MT103_FSA2600003_20260110.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0620",
+        "nature": "Amendement du financement",
+        "montant": 475000,
+        "devise": "MAD",
+        "dateCreation": "2026-03-20T10:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0620-01",
+            "type": "MT799",
+            "dateEmission": "2026-03-20T10:30:00",
+            "contenu": "Amendement du financement FSA2600003 : extension de la durée du financement.",
+            "fichier": "MT799_FSA2600003_20260320.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "FSA2600004",
+    "produit": "FIN",
+    "produitLibelle": "Financement",
+    "client": "TEXTILES ATLANTIC",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-30T16:45:00",
+    "clientInfo": {
+      "raisonSociale": "TEXTILES ATLANTIC",
+      "numeroCompte": "007 780 0000 671",
+      "ice": "003671123000078",
+      "codeClient": "CLI-0671",
+      "agenceRattachement": "Agence Tanger Med",
+      "roleOperation": "Bénéficiaire du financement"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-FIL-00118-26",
+      "agenceTraitante": "AGC-TGM-03",
+      "gestionnaire": "Ahmed Alami",
+      "datePriseEnCharge": "06/02/2026",
+      "statutOperationnel": "Remboursement attendu",
+      "controleDocumentaire": "Dossier complet",
+      "prochaineAction": "Préparer remboursement août 2026",
+      "noteInterne": "Client textile, mobilisation en devises pour export."
+    },
+    "donnees": {
+      "client": "TEXTILES ATLANTIC",
+      "partieDebitee": "TEXTILES ATLANTIC",
+      "contrepartie": "TEXTILES ATLANTIC",
+      "montantFinancement": { "valeur": 3200000, "devise": "EUR" },
+      "montantFinance": { "valeur": 3200000, "devise": "EUR" },
+      "encoursRestant": { "valeur": 3200000, "devise": "EUR" },
+      "montantTotalRembourser": { "valeur": 3200000, "devise": "EUR" },
+      "montantInterets": { "valeur": 0, "devise": "EUR" },
+      "typeFinancement": "Mobilisation en devises",
+      "tauxInteret": "8,0 %",
+      "referenceFinancement": "FSA2600004",
+      "referenceDossierFinance": "ERD00045825",
+      "dateMiseEnPlace": "2026-02-05",
+      "dateEcheance": "2026-08-05"
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0701",
+        "nature": "Mise en place du financement",
+        "montant": 3200000,
+        "devise": "EUR",
+        "dateCreation": "2026-02-05T10:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0701-01",
+            "type": "MT103",
+            "dateEmission": "2026-02-05T10:00:00",
+            "contenu": "Ordre de déblocage du financement FSA2600004 pour 3 200 000,00 EUR. Mobilisation en devises complète.",
+            "fichier": "MT103_FSA2600004_20260205.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0725",
+        "nature": "Remboursement du financement",
+        "montant": 1600000,
+        "devise": "EUR",
+        "dateCreation": "2026-05-05T09:00:00",
+        "statut": "VALIDE",
+        "uetr": "222b3333-c44d-55e6-f777-888g999h000i",
+        "datePaiement": "2026-05-05",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0725-01",
+            "type": "MT103",
+            "dateEmission": "2026-05-05T09:00:00",
+            "contenu": "Remboursement partiel du financement FSA2600004 pour 1 600 000,00 EUR. UETR : 222b3333-c44d-55e6-f777-888g999h000i.",
+            "fichier": "MT103_FSA2600004_20260505.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0730",
+        "nature": "Ajustement du financement",
+        "montant": 3200000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-15T11:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0730-01",
+            "type": "MT799",
+            "dateEmission": "2026-06-15T11:00:00",
+            "contenu": "Ajustement du financement FSA2600004 : confirmation du calendrier de remboursement.",
+            "fichier": "MT799_FSA2600004_20260615.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0740",
+        "nature": "Expiration du financement",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-08-05T00:00:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0740-01",
+            "type": "MT799",
+            "dateEmission": "2026-08-05T00:00:00",
+            "contenu": "Notification d'expiration du financement FSA2600004. Date d'échéance atteinte.",
+            "fichier": "MT799_FSA2600004_20260805.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "ILC-2026-00142",
+    "produit": "ILC",
+    "produitLibelle": "Crédit documentaire import",
+    "client": "OCEANIC SHIPPING SARL",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-24T16:33:00",
+    "clientInfo": {
+      "raisonSociale": "OCEANIC SHIPPING SARL",
+      "numeroCompte": "007 780 0000 042",
+      "ice": "002150042000078",
+      "codeClient": "CLI-0042",
+      "agenceRattachement": "Agence Casablanca",
+      "roleOperation": "Donneur d'ordre (Importateur)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ILC-0142-26",
+      "agenceTraitante": "AGC-CASA-01",
+      "gestionnaire": "Karim Benali",
+      "datePriseEnCharge": "13/03/2026",
+      "statutOperationnel": "Documents en attente",
+      "controleDocumentaire": "2 réserves actives",
+      "prochaineAction": "Relance documents transport",
+      "noteInterne": "Client habituel, suivi régulier recommandé."
+    },
+    "donnees": {
+      "donneurOrdre": "OCEANIC SHIPPING SARL",
+      "beneficiaire": "OCEANIC SHIPPING SARL",
+      "banqueNotification": "HSBC London",
+      "banqueConfirmation": "HSBC London",
+      "montantCredit": { "valeur": 1200000, "devise": "USD" },
+      "tolerance": "+/- 10,00 %",
+      "montantReclame": { "valeur": 1200000, "devise": "USD" },
+      "montantDisponible": { "valeur": 1200000, "devise": "USD" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "ILC-2026-00142",
+      "modeRealisation": "Acceptation",
+      "creditConfirme": "Confirmé",
+      "natureOperation": "Financière",
+      "dateExpiration": "2026-06-28",
+      "lieuExpiration": "Chine",
+      "referencesTitresImportation": [
+        "TI-2025-08847",
+        "TI-2025-08848"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-001",
+        "nature": "Création",
+        "montant": 1200000,
+        "devise": "USD",
+        "dateCreation": "2026-03-12T09:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0300-01",
+            "type": "MT700",
+            "dateEmission": "2026-03-12T09:30:00",
+            "contenu": "Message d'ouverture de crédit documentaire import ILC-2026-00142 pour 1 200 000,00 USD. Bénéficiaire : OCEANIC SHIPPING SARL. Banque notificatrice : HSBC London.",
+            "fichier": "MT700_ILC-2026-00142_20260312.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-002",
+        "nature": "Modification",
+        "montant": 1200000,
+        "devise": "USD",
+        "dateCreation": "2026-05-15T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0400-01",
+            "type": "MT707",
+            "dateEmission": "2026-05-15T14:15:00",
+            "contenu": "Amendement au crédit documentaire ILC-2026-00142. Extension de la date d'expiration.",
+            "fichier": "MT707_ILC-2026-00142_20260515.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-003",
+        "nature": "Présentation de documents avec réserves",
+        "montant": 1200000,
+        "devise": "USD",
+        "dateCreation": "2026-06-24T11:00:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0500-01",
+            "type": "MT734",
+            "dateEmission": "2026-06-24T11:00:00",
+            "contenu": "Présentation de documents avec réserves pour ILC-2026-00142. Documents en attente de correction.",
+            "fichier": "MT734_ILC-2026-00142_20260624.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-004",
+        "nature": "Acceptation des documents",
+        "montant": 1200000,
+        "devise": "USD",
+        "dateCreation": "2026-06-25T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0501-01",
+            "type": "MT732",
+            "dateEmission": "2026-06-25T14:15:00",
+            "contenu": "Acceptation des documents pour ILC-2026-00142. Documents conformes.",
+            "fichier": "MT732_ILC-2026-00142_20260625.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-005",
+        "nature": "Paiement à vue",
+        "montant": 1200000,
+        "devise": "USD",
+        "dateCreation": "2026-06-26T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "abc123def456-7890-abcd-ef1234567890",
+        "datePaiement": "2026-06-26",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0502-01",
+            "type": "MT103",
+            "dateEmission": "2026-06-26T10:00:00",
+            "contenu": "Paiement à vue de 1 200 000,00 USD au titre du crédit documentaire ILC-2026-00142. UETR : abc123def456-7890-abcd-ef1234567890.",
+            "fichier": "MT103_ILC-2026-00142_20260626.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-006",
+        "nature": "Correspondance",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-06-27T11:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0503-01",
+            "type": "MT799",
+            "dateEmission": "2026-06-27T11:30:00",
+            "contenu": "Message de correspondance libre concernant le crédit documentaire ILC-2026-00142.",
+            "fichier": "MT799_ILC-2026-00142_20260627.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-007",
+        "nature": "Gestion des frais et commission",
+        "montant": 1800,
+        "devise": "USD",
+        "dateCreation": "2026-06-28T14:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0504-01",
+            "type": "MT191",
+            "dateEmission": "2026-06-28T14:00:00",
+            "contenu": "Débit de frais et commissions de 1 800,00 USD sur le crédit documentaire ILC-2026-00142.",
+            "fichier": "MT191_ILC-2026-00142_20260628.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "ILC-2026-00145",
+    "produit": "ILC",
+    "produitLibelle": "Crédit documentaire import",
+    "client": "MEDITERRANEA TRADING CO",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-20T16:33:00",
+    "clientInfo": {
+      "raisonSociale": "MEDITERRANEA TRADING CO",
+      "numeroCompte": "007 780 0000 118",
+      "ice": "003470118000078",
+      "codeClient": "CLI-0118",
+      "agenceRattachement": "Agence Casablanca",
+      "roleOperation": "Donneur d'ordre (Importateur)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ILC-0145-26",
+      "agenceTraitante": "AGC-CASA-01",
+      "gestionnaire": "Fatima Tazi",
+      "datePriseEnCharge": "03/04/2026",
+      "statutOperationnel": "En traitement",
+      "controleDocumentaire": "0 réserve",
+      "prochaineAction": "Suivi acceptation",
+      "noteInterne": "Client exportateur, dossier en cours de traitement."
+    },
+    "donnees": {
+      "donneurOrdre": "MEDITERRANEA TRADING CO",
+      "beneficiaire": "MEDITERRANEA TRADING CO",
+      "banqueNotification": "BNP Paribas Paris",
+      "banqueConfirmation": "BNP Paribas Paris",
+      "montantCredit": { "valeur": 850000, "devise": "EUR" },
+      "tolerance": "+/- 5,00 %",
+      "montantReclame": { "valeur": 850000, "devise": "EUR" },
+      "montantDisponible": { "valeur": 850000, "devise": "EUR" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "ILC-2026-00145",
+      "modeRealisation": "Acceptation",
+      "creditConfirme": "Confirmé",
+      "natureOperation": "Financière",
+      "dateExpiration": "2026-07-15",
+      "lieuExpiration": "Italie",
+      "referencesTitresImportation": [
+        "TI-2025-09162",
+        "TI-2025-09215"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-004",
+        "nature": "Création",
+        "montant": 850000,
+        "devise": "EUR",
+        "dateCreation": "2026-04-02T09:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0305-01",
+            "type": "MT700",
+            "dateEmission": "2026-04-02T09:30:00",
+            "contenu": "Message d'ouverture de crédit documentaire import ILC-2026-00145 pour 850 000,00 EUR. Bénéficiaire : MEDITERRANEA TRADING CO. Banque notificatrice : BNP Paribas Paris.",
+            "fichier": "MT700_ILC-2026-00145_20260402.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-005",
+        "nature": "Acceptation des documents",
+        "montant": 850000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-20T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0405-01",
+            "type": "MT732",
+            "dateEmission": "2026-06-20T14:15:00",
+            "contenu": "Acceptation des documents pour ILC-2026-00145. Documents conformes.",
+            "fichier": "MT732_ILC-2026-00145_20260620.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-006",
+        "nature": "Paiement à échéance",
+        "montant": 850000,
+        "devise": "EUR",
+        "dateCreation": "2026-07-15T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "def456ghi789-0123-4567-8901234567890",
+        "datePaiement": "2026-07-15",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0506-01",
+            "type": "MT202",
+            "dateEmission": "2026-07-15T10:00:00",
+            "contenu": "Paiement à échéance de 850 000,00 EUR au titre du crédit documentaire ILC-2026-00145. UETR : def456ghi789-0123-4567-8901234567890.",
+            "fichier": "MT202_ILC-2026-00145_20260715.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "ILC-2026-00148",
+    "produit": "ILC",
+    "produitLibelle": "Crédit documentaire import",
+    "client": "ATLAS TEXTILE SARL",
+    "statut": "EXPIRE",
+    "dateMiseAJour": "2026-05-30T16:33:00",
+    "clientInfo": {
+      "raisonSociale": "ATLAS TEXTILE SARL",
+      "numeroCompte": "007 780 0000 203",
+      "ice": "001250203000078",
+      "codeClient": "CLI-0203",
+      "agenceRattachement": "Agence Rabat",
+      "roleOperation": "Donneur d'ordre (Importateur)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ILC-0148-26",
+      "agenceTraitante": "AGC-RABAT-02",
+      "gestionnaire": "Ahmed Alami",
+      "datePriseEnCharge": "16/02/2026",
+      "statutOperationnel": "Échéance dépassée",
+      "controleDocumentaire": "Clôturé",
+      "prochaineAction": "Clôture",
+      "noteInterne": "Client textile, dossier expiré."
+    },
+    "donnees": {
+      "donneurOrdre": "ATLAS TEXTILE SARL",
+      "beneficiaire": "ATLAS TEXTILE SARL",
+      "banqueNotification": "Citibank New York",
+      "banqueConfirmation": "Citibank New York",
+      "montantCredit": { "valeur": 2500000, "devise": "USD" },
+      "tolerance": "+/- 0,00 %",
+      "montantReclame": { "valeur": 0, "devise": "USD" },
+      "montantDisponible": { "valeur": 0, "devise": "USD" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "ILC-2026-00148",
+      "modeRealisation": "Acceptation",
+      "creditConfirme": "Confirmé",
+      "natureOperation": "Financière",
+      "dateExpiration": "2026-05-30",
+      "lieuExpiration": "USA",
+      "referencesTitresImportation": [
+        "TI-2025-09330",
+        "TI-2025-09441"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-006",
+        "nature": "Création",
+        "montant": 2500000,
+        "devise": "USD",
+        "dateCreation": "2026-02-15T09:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0200-01",
+            "type": "MT700",
+            "dateEmission": "2026-02-15T09:30:00",
+            "contenu": "Message d'ouverture de crédit documentaire import ILC-2026-00148 pour 2 500 000,00 USD. Bénéficiaire : ATLAS TEXTILE SARL. Banque notificatrice : Citibank New York.",
+            "fichier": "MT700_ILC-2026-00148_20260215.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-007",
+        "nature": "Refus des documents",
+        "montant": 2500000,
+        "devise": "USD",
+        "dateCreation": "2026-05-20T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0507-01",
+            "type": "MT734",
+            "dateEmission": "2026-05-20T14:15:00",
+            "contenu": "Refus des documents pour ILC-2026-00148. Documents non conformes.",
+            "fichier": "MT734_ILC-2026-00148_20260520.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-008",
+        "nature": "Expiration",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-05-30T00:00:00",
+        "statut": "EXPIRE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0505-01",
+            "type": "MT799",
+            "dateEmission": "2026-05-30T00:00:00",
+            "contenu": "Notification d'expiration du crédit documentaire ILC-2026-00148. Date d'expiration atteinte.",
+            "fichier": "MT799_ILC-2026-00148_20260530.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "ILC-2026-00152",
+    "produit": "ILC",
+    "produitLibelle": "Crédit documentaire import",
+    "client": "ROYAL CERAMICS SA",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-18T16:33:00",
+    "clientInfo": {
+      "raisonSociale": "ROYAL CERAMICS SA",
+      "numeroCompte": "007 780 0000 345",
+      "ice": "004320345000078",
+      "codeClient": "CLI-0345",
+      "agenceRattachement": "Agence Fès",
+      "roleOperation": "Donneur d'ordre (Importateur)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ILC-0152-26",
+      "agenceTraitante": "AGC-FES-03",
+      "gestionnaire": "Sara Bennani",
+      "datePriseEnCharge": "11/05/2026",
+      "statutOperationnel": "En attente documents",
+      "controleDocumentaire": "1 réserve active",
+      "prochaineAction": "Relance documents",
+      "noteInterne": "Client céramique, dossier en attente de documents."
+    },
+    "donnees": {
+      "donneurOrdre": "ROYAL CERAMICS SA",
+      "beneficiaire": "ROYAL CERAMICS SA",
+      "banqueNotification": "Barclays London",
+      "banqueConfirmation": "Barclays London",
+      "montantCredit": { "valeur": 450000, "devise": "GBP" },
+      "tolerance": "+/- 5,00 %",
+      "montantReclame": { "valeur": 450000, "devise": "GBP" },
+      "montantDisponible": { "valeur": 450000, "devise": "GBP" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "ILC-2026-00152",
+      "modeRealisation": "Acceptation",
+      "creditConfirme": "Confirmé",
+      "natureOperation": "Financière",
+      "dateExpiration": "2026-08-20",
+      "lieuExpiration": "Royaume-Uni",
+      "referencesTitresImportation": [
+        "TI-2025-09558",
+        "TI-2025-09612"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-008",
+        "nature": "Création",
+        "montant": 450000,
+        "devise": "GBP",
+        "dateCreation": "2026-05-10T09:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0310-01",
+            "type": "MT700",
+            "dateEmission": "2026-05-10T09:30:00",
+            "contenu": "Message d'ouverture de crédit documentaire import ILC-2026-00152 pour 450 000,00 GBP. Bénéficiaire : ROYAL CERAMICS SA. Banque notificatrice : Barclays London.",
+            "fichier": "MT700_ILC-2026-00152_20260510.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-009",
+        "nature": "Présentation de documents avec réserves",
+        "montant": 450000,
+        "devise": "GBP",
+        "dateCreation": "2026-06-18T14:15:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0410-01",
+            "type": "MT734",
+            "dateEmission": "2026-06-18T14:15:00",
+            "contenu": "Présentation de documents avec réserves pour ILC-2026-00152. Documents partiels reçus, attente certificat origine.",
+            "fichier": "MT734_ILC-2026-00152_20260618.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-010",
+        "nature": "Acceptation des documents",
+        "montant": 450000,
+        "devise": "GBP",
+        "dateCreation": "2026-06-19T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0411-01",
+            "type": "MT732",
+            "dateEmission": "2026-06-19T14:15:00",
+            "contenu": "Acceptation des documents pour ILC-2026-00152. Documents conformes.",
+            "fichier": "MT732_ILC-2026-00152_20260619.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-011",
+        "nature": "Paiement à vue",
+        "montant": 450000,
+        "devise": "GBP",
+        "dateCreation": "2026-06-20T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "ghi789jkl012-3456-7890-0123456789012",
+        "datePaiement": "2026-06-20",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0412-01",
+            "type": "MT103",
+            "dateEmission": "2026-06-20T10:00:00",
+            "contenu": "Paiement à vue de 450 000,00 GBP au titre du crédit documentaire ILC-2026-00152. UETR : ghi789jkl012-3456-7890-0123456789012.",
+            "fichier": "MT103_ILC-2026-00152_20260620.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-012",
+        "nature": "Gestion des frais et commission",
+        "montant": 450,
+        "devise": "GBP",
+        "dateCreation": "2026-06-21T14:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0413-01",
+            "type": "MT191",
+            "dateEmission": "2026-06-21T14:00:00",
+            "contenu": "Débit de frais et commissions de 450,00 GBP sur le crédit documentaire ILC-2026-00152.",
+            "fichier": "MT191_ILC-2026-00152_20260621.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "IRD-2026-00087",
+    "produit": "IRD",
+    "produitLibelle": "Remise documentaire import",
+    "client": "MAGHREB STEEL SA",
+    "statut": "EXPIRE",
+    "dateMiseAJour": "2026-04-25T16:45:00",
+    "clientInfo": {
+      "raisonSociale": "MAGHREB STEEL SA",
+      "numeroCompte": "007 780 0000 089",
+      "ice": "002890089000078",
+      "codeClient": "CLI-0089",
+      "agenceRattachement": "Agence Casablanca",
+      "roleOperation": "Importateur (Tiré)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-IRD-0087-26",
+      "agenceTraitante": "AGC-CASA-01",
+      "gestionnaire": "Karim Benali",
+      "datePriseEnCharge": "21/01/2026",
+      "statutOperationnel": "Clôturé",
+      "controleDocumentaire": "Clôturé",
+      "prochaineAction": "Clôture",
+      "noteInterne": "Client sidérurgique, dossier expiré."
+    },
+    "donnees": {
+      "client": "MAGHREB STEEL SA",
+      "tireur": "MAGHREB STEEL SA",
+      "partieRemettante": "Deutsche Bank Frankfurt",
+      "montantRemise": { "valeur": 1800000, "devise": "USD" },
+      "encours": { "valeur": 0, "devise": "USD" },
+      "referenceOperation": "IRD-2026-00087",
+      "autreReference": "EXT928291",
+      "conditionsRemiseDocuments": "Documents contre acceptation",
+      "dateEcheance": "2026-04-25",
+      "fraisAuMaroc": "Tiré",
+      "fraisAEtranger": "Tiré",
+      "referencesTitresImportation": [
+        "TI-2025-09689"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0201",
+        "nature": "Réception documents",
+        "montant": 1800000,
+        "devise": "USD",
+        "dateCreation": "2026-01-20T11:10:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0201-01",
+            "type": "MT400",
+            "dateEmission": "2026-01-20T11:10:00",
+            "contenu": "Réception de documents pour la remise documentaire import IRD-2026-00087. Montant : 1 800 000,00 USD. Tireur : MAGHREB STEEL SA.",
+            "fichier": "MT400_IRD-2026-00087_20260120.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0506",
+        "nature": "Expiration",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-04-25T00:00:00",
+        "statut": "EXPIRE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0506-01",
+            "type": "MT799",
+            "dateEmission": "2026-04-25T00:00:00",
+            "contenu": "Notification d'expiration de la remise documentaire import IRD-2026-00087. Date d'échéance atteinte.",
+            "fichier": "MT799_IRD-2026-00087_20260425.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "ERD-2026-00061",
+    "produit": "ERD",
+    "produitLibelle": "Remise documentaire export",
+    "client": "SARL BLED CONSERVES",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-21T10:48:00",
+    "clientInfo": {
+      "raisonSociale": "SARL BLED CONSERVES",
+      "numeroCompte": "007 780 0000 203",
+      "ice": "001250203000078",
+      "codeClient": "CLI-0203",
+      "agenceRattachement": "Agence Meknès",
+      "roleOperation": "Exportateur (Donneur d'ordre)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ERD-0061-26",
+      "agenceTraitante": "AGC-MEK-01",
+      "gestionnaire": "Larbi Chaoui",
+      "datePriseEnCharge": "19/04/2026",
+      "statutOperationnel": "Docs en attente",
+      "controleDocumentaire": "3 réserves actives",
+      "prochaineAction": "Relance documents",
+      "noteInterne": "Exportateur agroalimentaire, suivi régulier."
+    },
+    "donnees": {
+      "client": "SARL BLED CONSERVES",
+      "tire": "SARL BLED CONSERVES",
+      "partieRemettante": "SARL BLED CONSERVES",
+      "montantRemise": { "valeur": 950000, "devise": "MAD" },
+      "encours": { "valeur": 950000, "devise": "MAD" },
+      "referenceOperation": "ERD-2026-00061",
+      "autreReference": "EXT928292",
+      "conditionsRemiseDocuments": "Remise contre acceptation",
+      "dateEcheance": "2026-07-18",
+      "referencesCourrier": [
+        { "reference": "DHL7756234890", "dateEnvoi": "2026-04-19" }
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0302",
+        "nature": "Ouverture du dossier",
+        "montant": 950000,
+        "devise": "MAD",
+        "dateCreation": "2026-04-18T09:14:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0302-01",
+            "type": "MT400",
+            "dateEmission": "2026-04-18T09:14:00",
+            "contenu": "Ouverture de la remise documentaire export ERD-2026-00061 pour 950 000,00 MAD. Tireur : SARL BLED CONSERVES.",
+            "fichier": "MT400_ERD-2026-00061_20260418.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0411",
+        "nature": "Réception des documents",
+        "montant": 950000,
+        "devise": "MAD",
+        "dateCreation": "2026-06-21T11:02:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0411-01",
+            "type": "MT410",
+            "dateEmission": "2026-06-21T11:02:00",
+            "contenu": "Réception des documents pour la remise documentaire export ERD-2026-00061. Documents transmis pour vérification.",
+            "fichier": "MT410_ERD-2026-00061_20260621.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "ERD-2026-00062",
+    "produit": "ERD",
+    "produitLibelle": "Remise documentaire export",
+    "client": "TANGER MED FREIGHT",
+    "statut": "ANNULE",
+    "dateMiseAJour": "2026-06-10T10:48:00",
+    "clientInfo": {
+      "raisonSociale": "TANGER MED FREIGHT",
+      "numeroCompte": "007 780 0000 389",
+      "ice": "005890389000078",
+      "codeClient": "CLI-0389",
+      "agenceRattachement": "Agence Tanger Med",
+      "roleOperation": "Exportateur (Donneur d'ordre)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ERD-0062-26",
+      "agenceTraitante": "AGC-TANGER-06",
+      "gestionnaire": "Youssef El Fassi",
+      "datePriseEnCharge": "01/03/2026",
+      "statutOperationnel": "Annulé client",
+      "controleDocumentaire": "Annulé",
+      "prochaineAction": "Clôture",
+      "noteInterne": "Client fret, annulation demandée."
+    },
+    "donnees": {
+      "client": "TANGER MED FREIGHT",
+      "tire": "TANGER MED FREIGHT",
+      "partieRemettante": "Standard Chartered London",
+      "montantRemise": { "valeur": 3200000, "devise": "USD" },
+      "encours": { "valeur": 0, "devise": "USD" },
+      "referenceOperation": "ERD-2026-00062",
+      "autreReference": "EXT928293",
+      "conditionsRemiseDocuments": "Remise contre acceptation",
+      "dateEcheance": "2026-06-15",
+      "referencesCourrier": [
+        { "reference": "DHL7756234891", "dateEnvoi": "2026-06-05" }
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0303",
+        "nature": "Ouverture du dossier",
+        "montant": 3200000,
+        "devise": "USD",
+        "dateCreation": "2026-02-28T09:14:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0303-01",
+            "type": "MT400",
+            "dateEmission": "2026-02-28T09:14:00",
+            "contenu": "Ouverture de la remise documentaire export ERD-2026-00062 pour 3 200 000,00 USD. Tireur : TANGER MED FREIGHT.",
+            "fichier": "MT400_ERD-2026-00062_20260228.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0412",
+        "nature": "Annulation",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-06-10T10:00:00",
+        "statut": "ANNULE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0412-01",
+            "type": "MT799",
+            "dateEmission": "2026-06-10T10:00:00",
+            "contenu": "Annulation de la remise documentaire export ERD-2026-00062 à la demande du client.",
+            "fichier": "MT799_ERD-2026-00062_20260610.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "ERD-2026-00068",
+    "produit": "ERD",
+    "produitLibelle": "Remise documentaire export",
+    "client": "STE ABC IMPORT EXPORT",
+    "statut": "EXPIRE",
+    "dateMiseAJour": "2026-06-20T10:48:00",
+    "clientInfo": {
+      "raisonSociale": "STE ABC IMPORT EXPORT",
+      "numeroCompte": "007 780 0000 523",
+      "ice": "007230523000078",
+      "codeClient": "CLI-0523",
+      "agenceRattachement": "Agence Casablanca",
+      "roleOperation": "Exportateur (Donneur d'ordre)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ERD-0068-26",
+      "agenceTraitante": "AGC-CASA-01",
+      "gestionnaire": "Karim Benali",
+      "datePriseEnCharge": "09/03/2026",
+      "statutOperationnel": "Échéance dépassée",
+      "controleDocumentaire": "Clôturé",
+      "prochaineAction": "Clôture",
+      "noteInterne": "Client import/export, dossier expiré."
+    },
+    "donnees": {
+      "client": "STE ABC IMPORT EXPORT",
+      "tire": "STE ABC IMPORT EXPORT",
+      "partieRemettante": "HSBC Dubai",
+      "montantRemise": { "valeur": 780000, "devise": "USD" },
+      "encours": { "valeur": 0, "devise": "USD" },
+      "referenceOperation": "ERD-2026-00068",
+      "autreReference": "EXT928294",
+      "conditionsRemiseDocuments": "Remise contre acceptation",
+      "dateEcheance": "2026-06-20",
+      "referencesCourrier": [
+        { "reference": "DHL7756234892", "dateEnvoi": "2026-06-18" }
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0304",
+        "nature": "Ouverture du dossier",
+        "montant": 780000,
+        "devise": "USD",
+        "dateCreation": "2026-03-08T09:14:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0304-01",
+            "type": "MT400",
+            "dateEmission": "2026-03-08T09:14:00",
+            "contenu": "Ouverture de la remise documentaire export ERD-2026-00068 pour 780 000,00 USD. Tireur : STE ABC IMPORT EXPORT.",
+            "fichier": "MT400_ERD-2026-00068_20260308.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0507",
+        "nature": "Expiration",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-06-20T00:00:00",
+        "statut": "EXPIRE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0507-01",
+            "type": "MT799",
+            "dateEmission": "2026-06-20T00:00:00",
+            "contenu": "Notification d'expiration de la remise documentaire export ERD-2026-00068. Date d'échéance atteinte.",
+            "fichier": "MT799_ERD-2026-00068_20260620.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "ELC-2026-00034",
+    "produit": "ELC",
+    "produitLibelle": "Crédit documentaire export",
+    "client": "NORTH AFRICA IMPORT",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-25T16:33:00",
+    "clientInfo": {
+      "raisonSociale": "NORTH AFRICA IMPORT",
+      "numeroCompte": "007 780 0000 634",
+      "ice": "008340634000078",
+      "codeClient": "CLI-0634",
+      "agenceRattachement": "Agence Casablanca",
+      "roleOperation": "Exportateur (Donneur d'ordre)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ELC-0034-26",
+      "agenceTraitante": "AGC-CASA-01",
+      "gestionnaire": "Fatima Tazi",
+      "datePriseEnCharge": "13/04/2026",
+      "statutOperationnel": "Docs en attente",
+      "controleDocumentaire": "1 réserve active",
+      "prochaineAction": "Relance documents",
+      "noteInterne": "Client importateur, dossier en attente."
+    },
+    "donnees": {
+      "donneurOrdre": "NORTH AFRICA IMPORT",
+      "beneficiaire": "NORTH AFRICA IMPORT",
+      "banqueNotification": "Bank of America New York",
+      "banqueConfirmation": "Bank of America New York",
+      "montantCredit": { "valeur": 1100000, "devise": "USD" },
+      "tolerance": "+/- 10,00 %",
+      "montantReclame": { "valeur": 1100000, "devise": "USD" },
+      "montantDisponible": { "valeur": 1100000, "devise": "USD" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "ELC-2026-00034",
+      "modeRealisation": "Acceptation",
+      "creditConfirme": "Confirmé",
+      "natureOperation": "Financière",
+      "dateExpiration": "2026-07-25",
+      "lieuExpiration": "USA",
+      "referencesTitresImportation": [
+        "TI-2025-09701",
+        "TI-2025-09702"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-022",
+        "nature": "Notification",
+        "montant": 1100000,
+        "devise": "USD",
+        "dateCreation": "2026-04-12T09:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0306-01",
+            "type": "MT710",
+            "dateEmission": "2026-04-12T09:30:00",
+            "contenu": "Notification de crédit documentaire export ELC-2026-00034 pour 1 100 000,00 USD. Donneur d'ordre : NORTH AFRICA IMPORT. Banque notificatrice : Bank of America New York.",
+            "fichier": "MT710_ELC-2026-00034_20260412.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-023",
+        "nature": "Modification",
+        "montant": 1100000,
+        "devise": "USD",
+        "dateCreation": "2026-05-10T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0407-01",
+            "type": "MT707",
+            "dateEmission": "2026-05-10T14:15:00",
+            "contenu": "Amendement au crédit documentaire export ELC-2026-00034. Extension de la date d'expédition.",
+            "fichier": "MT707_ELC-2026-00034_20260510.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-024",
+        "nature": "Présentation de documents avec réserves",
+        "montant": 1100000,
+        "devise": "USD",
+        "dateCreation": "2026-06-25T14:15:00",
+        "statut": "EN_COURS",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0413-01",
+            "type": "MT720",
+            "dateEmission": "2026-06-25T14:15:00",
+            "contenu": "Présentation de documents avec réserves pour ELC-2026-00034. Documents partiels reçus, attente certificat origine.",
+            "fichier": "MT720_ELC-2026-00034_20260625.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-025",
+        "nature": "Acceptation des documents",
+        "montant": 1100000,
+        "devise": "USD",
+        "dateCreation": "2026-06-26T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0414-01",
+            "type": "MT730",
+            "dateEmission": "2026-06-26T14:15:00",
+            "contenu": "Acceptation des documents pour ELC-2026-00034. Documents conformes.",
+            "fichier": "MT730_ELC-2026-00034_20260626.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-026",
+        "nature": "Paiement à vue",
+        "montant": 1100000,
+        "devise": "USD",
+        "dateCreation": "2026-06-27T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "jkl012mno345-6789-0123-4567890123456",
+        "datePaiement": "2026-06-27",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0415-01",
+            "type": "MT103",
+            "dateEmission": "2026-06-27T10:00:00",
+            "contenu": "Paiement à vue de 1 100 000,00 USD au titre du crédit documentaire export ELC-2026-00034. UETR : jkl012mno345-6789-0123-4567890123456.",
+            "fichier": "MT103_ELC-2026-00034_20260627.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-027",
+        "nature": "Correspondance",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-06-28T11:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0416-01",
+            "type": "MT799",
+            "dateEmission": "2026-06-28T11:30:00",
+            "contenu": "Message de correspondance libre concernant le crédit documentaire export ELC-2026-00034.",
+            "fichier": "MT799_ELC-2026-00034_20260628.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-028",
+        "nature": "Gestion des frais et commission",
+        "montant": 1650,
+        "devise": "USD",
+        "dateCreation": "2026-06-29T14:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0417-01",
+            "type": "MT191",
+            "dateEmission": "2026-06-29T14:00:00",
+            "contenu": "Débit de frais et commissions de 1 650,00 USD sur le crédit documentaire export ELC-2026-00034.",
+            "fichier": "MT191_ELC-2026-00034_20260629.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "ELC-2026-00038",
+    "produit": "ELC",
+    "produitLibelle": "Crédit documentaire export",
+    "client": "ATLANTIC SHIPPING LTD",
+    "statut": "EXPIRE",
+    "dateMiseAJour": "2026-01-10T16:33:00",
+    "clientInfo": {
+      "raisonSociale": "ATLANTIC SHIPPING LTD",
+      "numeroCompte": "007 780 0000 745",
+      "ice": "009450745000078",
+      "codeClient": "CLI-0745",
+      "agenceRattachement": "Agence Casablanca",
+      "roleOperation": "Exportateur (Donneur d'ordre)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-ELC-0038-26",
+      "agenceTraitante": "AGC-CASA-01",
+      "gestionnaire": "Karim Benali",
+      "datePriseEnCharge": "11/01/2026",
+      "statutOperationnel": "Clôturé",
+      "controleDocumentaire": "Clôturé",
+      "prochaineAction": "Clôture",
+      "noteInterne": "Client shipping, dossier expiré."
+    },
+    "donnees": {
+      "donneurOrdre": "ATLANTIC SHIPPING LTD",
+      "beneficiaire": "ATLANTIC SHIPPING LTD",
+      "banqueNotification": "HSBC London",
+      "banqueConfirmation": "HSBC London",
+      "montantCredit": { "valeur": 2100000, "devise": "USD" },
+      "tolerance": "+/- 0,00 %",
+      "montantReclame": { "valeur": 0, "devise": "USD" },
+      "montantDisponible": { "valeur": 0, "devise": "USD" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "ELC-2026-00038",
+      "modeRealisation": "Acceptation",
+      "creditConfirme": "Confirmé",
+      "natureOperation": "Financière",
+      "dateExpiration": "2026-01-10",
+      "lieuExpiration": "Royaume-Uni",
+      "referencesTitresImportation": [
+        "TI-2025-09800",
+        "TI-2025-09801"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-024",
+        "nature": "Notification",
+        "montant": 580000,
+        "devise": "GBP",
+        "dateCreation": "2026-05-30T09:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0307-01",
+            "type": "MT710",
+            "dateEmission": "2026-05-30T09:30:00",
+            "contenu": "Notification de crédit documentaire export ELC-2026-00038 pour 580 000,00 GBP. Donneur d'ordre : ATLANTIC SHIPPING LTD. Banque notificatrice : HSBC London.",
+            "fichier": "MT710_ELC-2026-00038_20260530.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-025",
+        "nature": "Présentation des documents",
+        "montant": 580000,
+        "devise": "GBP",
+        "dateCreation": "2026-06-24T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0406-01",
+            "type": "MT720",
+            "dateEmission": "2026-06-24T14:15:00",
+            "contenu": "Présentation des documents pour ELC-2026-00038. Documents conformes.",
+            "fichier": "MT720_ELC-2026-00038_20260624.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-026",
+        "nature": "Acceptation des documents",
+        "montant": 580000,
+        "devise": "GBP",
+        "dateCreation": "2026-06-25T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0408-01",
+            "type": "MT730",
+            "dateEmission": "2026-06-25T14:15:00",
+            "contenu": "Acceptation des documents pour ELC-2026-00038. Documents conformes.",
+            "fichier": "MT730_ELC-2026-00038_20260625.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-027",
+        "nature": "Paiement à échéance",
+        "montant": 580000,
+        "devise": "GBP",
+        "dateCreation": "2026-09-12T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "mno345pqr678-9012-3456-7890123456789",
+        "datePaiement": "2026-09-12",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0409-01",
+            "type": "MT202",
+            "dateEmission": "2026-09-12T10:00:00",
+            "contenu": "Paiement à échéance de 580 000,00 GBP au titre du crédit documentaire export ELC-2026-00038. UETR : mno345pqr678-9012-3456-7890123456789.",
+            "fichier": "MT202_ELC-2026-00038_20260912.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-028",
+        "nature": "Gestion des frais et commission",
+        "montant": 580,
+        "devise": "GBP",
+        "dateCreation": "2026-09-13T14:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0410-01",
+            "type": "MT191",
+            "dateEmission": "2026-09-13T14:00:00",
+            "contenu": "Débit de frais et commissions de 580,00 GBP sur le crédit documentaire export ELC-2026-00038.",
+            "fichier": "MT191_ELC-2026-00038_20260913.pdf"
+          }
+        ]
+      }
+    ]
+  }
+]

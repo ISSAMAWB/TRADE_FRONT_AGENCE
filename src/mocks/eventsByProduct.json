@@ -1,13 +1,14 @@
 {
   "ILC": [
     "Création",
-    "Réception des documents",
     "Modification",
-    "Ajustement",
+    "Présentation de documents avec réserves",
+    "Acceptation des documents",
+    "Refus des documents",
     "Paiement à vue",
     "Paiement à échéance",
-    "Gestion des commissions",
     "Correspondance",
+    "Gestion des frais et commission",
     "Annulation",
     "Expiration"
   ],
@@ -24,18 +25,18 @@
     "Dénouement / Clôture"
   ],
   "ELC": [
-    "Réception ouverture",
-    "Notification bénéficiaire",
-    "Confirmation",
-    "Amendement",
-    "Présentation documents",
-    "Contrôle documentaire",
-    "Réserves / Irrégularités",
-    "Envoi documents",
-    "Négociation / Escompte",
-    "Réalisation / Paiement",
-    "Échéance",
-    "Clôture"
+    "Notification",
+    "Modification",
+    "Présentation des documents",
+    "Présentation de documents avec réserves",
+    "Acceptation des documents",
+    "Refus des documents",
+    "Paiement à vue",
+    "Paiement à échéance",
+    "Correspondance",
+    "Gestion des frais et commission",
+    "Annulation",
+    "Expiration"
   ],
   "ERD": [
     "Réception documents",

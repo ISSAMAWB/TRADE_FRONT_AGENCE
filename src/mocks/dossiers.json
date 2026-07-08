@@ -807,123 +807,319 @@
     "evenementCourant": "Clôture"
   },
   {
-    "id": "FSA-2026-00019",
-    "produit": "FSA",
+    "id": "ILC0012483Q-0151",
+    "produit": "ILC",
     "client": {
-      "nom": "MOROCCO EXPORT SA",
-      "compte": "007 780 0000 967",
-      "ice": "011670967000078",
-      "code": "CLI-0967"
+      "nom": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
+      "compte": "007 780 0000 042",
+      "ice": "002150042000078",
+      "code": "CLI-0042"
     },
-    "montant": 420000,
-    "devise": "USD",
-    "dateCreation": "2026-06-01",
-    "dateEcheance": "2026-09-15",
-    "banqueCorrespondante": "QNB Bank Doha",
-    "paysOrigine": "Qatar",
+    "montant": 20000,
+    "devise": "EUR",
+    "dateCreation": "2026-01-10",
+    "dateEcheance": "2026-07-19",
+    "banqueCorrespondante": "CREDIT INDUSTRIEL ET COMMERCIAL",
+    "paysOrigine": "France",
     "statut": "En cours",
-    "refCTN": "CTN-FSA-0019-26",
+    "refCTN": "CTN-ILC-00012-26",
     "codeAgence": "AGC-CASA-01",
     "agentCTN": {
-      "nom": "Idrissi",
-      "prenom": "Mohammed",
-      "code": "IM05"
+      "nom": "Benali",
+      "prenom": "Karim",
+      "code": "KB01"
     },
-    "datePriseEnCharge": "2026-06-02",
-    "statutOperationnel": "Docs en attente",
-    "controleDocumentaire": "2 réserves actives",
+    "datePriseEnCharge": "2026-01-11",
+    "statutOperationnel": "En traitement",
+    "controleDocumentaire": "0 réserve",
     "encours": {
-      "utilise": 420000,
-      "autorise": 1000000,
+      "utilise": 5000,
+      "autorise": 20000,
+      "devise": "EUR"
+    },
+    "commission": 0.15,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-01-15",
+    "canalInteraction": "email",
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Présentation de documents avec réserves"
+  },
+  {
+    "id": "ELC-2026-00034",
+    "produit": "ELC",
+    "client": {
+      "nom": "STE PAKISTAN MAROC PHOSPHORE",
+      "compte": "007 780 0000 089",
+      "ice": "001234567890123",
+      "code": "CLI-0089"
+    },
+    "montant": 12821930.55,
+    "devise": "USD",
+    "dateCreation": "2026-02-01",
+    "dateEcheance": "2026-11-02",
+    "banqueCorrespondante": "UNITED BANK LIMITED",
+    "paysOrigine": "Pakistan",
+    "statut": "En cours",
+    "refCTN": "CTN-ELC-00034-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Tazi",
+      "prenom": "Fatima",
+      "code": "TF02"
+    },
+    "datePriseEnCharge": "2026-02-02",
+    "statutOperationnel": "Validé",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 9620517.35,
+      "autorise": 15000000,
+      "devise": "USD"
+    },
+    "commission": 0.1,
+    "tauxChange": 9.85,
+    "derniereInteraction": "2026-02-25",
+    "canalInteraction": "email",
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Paiement différé"
+  },
+  {
+    "id": "IRD-2026-00047",
+    "produit": "IRD",
+    "client": {
+      "nom": "STE VIVO ENERGY MAROC",
+      "compte": "007 780 0000 156",
+      "ice": "003456789012345",
+      "code": "CLI-0156"
+    },
+    "montant": 21000,
+    "devise": "EUR",
+    "dateCreation": "2026-03-01",
+    "dateEcheance": "2026-04-15",
+    "banqueCorrespondante": "INTESA SANPAOLO SPA",
+    "paysOrigine": "Italie",
+    "statut": "En cours",
+    "refCTN": "CTN-IRD-00047-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Wadie",
+      "prenom": "Khalid",
+      "code": "KW03"
+    },
+    "datePriseEnCharge": "2026-03-02",
+    "statutOperationnel": "En traitement",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 0,
+      "autorise": 21000,
+      "devise": "EUR"
+    },
+    "commission": 0.08,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-03-08",
+    "canalInteraction": "mail",
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Remise au client"
+  },
+  {
+    "id": "ERD-2026-00065",
+    "produit": "ERD",
+    "client": {
+      "nom": "SARL BLED CONSERVES",
+      "compte": "007 780 0000 203",
+      "ice": "004567890123456",
+      "code": "CLI-0203"
+    },
+    "montant": 6904.88,
+    "devise": "EUR",
+    "dateCreation": "2026-05-22",
+    "dateEcheance": "2026-09-05",
+    "banqueCorrespondante": "CAISSE D'EPARGNE ROMILLY ORMES",
+    "paysOrigine": "France",
+    "statut": "En cours",
+    "refCTN": "CTN-ERD-00065-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Bennani",
+      "prenom": "Siham",
+      "code": "SB04"
+    },
+    "datePriseEnCharge": "2026-05-23",
+    "statutOperationnel": "En traitement",
+    "controleDocumentaire": "1 réserve",
+    "encours": {
+      "utilise": 6904.88,
+      "autorise": 6904.88,
+      "devise": "EUR"
+    },
+    "commission": 0.12,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-06-26",
+    "canalInteraction": "email",
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Demande de paiement"
+  },
+  {
+    "id": "FIL-2026-00088",
+    "produit": "FIN",
+    "typeFinancement": "Refinancement à l'import",
+    "client": {
+      "nom": "STE IMPORT MAROC SARL",
+      "compte": "007 780 0000 334",
+      "ice": "005678901234567",
+      "code": "CLI-0334"
+    },
+    "montant": 250000,
+    "devise": "EUR",
+    "dateCreation": "2025-09-15",
+    "dateEcheance": "2026-03-15",
+    "banqueCorrespondante": "CHINA STEEL CORPORATION",
+    "paysOrigine": "Chine",
+    "statut": "En cours",
+    "refCTN": "CTN-FIL-00088-26",
+    "codeAgence": "AGC-CASA-01",
+    "agentCTN": {
+      "nom": "Fassi",
+      "prenom": "Omar",
+      "code": "OF07"
+    },
+    "datePriseEnCharge": "2025-09-16",
+    "statutOperationnel": "Validé",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 2625000,
+      "autorise": 2650000,
+      "devise": "MAD"
+    },
+    "commission": 0.05,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-03-10",
+    "canalInteraction": "email",
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Remboursement programmé"
+  },
+  {
+    "id": "FIL-2026-00092",
+    "produit": "FIN",
+    "typeFinancement": "Préfinancement à l'export",
+    "client": {
+      "nom": "AGRO EXPORT MAROC",
+      "compte": "007 780 0000 512",
+      "ice": "001512789000078",
+      "code": "CLI-0512"
+    },
+    "montant": 1800000,
+    "devise": "USD",
+    "dateCreation": "2025-11-20",
+    "dateEcheance": "2026-11-20",
+    "banqueCorrespondante": "CitiBank New York",
+    "paysOrigine": "États-Unis",
+    "statut": "En cours",
+    "refCTN": "CTN-FIL-00092-26",
+    "codeAgence": "AGC-CASA-02",
+    "agentCTN": {
+      "nom": "Bennani",
+      "prenom": "Sara",
+      "code": "BS04"
+    },
+    "datePriseEnCharge": "2025-11-21",
+    "statutOperationnel": "Déblocage partiel",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 900000,
+      "autorise": 1800000,
       "devise": "USD"
     },
     "commission": 0.08,
     "tauxChange": 9.85,
-    "derniereInteraction": "2026-06-26",
-    "canalInteraction": "mail",
-    "notes": [
-      {
-        "date": "2026-06-26",
-        "auteur": "M. Idrissi",
-        "texte": "Attente facture proforma"
-      }
-    ],
-    "evenements": [
-      {
-        "id": "EVT-028",
-        "date": "2026-06-26",
-        "type": "Réception documents",
-        "statut": "Partiel",
-        "montant": null
-      },
-      {
-        "id": "EVT-029",
-        "date": "2026-06-01",
-        "type": "Ouverture",
-        "statut": "Validé",
-        "montant": 420000
-      }
-    ],
-    "evenementCourant": "Demande"
+    "derniereInteraction": "2026-06-28",
+    "canalInteraction": "email",
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Ajustement du financement"
   },
   {
-    "id": "FSA-2026-00022",
-    "produit": "FSA",
+    "id": "FIL-2026-00105",
+    "produit": "FIN",
+    "typeFinancement": "ACNEE",
     "client": {
-      "nom": "AFRICAN TRADE CORP",
-      "compte": "007 780 0000 078",
-      "ice": "012780078000078",
-      "code": "CLI-0078"
+      "nom": "INDUSTRIES DU SUD",
+      "compte": "007 780 0000 289",
+      "ice": "002289456000078",
+      "code": "CLI-0289"
     },
-    "montant": 680000,
-    "devise": "EUR",
-    "dateCreation": "2026-05-15",
-    "dateEcheance": "2026-08-30",
-    "banqueCorrespondante": "ABN AMRO Amsterdam",
-    "paysOrigine": "Pays-Bas",
+    "montant": 950000,
+    "devise": "MAD",
+    "dateCreation": "2026-01-10",
+    "dateEcheance": "2027-01-10",
+    "banqueCorrespondante": "BMCE Bank",
+    "paysOrigine": "Maroc",
     "statut": "En cours",
-    "refCTN": "CTN-FSA-0022-26",
-    "codeAgence": "AGC-CASA-01",
+    "refCTN": "CTN-FIL-00105-26",
+    "codeAgence": "AGC-RAB-05",
     "agentCTN": {
-      "nom": "Chaoui",
-      "prenom": "Laila",
-      "code": "CL06"
+      "nom": "Kabbaj",
+      "prenom": "Mohammed",
+      "code": "MK09"
     },
-    "datePriseEnCharge": "2026-05-16",
-    "statutOperationnel": "En traitement",
+    "datePriseEnCharge": "2026-01-11",
+    "statutOperationnel": "Mise en place validée",
     "controleDocumentaire": "0 réserve",
     "encours": {
-      "utilise": 680000,
-      "autorise": 1500000,
-      "devise": "EUR"
+      "utilise": 475000,
+      "autorise": 950000,
+      "devise": "MAD"
     },
-    "commission": 0.1,
-    "tauxChange": 10.72,
+    "commission": 0.06,
+    "tauxChange": 1,
     "derniereInteraction": "2026-06-25",
     "canalInteraction": "email",
-    "notes": [
-      {
-        "date": "2026-06-25",
-        "auteur": "L. Chaoui",
-        "texte": "Documents validés"
-      }
-    ],
-    "evenements": [
-      {
-        "id": "EVT-030",
-        "date": "2026-06-25",
-        "type": "Validation documents",
-        "statut": "Validé",
-        "montant": null
-      },
-      {
-        "id": "EVT-031",
-        "date": "2026-05-15",
-        "type": "Ouverture",
-        "statut": "Validé",
-        "montant": 680000
-      }
-    ],
-    "evenementCourant": "Octroi / Accord"
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Mise en place du financement"
+  },
+  {
+    "id": "FIL-2026-00118",
+    "produit": "FIN",
+    "typeFinancement": "Mobilisation en devises",
+    "client": {
+      "nom": "TEXTILES ATLANTIC",
+      "compte": "007 780 0000 671",
+      "ice": "003671123000078",
+      "code": "CLI-0671"
+    },
+    "montant": 3200000,
+    "devise": "EUR",
+    "dateCreation": "2026-02-05",
+    "dateEcheance": "2026-08-05",
+    "banqueCorrespondante": "Deutsche Bank Frankfurt",
+    "paysOrigine": "Allemagne",
+    "statut": "En cours",
+    "refCTN": "CTN-FIL-00118-26",
+    "codeAgence": "AGC-TGM-03",
+    "agentCTN": {
+      "nom": "Alami",
+      "prenom": "Ahmed",
+      "code": "AA03"
+    },
+    "datePriseEnCharge": "2026-02-06",
+    "statutOperationnel": "Remboursement attendu",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 3200000,
+      "autorise": 3200000,
+      "devise": "EUR"
+    },
+    "commission": 0.04,
+    "tauxChange": 10.72,
+    "derniereInteraction": "2026-06-30",
+    "canalInteraction": "email",
+    "notes": [],
+    "evenements": [],
+    "evenementCourant": "Remboursement du financement"
   }
 ]
