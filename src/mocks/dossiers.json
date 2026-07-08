@@ -52,14 +52,14 @@
         "date": "2026-06-24",
         "type": "Présentation documents",
         "statut": "Réserves",
-        "montant": null
+        "montant": 1200000
       },
       {
         "id": "EVT-002",
         "date": "2026-05-15",
         "type": "Modification",
         "statut": "Validé",
-        "montant": null
+        "montant": 1200000
       },
       {
         "id": "EVT-003",
@@ -119,7 +119,7 @@
         "date": "2026-06-20",
         "type": "Acceptation",
         "statut": "Validé",
-        "montant": null
+        "montant": 850000
       },
       {
         "id": "EVT-005",
@@ -184,7 +184,7 @@
         "date": "2026-05-30",
         "type": "Échéance",
         "statut": "Expiré",
-        "montant": null
+        "montant": 2500000
       },
       {
         "id": "EVT-007",
@@ -244,7 +244,7 @@
         "date": "2026-06-18",
         "type": "Réception documents",
         "statut": "Partiel",
-        "montant": null
+        "montant": 450000
       },
       {
         "id": "EVT-009",
@@ -963,7 +963,7 @@
     "evenementCourant": "Demande de paiement"
   },
   {
-    "id": "FIL-2026-00088",
+    "id": "FSA2600001",
     "produit": "FIN",
     "typeFinancement": "Refinancement à l'import",
     "client": {
@@ -1003,7 +1003,7 @@
     "evenementCourant": "Remboursement programmé"
   },
   {
-    "id": "FIL-2026-00092",
+    "id": "FSA2600002",
     "produit": "FIN",
     "typeFinancement": "Préfinancement à l'export",
     "client": {
@@ -1016,7 +1016,7 @@
     "devise": "USD",
     "dateCreation": "2025-11-20",
     "dateEcheance": "2026-11-20",
-    "banqueCorrespondante": "CitiBank New York",
+    "banqueCorrespondante": "AGRO EXPORT MAROC",
     "paysOrigine": "États-Unis",
     "statut": "En cours",
     "refCTN": "CTN-FIL-00092-26",
@@ -1043,7 +1043,7 @@
     "evenementCourant": "Ajustement du financement"
   },
   {
-    "id": "FIL-2026-00105",
+    "id": "FSA2600003",
     "produit": "FIN",
     "typeFinancement": "ACNEE",
     "client": {
@@ -1056,7 +1056,7 @@
     "devise": "MAD",
     "dateCreation": "2026-01-10",
     "dateEcheance": "2027-01-10",
-    "banqueCorrespondante": "BMCE Bank",
+    "banqueCorrespondante": "INDUSTRIES DU SUD",
     "paysOrigine": "Maroc",
     "statut": "En cours",
     "refCTN": "CTN-FIL-00105-26",
@@ -1083,7 +1083,7 @@
     "evenementCourant": "Mise en place du financement"
   },
   {
-    "id": "FIL-2026-00118",
+    "id": "FSA2600004",
     "produit": "FIN",
     "typeFinancement": "Mobilisation en devises",
     "client": {
@@ -1096,7 +1096,7 @@
     "devise": "EUR",
     "dateCreation": "2026-02-05",
     "dateEcheance": "2026-08-05",
-    "banqueCorrespondante": "Deutsche Bank Frankfurt",
+    "banqueCorrespondante": "TEXTILES ATLANTIC",
     "paysOrigine": "Allemagne",
     "statut": "En cours",
     "refCTN": "CTN-FIL-00118-26",

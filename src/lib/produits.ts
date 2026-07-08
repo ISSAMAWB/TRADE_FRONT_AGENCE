@@ -116,7 +116,6 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
           { cle: "referenceOperation", label: "Référence" },
           { cle: "autreReference", label: "Autre référence" },
           { cle: "conditionsRemiseDocuments", label: "Conditions de remise des documents" },
-          { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
         ],
       },
       {
@@ -139,6 +138,13 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
         ],
       },
       {
+        titre: "Date et lieu d'expiration",
+        icone: "Calendar",
+        champs: [
+          { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
+        ],
+      },
+      {
         titre: "Informations complémentaires",
         icone: "Info",
         champs: [
@@ -158,7 +164,6 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
           { cle: "referenceOperation", label: "Référence" },
           { cle: "autreReference", label: "Autre référence" },
           { cle: "conditionsRemiseDocuments", label: "Conditions de remise des documents" },
-          { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
         ],
       },
       {
@@ -177,6 +182,13 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
           { cle: "montantRemise", label: "Montant de la remise", format: "montant" },
           { cle: "encours", label: "Encours", format: "montant" },
           { cle: "typeFrais", label: "Type de frais" },
+        ],
+      },
+      {
+        titre: "Date et lieu d'expiration",
+        icone: "Calendar",
+        champs: [
+          { cle: "dateEcheance", label: "Date d'échéance", format: "date" },
         ],
       },
       {

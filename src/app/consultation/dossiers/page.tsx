@@ -55,7 +55,7 @@ export default function ConsultationDossiersPage() {
   const [montantMax, setMontantMax] = useState("");
   const [devise, setDevise] = useState<DeviseTrade | "">("");
   const [refClient, setRefClient] = useState("");
-  const [produit, setProduit] = useState<ProduitTrade | "">("FIN");
+  const [produit, setProduit] = useState<ProduitTrade | "">("");
   const [typeFinancement, setTypeFinancement] = useState("");
   const [evenement, setEvenement] = useState("");
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
@@ -142,8 +142,8 @@ export default function ConsultationDossiersPage() {
   function exportToExcel() {
     const data = filtered;
     const rows = data.map((d) => ({
-      Référence: d.id,
-      "Référence Client": d.client.compte,
+      "Ref de l'opération": d.id,
+      "Ref client": d.client.compte,
       Produit: PRODUIT_LABELS[d.produit] || d.produit,
       Client: d.client.nom,
       Compte: d.client.compte,
@@ -178,7 +178,7 @@ export default function ConsultationDossiersPage() {
     ]);
     (doc as any).autoTable({
       startY: 34,
-      head: [["Référence", "Référence Client", "Produit", "Client", "Compte", "Montant", "Devise", "Date création", "Statut"]],
+      head: [["Ref de l'opération", "Ref client", "Produit", "Client", "Compte", "Montant", "Devise", "Date création", "Statut"]],
       body,
       theme: "grid",
       styles: { fontSize: 9, cellPadding: 2 },
@@ -219,7 +219,7 @@ export default function ConsultationDossiersPage() {
             {/* Ligne 1: Référence bancaire, Référence client, Client / Compte */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-label">RÉFÉRENCE BANCAIRE</label>
+                <label className="text-label">REF DE L'OPERATION</label>
                 <input
                   value={refBancaire}
                   onChange={(e) => setRefBancaire(e.target.value)}
@@ -401,8 +401,8 @@ export default function ConsultationDossiersPage() {
           <table className="table">
             <thead>
               <tr>
-                <th>{header("Référence bancaire", "id")}</th>
-                <th>{header("Référence client", "client")}</th>
+                <th>{header("Ref de l'opération", "id")}</th>
+                <th>{header("Ref client", "client")}</th>
                 <th>{header("Produit", "produit")}</th>
                 <th>{header("Client / Compte", "client")}</th>
                 <th className="text-right">{header("Montant", "montant")}</th>
