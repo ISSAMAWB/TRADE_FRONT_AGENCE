@@ -63,6 +63,18 @@ function formatDate(valeur: string): string {
   return date.toLocaleDateString("fr-FR");
 }
 
+function formatDateHeure(valeur: string): string {
+  const date = new Date(valeur);
+  if (isNaN(date.getTime())) return valeur;
+  return date.toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function isMontantAvecDevise(value: unknown): value is MontantAvecDevise {
   return (
     typeof value === "object" &&
@@ -968,6 +980,11 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
                 <h1 className="text-[17px] font-bold text-[#0f172a] leading-tight">
                   {dossier.produitLibelle} <span className="font-mono text-[#64748b] font-normal">{dossier.reference}</span>
                 </h1>
+                {isIRD && dossier.dateMiseAJour && (
+                  <div className="text-[11px] text-[#64748b] mt-0.5">
+                    Dernière mise à jour : {formatDateHeure(dossier.dateMiseAJour)}
+                  </div>
+                )}
                 {!isELC && (
                   <div className="text-[11px] text-[#64748b] mt-0.5">
                     {String(dossier.donnees["natureOperation"] || "Opération commerciale")}
@@ -980,87 +997,75 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
             </div>
 
             <div className="border-t border-[#e5e8ec] mt-3 pt-3">
-              <div className="flex items-center gap-5">
-                <div>
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#94a3b8]">
-                    {isCredoc ? "Montant du crédit" : "Montant de la remise"}
-                  </div>
-                  <div className="text-[24px] font-extrabold text-[#0f172a] tabular-nums leading-tight">
-                    {montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}
-                  </div>
-                  {montantPrincipalOk && (
-                    <div className="text-[10.5px] text-[#64748b]">
-                      {isCredoc ? `Tolérance ${dossier.donnees["tolerance"] || "—"}` : `Frais Maroc : ${dossier.donnees["fraisAuMaroc"] || "—"} · Étranger : ${dossier.donnees["fraisAEtranger"] || "—"}`}
+              {isCredoc ? (
+                <div className="flex items-center gap-5">
+                  <div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#94a3b8]">Montant du crédit</div>
+                    <div className="text-[24px] font-extrabold text-[#0f172a] tabular-nums leading-tight">
+                      {montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}
                     </div>
-                  )}
-                </div>
-
-                <div className="flex-1">
-                  <div className="h-[10px] rounded-[6px] overflow-hidden flex">
-                    {isCredoc ? (
-                      <>
-                        <div
-                          className="h-full bg-[#e8632b]"
-                          style={{ width: `${getBarPct(dossier.donnees["montantCredit"], dossier.donnees["montantReclame"])}%` }}
-                        />
-                        <div className="h-full bg-[#2a9d6f] flex-1" />
-                      </>
-                    ) : (
-                      <>
-                        <div
-                          className="h-full bg-[#2a9d6f]"
-                          style={{ width: `${getBarPct(dossier.donnees["montantRemise"], dossier.donnees["montantRegle"])}%` }}
-                        />
-                        <div className="h-full bg-[#e8632b] flex-1" />
-                      </>
-                    )}
+                    <div className="text-[10.5px] text-[#64748b]">Tolérance {String(dossier.donnees["tolerance"] || "—")}</div>
                   </div>
-                  <div className="flex justify-between text-[11px] mt-2">
-                    {isCredoc ? (
-                      <>
-                        <span className="flex items-center gap-1 text-[#e8632b]">
-                          <span className="w-2 h-2 rounded-full bg-[#e8632b]" />
-                          Réclamé {isMontantAvecDevise(dossier.donnees["montantReclame"]) ? formatMontant(dossier.donnees["montantReclame"].valeur, dossier.donnees["montantReclame"].devise) : "—"}
-                        </span>
-                        <span className="flex items-center gap-1 text-[#2a9d6f]">
-                          <span className="w-2 h-2 rounded-full bg-[#2a9d6f]" />
-                          Disponible {isMontantAvecDevise(dossier.donnees["montantDisponible"]) ? formatMontant(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise) : "—"}
-                          {isMontantAvecDevise(dossier.donnees["montantDisponible"]) && formatContreValeurMAD(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise) && (
-                            <span className="text-[#94a3b8] ml-1">≈ {formatContreValeurMAD(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise)}</span>
-                          )}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="flex items-center gap-1 text-[#2a9d6f]">
-                          <span className="w-2 h-2 rounded-full bg-[#2a9d6f]" />
-                          Réglé {isMontantAvecDevise(dossier.donnees["montantRegle"]) ? formatMontant(dossier.donnees["montantRegle"].valeur, dossier.donnees["montantRegle"].devise) : "—"}
-                        </span>
-                        <span className="flex items-center gap-1 text-[#e8632b]">
-                          <span className="w-2 h-2 rounded-full bg-[#e8632b]" />
-                          Encours {isMontantAvecDevise(dossier.donnees["encours"]) ? formatMontant(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) : "—"}
-                          {isMontantAvecDevise(dossier.donnees["encours"]) && formatContreValeurMAD(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) && (
-                            <span className="text-[#94a3b8] ml-1">≈ {formatContreValeurMAD(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise)}</span>
-                          )}
-                        </span>
-                      </>
-                    )}
+                  <div className="flex-1">
+                    <div className="h-[10px] rounded-[6px] overflow-hidden flex">
+                      <div className="h-full bg-[#e8632b]" style={{ width: `${getBarPct(dossier.donnees["montantCredit"], dossier.donnees["montantReclame"])}%` }} />
+                      <div className="h-full bg-[#2a9d6f] flex-1" />
+                    </div>
+                    <div className="flex justify-between text-[11px] mt-2">
+                      <span className="flex items-center gap-1 text-[#e8632b]">
+                        <span className="w-2 h-2 rounded-full bg-[#e8632b]" />
+                        Réclamé {isMontantAvecDevise(dossier.donnees["montantReclame"]) ? formatMontant(dossier.donnees["montantReclame"].valeur, dossier.donnees["montantReclame"].devise) : "—"}
+                      </span>
+                      <span className="flex items-center gap-1 text-[#2a9d6f]">
+                        <span className="w-2 h-2 rounded-full bg-[#2a9d6f]" />
+                        Disponible {isMontantAvecDevise(dossier.donnees["montantDisponible"]) ? formatMontant(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise) : "—"}
+                        {isMontantAvecDevise(dossier.donnees["montantDisponible"]) && formatContreValeurMAD(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise) && (
+                          <span className="text-[#94a3b8] ml-1">≈ {formatContreValeurMAD(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise)}</span>
+                        )}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="flex items-start gap-8">
+                  <div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#94a3b8]">Montant de la remise</div>
+                    <div className="text-[24px] font-extrabold text-[#0f172a] tabular-nums leading-tight">
+                      {montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}
+                    </div>
+                  </div>
+                  <div className="border-l border-[#e5e8ec] pl-8">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#94a3b8]">Encours</div>
+                    <div className="text-[24px] font-extrabold text-[#e8632b] tabular-nums leading-tight">
+                      {isMontantAvecDevise(dossier.donnees["encours"]) ? formatMontant(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) : "—"}
+                    </div>
+                    <div className="h-[3px] bg-[#e8632b] rounded-full mt-1 w-full" />
+                  </div>
+                  <div className="ml-auto text-[11px] text-[#64748b] self-center">
+                    Frais Maroc : {String(dossier.donnees["fraisAuMaroc"] || "—")}<br />
+                    Étranger : {String(dossier.donnees["fraisAEtranger"] || "—")}
+                  </div>
+                </div>
+              )}
             </div>
           </Card>
         </div>
 
         <div>
           <Card className="border-l-[3px] border-l-[#e8632b] h-full">
-            <SectionLabel>Parties impliquées</SectionLabel>
+            <SectionLabel>{isCredoc ? "Parties impliquées" : "Informations client"}</SectionLabel>
             <div className="space-y-2.5">
               <div>
                 <div className="text-[12.5px] font-semibold text-[#0f172a] leading-tight">{client?.raisonSociale || String(dossier.donnees[isILC ? "donneurOrdre" : "client"] || "—")}</div>
                 <div className="text-[10.5px] text-[#64748b]">Client · {isILC ? "Donneur d'ordre" : isELC ? "Bénéficiaire" : "Tiré"} · <span className="font-mono">{client?.numeroCompte || "—"}</span></div>
               </div>
               <div className="border-t border-[#e5e8ec] pt-2.5 grid grid-cols-[92px_1fr] gap-y-2 gap-x-2 text-[12px]">
+                {!isCredoc && (
+                  <>
+                    <span className="text-[#94a3b8]">Tiré</span>
+                    <span className="font-medium text-[#0f172a]">{String(dossier.donnees["client"] || "—")}</span>
+                  </>
+                )}
                 <span className="text-[#94a3b8]">{isILC ? "Bénéficiaire" : isELC ? "Donneur d'ordre" : "Tireur"}</span>
                 <span className="font-medium text-[#0f172a]">{String(dossier.donnees[isILC ? "beneficiaire" : isELC ? "donneurOrdre" : "tireur"] || "—")}</span>
                 <span className="text-[#94a3b8]">{isILC ? "Banque notificatrice" : isELC ? "Banque émettrice" : "P. remettante"}</span>
@@ -1083,64 +1088,73 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <Card>
-          <SectionLabel>Caractéristiques de l'opération</SectionLabel>
-          <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
-            <span className="text-[#94a3b8]">Réf. de l'opération</span>
-            <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceOperation"] || "—")}</span>
-            <span className="text-[#94a3b8]">{isCredoc ? "Réf. correspondant" : "Autre référence"}</span>
-            <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees[isCredoc ? "referenceCorrespondant" : "autreReference"] || "—")}</span>
-            {!isELC && (
-              <>
-                <span className="text-[#94a3b8]">Type d'opération</span>
-                <span className="font-medium text-[#0f172a]">{String(dossier.donnees["natureOperation"] || "Opération commerciale")}</span>
-              </>
-            )}
-            <span className="text-[#94a3b8]">{isCredoc ? "Mode de réalisation" : "Conditions de remise"}</span>
-            <span className="font-medium text-[#0f172a]">{String(isCredoc ? modeRealisation : conditionsRemise || "—")}</span>
-            <span className="text-[#94a3b8]">{isCredoc ? "Confirmation" : "Échéance"}</span>
-            <span className={`font-semibold ${isCredoc ? (isConfirme ? "text-[#177a52]" : "text-[#6d4fc4]") : "text-[#e8632b]"}`}>
-              {isCredoc ? (isConfirme ? "Confirmed" : "Unconfirmed") : (dateEcheance ? formatDate(String(dateEcheance)) : "—")}
-            </span>
-          </div>
-        </Card>
-
-        <Card>
-          <SectionLabel>Informations financières</SectionLabel>
-          <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
-            <span className="text-[#94a3b8]">{isCredoc ? "Montant du crédit" : "Montant de la remise"}</span>
-            <span className="font-semibold text-[#0f172a]">{montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}</span>
-            <span className="text-[#94a3b8]">{isCredoc ? "Tolérance" : "Encours"}</span>
-            <span className={`font-semibold ${isCredoc ? "text-[#0f172a]" : "text-[#e8632b]"}`}>
-              {isCredoc ? String(dossier.donnees["tolerance"] || "—") : (isMontantAvecDevise(dossier.donnees["encours"]) ? formatMontant(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) : "—")}
-            </span>
-            {isCredoc && (
-              <>
+        {isCredoc ? (
+          <>
+            <Card>
+              <SectionLabel>Caractéristiques de l'opération</SectionLabel>
+              <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
+                <span className="text-[#94a3b8]">Réf. de l'opération</span>
+                <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceOperation"] || "—")}</span>
+                <span className="text-[#94a3b8]">Réf. correspondant</span>
+                <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceCorrespondant"] || "—")}</span>
+                {!isELC && (
+                  <>
+                    <span className="text-[#94a3b8]">Type d'opération</span>
+                    <span className="font-medium text-[#0f172a]">{String(dossier.donnees["natureOperation"] || "Opération commerciale")}</span>
+                  </>
+                )}
+                <span className="text-[#94a3b8]">Mode de réalisation</span>
+                <span className="font-medium text-[#0f172a]">{String(modeRealisation || "—")}</span>
+                <span className="text-[#94a3b8]">Confirmation</span>
+                <span className={`font-semibold ${isConfirme ? "text-[#177a52]" : "text-[#6d4fc4]"}`}>
+                  {isConfirme ? "Confirmed" : "Unconfirmed"}
+                </span>
+              </div>
+            </Card>
+            <Card>
+              <SectionLabel>Informations financières</SectionLabel>
+              <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
+                <span className="text-[#94a3b8]">Montant du crédit</span>
+                <span className="font-semibold text-[#0f172a]">{montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}</span>
+                <span className="text-[#94a3b8]">Tolérance</span>
+                <span className="font-semibold text-[#0f172a]">{String(dossier.donnees["tolerance"] || "—")}</span>
                 <span className="text-[#94a3b8]">Montant réclamé</span>
                 <span className="font-semibold text-[#e8632b]">{isMontantAvecDevise(dossier.donnees["montantReclame"]) ? formatMontant(dossier.donnees["montantReclame"].valeur, dossier.donnees["montantReclame"].devise) : "—"}</span>
                 <span className="text-[#94a3b8]">Montant disponible</span>
                 <span className="font-semibold text-[#2a9d6f]">{isMontantAvecDevise(dossier.donnees["montantDisponible"]) ? formatMontant(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise) : "—"}</span>
-              </>
-            )}
-            {!isCredoc && (
-              <>
-                <span className="text-[#94a3b8]">Frais au Maroc</span>
-                <span className="font-medium text-[#0f172a]">{String(dossier.donnees["fraisAuMaroc"] || "—")}</span>
-                <span className="text-[#94a3b8]">Frais à l'étranger</span>
-                <span className="font-medium text-[#0f172a]">{String(dossier.donnees["fraisAEtranger"] || "—")}</span>
-              </>
-            )}
-            <span className="text-[#94a3b8]">Contre-valeur MAD</span>
-            <span className="font-semibold text-[#0f172a]">
-              {(() => {
-                const m = isCredoc ? dossier.donnees["montantDisponible"] : montantPrincipal;
-                return isMontantAvecDevise(m) && formatContreValeurMAD(m.valeur, m.devise)
-                  ? formatContreValeurMAD(m.valeur, m.devise)
-                  : "—";
-              })()}
-            </span>
-          </div>
-        </Card>
+                <span className="text-[#94a3b8]">Contre-valeur MAD</span>
+                <span className="font-semibold text-[#0f172a]">
+                  {isMontantAvecDevise(dossier.donnees["montantDisponible"]) && formatContreValeurMAD(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise)
+                    ? formatContreValeurMAD(dossier.donnees["montantDisponible"].valeur, dossier.donnees["montantDisponible"].devise)
+                    : "—"}
+                </span>
+              </div>
+            </Card>
+          </>
+        ) : (
+          <>
+            <Card>
+              <SectionLabel>Références</SectionLabel>
+              <div className="grid grid-cols-[120px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
+                <span className="text-[#94a3b8]">Référence</span>
+                <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceOperation"] || "—")}</span>
+                <span className="text-[#94a3b8]">Autre référence</span>
+                <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["autreReference"] || "—")}</span>
+              </div>
+            </Card>
+            <Card>
+              <SectionLabel>Conditions de remise</SectionLabel>
+              <div className="grid grid-cols-[120px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
+                <span className="text-[#94a3b8]">Conditions</span>
+                <span className="font-semibold text-[#0f172a]">{String(conditionsRemise || "—")}</span>
+                <span className="text-[#94a3b8]">Échéance</span>
+                <span className="font-semibold text-[#94a3b8]">
+                  {dateEcheance ? formatDate(String(dateEcheance)) : "— non applicable"}
+                </span>
+              </div>
+            </Card>
+          </>
+        )}
       </div>
 
       <EvenementsTableV2 evenements={dossier.evenements} />

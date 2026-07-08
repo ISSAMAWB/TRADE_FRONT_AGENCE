@@ -572,6 +572,73 @@
     ]
   },
   {
+    "reference": "IRD-2026-00052",
+    "produit": "IRD",
+    "produitLibelle": "Remise documentaire import",
+    "client": "STE VIVO ENERGY MAROC",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-28T09:12:00",
+    "clientInfo": {
+      "raisonSociale": "STE VIVO ENERGY MAROC",
+      "numeroCompte": "007 780 0000 156",
+      "ice": "003456789012345",
+      "codeClient": "CLI-0156",
+      "agenceRattachement": "Agence Tanger Med",
+      "roleOperation": "Importateur (Tiré)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-IRD-0352-26",
+      "agenceTraitante": "AGC-TGM-03",
+      "gestionnaire": "Ahmed Alami",
+      "datePriseEnCharge": "24/06/2026",
+      "statutOperationnel": "Documents reçus",
+      "controleDocumentaire": "Aucune réserve",
+      "prochaineAction": "Paiement à vue",
+      "noteInterne": "Dossier paiement à vue, documents conformes."
+    },
+    "donnees": {
+      "client": "STE VIVO ENERGY MAROC",
+      "tireur": "CAVAGNA GROUP SPA",
+      "partieRemettante": "INTESA SANPAOLO SPA",
+      "montantRemise": { "valeur": 14750, "devise": "EUR" },
+      "encours": { "valeur": 14750, "devise": "EUR" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "IRD93903071",
+      "autreReference": "EXT928304",
+      "conditionsRemiseDocuments": "Documents contre paiement à vue",
+      "dateEcheance": "",
+      "fraisAuMaroc": "Tiré",
+      "fraisAEtranger": "Tiré",
+      "dateReceptionDocuments": "2026-06-24"
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0341",
+        "nature": "Réception documents",
+        "montant": 14750,
+        "devise": "EUR",
+        "dateCreation": "2026-06-24T14:30:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0342",
+        "nature": "Contrôle documentaire",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-06-25T10:15:00",
+        "statut": "VALIDE"
+      },
+      {
+        "reference": "EVT-2026-0343",
+        "nature": "Notification paiement à vue",
+        "montant": null,
+        "devise": "EUR",
+        "dateCreation": "2026-06-26T11:00:00",
+        "statut": "EN_COURS"
+      }
+    ]
+  },
+  {
     "reference": "ERD-2026-00065",
     "produit": "ERD",
     "produitLibelle": "Remise documentaire export",
