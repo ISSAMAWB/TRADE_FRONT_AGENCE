@@ -728,9 +728,6 @@ function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenement
                             <Download size={13} /> Télécharger
                           </button>
                         </div>
-                        <div className="text-sm text-[#334155] bg-[#f8fafc] rounded-lg p-3 border border-[#e5e8ec]">
-                          {swift.contenu}
-                        </div>
                       </div>
                     ))}
                   </div>
@@ -1149,56 +1146,172 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
 }
 
 function DetailERD({ dossier }: { dossier: DossierTrade }) {
+  const client = dossier.clientInfo;
   const montantRemise = dossier.donnees["montantRemise"];
+  const montantRemiseOk = isMontantAvecDevise(montantRemise) ? montantRemise : null;
   const encours = dossier.donnees["encours"];
+  const encoursOk = isMontantAvecDevise(encours) ? encours : null;
   const typeFrais = dossier.donnees["typeFrais"];
   const conditionsRemise = dossier.donnees["conditionsRemiseDocuments"];
   const dateEcheance = dossier.donnees["dateEcheance"];
+  const dateEcheanceStr = dateEcheance ? String(dateEcheance) : "";
+  const isPaiementAVue = String(conditionsRemise).toLowerCase().includes("vue");
+  const isContreAcceptation = String(conditionsRemise).toLowerCase().includes("acceptation");
   const referencesCourrier = dossier.donnees["referencesCourrier"];
+  const dateEmission = dossier.donnees["dateEmission"] || dossier.dateMiseAJour;
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <CarteInfo titre="Montant & Frais">
-          <div className="space-y-2">
-            <ChampCarte label="Montant de la remise" value={isMontantAvecDevise(montantRemise) ? formatMontant(montantRemise.valeur, montantRemise.devise) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Encours" value={isMontantAvecDevise(encours) ? formatMontant(encours.valeur, encours.devise) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Type de frais" value={typeFrais ? String(typeFrais) : <span className="text-ink-300">—</span>} />
-          </div>
-        </CarteInfo>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="lg:col-span-2">
+          <Card>
+            <div className="flex justify-between items-start">
+              <div>
+                <Link href="/consultation/dossiers" className="text-[11px] text-[#64748b] hover:text-[#e8632b] flex items-center gap-1 mb-1.5">
+                  ‹ Retour à la liste
+                </Link>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="text-[11px] text-[#64748b]">ERD · Export</span>
+                  <Badge color={isContreAcceptation ? "amber" : "blue"}>
+                    {isContreAcceptation ? <Clock size={11} /> : <Diamond size={11} />}
+                    {isContreAcceptation ? "Contre acceptation" : "Paiement à vue"}
+                  </Badge>
+                  <Badge color="blue">En cours</Badge>
+                </div>
+                <h1 className="text-[17px] font-bold text-[#0f172a] leading-tight">
+                  {dossier.produitLibelle} <span className="font-mono text-[#64748b] font-normal">{dossier.reference}</span>
+                </h1>
+                <div className="text-[11px] text-[#64748b] mt-0.5">
+                  {String(conditionsRemise || "Opération commerciale")}
+                  {dossier.donnees["referenceCorrespondant"] && (
+                    <span> · Réf. correspondant {String(dossier.donnees["referenceCorrespondant"])}</span>
+                  )}
+                </div>
+              </div>
+            </div>
 
-        <CarteInfo titre="Conditions & Échéance">
-          <div className="space-y-2">
-            <ChampCarte label="Conditions de remise" value={conditionsRemise ? String(conditionsRemise) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Date d'échéance" value={dateEcheance ? formatDate(String(dateEcheance)) : <span className="text-ink-300">—</span>} />
-          </div>
-        </CarteInfo>
+            <div className="border-t border-[#e5e8ec] mt-3 pt-3">
+              <div className="flex items-center gap-5">
+                <div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#94a3b8]">
+                    Montant de la remise
+                  </div>
+                  <div className="text-[24px] font-extrabold text-[#0f172a] tabular-nums leading-tight">
+                    {montantRemiseOk ? formatMontant(montantRemiseOk.valeur, montantRemiseOk.devise) : "—"}
+                  </div>
+                  {montantRemiseOk && (
+                    <div className="text-[10.5px] text-[#64748b]">
+                      Type de frais : {String(typeFrais || "—")}
+                    </div>
+                  )}
+                </div>
 
-        <CarteInfo titre="Références">
-          <div className="space-y-2">
-            <ChampCarte label="Référence" value={dossier.donnees["referenceOperation"] ? String(dossier.donnees["referenceOperation"]) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Autre référence" value={dossier.donnees["autreReference"] ? String(dossier.donnees["autreReference"]) : <span className="text-ink-300">—</span>} />
-          </div>
-        </CarteInfo>
+                <div className="flex-1">
+                  <div className="h-[10px] rounded-[6px] overflow-hidden flex">
+                    <div
+                      className="h-full bg-[#2a9d6f]"
+                      style={{ width: `${getBarPct(dossier.donnees["montantRemise"], dossier.donnees["montantRegle"])}%` }}
+                    />
+                    <div className="h-full bg-[#e8632b] flex-1" />
+                  </div>
+                  <div className="flex justify-between text-[11px] mt-2">
+                    <span className="flex items-center gap-1 text-[#2a9d6f]">
+                      <span className="w-2 h-2 rounded-full bg-[#2a9d6f]" />
+                      Réglé {isMontantAvecDevise(dossier.donnees["montantRegle"]) ? formatMontant(dossier.donnees["montantRegle"].valeur, dossier.donnees["montantRegle"].devise) : "—"}
+                    </span>
+                    <span className="flex items-center gap-1 text-[#e8632b]">
+                      <span className="w-2 h-2 rounded-full bg-[#e8632b]" />
+                      Encours {encoursOk ? formatMontant(encoursOk.valeur, encoursOk.devise) : "—"}
+                      {encoursOk && formatContreValeurMAD(encoursOk.valeur, encoursOk.devise) && (
+                        <span className="text-[#94a3b8] ml-1">≈ {formatContreValeurMAD(encoursOk.valeur, encoursOk.devise)}</span>
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
 
-        <CarteInfo titre="Parties impliquées">
-          <div className="space-y-2">
-            <ChampCarte label="Tireur" value={dossier.donnees["client"] ? String(dossier.donnees["client"]) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Tiré" value={dossier.donnees["tire"] ? String(dossier.donnees["tire"]) : <span className="text-ink-300">—</span>} />
-            <ChampCarte label="Banque d'encaissement" value={dossier.donnees["partieRemettante"] ? String(dossier.donnees["partieRemettante"]) : <span className="text-ink-300">—</span>} />
+        <div>
+          <Card className="border-l-[3px] border-l-[#e8632b] h-full">
+            <SectionLabel>Parties impliquées</SectionLabel>
+            <div className="space-y-2.5">
+              <div>
+                <div className="text-[12.5px] font-semibold text-[#0f172a] leading-tight">
+                  {client?.raisonSociale || String(dossier.donnees["client"] || "—")}
+                </div>
+                <div className="text-[10.5px] text-[#64748b]">
+                  Client · Tireur · <span className="font-mono">{client?.numeroCompte || "—"}</span>
+                </div>
+              </div>
+              <div className="border-t border-[#e5e8ec] pt-2.5 grid grid-cols-[92px_1fr] gap-y-2 gap-x-2 text-[12px]">
+                <span className="text-[#94a3b8]">Tiré</span>
+                <span className="font-medium text-[#0f172a]">{String(dossier.donnees["tire"] || "—")}</span>
+                <span className="text-[#94a3b8]">Banque encaiss.</span>
+                <span className="font-medium text-[#0f172a]">{String(dossier.donnees["partieRemettante"] || "—")}</span>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      <BandeauEcheanceV2
+        date={dateEcheanceStr}
+        dateDebut={dateEmission ? String(dateEmission) : undefined}
+        contexte={String(conditionsRemise || "")}
+        label="DATE D'ÉCHÉANCE"
+        labelDebut="Ouverture"
+        labelFin="Échéance"
+        isPaiementAVue={isPaiementAVue}
+        documentsRecusLe={dossier.donnees["dateReceptionDocuments"]}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <Card>
+          <SectionLabel>Caractéristiques de l'opération</SectionLabel>
+          <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
+            <span className="text-[#94a3b8]">Réf. de l'opération</span>
+            <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceOperation"] || "—")}</span>
+            <span className="text-[#94a3b8]">Autre référence</span>
+            <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["autreReference"] || "—")}</span>
+            <span className="text-[#94a3b8]">Conditions de remise</span>
+            <span className="font-medium text-[#0f172a]">{String(conditionsRemise || "—")}</span>
+            <span className="text-[#94a3b8]">Échéance</span>
+            <span className="font-semibold text-[#e8632b]">{dateEcheance ? formatDate(String(dateEcheance)) : "—"}</span>
           </div>
-        </CarteInfo>
+        </Card>
+
+        <Card>
+          <SectionLabel>Informations financières</SectionLabel>
+          <div className="grid grid-cols-[140px_1fr] gap-y-2.5 gap-x-3 text-[12.5px]">
+            <span className="text-[#94a3b8]">Montant de la remise</span>
+            <span className="font-semibold text-[#0f172a]">{montantRemiseOk ? formatMontant(montantRemiseOk.valeur, montantRemiseOk.devise) : "—"}</span>
+            <span className="text-[#94a3b8]">Encours</span>
+            <span className="font-semibold text-[#e8632b]">{encoursOk ? formatMontant(encoursOk.valeur, encoursOk.devise) : "—"}</span>
+            <span className="text-[#94a3b8]">Type de frais</span>
+            <span className="font-medium text-[#0f172a]">{String(typeFrais || "—")}</span>
+            <span className="text-[#94a3b8]">Contre-valeur MAD</span>
+            <span className="font-semibold text-[#0f172a]">
+              {(() => {
+                const m = montantRemiseOk;
+                return m && formatContreValeurMAD(m.valeur, m.devise)
+                  ? formatContreValeurMAD(m.valeur, m.devise)
+                  : "—";
+              })()}
+            </span>
+          </div>
+        </Card>
       </div>
 
       {referencesCourrier && isCourrierArray(referencesCourrier) && referencesCourrier.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <CarteInfo titre="Références de courrier">
-            <TableauCourriers courriers={referencesCourrier} />
-          </CarteInfo>
-        </div>
+        <Card>
+          <SectionLabel>Références de courrier</SectionLabel>
+          <TableauCourriers courriers={referencesCourrier} />
+        </Card>
       )}
 
-      <EvenementsTable evenements={dossier.evenements} />
+      <EvenementsTableV2 evenements={dossier.evenements} />
     </div>
   );
 }

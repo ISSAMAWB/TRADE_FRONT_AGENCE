@@ -54,7 +54,7 @@ export default function ConsultationDossiersPage() {
   const [montantMin, setMontantMin] = useState("");
   const [montantMax, setMontantMax] = useState("");
   const [devise, setDevise] = useState<DeviseTrade | "">("");
-  const [refClient, setRefClient] = useState("");
+  const [refCorrespondant, setRefCorrespondant] = useState("");
   const [produit, setProduit] = useState<ProduitTrade | "">("");
   const [typeFinancement, setTypeFinancement] = useState("");
   const [evenement, setEvenement] = useState("");
@@ -76,7 +76,7 @@ export default function ConsultationDossiersPage() {
       if (montantMin && d.montant < parseFloat(montantMin)) return false;
       if (montantMax && d.montant > parseFloat(montantMax)) return false;
       if (devise && d.devise !== devise) return false;
-      if (refClient.trim() && !d.client.compte.toLowerCase().includes(refClient.toLowerCase())) return false;
+      if (refCorrespondant.trim() && !d.referenceCorrespondant.toLowerCase().includes(refCorrespondant.toLowerCase())) return false;
       if (produit && d.produit !== produit) return false;
       if (produit === "FIN" && typeFinancement && d.typeFinancement !== typeFinancement) return false;
       if (evenement && !d.evenements.some((e: any) => e.type.toLowerCase().includes(evenement.toLowerCase()))) return false;
@@ -94,14 +94,14 @@ export default function ConsultationDossiersPage() {
     });
 
     return items;
-  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit, typeFinancement, evenement, sortKey, sortDir]);
+  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refCorrespondant, produit, typeFinancement, evenement, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   useEffect(() => {
     setPage(1);
-  }, [refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refClient, produit, typeFinancement, evenement]);
+  }, [refBancaire, statut, clientQuery, dateDebut, dateFin, montantMin, montantMax, devise, refCorrespondant, produit, typeFinancement, evenement]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -116,7 +116,7 @@ export default function ConsultationDossiersPage() {
     setMontantMin("");
     setMontantMax("");
     setDevise("");
-    setRefClient("");
+    setRefCorrespondant("");
     setProduit("");
     setTypeFinancement("");
     setEvenement("");
@@ -143,7 +143,7 @@ export default function ConsultationDossiersPage() {
     const data = filtered;
     const rows = data.map((d) => ({
       "Ref de l'opération": d.id,
-      "Ref client": d.client.compte,
+      "Ref correspondant": d.referenceCorrespondant,
       Produit: PRODUIT_LABELS[d.produit] || d.produit,
       Client: d.client.nom,
       Compte: d.client.compte,
@@ -167,7 +167,7 @@ export default function ConsultationDossiersPage() {
     doc.text(`Exporté le ${new Date().toLocaleDateString("fr-FR")} — ${data.length} dossier(s)`, 14, 28);
     const body = data.map((d) => [
       d.id,
-      d.client.compte,
+      d.referenceCorrespondant,
       PRODUIT_LABELS[d.produit] || d.produit,
       d.client.nom,
       d.client.compte,
@@ -178,7 +178,7 @@ export default function ConsultationDossiersPage() {
     ]);
     (doc as any).autoTable({
       startY: 34,
-      head: [["Ref de l'opération", "Ref client", "Produit", "Client", "Compte", "Montant", "Devise", "Date création", "Statut"]],
+      head: [["Ref de l'opération", "Ref correspondant", "Produit", "Client", "Compte", "Montant", "Devise", "Date création", "Statut"]],
       body,
       theme: "grid",
       styles: { fontSize: 9, cellPadding: 2 },
@@ -229,11 +229,11 @@ export default function ConsultationDossiersPage() {
               </div>
 
               <div>
-                <label className="text-label">RÉFÉRENCE CLIENT</label>
+                <label className="text-label">REF CORRESPONDANT</label>
                 <input
-                  value={refClient}
-                  onChange={(e) => setRefClient(e.target.value)}
-                  placeholder="Ex. CL%  (commence par CL)"
+                  value={refCorrespondant}
+                  onChange={(e) => setRefCorrespondant(e.target.value)}
+                  placeholder="Ex. CORR%  (commence par CORR)"
                   className="input w-full"
                 />
               </div>
@@ -402,7 +402,7 @@ export default function ConsultationDossiersPage() {
             <thead>
               <tr>
                 <th>{header("Ref de l'opération", "id")}</th>
-                <th>{header("Ref client", "client")}</th>
+                <th>{header("Ref correspondant", "banqueCorrespondante")}</th>
                 <th>{header("Produit", "produit")}</th>
                 <th>{header("Client / Compte", "client")}</th>
                 <th className="text-right">{header("Montant", "montant")}</th>
@@ -420,7 +420,7 @@ export default function ConsultationDossiersPage() {
                     <Link href={`/consultation/dossiers/${d.id}`} className="font-medium hover:underline text-orange-500">{d.id}</Link>
                   </td>
                   <td>
-                    <Link href={`/consultation/dossiers/${d.id}`} className="font-medium hover:underline text-orange-500">{d.client.compte}</Link>
+                    <span className="text-xs text-gray-600">{d.referenceCorrespondant}</span>
                   </td>
                   <td>
                     <span className="badge-produit">{PRODUIT_LABELS[d.produit] || d.produit}</span>
@@ -507,7 +507,6 @@ export default function ConsultationDossiersPage() {
         onClose={() => setIsClientModalOpen(false)}
         onClientSelect={(client) => {
           setClientQuery(client.nom);
-          setRefClient(client.compte);
         }}
       />
     </Shell>

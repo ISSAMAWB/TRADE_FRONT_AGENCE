@@ -54,6 +54,7 @@ export interface Dossier {
   dateCreation: string;
   dateEcheance: string;
   banqueCorrespondante: string;
+  referenceCorrespondant: string;
   paysOrigine: string;
   statut: StatutDossier;
   evenementCourant?: string;

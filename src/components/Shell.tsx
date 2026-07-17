@@ -4,14 +4,22 @@ import { ReactNode, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Mail, FileSpreadsheet, FolderOpen, Clock, Bell, Settings, Lock,
-  FolderOpen as FolderOpenIcon,
+  FolderOpen as FolderOpenIcon, ArrowRight, ArrowLeft, DollarSign, BarChart3,
+  FileText, ChevronRight, ChevronDown
 } from "lucide-react";
 import { useTomStore } from "@/store/useTomStore";
 import type { EquipeActeur } from "@/domain/types";
 import CompactSidebar from "@/components/ui/CompactSidebar";
 import FilterToggleButton from "@/components/ui/FilterToggleButton";
 
-type NavItem = { href: string; label: string; icon: ReactNode; disabled?: boolean };
+type NavItem = { 
+  href: string; 
+  label: string; 
+  icon: ReactNode; 
+  disabled?: boolean;
+  isSubItem?: boolean;
+  children?: NavItem[];
+};
 type NavGroup = { title?: string; items: NavItem[] };
 
 const NAV_GROUPS: NavGroup[] = [
@@ -19,18 +27,50 @@ const NAV_GROUPS: NavGroup[] = [
     items: [{ href: "/", label: "Tableau de bord", icon: <LayoutDashboard size={18} /> }],
   },
   {
-    title: "Remise Documentaire Import",
+    title: "ESPACE DE CONSULTATION",
     items: [
-      { href: "/courriers",  label: "Centralisation des courriers IRD", icon: <Mail size={18} /> },
-      { href: "/operations", label: "Gestion des opérations IRD",        icon: <FileSpreadsheet size={18} />, disabled: true },
+      { href: "/consultation/dossiers",  label: "Tous les dossiers",    icon: <FolderOpen size={18} /> },
+      { href: "/consultation/evenements", label: "Événements récents", icon: <Clock size={18} /> },
     ],
   },
   {
-    title: "Consultation",
+    title: "PRODUITS DOCUMENTAIRES",
     items: [
-      { href: "/consultation/dossiers",  label: "Dossiers Trade",       icon: <FolderOpen size={18} /> },
-      { href: "/consultation/evenements", label: "Événements récents",  icon: <Clock size={18} /> },
-      { href: "/consultation/alertes",    label: "Alertes & échéances", icon: <Bell size={18} /> },
+      { 
+        href: "#", 
+        label: "Crédits documentaires", 
+        icon: <FileText size={18} />,
+        children: [
+          { href: "/credits-doc/import", label: "Import", icon: <ArrowRight size={14} />, isSubItem: true },
+          { href: "/credits-doc/export", label: "Export", icon: <ArrowLeft size={14} />, isSubItem: true },
+        ]
+      },
+      { 
+        href: "#", 
+        label: "Remises documentaires", 
+        icon: <FileSpreadsheet size={18} />,
+        children: [
+          { href: "/remises-doc/import", label: "Import", icon: <ArrowRight size={14} />, isSubItem: true },
+          { href: "/remises-doc/export", label: "Export", icon: <ArrowLeft size={14} />, isSubItem: true },
+          { href: "/courriers", label: "Centralisation des courriers", icon: <Mail size={14} />, isSubItem: true },
+        ]
+      },
+      { 
+        href: "#", 
+        label: "Financements", 
+        icon: <DollarSign size={18} />,
+        children: [
+          { href: "/financements/refinancement-import", label: "Refinancement import", icon: <ArrowRight size={14} />, isSubItem: true },
+          { href: "/financements/prefinancement-export", label: "Préfinancement export", icon: <ArrowLeft size={14} />, isSubItem: true },
+        ]
+      },
+    ],
+  },
+  {
+    title: "SUIVI ET PILOTAGE",
+    items: [
+      { href: "/consultation/alertes", label: "Alertes et échéances", icon: <Bell size={18} /> },
+      { href: "/reporting", label: "Reporting", icon: <BarChart3 size={18} />, disabled: true },
     ],
   },
 ];
@@ -55,11 +95,17 @@ export default function Shell({ children, showFilterButton = false, onFilterTogg
   const acteur = useTomStore(s => s.acteurCourant);
   const reset = useTomStore(s => s.resetSeed);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
     <div className="min-h-screen flex">
       {/* Compact Sidebar */}
-      <CompactSidebar groups={NAV_GROUPS} onReset={reset} />
+      <CompactSidebar 
+        groups={NAV_GROUPS} 
+        onReset={reset} 
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+      />
 
       {/* Main column */}
       <div className="flex-1 flex flex-col min-w-0">

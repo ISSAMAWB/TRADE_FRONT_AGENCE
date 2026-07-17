@@ -24,7 +24,7 @@
     },
     "datePriseEnCharge": "2026-03-13",
     "statutOperationnel": "Docs en attente",
-    "controleDocumentaire": "2 réserves actives",
+    "controleDocumentaire": "2 rÃ©serves actives",
     "encours": {
       "utilise": 1200000,
       "autorise": 2000000,
@@ -38,38 +38,39 @@
       {
         "date": "2026-06-22",
         "auteur": "K. Benali",
-        "texte": "Relance client envoyée, attente documents BL"
+        "texte": "Relance client envoyÃ©e, attente documents BL"
       },
       {
         "date": "2026-06-10",
         "auteur": "K. Benali",
-        "texte": "Documents reçus, contrôle en cours"
+        "texte": "Documents reÃ§us, contrÃ´le en cours"
       }
     ],
     "evenements": [
       {
         "id": "EVT-001",
         "date": "2026-06-24",
-        "type": "Présentation documents",
-        "statut": "Réserves",
+        "type": "PrÃ©sentation documents",
+        "statut": "RÃ©serves",
         "montant": 1200000
       },
       {
         "id": "EVT-002",
         "date": "2026-05-15",
         "type": "Modification",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 1200000
       },
       {
         "id": "EVT-003",
         "date": "2026-03-12",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 1200000
       }
     ],
-    "evenementCourant": "Réception documents"
+    "evenementCourant": "RÃ©ception documents",
+    "referenceCorrespondant": "REFCOR0001"
   },
   {
     "id": "ILC-2026-00145",
@@ -96,7 +97,7 @@
     },
     "datePriseEnCharge": "2026-04-03",
     "statutOperationnel": "En traitement",
-    "controleDocumentaire": "0 réserve",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 850000,
       "autorise": 1500000,
@@ -110,7 +111,7 @@
       {
         "date": "2026-06-20",
         "auteur": "F. Tazi",
-        "texte": "Client informé de l'acceptation banque correspondante"
+        "texte": "Client informÃ© de l'acceptation banque correspondante"
       }
     ],
     "evenements": [
@@ -118,18 +119,19 @@
         "id": "EVT-004",
         "date": "2026-06-20",
         "type": "Acceptation",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 850000
       },
       {
         "id": "EVT-005",
         "date": "2026-04-02",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 850000
       }
     ],
-    "evenementCourant": "Acceptation / Engagement"
+    "evenementCourant": "Acceptation / Engagement",
+    "referenceCorrespondant": "REFCOR0002"
   },
   {
     "id": "ILC-2026-00148",
@@ -146,7 +148,7 @@
     "dateEcheance": "2026-05-30",
     "banqueCorrespondante": "Citibank New York",
     "paysOrigine": "USA",
-    "statut": "Expiré",
+    "statut": "ExpirÃ©",
     "refCTN": "CTN-ILC-0148-26",
     "codeAgence": "AGC-RABAT-02",
     "agentCTN": {
@@ -155,8 +157,8 @@
       "code": "AA03"
     },
     "datePriseEnCharge": "2026-02-16",
-    "statutOperationnel": "Échéance dépassée",
-    "controleDocumentaire": "Clôturé",
+    "statutOperationnel": "Ã‰chÃ©ance dÃ©passÃ©e",
+    "controleDocumentaire": "ClÃ´turÃ©",
     "encours": {
       "utilise": 0,
       "autorise": 3000000,
@@ -170,7 +172,7 @@
       {
         "date": "2026-05-28",
         "auteur": "A. Alami",
-        "texte": "Client informé de l'échéance imminente"
+        "texte": "Client informÃ© de l'Ã©chÃ©ance imminente"
       },
       {
         "date": "2026-05-20",
@@ -182,19 +184,20 @@
       {
         "id": "EVT-006",
         "date": "2026-05-30",
-        "type": "Échéance",
-        "statut": "Expiré",
+        "type": "Ã‰chÃ©ance",
+        "statut": "ExpirÃ©",
         "montant": 2500000
       },
       {
         "id": "EVT-007",
         "date": "2026-02-15",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 2500000
       }
     ],
-    "evenementCourant": "Échéance"
+    "evenementCourant": "Ã‰chÃ©ance",
+    "referenceCorrespondant": "REFCOR0003"
   },
   {
     "id": "ILC-2026-00152",
@@ -221,7 +224,7 @@
     },
     "datePriseEnCharge": "2026-05-11",
     "statutOperationnel": "En attente documents",
-    "controleDocumentaire": "1 réserve active",
+    "controleDocumentaire": "1 rÃ©serve active",
     "encours": {
       "utilise": 450000,
       "autorise": 1000000,
@@ -235,14 +238,14 @@
       {
         "date": "2026-06-18",
         "auteur": "S. Bennani",
-        "texte": "Documents partiels reçus, attente certificat origine"
+        "texte": "Documents partiels reÃ§us, attente certificat origine"
       }
     ],
     "evenements": [
       {
         "id": "EVT-008",
         "date": "2026-06-18",
-        "type": "Réception documents",
+        "type": "RÃ©ception documents",
         "statut": "Partiel",
         "montant": 450000
       },
@@ -250,11 +253,12 @@
         "id": "EVT-009",
         "date": "2026-05-10",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 450000
       }
     ],
-    "evenementCourant": "Réception documents"
+    "evenementCourant": "RÃ©ception documents",
+    "referenceCorrespondant": "REFCOR0004"
   },
   {
     "id": "IRD-2026-00087",
@@ -271,7 +275,7 @@
     "dateEcheance": "2026-04-25",
     "banqueCorrespondante": "Deutsche Bank Frankfurt",
     "paysOrigine": "Allemagne",
-    "statut": "Expiré",
+    "statut": "ExpirÃ©",
     "refCTN": "CTN-IRD-0087-26",
     "codeAgence": "AGC-CASA-01",
     "agentCTN": {
@@ -280,8 +284,8 @@
       "code": "KB01"
     },
     "datePriseEnCharge": "2026-01-21",
-    "statutOperationnel": "Clôturé",
-    "controleDocumentaire": "Clôturé",
+    "statutOperationnel": "ClÃ´turÃ©",
+    "controleDocumentaire": "ClÃ´turÃ©",
     "encours": {
       "utilise": 0,
       "autorise": 2500000,
@@ -295,26 +299,27 @@
       {
         "date": "2026-04-23",
         "auteur": "K. Benali",
-        "texte": "Dossier clôturé suite échéance non honorée"
+        "texte": "Dossier clÃ´turÃ© suite Ã©chÃ©ance non honorÃ©e"
       }
     ],
     "evenements": [
       {
         "id": "EVT-010",
         "date": "2026-04-25",
-        "type": "Échéance",
-        "statut": "Expiré",
+        "type": "Ã‰chÃ©ance",
+        "statut": "ExpirÃ©",
         "montant": null
       },
       {
         "id": "EVT-011",
         "date": "2026-01-20",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 1800000
       }
     ],
-    "evenementCourant": "Échéance"
+    "evenementCourant": "Ã‰chÃ©ance",
+    "referenceCorrespondant": "REFCOR0005"
   },
   {
     "id": "IRD-2026-00091",
@@ -329,7 +334,7 @@
     "devise": "EUR",
     "dateCreation": "2026-05-05",
     "dateEcheance": "2026-08-10",
-    "banqueCorrespondante": "Société Générale Paris",
+    "banqueCorrespondante": "SociÃ©tÃ© GÃ©nÃ©rale Paris",
     "paysOrigine": "France",
     "statut": "En cours",
     "refCTN": "CTN-IRD-0091-26",
@@ -341,7 +346,7 @@
     },
     "datePriseEnCharge": "2026-05-06",
     "statutOperationnel": "En traitement",
-    "controleDocumentaire": "0 réserve",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 650000,
       "autorise": 1200000,
@@ -355,7 +360,7 @@
       {
         "date": "2026-06-19",
         "auteur": "M. Idrissi",
-        "texte": "Validation documents complète"
+        "texte": "Validation documents complÃ¨te"
       }
     ],
     "evenements": [
@@ -363,18 +368,19 @@
         "id": "EVT-012",
         "date": "2026-06-19",
         "type": "Validation documents",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": null
       },
       {
         "id": "EVT-013",
         "date": "2026-05-05",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 650000
       }
     ],
-    "evenementCourant": "Acceptation & Aval"
+    "evenementCourant": "Acceptation & Aval",
+    "referenceCorrespondant": "REFCOR0006"
   },
   {
     "id": "IRD-2026-00095",
@@ -401,7 +407,7 @@
     },
     "datePriseEnCharge": "2026-04-19",
     "statutOperationnel": "Docs en attente",
-    "controleDocumentaire": "3 réserves actives",
+    "controleDocumentaire": "3 rÃ©serves actives",
     "encours": {
       "utilise": 950000,
       "autorise": 2000000,
@@ -420,14 +426,14 @@
       {
         "date": "2026-06-10",
         "auteur": "L. Chaoui",
-        "texte": "Documents partiels reçus"
+        "texte": "Documents partiels reÃ§us"
       }
     ],
     "evenements": [
       {
         "id": "EVT-014",
         "date": "2026-06-21",
-        "type": "Réception documents",
+        "type": "RÃ©ception documents",
         "statut": "Partiel",
         "montant": null
       },
@@ -435,11 +441,12 @@
         "id": "EVT-015",
         "date": "2026-04-18",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 950000
       }
     ],
-    "evenementCourant": "Réception documents"
+    "evenementCourant": "RÃ©ception documents",
+    "referenceCorrespondant": "REFCOR0007"
   },
   {
     "id": "ERD-2026-00062",
@@ -456,7 +463,7 @@
     "dateEcheance": "2026-06-15",
     "banqueCorrespondante": "Standard Chartered London",
     "paysOrigine": "Royaume-Uni",
-    "statut": "Annulé",
+    "statut": "AnnulÃ©",
     "refCTN": "CTN-ERD-0062-26",
     "codeAgence": "AGC-TANGER-06",
     "agentCTN": {
@@ -465,8 +472,8 @@
       "code": "EY07"
     },
     "datePriseEnCharge": "2026-03-01",
-    "statutOperationnel": "Annulé client",
-    "controleDocumentaire": "Annulé",
+    "statutOperationnel": "AnnulÃ© client",
+    "controleDocumentaire": "AnnulÃ©",
     "encours": {
       "utilise": 0,
       "autorise": 5000000,
@@ -480,12 +487,12 @@
       {
         "date": "2026-06-10",
         "auteur": "Y. El Fassi",
-        "texte": "Annulation demandée par client"
+        "texte": "Annulation demandÃ©e par client"
       },
       {
         "date": "2026-06-05",
         "auteur": "Y. El Fassi",
-        "texte": "Client contacté pour confirmation"
+        "texte": "Client contactÃ© pour confirmation"
       }
     ],
     "evenements": [
@@ -493,18 +500,19 @@
         "id": "EVT-016",
         "date": "2026-06-10",
         "type": "Annulation",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": null
       },
       {
         "id": "EVT-017",
         "date": "2026-02-28",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 3200000
       }
     ],
-    "evenementCourant": "Dénouement / Clôture"
+    "evenementCourant": "DÃ©nouement / ClÃ´ture",
+    "referenceCorrespondant": "REFCOR0008"
   },
   {
     "id": "ERD-2026-00065",
@@ -531,7 +539,7 @@
     },
     "datePriseEnCharge": "2026-05-23",
     "statutOperationnel": "En traitement",
-    "controleDocumentaire": "0 réserve",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 1500000,
       "autorise": 3000000,
@@ -545,7 +553,7 @@
       {
         "date": "2026-06-23",
         "auteur": "A. Alami",
-        "texte": "Documents validés, transmission au BO"
+        "texte": "Documents validÃ©s, transmission au BO"
       }
     ],
     "evenements": [
@@ -553,18 +561,19 @@
         "id": "EVT-018",
         "date": "2026-06-23",
         "type": "Validation documents",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": null
       },
       {
         "id": "EVT-019",
         "date": "2026-05-22",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 1500000
       }
     ],
-    "evenementCourant": "Acceptation & Aval"
+    "evenementCourant": "Acceptation & Aval",
+    "referenceCorrespondant": "REFCOR0009"
   },
   {
     "id": "ERD-2026-00068",
@@ -580,8 +589,8 @@
     "dateCreation": "2026-03-08",
     "dateEcheance": "2026-06-20",
     "banqueCorrespondante": "HSBC Dubai",
-    "paysOrigine": "Émirats",
-    "statut": "Expiré",
+    "paysOrigine": "Ã‰mirats",
+    "statut": "ExpirÃ©",
     "refCTN": "CTN-ERD-0068-26",
     "codeAgence": "AGC-CASA-01",
     "agentCTN": {
@@ -590,8 +599,8 @@
       "code": "KB01"
     },
     "datePriseEnCharge": "2026-03-09",
-    "statutOperationnel": "Échéance dépassée",
-    "controleDocumentaire": "Clôturé",
+    "statutOperationnel": "Ã‰chÃ©ance dÃ©passÃ©e",
+    "controleDocumentaire": "ClÃ´turÃ©",
     "encours": {
       "utilise": 0,
       "autorise": 1500000,
@@ -605,26 +614,27 @@
       {
         "date": "2026-06-18",
         "auteur": "K. Benali",
-        "texte": "Relance échéance, client injoignable"
+        "texte": "Relance Ã©chÃ©ance, client injoignable"
       }
     ],
     "evenements": [
       {
         "id": "EVT-020",
         "date": "2026-06-20",
-        "type": "Échéance",
-        "statut": "Expiré",
+        "type": "Ã‰chÃ©ance",
+        "statut": "ExpirÃ©",
         "montant": null
       },
       {
         "id": "EVT-021",
         "date": "2026-03-08",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 780000
       }
     ],
-    "evenementCourant": "Échéance"
+    "evenementCourant": "Ã‰chÃ©ance",
+    "referenceCorrespondant": "REFCOR0010"
   },
   {
     "id": "ELC-2026-00034",
@@ -651,7 +661,7 @@
     },
     "datePriseEnCharge": "2026-04-13",
     "statutOperationnel": "Docs en attente",
-    "controleDocumentaire": "1 réserve active",
+    "controleDocumentaire": "1 rÃ©serve active",
     "encours": {
       "utilise": 1100000,
       "autorise": 2000000,
@@ -672,7 +682,7 @@
       {
         "id": "EVT-022",
         "date": "2026-06-25",
-        "type": "Réception documents",
+        "type": "RÃ©ception documents",
         "statut": "Partiel",
         "montant": null
       },
@@ -680,11 +690,12 @@
         "id": "EVT-023",
         "date": "2026-04-12",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 1100000
       }
     ],
-    "evenementCourant": "Réception documents"
+    "evenementCourant": "RÃ©ception documents",
+    "referenceCorrespondant": "REFCOR0011"
   },
   {
     "id": "ELC-2026-00038",
@@ -711,7 +722,7 @@
     },
     "datePriseEnCharge": "2026-05-31",
     "statutOperationnel": "En traitement",
-    "controleDocumentaire": "0 réserve",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 580000,
       "autorise": 1200000,
@@ -725,7 +736,7 @@
       {
         "date": "2026-06-24",
         "auteur": "S. Bennani",
-        "texte": "Validation documents complète"
+        "texte": "Validation documents complÃ¨te"
       }
     ],
     "evenements": [
@@ -733,18 +744,19 @@
         "id": "EVT-024",
         "date": "2026-06-24",
         "type": "Validation documents",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": null
       },
       {
         "id": "EVT-025",
         "date": "2026-05-30",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 580000
       }
     ],
-    "evenementCourant": "Contrôle documentaire"
+    "evenementCourant": "ContrÃ´le documentaire",
+    "referenceCorrespondant": "REFCOR0012"
   },
   {
     "id": "ELC-2026-00041",
@@ -761,7 +773,7 @@
     "dateEcheance": "2026-04-20",
     "banqueCorrespondante": "UniCredit Milan",
     "paysOrigine": "Italie",
-    "statut": "Annulé",
+    "statut": "AnnulÃ©",
     "refCTN": "CTN-ELC-0041-26",
     "codeAgence": "AGC-CASA-01",
     "agentCTN": {
@@ -770,8 +782,8 @@
       "code": "KB01"
     },
     "datePriseEnCharge": "2026-01-11",
-    "statutOperationnel": "Annulé client",
-    "controleDocumentaire": "Annulé",
+    "statutOperationnel": "AnnulÃ© client",
+    "controleDocumentaire": "AnnulÃ©",
     "encours": {
       "utilise": 0,
       "autorise": 3000000,
@@ -785,7 +797,7 @@
       {
         "date": "2026-04-15",
         "auteur": "K. Benali",
-        "texte": "Annulation confirmée par client"
+        "texte": "Annulation confirmÃ©e par client"
       }
     ],
     "evenements": [
@@ -793,18 +805,19 @@
         "id": "EVT-026",
         "date": "2026-04-15",
         "type": "Annulation",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": null
       },
       {
         "id": "EVT-027",
         "date": "2026-01-10",
         "type": "Ouverture",
-        "statut": "Validé",
+        "statut": "ValidÃ©",
         "montant": 2100000
       }
     ],
-    "evenementCourant": "Clôture"
+    "evenementCourant": "ClÃ´ture",
+    "referenceCorrespondant": "REFCOR0013"
   },
   {
     "id": "ILC0012483Q-0151",
@@ -831,7 +844,7 @@
     },
     "datePriseEnCharge": "2026-01-11",
     "statutOperationnel": "En traitement",
-    "controleDocumentaire": "0 réserve",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 5000,
       "autorise": 20000,
@@ -843,7 +856,8 @@
     "canalInteraction": "email",
     "notes": [],
     "evenements": [],
-    "evenementCourant": "Présentation de documents avec réserves"
+    "evenementCourant": "PrÃ©sentation de documents avec rÃ©serves",
+    "referenceCorrespondant": "REFCOR0014"
   },
   {
     "id": "ELC-2026-00034",
@@ -869,8 +883,8 @@
       "code": "TF02"
     },
     "datePriseEnCharge": "2026-02-02",
-    "statutOperationnel": "Validé",
-    "controleDocumentaire": "0 réserve",
+    "statutOperationnel": "ValidÃ©",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 9620517.35,
       "autorise": 15000000,
@@ -882,7 +896,8 @@
     "canalInteraction": "email",
     "notes": [],
     "evenements": [],
-    "evenementCourant": "Paiement différé"
+    "evenementCourant": "Paiement diffÃ©rÃ©",
+    "referenceCorrespondant": "REFCOR0015"
   },
   {
     "id": "IRD-2026-00047",
@@ -909,7 +924,7 @@
     },
     "datePriseEnCharge": "2026-03-02",
     "statutOperationnel": "En traitement",
-    "controleDocumentaire": "0 réserve",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 0,
       "autorise": 21000,
@@ -921,7 +936,8 @@
     "canalInteraction": "mail",
     "notes": [],
     "evenements": [],
-    "evenementCourant": "Remise au client"
+    "evenementCourant": "Remise au client",
+    "referenceCorrespondant": "REFCOR0016"
   },
   {
     "id": "ERD-2026-00065",
@@ -948,7 +964,7 @@
     },
     "datePriseEnCharge": "2026-05-23",
     "statutOperationnel": "En traitement",
-    "controleDocumentaire": "1 réserve",
+    "controleDocumentaire": "1 rÃ©serve",
     "encours": {
       "utilise": 6904.88,
       "autorise": 6904.88,
@@ -960,12 +976,13 @@
     "canalInteraction": "email",
     "notes": [],
     "evenements": [],
-    "evenementCourant": "Demande de paiement"
+    "evenementCourant": "Demande de paiement",
+    "referenceCorrespondant": "REFCOR0017"
   },
   {
     "id": "FSA2600001",
     "produit": "FIN",
-    "typeFinancement": "Refinancement à l'import",
+    "typeFinancement": "Refinancement Ã  l'import",
     "client": {
       "nom": "STE IMPORT MAROC SARL",
       "compte": "007 780 0000 334",
@@ -987,8 +1004,8 @@
       "code": "OF07"
     },
     "datePriseEnCharge": "2025-09-16",
-    "statutOperationnel": "Validé",
-    "controleDocumentaire": "0 réserve",
+    "statutOperationnel": "ValidÃ©",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 2625000,
       "autorise": 2650000,
@@ -1000,12 +1017,13 @@
     "canalInteraction": "email",
     "notes": [],
     "evenements": [],
-    "evenementCourant": "Remboursement programmé"
+    "evenementCourant": "Remboursement programmÃ©",
+    "referenceCorrespondant": "REFCOR0018"
   },
   {
     "id": "FSA2600002",
     "produit": "FIN",
-    "typeFinancement": "Préfinancement à l'export",
+    "typeFinancement": "PrÃ©financement Ã  l'export",
     "client": {
       "nom": "AGRO EXPORT MAROC",
       "compte": "007 780 0000 512",
@@ -1017,7 +1035,7 @@
     "dateCreation": "2025-11-20",
     "dateEcheance": "2026-11-20",
     "banqueCorrespondante": "AGRO EXPORT MAROC",
-    "paysOrigine": "États-Unis",
+    "paysOrigine": "Ã‰tats-Unis",
     "statut": "En cours",
     "refCTN": "CTN-FIL-00092-26",
     "codeAgence": "AGC-CASA-02",
@@ -1027,8 +1045,8 @@
       "code": "BS04"
     },
     "datePriseEnCharge": "2025-11-21",
-    "statutOperationnel": "Déblocage partiel",
-    "controleDocumentaire": "0 réserve",
+    "statutOperationnel": "DÃ©blocage partiel",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 900000,
       "autorise": 1800000,
@@ -1040,7 +1058,8 @@
     "canalInteraction": "email",
     "notes": [],
     "evenements": [],
-    "evenementCourant": "Ajustement du financement"
+    "evenementCourant": "Ajustement du financement",
+    "referenceCorrespondant": "REFCOR0019"
   },
   {
     "id": "FSA2600003",
@@ -1067,8 +1086,8 @@
       "code": "MK09"
     },
     "datePriseEnCharge": "2026-01-11",
-    "statutOperationnel": "Mise en place validée",
-    "controleDocumentaire": "0 réserve",
+    "statutOperationnel": "Mise en place validÃ©e",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 475000,
       "autorise": 950000,
@@ -1080,7 +1099,8 @@
     "canalInteraction": "email",
     "notes": [],
     "evenements": [],
-    "evenementCourant": "Mise en place du financement"
+    "evenementCourant": "Mise en place du financement",
+    "referenceCorrespondant": "REFCOR0020"
   },
   {
     "id": "FSA2600004",
@@ -1108,7 +1128,7 @@
     },
     "datePriseEnCharge": "2026-02-06",
     "statutOperationnel": "Remboursement attendu",
-    "controleDocumentaire": "0 réserve",
+    "controleDocumentaire": "0 rÃ©serve",
     "encours": {
       "utilise": 3200000,
       "autorise": 3200000,
@@ -1120,6 +1140,7 @@
     "canalInteraction": "email",
     "notes": [],
     "evenements": [],
-    "evenementCourant": "Remboursement du financement"
+    "evenementCourant": "Remboursement du financement",
+    "referenceCorrespondant": "REFCOR0021"
   }
 ]
