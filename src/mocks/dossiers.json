@@ -1,6 +1,6 @@
 [
   {
-    "id": "ILC-2026-00142",
+    "id": "ILC260000001",
     "produit": "ILC",
     "client": {
       "nom": "OCEANIC SHIPPING SARL",
@@ -73,7 +73,7 @@
     "referenceCorrespondant": "REFCOR0001"
   },
   {
-    "id": "ILC-2026-00145",
+    "id": "ILC260000002",
     "produit": "ILC",
     "client": {
       "nom": "MEDITERRANEA TRADING CO",
@@ -134,7 +134,7 @@
     "referenceCorrespondant": "REFCOR0002"
   },
   {
-    "id": "ILC-2026-00148",
+    "id": "ILC260000003",
     "produit": "ILC",
     "client": {
       "nom": "ATLAS TEXTILE SARL",
@@ -200,7 +200,7 @@
     "referenceCorrespondant": "REFCOR0003"
   },
   {
-    "id": "ILC-2026-00152",
+    "id": "ILC260000004",
     "produit": "ILC",
     "client": {
       "nom": "ROYAL CERAMICS SA",
@@ -261,7 +261,7 @@
     "referenceCorrespondant": "REFCOR0004"
   },
   {
-    "id": "IRD-2026-00087",
+    "id": "IRD260000001",
     "produit": "IRD",
     "client": {
       "nom": "MAGHREB STEEL SA",
@@ -322,7 +322,7 @@
     "referenceCorrespondant": "REFCOR0005"
   },
   {
-    "id": "IRD-2026-00091",
+    "id": "IRD260000002",
     "produit": "IRD",
     "client": {
       "nom": "DELICES DU SUD SARL",
@@ -383,7 +383,7 @@
     "referenceCorrespondant": "REFCOR0006"
   },
   {
-    "id": "IRD-2026-00095",
+    "id": "IRD260000003",
     "produit": "IRD",
     "client": {
       "nom": "SAHARA LOGISTICS",
@@ -449,7 +449,7 @@
     "referenceCorrespondant": "REFCOR0007"
   },
   {
-    "id": "ERD-2026-00062",
+    "id": "ERD260000001",
     "produit": "ERD",
     "client": {
       "nom": "TANGER MED FREIGHT",
@@ -515,7 +515,7 @@
     "referenceCorrespondant": "REFCOR0008"
   },
   {
-    "id": "ERD-2026-00065",
+    "id": "ERD260000002",
     "produit": "ERD",
     "client": {
       "nom": "GLOBAL TRADE MAROC",
@@ -576,7 +576,7 @@
     "referenceCorrespondant": "REFCOR0009"
   },
   {
-    "id": "ERD-2026-00068",
+    "id": "ERD260000003",
     "produit": "ERD",
     "client": {
       "nom": "STE ABC IMPORT EXPORT",
@@ -637,7 +637,7 @@
     "referenceCorrespondant": "REFCOR0010"
   },
   {
-    "id": "ELC-2026-00034",
+    "id": "ELC260000002",
     "produit": "ELC",
     "client": {
       "nom": "NORTH AFRICA IMPORT",
@@ -698,7 +698,7 @@
     "referenceCorrespondant": "REFCOR0011"
   },
   {
-    "id": "ELC-2026-00038",
+    "id": "ELC260000003",
     "produit": "ELC",
     "client": {
       "nom": "ATLANTIC SHIPPING LTD",
@@ -759,7 +759,7 @@
     "referenceCorrespondant": "REFCOR0012"
   },
   {
-    "id": "ELC-2026-00041",
+    "id": "ELC260000004",
     "produit": "ELC",
     "client": {
       "nom": "MEDITERRANEA LOGISTICS",
@@ -820,7 +820,7 @@
     "referenceCorrespondant": "REFCOR0013"
   },
   {
-    "id": "ILC0012483Q-0151",
+    "id": "ILC260000005",
     "produit": "ILC",
     "client": {
       "nom": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
@@ -860,7 +860,7 @@
     "referenceCorrespondant": "REFCOR0014"
   },
   {
-    "id": "ELC-2026-00034",
+    "id": "ELC260000005",
     "produit": "ELC",
     "client": {
       "nom": "STE PAKISTAN MAROC PHOSPHORE",
@@ -900,7 +900,7 @@
     "referenceCorrespondant": "REFCOR0015"
   },
   {
-    "id": "IRD-2026-00047",
+    "id": "IRD260000004",
     "produit": "IRD",
     "client": {
       "nom": "STE VIVO ENERGY MAROC",
@@ -940,7 +940,7 @@
     "referenceCorrespondant": "REFCOR0016"
   },
   {
-    "id": "ERD-2026-00065",
+    "id": "ERD260000004",
     "produit": "ERD",
     "client": {
       "nom": "SARL BLED CONSERVES",
@@ -980,7 +980,7 @@
     "referenceCorrespondant": "REFCOR0017"
   },
   {
-    "id": "FSA2600001",
+    "id": "FSA260000002",
     "produit": "FIN",
     "typeFinancement": "Refinancement Ã  l'import",
     "client": {
@@ -1021,7 +1021,7 @@
     "referenceCorrespondant": "REFCOR0018"
   },
   {
-    "id": "FSA2600002",
+    "id": "FSA260000003",
     "produit": "FIN",
     "typeFinancement": "PrÃ©financement Ã  l'export",
     "client": {
@@ -1062,7 +1062,7 @@
     "referenceCorrespondant": "REFCOR0019"
   },
   {
-    "id": "FSA2600003",
+    "id": "FSA260000004",
     "produit": "FIN",
     "typeFinancement": "ACNEE",
     "client": {
@@ -1103,7 +1103,7 @@
     "referenceCorrespondant": "REFCOR0020"
   },
   {
-    "id": "FSA2600004",
+    "id": "FSA260000005",
     "produit": "FIN",
     "typeFinancement": "Mobilisation en devises",
     "client": {

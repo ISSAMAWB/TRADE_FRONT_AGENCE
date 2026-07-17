@@ -1,6 +1,6 @@
 [
   {
-    "reference": "ILC0012483Q-0151",
+    "reference": "ILC260000005",
     "produit": "ILC",
     "produitLibelle": "Crédit documentaire import",
     "client": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
@@ -29,13 +29,25 @@
       "beneficiaire": "SOCIETE NOUVELLE HYDRAULIQUE-SNH",
       "banqueNotification": "CREDIT INDUSTRIEL ET COMMERCIAL",
       "banqueConfirmation": "CREDIT INDUSTRIEL ET COMMERCIAL",
-      "montantCredit": { "valeur": 20000, "devise": "EUR" },
+      "montantCredit": {
+        "valeur": 20000,
+        "devise": "EUR"
+      },
       "tolerance": "+/- 0,00 %",
-      "montantEnAttente": { "valeur": 5000, "devise": "EUR" },
-      "montantReclame": { "valeur": 2000, "devise": "EUR" },
-      "montantDisponible": { "valeur": 14000, "devise": "EUR" },
+      "montantEnAttente": {
+        "valeur": 5000,
+        "devise": "EUR"
+      },
+      "montantReclame": {
+        "valeur": 2000,
+        "devise": "EUR"
+      },
+      "montantDisponible": {
+        "valeur": 14000,
+        "devise": "EUR"
+      },
       "typeFrais": "Partagés",
-      "referenceOperation": "ILC0012483Q-0151",
+      "referenceOperation": "ILC260000005",
       "modeRealisation": "Acceptation",
       "creditConfirme": "Confirmé",
       "natureOperation": "Financière",
@@ -233,7 +245,7 @@
     ]
   },
   {
-    "reference": "ELC-2026-00034",
+    "reference": "ELC260000005",
     "produit": "ELC",
     "produitLibelle": "Crédit documentaire export",
     "client": "STE PAKISTAN MAROC PHOSPHORE",
@@ -262,11 +274,23 @@
       "donneurOrdre": "BRAZIL TRADING INTERNATIONAL",
       "banqueEmettrice": "BANQUE MAROCAINE DU COMMERCE EXTERIEUR",
       "banqueConfirmation": "Non applicable",
-      "montantCredit": { "valeur": 350000, "devise": "USD" },
+      "montantCredit": {
+        "valeur": 350000,
+        "devise": "USD"
+      },
       "tolerance": "+/- 5,00 %",
-      "montantEnAttente": { "valeur": 75000, "devise": "USD" },
-      "montantReclame": { "valeur": 100000, "devise": "USD" },
-      "montantDisponible": { "valeur": 200000, "devise": "USD" },
+      "montantEnAttente": {
+        "valeur": 75000,
+        "devise": "USD"
+      },
+      "montantReclame": {
+        "valeur": 100000,
+        "devise": "USD"
+      },
+      "montantDisponible": {
+        "valeur": 200000,
+        "devise": "USD"
+      },
       "typeFrais": "À notre charge",
       "referenceOperation": "ELC0098741A-0023",
       "modeRealisation": "Paiement à vue",
@@ -275,11 +299,26 @@
       "dateExpiration": "2028-03-10",
       "lieuExpiration": "Maroc",
       "referencesCourrier": [
-        { "reference": "DHL7842941234", "dateEnvoi": "2026-03-10" },
-        { "reference": "DHL7842981238", "dateEnvoi": "2026-03-22" },
-        { "reference": "DHL7843011241", "dateEnvoi": "2026-04-05" },
-        { "reference": "DHL7843051245", "dateEnvoi": "2026-04-18" },
-        { "reference": "DHL7843091249", "dateEnvoi": "2026-05-02" }
+        {
+          "reference": "DHL7842941234",
+          "dateEnvoi": "2026-03-10"
+        },
+        {
+          "reference": "DHL7842981238",
+          "dateEnvoi": "2026-03-22"
+        },
+        {
+          "reference": "DHL7843011241",
+          "dateEnvoi": "2026-04-05"
+        },
+        {
+          "reference": "DHL7843051245",
+          "dateEnvoi": "2026-04-18"
+        },
+        {
+          "reference": "DHL7843091249",
+          "dateEnvoi": "2026-05-02"
+        }
       ]
     },
     "evenements": [
@@ -494,7 +533,7 @@
     ]
   },
   {
-    "reference": "IRD-2026-00047",
+    "reference": "IRD260000004",
     "produit": "IRD",
     "produitLibelle": "Remise documentaire import",
     "client": "STE VIVO ENERGY MAROC",
@@ -522,8 +561,14 @@
       "client": "STE VIVO ENERGY MAROC",
       "tireur": "CAVAGNA GROUP SPA",
       "partieRemettante": "INTESA SANPAOLO SPA",
-      "montantRemise": { "valeur": 21000, "devise": "EUR" },
-      "encours": { "valeur": 5200, "devise": "EUR" },
+      "montantRemise": {
+        "valeur": 21000,
+        "devise": "EUR"
+      },
+      "encours": {
+        "valeur": 5200,
+        "devise": "EUR"
+      },
       "typeFrais": "Partagés",
       "referenceOperation": "IRD93903039",
       "autreReference": "EXT928289",
@@ -617,7 +662,7 @@
     ]
   },
   {
-    "reference": "ERD-2026-00065",
+    "reference": "ERD260000004",
     "produit": "ERD",
     "produitLibelle": "Remise documentaire export",
     "client": "SARL BLED CONSERVES",
@@ -645,16 +690,28 @@
       "client": "SARL BLED CONSERVES",
       "tire": "EQUARHIM BIDAT",
       "partieRemettante": "CAISSE D'EPARGNE ROMILLY ORMES",
-      "montantRemise": { "valeur": 6904.88, "devise": "EUR" },
-      "encours": { "valeur": 6904.88, "devise": "EUR" },
+      "montantRemise": {
+        "valeur": 6904.88,
+        "devise": "EUR"
+      },
+      "encours": {
+        "valeur": 6904.88,
+        "devise": "EUR"
+      },
       "typeFrais": "Partagés",
       "referenceOperation": "E-10-1-17-EQUARHIM",
       "autreReference": "EXT928290",
       "conditionsRemiseDocuments": "Remise contre acceptation",
       "dateEcheance": "2026-09-05",
       "referencesCourrier": [
-        { "reference": "DHL7756234891", "dateEnvoi": "2026-05-23" },
-        { "reference": "DHL7756234892", "dateEnvoi": "2026-06-02" }
+        {
+          "reference": "DHL7756234891",
+          "dateEnvoi": "2026-05-23"
+        },
+        {
+          "reference": "DHL7756234892",
+          "dateEnvoi": "2026-06-02"
+        }
       ]
     },
     "evenements": [
@@ -763,7 +820,7 @@
     ]
   },
   {
-    "reference": "FSA2600001",
+    "reference": "FSA260000002",
     "produit": "FIN",
     "produitLibelle": "Financement",
     "client": "STE IMPORT MAROC SARL",
@@ -791,14 +848,29 @@
       "client": "STE IMPORT MAROC SARL",
       "partieDebitee": "Agence Rabat Agdal",
       "contrepartie": "CHINA STEEL CORPORATION",
-      "montantFinancement": { "valeur": 250000, "devise": "EUR" },
-      "montantFinance": { "valeur": 250000, "devise": "EUR" },
-      "encoursRestant": { "valeur": 243056, "devise": "EUR" },
-      "montantTotalRembourser": { "valeur": 245370, "devise": "EUR" },
-      "montantInterets": { "valeur": 11574, "devise": "EUR" },
+      "montantFinancement": {
+        "valeur": 250000,
+        "devise": "EUR"
+      },
+      "montantFinance": {
+        "valeur": 250000,
+        "devise": "EUR"
+      },
+      "encoursRestant": {
+        "valeur": 243056,
+        "devise": "EUR"
+      },
+      "montantTotalRembourser": {
+        "valeur": 245370,
+        "devise": "EUR"
+      },
+      "montantInterets": {
+        "valeur": 11574,
+        "devise": "EUR"
+      },
       "typeFinancement": "Refinancement à l'import",
       "tauxInteret": "5,8 %",
-      "referenceFinancement": "FSA2600001",
+      "referenceFinancement": "FSA260000002",
       "referenceDossierFinance": "ILC00045821",
       "dateMiseEnPlace": "2025-09-15",
       "dateEcheance": "2026-03-15"
@@ -894,7 +966,7 @@
     ]
   },
   {
-    "reference": "FSA2600002",
+    "reference": "FSA260000003",
     "produit": "FIN",
     "produitLibelle": "Financement",
     "client": "AGRO EXPORT MAROC",
@@ -922,14 +994,29 @@
       "client": "AGRO EXPORT MAROC",
       "partieDebitee": "AGRO EXPORT MAROC",
       "contrepartie": "AGRO EXPORT MAROC",
-      "montantFinancement": { "valeur": 1800000, "devise": "USD" },
-      "montantFinance": { "valeur": 900000, "devise": "USD" },
-      "encoursRestant": { "valeur": 900000, "devise": "USD" },
-      "montantTotalRembourser": { "valeur": 1800000, "devise": "USD" },
-      "montantInterets": { "valeur": 90000, "devise": "USD" },
+      "montantFinancement": {
+        "valeur": 1800000,
+        "devise": "USD"
+      },
+      "montantFinance": {
+        "valeur": 900000,
+        "devise": "USD"
+      },
+      "encoursRestant": {
+        "valeur": 900000,
+        "devise": "USD"
+      },
+      "montantTotalRembourser": {
+        "valeur": 1800000,
+        "devise": "USD"
+      },
+      "montantInterets": {
+        "valeur": 90000,
+        "devise": "USD"
+      },
       "typeFinancement": "Préfinancement à l'export",
       "tauxInteret": "5,0 %",
-      "referenceFinancement": "FSA2600002",
+      "referenceFinancement": "FSA260000003",
       "referenceDossierFinance": "ELC00045822",
       "dateMiseEnPlace": "2025-11-20",
       "dateEcheance": "2026-11-20"
@@ -972,7 +1059,7 @@
     ]
   },
   {
-    "reference": "FSA2600003",
+    "reference": "FSA260000004",
     "produit": "FIN",
     "produitLibelle": "Financement",
     "client": "INDUSTRIES DU SUD",
@@ -1000,14 +1087,29 @@
       "client": "INDUSTRIES DU SUD",
       "partieDebitee": "INDUSTRIES DU SUD",
       "contrepartie": "INDUSTRIES DU SUD",
-      "montantFinancement": { "valeur": 950000, "devise": "MAD" },
-      "montantFinance": { "valeur": 475000, "devise": "MAD" },
-      "encoursRestant": { "valeur": 475000, "devise": "MAD" },
-      "montantTotalRembourser": { "valeur": 1026000, "devise": "MAD" },
-      "montantInterets": { "valeur": 76000, "devise": "MAD" },
+      "montantFinancement": {
+        "valeur": 950000,
+        "devise": "MAD"
+      },
+      "montantFinance": {
+        "valeur": 475000,
+        "devise": "MAD"
+      },
+      "encoursRestant": {
+        "valeur": 475000,
+        "devise": "MAD"
+      },
+      "montantTotalRembourser": {
+        "valeur": 1026000,
+        "devise": "MAD"
+      },
+      "montantInterets": {
+        "valeur": 76000,
+        "devise": "MAD"
+      },
       "typeFinancement": "ACNEE",
       "tauxInteret": "8,0 %",
-      "referenceFinancement": "FSA2600003",
+      "referenceFinancement": "FSA260000004",
       "referenceDossierFinance": null,
       "dateMiseEnPlace": "2026-01-10",
       "dateEcheance": "2027-01-10"
@@ -1050,7 +1152,7 @@
     ]
   },
   {
-    "reference": "FSA2600004",
+    "reference": "FSA260000005",
     "produit": "FIN",
     "produitLibelle": "Financement",
     "client": "TEXTILES ATLANTIC",
@@ -1078,14 +1180,29 @@
       "client": "TEXTILES ATLANTIC",
       "partieDebitee": "TEXTILES ATLANTIC",
       "contrepartie": "TEXTILES ATLANTIC",
-      "montantFinancement": { "valeur": 3200000, "devise": "EUR" },
-      "montantFinance": { "valeur": 3200000, "devise": "EUR" },
-      "encoursRestant": { "valeur": 3200000, "devise": "EUR" },
-      "montantTotalRembourser": { "valeur": 3200000, "devise": "EUR" },
-      "montantInterets": { "valeur": 0, "devise": "EUR" },
+      "montantFinancement": {
+        "valeur": 3200000,
+        "devise": "EUR"
+      },
+      "montantFinance": {
+        "valeur": 3200000,
+        "devise": "EUR"
+      },
+      "encoursRestant": {
+        "valeur": 3200000,
+        "devise": "EUR"
+      },
+      "montantTotalRembourser": {
+        "valeur": 3200000,
+        "devise": "EUR"
+      },
+      "montantInterets": {
+        "valeur": 0,
+        "devise": "EUR"
+      },
       "typeFinancement": "Mobilisation en devises",
       "tauxInteret": "8,0 %",
-      "referenceFinancement": "FSA2600004",
+      "referenceFinancement": "FSA260000005",
       "referenceDossierFinance": "ERD00045825",
       "dateMiseEnPlace": "2026-02-05",
       "dateEcheance": "2026-08-05"
@@ -1164,7 +1281,7 @@
     ]
   },
   {
-    "reference": "ILC-2026-00142",
+    "reference": "ILC260000001",
     "produit": "ILC",
     "produitLibelle": "Crédit documentaire import",
     "client": "OCEANIC SHIPPING SARL",
@@ -1193,12 +1310,21 @@
       "beneficiaire": "OCEANIC SHIPPING SARL",
       "banqueNotification": "HSBC London",
       "banqueConfirmation": "HSBC London",
-      "montantCredit": { "valeur": 1200000, "devise": "USD" },
+      "montantCredit": {
+        "valeur": 1200000,
+        "devise": "USD"
+      },
       "tolerance": "+/- 10,00 %",
-      "montantReclame": { "valeur": 1200000, "devise": "USD" },
-      "montantDisponible": { "valeur": 1200000, "devise": "USD" },
+      "montantReclame": {
+        "valeur": 1200000,
+        "devise": "USD"
+      },
+      "montantDisponible": {
+        "valeur": 1200000,
+        "devise": "USD"
+      },
       "typeFrais": "Partagés",
-      "referenceOperation": "ILC-2026-00142",
+      "referenceOperation": "ILC260000001",
       "modeRealisation": "Acceptation",
       "creditConfirme": "Confirmé",
       "natureOperation": "Financière",
@@ -1334,7 +1460,7 @@
     ]
   },
   {
-    "reference": "ILC-2026-00145",
+    "reference": "ILC260000002",
     "produit": "ILC",
     "produitLibelle": "Crédit documentaire import",
     "client": "MEDITERRANEA TRADING CO",
@@ -1363,12 +1489,21 @@
       "beneficiaire": "MEDITERRANEA TRADING CO",
       "banqueNotification": "BNP Paribas Paris",
       "banqueConfirmation": "BNP Paribas Paris",
-      "montantCredit": { "valeur": 850000, "devise": "EUR" },
+      "montantCredit": {
+        "valeur": 850000,
+        "devise": "EUR"
+      },
       "tolerance": "+/- 5,00 %",
-      "montantReclame": { "valeur": 850000, "devise": "EUR" },
-      "montantDisponible": { "valeur": 850000, "devise": "EUR" },
+      "montantReclame": {
+        "valeur": 850000,
+        "devise": "EUR"
+      },
+      "montantDisponible": {
+        "valeur": 850000,
+        "devise": "EUR"
+      },
       "typeFrais": "Partagés",
-      "referenceOperation": "ILC-2026-00145",
+      "referenceOperation": "ILC260000002",
       "modeRealisation": "Acceptation",
       "creditConfirme": "Confirmé",
       "natureOperation": "Financière",
@@ -1436,7 +1571,7 @@
     ]
   },
   {
-    "reference": "ILC-2026-00148",
+    "reference": "ILC260000003",
     "produit": "ILC",
     "produitLibelle": "Crédit documentaire import",
     "client": "ATLAS TEXTILE SARL",
@@ -1465,12 +1600,21 @@
       "beneficiaire": "ATLAS TEXTILE SARL",
       "banqueNotification": "Citibank New York",
       "banqueConfirmation": "Citibank New York",
-      "montantCredit": { "valeur": 2500000, "devise": "USD" },
+      "montantCredit": {
+        "valeur": 2500000,
+        "devise": "USD"
+      },
       "tolerance": "+/- 0,00 %",
-      "montantReclame": { "valeur": 0, "devise": "USD" },
-      "montantDisponible": { "valeur": 0, "devise": "USD" },
+      "montantReclame": {
+        "valeur": 0,
+        "devise": "USD"
+      },
+      "montantDisponible": {
+        "valeur": 0,
+        "devise": "USD"
+      },
       "typeFrais": "Partagés",
-      "referenceOperation": "ILC-2026-00148",
+      "referenceOperation": "ILC260000003",
       "modeRealisation": "Acceptation",
       "creditConfirme": "Confirmé",
       "natureOperation": "Financière",
@@ -1536,7 +1680,7 @@
     ]
   },
   {
-    "reference": "ILC-2026-00152",
+    "reference": "ILC260000004",
     "produit": "ILC",
     "produitLibelle": "Crédit documentaire import",
     "client": "ROYAL CERAMICS SA",
@@ -1565,12 +1709,21 @@
       "beneficiaire": "ROYAL CERAMICS SA",
       "banqueNotification": "Barclays London",
       "banqueConfirmation": "Barclays London",
-      "montantCredit": { "valeur": 450000, "devise": "GBP" },
+      "montantCredit": {
+        "valeur": 450000,
+        "devise": "GBP"
+      },
       "tolerance": "+/- 5,00 %",
-      "montantReclame": { "valeur": 450000, "devise": "GBP" },
-      "montantDisponible": { "valeur": 450000, "devise": "GBP" },
+      "montantReclame": {
+        "valeur": 450000,
+        "devise": "GBP"
+      },
+      "montantDisponible": {
+        "valeur": 450000,
+        "devise": "GBP"
+      },
       "typeFrais": "Partagés",
-      "referenceOperation": "ILC-2026-00152",
+      "referenceOperation": "ILC260000004",
       "modeRealisation": "Acceptation",
       "creditConfirme": "Confirmé",
       "natureOperation": "Financière",
@@ -1672,7 +1825,7 @@
     ]
   },
   {
-    "reference": "IRD-2026-00087",
+    "reference": "IRD260000001",
     "produit": "IRD",
     "produitLibelle": "Remise documentaire import",
     "client": "MAGHREB STEEL SA",
@@ -1700,9 +1853,15 @@
       "client": "MAGHREB STEEL SA",
       "tireur": "MAGHREB STEEL SA",
       "partieRemettante": "Deutsche Bank Frankfurt",
-      "montantRemise": { "valeur": 1800000, "devise": "USD" },
-      "encours": { "valeur": 0, "devise": "USD" },
-      "referenceOperation": "IRD-2026-00087",
+      "montantRemise": {
+        "valeur": 1800000,
+        "devise": "USD"
+      },
+      "encours": {
+        "valeur": 0,
+        "devise": "USD"
+      },
+      "referenceOperation": "IRD260000001",
       "autreReference": "EXT928291",
       "conditionsRemiseDocuments": "Documents contre acceptation",
       "dateEcheance": "2026-04-25",
@@ -1778,14 +1937,23 @@
       "client": "SARL BLED CONSERVES",
       "tire": "SARL BLED CONSERVES",
       "partieRemettante": "SARL BLED CONSERVES",
-      "montantRemise": { "valeur": 950000, "devise": "MAD" },
-      "encours": { "valeur": 950000, "devise": "MAD" },
+      "montantRemise": {
+        "valeur": 950000,
+        "devise": "MAD"
+      },
+      "encours": {
+        "valeur": 950000,
+        "devise": "MAD"
+      },
       "referenceOperation": "ERD-2026-00061",
       "autreReference": "EXT928292",
       "conditionsRemiseDocuments": "Remise contre acceptation",
       "dateEcheance": "2026-07-18",
       "referencesCourrier": [
-        { "reference": "DHL7756234890", "dateEnvoi": "2026-04-19" }
+        {
+          "reference": "DHL7756234890",
+          "dateEnvoi": "2026-04-19"
+        }
       ]
     },
     "evenements": [
@@ -1826,7 +1994,7 @@
     ]
   },
   {
-    "reference": "ERD-2026-00062",
+    "reference": "ERD260000001",
     "produit": "ERD",
     "produitLibelle": "Remise documentaire export",
     "client": "TANGER MED FREIGHT",
@@ -1854,14 +2022,23 @@
       "client": "TANGER MED FREIGHT",
       "tire": "TANGER MED FREIGHT",
       "partieRemettante": "Standard Chartered London",
-      "montantRemise": { "valeur": 3200000, "devise": "USD" },
-      "encours": { "valeur": 0, "devise": "USD" },
-      "referenceOperation": "ERD-2026-00062",
+      "montantRemise": {
+        "valeur": 3200000,
+        "devise": "USD"
+      },
+      "encours": {
+        "valeur": 0,
+        "devise": "USD"
+      },
+      "referenceOperation": "ERD260000001",
       "autreReference": "EXT928293",
       "conditionsRemiseDocuments": "Remise contre acceptation",
       "dateEcheance": "2026-06-15",
       "referencesCourrier": [
-        { "reference": "DHL7756234891", "dateEnvoi": "2026-06-05" }
+        {
+          "reference": "DHL7756234891",
+          "dateEnvoi": "2026-06-05"
+        }
       ]
     },
     "evenements": [
@@ -1902,7 +2079,7 @@
     ]
   },
   {
-    "reference": "ERD-2026-00068",
+    "reference": "ERD260000003",
     "produit": "ERD",
     "produitLibelle": "Remise documentaire export",
     "client": "STE ABC IMPORT EXPORT",
@@ -1930,14 +2107,23 @@
       "client": "STE ABC IMPORT EXPORT",
       "tire": "STE ABC IMPORT EXPORT",
       "partieRemettante": "HSBC Dubai",
-      "montantRemise": { "valeur": 780000, "devise": "USD" },
-      "encours": { "valeur": 0, "devise": "USD" },
-      "referenceOperation": "ERD-2026-00068",
+      "montantRemise": {
+        "valeur": 780000,
+        "devise": "USD"
+      },
+      "encours": {
+        "valeur": 0,
+        "devise": "USD"
+      },
+      "referenceOperation": "ERD260000003",
       "autreReference": "EXT928294",
       "conditionsRemiseDocuments": "Remise contre acceptation",
       "dateEcheance": "2026-06-20",
       "referencesCourrier": [
-        { "reference": "DHL7756234892", "dateEnvoi": "2026-06-18" }
+        {
+          "reference": "DHL7756234892",
+          "dateEnvoi": "2026-06-18"
+        }
       ]
     },
     "evenements": [
@@ -1978,7 +2164,7 @@
     ]
   },
   {
-    "reference": "ELC-2026-00034",
+    "reference": "ELC260000005",
     "produit": "ELC",
     "produitLibelle": "Crédit documentaire export",
     "client": "NORTH AFRICA IMPORT",
@@ -2007,12 +2193,21 @@
       "beneficiaire": "NORTH AFRICA IMPORT",
       "banqueNotification": "Bank of America New York",
       "banqueConfirmation": "Bank of America New York",
-      "montantCredit": { "valeur": 1100000, "devise": "USD" },
+      "montantCredit": {
+        "valeur": 1100000,
+        "devise": "USD"
+      },
       "tolerance": "+/- 10,00 %",
-      "montantReclame": { "valeur": 1100000, "devise": "USD" },
-      "montantDisponible": { "valeur": 1100000, "devise": "USD" },
+      "montantReclame": {
+        "valeur": 1100000,
+        "devise": "USD"
+      },
+      "montantDisponible": {
+        "valeur": 1100000,
+        "devise": "USD"
+      },
       "typeFrais": "Partagés",
-      "referenceOperation": "ELC-2026-00034",
+      "referenceOperation": "ELC260000005",
       "modeRealisation": "Acceptation",
       "creditConfirme": "Confirmé",
       "natureOperation": "Financière",
@@ -2148,7 +2343,7 @@
     ]
   },
   {
-    "reference": "ELC-2026-00038",
+    "reference": "ELC260000003",
     "produit": "ELC",
     "produitLibelle": "Crédit documentaire export",
     "client": "ATLANTIC SHIPPING LTD",
@@ -2177,12 +2372,21 @@
       "beneficiaire": "ATLANTIC SHIPPING LTD",
       "banqueNotification": "HSBC London",
       "banqueConfirmation": "HSBC London",
-      "montantCredit": { "valeur": 2100000, "devise": "USD" },
+      "montantCredit": {
+        "valeur": 2100000,
+        "devise": "USD"
+      },
       "tolerance": "+/- 0,00 %",
-      "montantReclame": { "valeur": 0, "devise": "USD" },
-      "montantDisponible": { "valeur": 0, "devise": "USD" },
+      "montantReclame": {
+        "valeur": 0,
+        "devise": "USD"
+      },
+      "montantDisponible": {
+        "valeur": 0,
+        "devise": "USD"
+      },
       "typeFrais": "Partagés",
-      "referenceOperation": "ELC-2026-00038",
+      "referenceOperation": "ELC260000003",
       "modeRealisation": "Acceptation",
       "creditConfirme": "Confirmé",
       "natureOperation": "Financière",
