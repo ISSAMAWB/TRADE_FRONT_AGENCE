@@ -1,0 +1,335 @@
+"use client";
+
+import Link from "next/link";
+import { useState, useMemo, useEffect } from "react";
+import { Eye, FileSpreadsheet, Printer } from "lucide-react";
+import * as XLSX from "xlsx";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+import dossiersData from "@/mocks/dossiers.json";
+import type { Dossier, StatutDossier } from "@/domain/consultation";
+import Button from "@/components/ui/Button";
+import CollapsibleFilterPanel from "@/components/ui/CollapsibleFilterPanel";
+import ConsultationLayout from "@/components/ConsultationLayout";
+
+const STATUTS: StatutDossier[] = ["En cours", "Expiré", "Annulé"];
+
+const statutClasses: Record<StatutDossier, string> = {
+  "En cours": "badge-statut-en-cours",
+  "Expiré": "badge-statut-expire",
+  "Annulé": "badge-statut-annule",
+};
+
+export default function ConsultationDossiersPage() {
+  const dossiers = dossiersData as Dossier[];
+
+  const [refBancaire, setRefBancaire] = useState("");
+  const [statut, setStatut] = useState<StatutDossier | "">("");
+  const [clientQuery, setClientQuery] = useState("");
+  const [dateDebut, setDateDebut] = useState("");
+  const [dateFin, setDateFin] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const [sortKey, setSortKey] = useState<keyof Dossier>("dateCreation");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  const filtered = useMemo(() => {
+    let items = dossiers.filter((d) => {
+      if (refBancaire.trim() && !d.id.toLowerCase().includes(refBancaire.toLowerCase())) return false;
+      if (statut && d.statut !== statut) return false;
+      if (clientQuery.trim() && !d.client.nom.toLowerCase().includes(clientQuery.toLowerCase())) return false;
+      if (dateDebut && new Date(d.dateCreation) < new Date(dateDebut)) return false;
+      if (dateFin && new Date(d.dateCreation) > new Date(dateFin)) return false;
+      return true;
+    });
+
+    items.sort((a, b) => {
+      let va: any = a[sortKey];
+      let vb: any = b[sortKey];
+      if (typeof va === "string") va = va.toLowerCase();
+      if (typeof vb === "string") vb = vb.toLowerCase();
+      if (va < vb) return sortDir === "asc" ? -1 : 1;
+      if (va > vb) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    return items;
+  }, [dossiers, refBancaire, statut, clientQuery, dateDebut, dateFin, sortKey, sortDir]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+  useEffect(() => {
+    setPage(1);
+  }, [refBancaire, statut, clientQuery, dateDebut, dateFin]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
+  function resetFilters() {
+    setRefBancaire("");
+    setStatut("");
+    setClientQuery("");
+    setDateDebut("");
+    setDateFin("");
+    setPage(1);
+  }
+
+  const header = (label: string, key: keyof Dossier) => (
+    <button
+      className="flex items-center gap-1 uppercase tracking-wider"
+      onClick={() => {
+        if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+        else {
+          setSortKey(key);
+          setSortDir("asc");
+        }
+      }}
+    >
+      {label}
+      {sortKey === key && (sortDir === "asc" ? " ▲" : " ▼")}
+    </button>
+  );
+
+  function exportToExcel() {
+    const data = filtered;
+    const rows = data.map((d) => ({
+      Référence: d.id,
+      Produit: d.produit,
+      Client: d.client.nom,
+      Compte: d.client.compte,
+      Montant: d.montant,
+      Devise: d.devise,
+      "Date création": new Date(d.dateCreation).toLocaleDateString("fr-FR"),
+      Statut: d.statut,
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Dossiers");
+    XLSX.writeFile(wb, `dossiers_trade_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
+
+  function exportToPDF() {
+    const data = filtered;
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.setFontSize(14);
+    doc.text("Résultat de la recherche — Dossiers Trade", 14, 20);
+    doc.setFontSize(10);
+    doc.text(`Exporté le ${new Date().toLocaleDateString("fr-FR")} — ${data.length} dossier(s)`, 14, 28);
+    const body = data.map((d) => [
+      d.id,
+      d.produit,
+      d.client.nom,
+      d.client.compte,
+      d.montant.toLocaleString("fr-FR"),
+      d.devise,
+      new Date(d.dateCreation).toLocaleDateString("fr-FR"),
+      d.statut,
+    ]);
+    (doc as any).autoTable({
+      startY: 34,
+      head: [["Référence", "Produit", "Client", "Compte", "Montant", "Devise", "Date création", "Statut"]],
+      body,
+      theme: "grid",
+      styles: { fontSize: 9, cellPadding: 2 },
+      headStyles: { fillColor: [232, 114, 42], textColor: 255 },
+    });
+    doc.save(`dossiers_trade_${new Date().toISOString().slice(0, 10)}.pdf`);
+  }
+
+  return (
+    <ConsultationLayout
+      onFilterToggle={() => setIsFilterOpen(!isFilterOpen)}
+      isFilterOpen={isFilterOpen}
+    >
+      <div className="space-y-6">
+        {/* En-tête */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-display">Liste des dossiers Trade</h1>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" onClick={exportToExcel}>
+              <FileSpreadsheet size={16} />
+              Exporter Excel
+            </Button>
+            <Button variant="secondary" onClick={exportToPDF}>
+              <Printer size={16} />
+              Imprimer
+            </Button>
+          </div>
+        </div>
+
+        {/* Filtres rétractables */}
+        <CollapsibleFilterPanel
+          isOpen={isFilterOpen}
+          onSearch={() => {}}
+          onReset={resetFilters}
+        >
+          {/* Portnet Registration Number */}
+          <div>
+            <label className="text-label">PORTNET REGISTRATION NUMBER</label>
+            <input
+              value={refBancaire}
+              onChange={(e) => setRefBancaire(e.target.value)}
+              placeholder="Ex. ILC%  (commence par ILC)"
+              className="input w-full"
+            />
+          </div>
+
+          {/* Status */}
+          <div>
+            <label className="text-label">STATUS</label>
+            <select
+              className="input w-full"
+              value={statut}
+              onChange={(e) => setStatut(e.target.value as StatutDossier | "")}
+            >
+              <option value="">Tous les statuts</option>
+              {STATUTS.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Account Number */}
+          <div>
+            <label className="text-label">ACCOUNT NUMBER</label>
+            <input
+              value={clientQuery}
+              onChange={(e) => setClientQuery(e.target.value)}
+              placeholder="Rechercher par nom, n° compte"
+              className="input w-full"
+            />
+          </div>
+
+          {/* Start Date */}
+          <div>
+            <label className="text-label">START DATE</label>
+            <input
+              type="date"
+              value={dateDebut}
+              onChange={(e) => setDateDebut(e.target.value)}
+              className="input w-full"
+            />
+          </div>
+
+          {/* End Date */}
+          <div>
+            <label className="text-label">END DATE</label>
+            <input
+              type="date"
+              value={dateFin}
+              onChange={(e) => setDateFin(e.target.value)}
+              className="input w-full"
+            />
+          </div>
+        </CollapsibleFilterPanel>
+
+        {/* Compteur */}
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="text-sm text-text-secondary">
+            <span className="font-semibold text-text-primary">{filtered.length}</span> dossier(s) trouvé(s)
+          </div>
+        </div>
+
+        {/* Tableau */}
+        <div className="table-container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>{header("Référence bancaire", "id")}</th>
+                <th>{header("Produit", "produit")}</th>
+                <th>{header("Client / Compte", "client")}</th>
+                <th className="text-right">{header("Montant", "montant")}</th>
+                <th>{header("Devise", "devise")}</th>
+                <th>Correspondant bancaire</th>
+                <th>{header("Date création", "dateCreation")}</th>
+                <th>{header("Statut", "statut")}</th>
+                <th className="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paged.map((d) => (
+                <tr key={d.id} className="cursor-pointer hover:bg-primary-50/30">
+                  <td>
+                    <Link href={`/consultation/dossiers/${d.id}`} className="font-medium hover:underline text-primary-500">{d.id}</Link>
+                  </td>
+                  <td><span className="badge-produit">{d.produit}</span></td>
+                  <td>
+                    <div className="text-sm font-medium text-text-primary">{d.client.nom}</div>
+                    <div className="text-xs text-text-secondary">{d.client.compte}</div>
+                  </td>
+                  <td className="text-sm font-medium text-text-primary text-right">{d.montant.toLocaleString("fr-FR")}</td>
+                  <td className="text-sm text-text-secondary">{d.devise}</td>
+                  <td className="text-xs text-text-secondary">{d.banqueCorrespondante}</td>
+                  <td className="text-xs text-text-secondary">{new Date(d.dateCreation).toLocaleDateString("fr-FR")}</td>
+                  <td><span className={statutClasses[d.statut]}>{d.statut}</span></td>
+                  <td className="text-center">
+                    <Link href={`/consultation/dossiers/${d.id}`} className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-primary-50 transition text-primary-500" title="Consulter le détail">
+                      <Eye size={18} />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+              {paged.length === 0 && (
+                <tr>
+                  <td colSpan={9} className="text-center text-text-muted py-8">
+                    <div className="text-sm">Aucun dossier ne correspond à vos critères.</div>
+                    <button onClick={resetFilters} className="text-primary-500 text-xs hover:underline mt-1">Réinitialiser les filtres</button>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {filtered.length > 0 && (
+          <div className="flex flex-col items-center gap-2 pt-2">
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-1">
+                <button
+                  className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-border-medium text-text-secondary hover:border-primary-500 hover:text-primary-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border-medium disabled:hover:text-text-secondary transition"
+                  disabled={page === 1}
+                  onClick={() => setPage(1)}
+                  title="Première page"
+                >
+                  «
+                </button>
+                <button
+                  className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-border-medium text-text-secondary hover:border-primary-500 hover:text-primary-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border-medium disabled:hover:text-text-secondary transition"
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  title="Page précédente"
+                >
+                  ‹
+                </button>
+                <span className="px-3 text-sm text-text-primary">
+                  Page {page} sur {totalPages}
+                </span>
+                <button
+                  className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-border-medium text-text-secondary hover:border-primary-500 hover:text-primary-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border-medium disabled:hover:text-text-secondary transition"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  title="Page suivante"
+                >
+                  ›
+                </button>
+                <button
+                  className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-border-medium text-text-secondary hover:border-primary-500 hover:text-primary-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border-medium disabled:hover:text-text-secondary transition"
+                  disabled={page === totalPages}
+                  onClick={() => setPage(totalPages)}
+                  title="Dernière page"
+                >
+                  »
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </ConsultationLayout>
+  );
+}
