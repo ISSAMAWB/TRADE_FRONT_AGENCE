@@ -13,16 +13,18 @@
     "Expiration"
   ],
   "IRD": [
-    "Entrée",
-    "Avis / Notification au tiré",
-    "Acceptation & Aval",
+    "Réception de la remise",
+    "Réception des documents en agence",
+    "Modification de la remise",
+    "Réception des instructions du client",
     "Paiement",
-    "Levée des documents",
+    "Acceptation & Aval de la traite",
+    "Remise des documents au client",
+    "Retour des documents",
     "Correspondance",
-    "Avis de sort / Relance",
-    "Protêt",
-    "Échéance",
-    "Dénouement / Clôture"
+    "Frais et commission",
+    "Clôture de la remise",
+    "Ecritures comptables manuelles"
   ],
   "ELC": [
     "Notification",

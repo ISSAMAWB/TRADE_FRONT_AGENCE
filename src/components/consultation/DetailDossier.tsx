@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye, Clock, Check, Circle, Diamond, AlertCircle, X, Download } from "lucide-react";
 import StatutBadge from "./StatutBadge";
 import { getProduitSchema } from "@/lib/produits";
@@ -605,8 +606,9 @@ function BandeauEcheanceV2({
   );
 }
 
-function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenements"] }) {
+function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade["evenements"]; dossierId: string }) {
   const [selectedEvent, setSelectedEvent] = useState<EvenementTrade | null>(null);
+  const router = useRouter();
 
   function downloadSwift(swift: SwiftMessage) {
     const blob = new Blob([swift.contenu], { type: "text/plain;charset=utf-8" });
@@ -651,13 +653,58 @@ function EvenementsTableV2({ evenements }: { evenements: DossierTrade["evenement
                 </td>
                 <td className="py-[7px] px-3 text-[#64748b]">{formatDate(e.dateCreation)}</td>
                 <td className="py-[7px] px-3 text-center">
-                  <button
-                    className="text-[#94a3b8] hover:text-[#e8632b] transition"
-                    onClick={() => setSelectedEvent(e)}
-                    title="Voir le détail et les SWIFT"
-                  >
-                    <Eye size={15} />
-                  </button>
+                  <div className="flex items-center justify-center gap-2">
+                    {e.nature === "Réception de la remise" ? (
+                      <button
+                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                        onClick={() => router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`)}
+                        title="Voir le détail de la réception"
+                      >
+                        <Eye size={15} />
+                      </button>
+                    ) : e.nature === "Modification de la remise" ? (
+                      <button
+                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                        onClick={() => router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`)}
+                        title="Voir le détail de la modification"
+                      >
+                        <Eye size={15} />
+                      </button>
+                    ) : e.nature === "Acceptation & Aval de la traite" ? (
+                      <button
+                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                        onClick={() => router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`)}
+                        title="Voir le détail de l'acceptation"
+                      >
+                        <Eye size={15} />
+                      </button>
+                    ) : e.nature === "Paiement" ? (
+                      <button
+                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                        onClick={() => router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`)}
+                        title="Voir le détail du paiement"
+                      >
+                        <Eye size={15} />
+                      </button>
+                    ) : (
+                      <button
+                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                        onClick={() => setSelectedEvent(e)}
+                        title="Voir le détail et les SWIFT"
+                      >
+                        <Eye size={15} />
+                      </button>
+                    )}
+                    {e.swifts && e.swifts.length > 0 && (
+                      <button
+                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                        onClick={() => setSelectedEvent(e)}
+                        title="Voir le détail et les SWIFT"
+                      >
+                        <Download size={15} />
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -895,7 +942,7 @@ function DetailFIN({ dossier }: { dossier: DossierTrade }) {
         </Card>
       </div>
 
-      <EvenementsTableV2 evenements={dossier.evenements} />
+      <EvenementsTableV2 evenements={dossier.evenements} dossierId={dossier.reference} />
     </div>
   );
 }
@@ -1140,7 +1187,7 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
         </Card>
       </div>
 
-      <EvenementsTableV2 evenements={dossier.evenements} />
+      <EvenementsTableV2 evenements={dossier.evenements} dossierId={dossier.reference} />
     </div>
   );
 }
@@ -1311,7 +1358,7 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
         </Card>
       )}
 
-      <EvenementsTableV2 evenements={dossier.evenements} />
+      <EvenementsTableV2 evenements={dossier.evenements} dossierId={dossier.reference} />
     </div>
   );
 }

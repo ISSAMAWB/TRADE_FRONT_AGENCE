@@ -589,7 +589,7 @@
     "evenements": [
       {
         "reference": "EVT-2026-0301",
-        "nature": "Réception documents",
+        "nature": "Réception de la remise",
         "montant": 21000,
         "devise": "EUR",
         "dateCreation": "2026-03-01T11:10:00",
@@ -599,31 +599,31 @@
             "reference": "SWIFT-2026-0301-01",
             "type": "MT400",
             "dateEmission": "2026-03-01T11:10:00",
-            "contenu": "Réception de documents pour la remise documentaire import IRD93903039. Montant : 21 000,00 EUR. Tireur : CAVAGNA GROUP SPA.",
+            "contenu": "Réception de la remise documentaire import IRD93903039. Montant : 21 000,00 EUR. Tireur : CAVAGNA GROUP SPA.",
             "fichier": "MT400_IRD93903039_20260301.pdf"
           }
         ]
       },
       {
         "reference": "EVT-2026-0312",
-        "nature": "Remise au client",
-        "montant": 50000,
+        "nature": "Modification de la remise",
+        "montant": 21000,
         "devise": "EUR",
         "dateCreation": "2026-03-05T09:45:00",
-        "statut": "EN_COURS",
+        "statut": "VALIDE",
         "swifts": [
           {
             "reference": "SWIFT-2026-0312-01",
-            "type": "MT410",
+            "type": "MT707",
             "dateEmission": "2026-03-05T09:45:00",
-            "contenu": "Remise des documents au client pour la remise documentaire import IRD93903039. Documents transmis pour acceptation.",
-            "fichier": "MT410_IRD93903039_20260305.pdf"
+            "contenu": "Modification de la remise documentaire import IRD93903039. Extension de la date d'échéance.",
+            "fichier": "MT707_IRD93903039_20260305.pdf"
           }
         ]
       },
       {
         "reference": "EVT-2026-0325",
-        "nature": "Paiement effectué",
+        "nature": "Paiement",
         "montant": 21000,
         "devise": "EUR",
         "dateCreation": "2026-03-08T15:20:00",
@@ -639,6 +639,83 @@
             "fichier": "MT103_IRD93903039_20260308.pdf"
           }
         ]
+      },
+      {
+        "reference": "EVT-2026-0330",
+        "nature": "Acceptation & Aval de la traite",
+        "montant": 21000,
+        "devise": "EUR",
+        "dateCreation": "2026-03-10T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0330-01",
+            "type": "MT732",
+            "dateEmission": "2026-03-10T14:15:00",
+            "contenu": "Acceptation & Aval de la traite pour la remise documentaire import IRD93903039.",
+            "fichier": "MT732_IRD93903039_20260310.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0335",
+        "nature": "Correspondance",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-03-15T11:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0335-01",
+            "type": "MT799",
+            "dateEmission": "2026-03-15T11:30:00",
+            "contenu": "Message de correspondance libre concernant la remise documentaire import IRD93903039.",
+            "fichier": "MT799_IRD93903039_20260315.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0340",
+        "nature": "Frais et commission",
+        "montant": 315,
+        "devise": "EUR",
+        "dateCreation": "2026-03-20T14:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0340-01",
+            "type": "MT191",
+            "dateEmission": "2026-03-20T14:00:00",
+            "contenu": "Débit de frais et commissions de 315,00 EUR sur la remise documentaire import IRD93903039.",
+            "fichier": "MT191_IRD93903039_20260320.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0345",
+        "nature": "Clôture de la remise",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-04-20T16:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0345-01",
+            "type": "MT799",
+            "dateEmission": "2026-04-20T16:00:00",
+            "contenu": "Clôture de la remise documentaire import IRD93903039. Opération terminée.",
+            "fichier": "MT799_IRD93903039_20260420.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0350",
+        "nature": "Ecritures comptables manuelles",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-04-21T10:00:00",
+        "statut": "VALIDE",
+        "swifts": []
       },
       {
         "reference": "EVT-2026-0335",
@@ -1874,7 +1951,7 @@
     "evenements": [
       {
         "reference": "EVT-2026-0201",
-        "nature": "Réception documents",
+        "nature": "Réception de la remise",
         "montant": 1800000,
         "devise": "USD",
         "dateCreation": "2026-01-20T11:10:00",
@@ -1884,27 +1961,123 @@
             "reference": "SWIFT-2026-0201-01",
             "type": "MT400",
             "dateEmission": "2026-01-20T11:10:00",
-            "contenu": "Réception de documents pour la remise documentaire import IRD-2026-00087. Montant : 1 800 000,00 USD. Tireur : MAGHREB STEEL SA.",
-            "fichier": "MT400_IRD-2026-00087_20260120.pdf"
+            "contenu": "Réception de la remise documentaire import IRD260000001. Montant : 1 800 000,00 USD. Tireur : MAGHREB STEEL SA.",
+            "fichier": "MT400_IRD260000001_20260120.pdf"
           }
         ]
       },
       {
-        "reference": "EVT-2026-0506",
-        "nature": "Expiration",
-        "montant": 0,
+        "reference": "EVT-2026-0250",
+        "nature": "Modification de la remise",
+        "montant": 1800000,
         "devise": "USD",
-        "dateCreation": "2026-04-25T00:00:00",
-        "statut": "EXPIRE",
+        "dateCreation": "2026-02-15T14:15:00",
+        "statut": "VALIDE",
         "swifts": [
           {
-            "reference": "SWIFT-2026-0506-01",
-            "type": "MT799",
-            "dateEmission": "2026-04-25T00:00:00",
-            "contenu": "Notification d'expiration de la remise documentaire import IRD-2026-00087. Date d'échéance atteinte.",
-            "fichier": "MT799_IRD-2026-00087_20260425.pdf"
+            "reference": "SWIFT-2026-0250-01",
+            "type": "MT707",
+            "dateEmission": "2026-02-15T14:15:00",
+            "contenu": "Modification de la remise documentaire import IRD260000001. Extension de la date d'échéance.",
+            "fichier": "MT707_IRD260000001_20260215.pdf"
           }
         ]
+      },
+      {
+        "reference": "EVT-2026-0300",
+        "nature": "Paiement",
+        "montant": 1800000,
+        "devise": "USD",
+        "dateCreation": "2026-04-20T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "xyz789abc123-4567-8901-234567890123",
+        "datePaiement": "2026-04-20",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0300-01",
+            "type": "MT103",
+            "dateEmission": "2026-04-20T10:00:00",
+            "contenu": "Paiement de 1 800 000,00 USD au titre de la remise documentaire import IRD260000001. UETR : xyz789abc123-4567-8901-234567890123.",
+            "fichier": "MT103_IRD260000001_20260420.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0310",
+        "nature": "Acceptation & Aval de la traite",
+        "montant": 1800000,
+        "devise": "USD",
+        "dateCreation": "2026-04-22T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0310-01",
+            "type": "MT732",
+            "dateEmission": "2026-04-22T14:15:00",
+            "contenu": "Acceptation & Aval de la traite pour la remise documentaire import IRD260000001.",
+            "fichier": "MT732_IRD260000001_20260422.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0320",
+        "nature": "Correspondance",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-04-23T11:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0320-01",
+            "type": "MT799",
+            "dateEmission": "2026-04-23T11:30:00",
+            "contenu": "Message de correspondance libre concernant la remise documentaire import IRD260000001.",
+            "fichier": "MT799_IRD260000001_20260423.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0330",
+        "nature": "Frais et commission",
+        "montant": 27000,
+        "devise": "USD",
+        "dateCreation": "2026-04-24T14:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0330-01",
+            "type": "MT191",
+            "dateEmission": "2026-04-24T14:00:00",
+            "contenu": "Débit de frais et commissions de 27 000,00 USD sur la remise documentaire import IRD260000001.",
+            "fichier": "MT191_IRD260000001_20260424.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0340",
+        "nature": "Clôture de la remise",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-04-25T16:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0340-01",
+            "type": "MT799",
+            "dateEmission": "2026-04-25T16:00:00",
+            "contenu": "Clôture de la remise documentaire import IRD260000001. Opération terminée.",
+            "fichier": "MT799_IRD260000001_20260425.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0350",
+        "nature": "Ecritures comptables manuelles",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-04-26T10:00:00",
+        "statut": "VALIDE",
+        "swifts": []
       }
     ]
   },
@@ -2484,6 +2657,358 @@
             "fichier": "MT191_ELC-2026-00038_20260913.pdf"
           }
         ]
+      }
+    ]
+  },
+  {
+    "reference": "IRD260000002",
+    "produit": "IRD",
+    "produitLibelle": "Remise documentaire import",
+    "client": "DELICES DU SUD SARL",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-08-10T16:45:00",
+    "clientInfo": {
+      "raisonSociale": "DELICES DU SUD SARL",
+      "numeroCompte": "007 780 0000 156",
+      "ice": "003560156000078",
+      "codeClient": "CLI-0156",
+      "agenceRattachement": "Agence Marrakech",
+      "roleOperation": "Importateur (Tiré)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-IRD-0091-26",
+      "agenceTraitante": "AGC-MARRAKECH-04",
+      "gestionnaire": "Mohammed Idrissi",
+      "datePriseEnCharge": "06/05/2026",
+      "statutOperationnel": "En traitement",
+      "controleDocumentaire": "0 réserve",
+      "prochaineAction": "Suivi acceptation",
+      "noteInterne": "Client agroalimentaire, dossier en cours de traitement."
+    },
+    "donnees": {
+      "client": "DELICES DU SUD SARL",
+      "tireur": "Société Générale Paris",
+      "partieRemettante": "Société Générale Paris",
+      "montantRemise": { "valeur": 650000, "devise": "EUR" },
+      "encours": { "valeur": 650000, "devise": "EUR" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "IRD260000002",
+      "autreReference": "EXT928290",
+      "conditionsRemiseDocuments": "Documents contre acceptation",
+      "dateEcheance": "2026-08-10",
+      "fraisAuMaroc": "Tiré",
+      "fraisAEtranger": "Tiré",
+      "referencesTitresImportation": [
+        "TI-2025-09701",
+        "TI-2025-09702"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0400",
+        "nature": "Réception de la remise",
+        "montant": 650000,
+        "devise": "EUR",
+        "dateCreation": "2026-05-05T11:10:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0400-01",
+            "type": "MT400",
+            "dateEmission": "2026-05-05T11:10:00",
+            "contenu": "Réception de la remise documentaire import IRD260000002. Montant : 650 000,00 EUR. Tireur : Société Générale Paris.",
+            "fichier": "MT400_IRD260000002_20260505.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0410",
+        "nature": "Modification de la remise",
+        "montant": 650000,
+        "devise": "EUR",
+        "dateCreation": "2026-06-15T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0410-01",
+            "type": "MT707",
+            "dateEmission": "2026-06-15T14:15:00",
+            "contenu": "Modification de la remise documentaire import IRD260000002. Extension de la date d'échéance.",
+            "fichier": "MT707_IRD260000002_20260615.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0420",
+        "nature": "Paiement",
+        "montant": 650000,
+        "devise": "EUR",
+        "dateCreation": "2026-08-05T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "abc123def456-7890-abcd-ef1234567890",
+        "datePaiement": "2026-08-05",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0420-01",
+            "type": "MT103",
+            "dateEmission": "2026-08-05T10:00:00",
+            "contenu": "Paiement de 650 000,00 EUR au titre de la remise documentaire import IRD260000002. UETR : abc123def456-7890-abcd-ef1234567890.",
+            "fichier": "MT103_IRD260000002_20260805.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0430",
+        "nature": "Acceptation & Aval de la traite",
+        "montant": 650000,
+        "devise": "EUR",
+        "dateCreation": "2026-08-06T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0430-01",
+            "type": "MT732",
+            "dateEmission": "2026-08-06T14:15:00",
+            "contenu": "Acceptation & Aval de la traite pour la remise documentaire import IRD260000002.",
+            "fichier": "MT732_IRD260000002_20260806.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0440",
+        "nature": "Correspondance",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-08-07T11:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0440-01",
+            "type": "MT799",
+            "dateEmission": "2026-08-07T11:30:00",
+            "contenu": "Message de correspondance libre concernant la remise documentaire import IRD260000002.",
+            "fichier": "MT799_IRD260000002_20260807.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0450",
+        "nature": "Frais et commission",
+        "montant": 9750,
+        "devise": "EUR",
+        "dateCreation": "2026-08-08T14:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0450-01",
+            "type": "MT191",
+            "dateEmission": "2026-08-08T14:00:00",
+            "contenu": "Débit de frais et commissions de 9 750,00 EUR sur la remise documentaire import IRD260000002.",
+            "fichier": "MT191_IRD260000002_20260808.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0460",
+        "nature": "Clôture de la remise",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-08-10T16:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0460-01",
+            "type": "MT799",
+            "dateEmission": "2026-08-10T16:00:00",
+            "contenu": "Clôture de la remise documentaire import IRD260000002. Opération terminée.",
+            "fichier": "MT799_IRD260000002_20260810.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0470",
+        "nature": "Ecritures comptables manuelles",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-08-11T10:00:00",
+        "statut": "VALIDE",
+        "swifts": []
+      }
+    ]
+  },
+  {
+    "reference": "IRD260000003",
+    "produit": "IRD",
+    "produitLibelle": "Remise documentaire import",
+    "client": "SAHARA LOGISTICS",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-07-30T16:45:00",
+    "clientInfo": {
+      "raisonSociale": "SAHARA LOGISTICS",
+      "numeroCompte": "007 780 0000 278",
+      "ice": "004780278000078",
+      "codeClient": "CLI-0278",
+      "agenceRattachement": "Agence Agadir",
+      "roleOperation": "Importateur (Tiré)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-IRD-0095-26",
+      "agenceTraitante": "AGC-AGADIR-05",
+      "gestionnaire": "Laila Chaoui",
+      "datePriseEnCharge": "19/04/2026",
+      "statutOperationnel": "Docs en attente",
+      "controleDocumentaire": "3 réserves actives",
+      "prochaineAction": "Relance documents",
+      "noteInterne": "Client logistique, suivi régulier recommandé."
+    },
+    "donnees": {
+      "client": "SAHARA LOGISTICS",
+      "tireur": "BMCE Bank",
+      "partieRemettante": "BMCE Bank",
+      "montantRemise": { "valeur": 950000, "devise": "MAD" },
+      "encours": { "valeur": 950000, "devise": "MAD" },
+      "typeFrais": "Partagés",
+      "referenceOperation": "IRD260000003",
+      "autreReference": "EXT928291",
+      "conditionsRemiseDocuments": "Documents contre acceptation",
+      "dateEcheance": "2026-07-30",
+      "fraisAuMaroc": "Tiré",
+      "fraisAEtranger": "Tiré",
+      "referencesTitresImportation": [
+        "TI-2025-09800",
+        "TI-2025-09801"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0350",
+        "nature": "Réception de la remise",
+        "montant": 950000,
+        "devise": "MAD",
+        "dateCreation": "2026-04-18T11:10:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0350-01",
+            "type": "MT400",
+            "dateEmission": "2026-04-18T11:10:00",
+            "contenu": "Réception de la remise documentaire import IRD260000003. Montant : 950 000,00 MAD. Tireur : BMCE Bank.",
+            "fichier": "MT400_IRD260000003_20260418.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0360",
+        "nature": "Modification de la remise",
+        "montant": 950000,
+        "devise": "MAD",
+        "dateCreation": "2026-06-20T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0360-01",
+            "type": "MT707",
+            "dateEmission": "2026-06-20T14:15:00",
+            "contenu": "Modification de la remise documentaire import IRD260000003. Extension de la date d'échéance.",
+            "fichier": "MT707_IRD260000003_20260620.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0370",
+        "nature": "Paiement",
+        "montant": 950000,
+        "devise": "MAD",
+        "dateCreation": "2026-07-25T10:00:00",
+        "statut": "VALIDE",
+        "uetr": "def456ghi789-0123-4567-8901234567890",
+        "datePaiement": "2026-07-25",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0370-01",
+            "type": "MT103",
+            "dateEmission": "2026-07-25T10:00:00",
+            "contenu": "Paiement de 950 000,00 MAD au titre de la remise documentaire import IRD260000003. UETR : def456ghi789-0123-4567-8901234567890.",
+            "fichier": "MT103_IRD260000003_20260725.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0380",
+        "nature": "Acceptation & Aval de la traite",
+        "montant": 950000,
+        "devise": "MAD",
+        "dateCreation": "2026-07-26T14:15:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0380-01",
+            "type": "MT732",
+            "dateEmission": "2026-07-26T14:15:00",
+            "contenu": "Acceptation & Aval de la traite pour la remise documentaire import IRD260000003.",
+            "fichier": "MT732_IRD260000003_20260726.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0390",
+        "nature": "Correspondance",
+        "montant": 0,
+        "devise": "MAD",
+        "dateCreation": "2026-07-27T11:30:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0390-01",
+            "type": "MT799",
+            "dateEmission": "2026-07-27T11:30:00",
+            "contenu": "Message de correspondance libre concernant la remise documentaire import IRD260000003.",
+            "fichier": "MT799_IRD260000003_20260727.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0400",
+        "nature": "Frais et commission",
+        "montant": 14250,
+        "devise": "MAD",
+        "dateCreation": "2026-07-28T14:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0400-01",
+            "type": "MT191",
+            "dateEmission": "2026-07-28T14:00:00",
+            "contenu": "Débit de frais et commissions de 14 250,00 MAD sur la remise documentaire import IRD260000003.",
+            "fichier": "MT191_IRD260000003_20260728.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0410",
+        "nature": "Clôture de la remise",
+        "montant": 0,
+        "devise": "MAD",
+        "dateCreation": "2026-07-30T16:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0410-01",
+            "type": "MT799",
+            "dateEmission": "2026-07-30T16:00:00",
+            "contenu": "Clôture de la remise documentaire import IRD260000003. Opération terminée.",
+            "fichier": "MT799_IRD260000003_20260730.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0420",
+        "nature": "Ecritures comptables manuelles",
+        "montant": 0,
+        "devise": "MAD",
+        "dateCreation": "2026-07-31T10:00:00",
+        "statut": "VALIDE",
+        "swifts": []
       }
     ]
   }
