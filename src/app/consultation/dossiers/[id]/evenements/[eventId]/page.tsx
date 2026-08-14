@@ -121,6 +121,30 @@ export default function EventDetailPage() {
           </div>
         )}
 
+        {/* Partie remettante - uniquement pour Réception de la remise et Modification de la remise */}
+        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Partie remettante</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nom</label>
+                <p className="font-semibold text-gray-900">{dossier.donnees.partieRemettante}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Adresse</label>
+                <p className="font-semibold text-gray-900">15, Rue de la Banque, Paris, France</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Pays</label>
+                <p className="font-semibold text-gray-900">France</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Détails de l'acceptation - uniquement pour Acceptation & Aval de la traite */}
         {event.nature === "Acceptation & Aval de la traite" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
@@ -309,42 +333,52 @@ FRANCE</p>
               <h2 className="text-lg font-semibold text-gray-900">Bénéficiaire du paiement</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Banque bénéficiaire</label>
-                <p className="font-semibold text-gray-900">Banque Populaire</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">IBAN</label>
-                <p className="font-semibold text-gray-900">ES73 3773-441-5653-54</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nature de la partie à notifier</label>
-                <p className="font-semibold text-gray-900">Tiré</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Paiement envoyé à</label>
-                <div className="bg-white border border-gray-200 rounded-lg p-3 mt-1">
-                  <p className="text-sm text-gray-900 whitespace-pre-line">ERCO LUMIERES EURL
+              {/* Colonne gauche */}
+              <div className="space-y-4">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nature de la partie à payer</label>
+                  <p className="font-semibold text-gray-900">Banque étrangère</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nom & Adresse</label>
+                  <div className="bg-white border border-gray-200 rounded-lg p-3 mt-1">
+                    <p className="text-sm text-gray-900 whitespace-pre-line">ERCO LUMIERES EURL
 6 TER RUE DES SAINTS PERES 75007
 PARIS
 FRANCE</p>
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence</label>
+                  <p className="font-semibold text-gray-900">INV N 25094269</p>
                 </div>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence</label>
-                <p className="font-semibold text-gray-900">INV N 25094269</p>
+              {/* Colonne droite */}
+              <div className="space-y-4">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Banque du bénéficiaire</label>
+                  <p className="font-semibold text-gray-900">Banque Populaire</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Adresse de la banque du bénéficiaire</label>
+                  <p className="font-semibold text-gray-900">Paris, France</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Numéro de compte du bénéficiaire</label>
+                  <p className="font-semibold text-gray-900">ES73 3773-441-5653-54</p>
+                </div>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
-                <label className="flex items-center gap-3 cursor-not-allowed opacity-50">
-                  <input
-                    type="checkbox"
-                    checked={false}
-                    disabled
-                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Remise à expirer</span>
-                </label>
-              </div>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4 mt-4">
+              <label className="flex items-center gap-3 cursor-not-allowed opacity-50">
+                <input
+                  type="checkbox"
+                  checked={false}
+                  disabled
+                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Remise à expirer</span>
+              </label>
             </div>
           </div>
         )}
@@ -402,7 +436,7 @@ FRANCE</p>
                 <p className="font-semibold text-gray-900">56f0c1ce-56f0-456f-56f0-0000000056f0</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date du règlement</label>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date de valeur</label>
                 <p className="font-semibold text-gray-900">12/12/2024</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
@@ -510,99 +544,6 @@ FRANCE</p>
           </div>
         )}
 
-        {/* Titres d'importation - uniquement pour Acceptation & Aval de la traite */}
-        {event.nature === "Acceptation & Aval de la traite" && (
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Titres d'importation</h2>
-            </div>
-            <div className="overflow-hidden rounded-lg border border-gray-200">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Numéro d'enregistrement</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant utilisé</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de validité</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0001</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0002</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0003</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0004</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0005</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0006</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0007</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0008</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0009</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0010</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="flex items-center justify-between mt-4">
-              <p className="text-sm text-gray-500">20 titre(s) - Page 1 sur 2</p>
-              <div className="flex gap-2">
-                <button className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded">Précédent</button>
-                <button className="px-3 py-1 text-sm text-white bg-orange-600 hover:bg-orange-700 rounded">1</button>
-                <button className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded">2</button>
-                <button className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded">Suivant</button>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Répartition des frais - uniquement pour Acceptation & Aval de la traite */}
         {event.nature === "Acceptation & Aval de la traite" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
@@ -610,9 +551,15 @@ FRANCE</p>
               <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
               <h2 className="text-lg font-semibold text-gray-900">Répartition des frais</h2>
             </div>
-            <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mb-6">
-              <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
-              <p className="font-bold text-2xl text-amber-900">2,500 EUR</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions au Maroc</label>
+                <p className="font-semibold text-gray-900">Tiré</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions à l'étranger</label>
+                <p className="font-semibold text-gray-900">Tireur</p>
+              </div>
             </div>
             <h3 className="text-md font-semibold text-gray-900 mb-4">Détails des charges</h3>
             <div className="overflow-hidden rounded-lg border border-gray-200">
@@ -646,6 +593,10 @@ FRANCE</p>
                   </tr>
                 </tbody>
               </table>
+            </div>
+            <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mt-6">
+              <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
+              <p className="font-bold text-2xl text-amber-900">2,500 EUR</p>
             </div>
           </div>
         )}
@@ -699,6 +650,30 @@ FRANCE</p>
               <div className="bg-gray-50 rounded-lg p-4">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Pays</label>
                 <p className="font-semibold text-gray-900">Maroc</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Exportateur - uniquement pour Réception de la remise et Modification de la remise */}
+        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-green-500 to-green-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Exportateur (Tireur)</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nom</label>
+                <p className="font-semibold text-gray-900">MAGHREB STEEL SA</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Adresse</label>
+                <p className="font-semibold text-gray-900">119, Avenue de l'Europe, Barcelone, Espagne</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Pays</label>
+                <p className="font-semibold text-gray-900">Espagne</p>
               </div>
             </div>
           </div>
@@ -758,6 +733,42 @@ FRANCE</p>
           </div>
         )}
 
+        {/* Informations sur l'expédition - uniquement pour Réception de la remise et Modification de la remise */}
+        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Informations sur l'expédition</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Description des marchandises</label>
+                <p className="font-semibold text-gray-900">Équipements industriels</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence du transporteur</label>
+                <p className="font-semibold text-gray-900">BL-560451598</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Lieu d'expédition</label>
+                <p className="font-semibold text-gray-900">Shanghai</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Lieu de destination</label>
+                <p className="font-semibold text-gray-900">Agadir</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date d'expédition prévue</label>
+                <p className="font-semibold text-gray-900">15/11/2024</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Navire/Avion</label>
+                <p className="font-semibold text-gray-900">MSC ALEXANDRA</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Répartition des frais - uniquement pour Réception de la remise et Modification de la remise */}
         {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
@@ -765,9 +776,15 @@ FRANCE</p>
               <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
               <h2 className="text-lg font-semibold text-gray-900">Répartition des frais</h2>
             </div>
-            <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mb-6">
-              <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
-              <p className="font-bold text-2xl text-amber-900">25,700 EUR</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions au Maroc</label>
+                <p className="font-semibold text-gray-900">Tiré</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions à l'étranger</label>
+                <p className="font-semibold text-gray-900">Tireur</p>
+              </div>
             </div>
             <h3 className="text-md font-semibold text-gray-900 mb-4">Détails des charges</h3>
             <div className="overflow-hidden rounded-lg border border-gray-200">
@@ -825,6 +842,46 @@ FRANCE</p>
                   </tr>
                 </tbody>
               </table>
+            </div>
+            <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mt-6">
+              <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
+              <p className="font-bold text-2xl text-amber-900">25,700 EUR</p>
+            </div>
+          </div>
+        )}
+
+        {/* Informations complémentaires - uniquement pour Réception de la remise et Modification de la remise */}
+        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-violet-500 to-violet-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Informations complémentaires</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Code agence</label>
+                <p className="font-semibold text-gray-900">AGC-CASA-01</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nature Office des changes</label>
+                <p className="font-semibold text-gray-900">0130-Import Export Incoterms</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Changement de domiciliation</label>
+                <p className="font-semibold text-gray-900">NON</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Retour de la remise</label>
+                <p className="font-semibold text-gray-900">NON</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Escompte demandé</label>
+                <p className="font-semibold text-gray-900">NON</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Financement</label>
+                <p className="font-semibold text-gray-900">NON</p>
+              </div>
             </div>
           </div>
         )}
@@ -920,9 +977,15 @@ FRANCE</p>
               <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
               <h2 className="text-lg font-semibold text-gray-900">Répartition des frais</h2>
             </div>
-            <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mb-6">
-              <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
-              <p className="font-bold text-2xl text-amber-900">3,000 EUR</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions au Maroc</label>
+                <p className="font-semibold text-gray-900">Tiré</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions à l'étranger</label>
+                <p className="font-semibold text-gray-900">Tireur</p>
+              </div>
             </div>
             <h3 className="text-md font-semibold text-gray-900 mb-4">Détails des charges</h3>
             <div className="overflow-hidden rounded-lg border border-gray-200">
@@ -964,6 +1027,10 @@ FRANCE</p>
                   </tr>
                 </tbody>
               </table>
+            </div>
+            <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mt-6">
+              <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
+              <p className="font-bold text-2xl text-amber-900">3,000 EUR</p>
             </div>
           </div>
         )}
