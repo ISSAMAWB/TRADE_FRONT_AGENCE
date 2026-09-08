@@ -65,8 +65,8 @@ export default function EventDetailPage() {
   const dossierId = params.id as string;
   const eventId = params.eventId as string;
 
-  const dossier = dossiersDetail.find((d) => d.reference === dossierId);
-  const event = dossier?.evenements.find((e) => e.reference === eventId);
+  const dossier = dossiersDetail.find((d) => d.reference === dossierId) as any;
+  const event = dossier?.evenements.find((e) => e.reference === eventId) as any;
 
   const showInfosGenerales = !event
     ? false
@@ -1386,7 +1386,7 @@ FRANCE</p>
               const totalCredit = ecritures
                 .filter(e => e.sens === "CR")
                 .reduce((sum, e) => sum + e.montant, 0);
-              const devises = Array.from(new Set(ecritures.map(e => e.devise)));
+              const devises = Array.from(new Set(ecritures.map((e: any) => e.devise))) as string[];
               const deviseTotal = devises.length === 1 ? devises[0] : "-";
 
               const formatMontantCell = (montant: number | null) => {
@@ -1489,7 +1489,7 @@ FRANCE</p>
 
             <h3 className="text-md font-semibold text-gray-900 mb-4">Détails des charges</h3>
             {(() => {
-              const frais = event.fraisCommissions || [];
+              const frais = (event.fraisCommissions || []) as any[];
               const totalParDevise = frais.reduce((acc, f) => {
                 acc[f.devise] = (acc[f.devise] || 0) + f.montant;
                 return acc;
@@ -1529,9 +1529,9 @@ FRANCE</p>
                           <td className="py-3 px-4 text-gray-900 uppercase tracking-wider text-xs">TOTAL</td>
                           <td className="py-3 px-4" colSpan={2}></td>
                           <td className="py-3 px-4 text-right text-gray-900">
-                            {Object.entries(totalParDevise).map(([devise, montant], i, arr) => (
+                            {Object.entries(totalParDevise).map(([devise, montant]: [string, any], i, arr) => (
                               <span key={devise}>
-                                {formatMontant(montant)} {devise}
+                                {formatMontant(montant as number)} {devise}
                                 {i < arr.length - 1 && <br />}
                               </span>
                             ))}

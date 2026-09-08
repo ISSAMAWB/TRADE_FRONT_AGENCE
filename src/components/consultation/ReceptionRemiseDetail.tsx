@@ -40,7 +40,7 @@ export default function ReceptionRemiseDetail({ dossier, event }: Props) {
             className="text-xs font-semibold uppercase tracking-wider text-[#8b95a8] hover:text-[#ea580c] transition mb-3 flex items-center gap-2"
           >
             <ArrowLeft size={14} />
-            Remise documentaire import · {dossier.reference}
+            REMDOC Import · {dossier.reference}
           </button>
           <div className="flex items-start flex-wrap gap-4">
             <div>
@@ -272,7 +272,7 @@ export default function ReceptionRemiseDetail({ dossier, event }: Props) {
                     </div>
                     <div className="flex gap-3">
                       <Button onClick={handleAccuserReception}>Accuser réception</Button>
-                      <Button variant="outline" onClick={() => setShowAccuseForm(false)}>Annuler</Button>
+                      <Button variant="secondary" onClick={() => setShowAccuseForm(false)}>Annuler</Button>
                     </div>
                   </div>
                 )}

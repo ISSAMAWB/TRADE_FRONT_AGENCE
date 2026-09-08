@@ -933,6 +933,10 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
   const montantPrincipal = isCredoc ? dossier.donnees["montantCredit"] : dossier.donnees["montantRemise"];
   const montantPrincipalOk = isMontantAvecDevise(montantPrincipal) ? montantPrincipal : null;
 
+  const encours = dossier.donnees["encours"];
+  const encoursOk = isMontantAvecDevise(encours) ? encours : null;
+  const encoursNonZero = encoursOk ? encoursOk.valeur !== 0 : false;
+
   const dateEcheance = isIRD ? dossier.donnees["dateEcheance"] : null;
   const dateExpiration = isCredoc ? dossier.donnees["dateExpiration"] : null;
   const dateEcheanceOuExpiration = String(dateEcheance || dateExpiration || "");
@@ -952,6 +956,7 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
   const isUnconfirmed = isCredoc && !isConfirme;
 
   const dateEmission = dossier.donnees["dateEmission"] || dossier.dateMiseAJour;
+  const dateCreation = dossier.evenements[0]?.dateCreation;
 
   return (
     <div className="space-y-3">
@@ -1031,7 +1036,7 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
                           className="h-full bg-[#2a9d6f]"
                           style={{ width: `${getBarPct(dossier.donnees["montantRemise"], dossier.donnees["montantRegle"])}%` }}
                         />
-                        <div className="h-full bg-[#e8632b] flex-1" />
+                        <div className={`h-full flex-1 ${encoursNonZero ? "bg-[#dc2626]" : "bg-[#2a9d6f]"}`} />
                       </>
                     )}
                   </div>
@@ -1056,11 +1061,11 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
                           <span className="w-2 h-2 rounded-full bg-[#2a9d6f]" />
                           Réglé {isMontantAvecDevise(dossier.donnees["montantRegle"]) ? formatMontant(dossier.donnees["montantRegle"].valeur, dossier.donnees["montantRegle"].devise) : "—"}
                         </span>
-                        <span className="flex items-center gap-1 text-[#e8632b]">
-                          <span className="w-2 h-2 rounded-full bg-[#e8632b]" />
-                          Encours {isMontantAvecDevise(dossier.donnees["encours"]) ? formatMontant(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) : "—"}
-                          {isMontantAvecDevise(dossier.donnees["encours"]) && formatContreValeurMAD(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) && (
-                            <span className="text-[#94a3b8] ml-1">≈ {formatContreValeurMAD(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise)}</span>
+                        <span className={`flex items-center gap-1 ${encoursNonZero ? "text-[#dc2626]" : "text-[#64748b]"}`}>
+                          <span className={`w-2 h-2 rounded-full ${encoursNonZero ? "bg-[#dc2626]" : "bg-[#64748b]"}`} />
+                          Encours {encoursOk ? formatMontant(encoursOk.valeur, encoursOk.devise) : "—"}
+                          {encoursOk && formatContreValeurMAD(encoursOk.valeur, encoursOk.devise) && (
+                            <span className="text-[#94a3b8] ml-1">≈ {formatContreValeurMAD(encoursOk.valeur, encoursOk.devise)}</span>
                           )}
                         </span>
                       </>
@@ -1093,10 +1098,10 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
 
       <BandeauEcheanceV2
         date={dateEcheanceOuExpiration}
-        dateDebut={dateEmission ? String(dateEmission) : undefined}
+        dateDebut={isIRD ? (dateCreation ? String(dateCreation) : dateEmission ? String(dateEmission) : undefined) : (dateEmission ? String(dateEmission) : undefined)}
         contexte={isCredoc ? `Lieu d'expiration : ${dossier.donnees["lieuExpiration"] || "—"}` : String(conditionsRemise || "")}
         label={isCredoc ? "DATE D'EXPIRATION" : "DATE D'ÉCHÉANCE"}
-        labelDebut={isCredoc ? "Émission" : "Ouverture"}
+        labelDebut={isCredoc ? "Émission" : isIRD ? "Date de création" : "Ouverture"}
         labelFin={isCredoc ? "Expiration" : "Échéance"}
         isPaiementAVue={isPaiementAVue}
         documentsRecusLe={isIRD ? dossier.donnees["dateReceptionDocuments"] : undefined}
@@ -1112,8 +1117,17 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
             <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees[isCredoc ? "referenceCorrespondant" : "autreReference"] || "—")}</span>
             {!isELC && (
               <>
-                <span className="text-[#94a3b8]">Type d'opération</span>
-                <span className="font-medium text-[#0f172a]">{String(dossier.donnees["natureOperation"] || "Opération commerciale")}</span>
+                {isIRD ? (
+                  <>
+                    <span className="text-[#94a3b8]">Date de création</span>
+                    <span className="font-medium text-[#0f172a]">{dossier.evenements[0]?.dateCreation ? formatDate(dossier.evenements[0].dateCreation) : "—"}</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-[#94a3b8]">Type d'opération</span>
+                    <span className="font-medium text-[#0f172a]">{String(dossier.donnees["natureOperation"] || "Opération commerciale")}</span>
+                  </>
+                )}
               </>
             )}
             <span className="text-[#94a3b8]">{isCredoc ? "Mode de réalisation" : "Conditions de remise"}</span>
@@ -1131,8 +1145,8 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
             <span className="text-[#94a3b8]">{isCredoc ? "Montant du crédit" : "Montant de la remise"}</span>
             <span className="font-semibold text-[#0f172a]">{montantPrincipalOk ? formatMontant(montantPrincipalOk.valeur, montantPrincipalOk.devise) : "—"}</span>
             <span className="text-[#94a3b8]">{isCredoc ? "Tolérance" : "Encours"}</span>
-            <span className={`font-semibold ${isCredoc ? "text-[#0f172a]" : "text-[#e8632b]"}`}>
-              {isCredoc ? String(dossier.donnees["tolerance"] || "—") : (isMontantAvecDevise(dossier.donnees["encours"]) ? formatMontant(dossier.donnees["encours"].valeur, dossier.donnees["encours"].devise) : "—")}
+            <span className={`font-semibold ${isCredoc ? "text-[#0f172a]" : encoursNonZero ? "text-[#dc2626]" : "text-[#2a9d6f]"}`}>
+              {isCredoc ? String(dossier.donnees["tolerance"] || "—") : (encoursOk ? formatMontant(encoursOk.valeur, encoursOk.devise) : "—")}
             </span>
             {isCredoc && (
               <>
@@ -1174,7 +1188,9 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
   const montantRemiseOk = isMontantAvecDevise(montantRemise) ? montantRemise : null;
   const encours = dossier.donnees["encours"];
   const encoursOk = isMontantAvecDevise(encours) ? encours : null;
-  const typeFrais = dossier.donnees["typeFrais"];
+  const encoursNonZero = encoursOk ? encoursOk.valeur !== 0 : false;
+  const fraisAuMaroc = dossier.donnees["fraisAuMaroc"];
+  const fraisAEtranger = dossier.donnees["fraisAEtranger"];
   const conditionsRemise = dossier.donnees["conditionsRemiseDocuments"];
   const dateEcheance = dossier.donnees["dateEcheance"];
   const dateEcheanceStr = dateEcheance ? String(dateEcheance) : "";
@@ -1182,6 +1198,7 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
   const isContreAcceptation = String(conditionsRemise).toLowerCase().includes("acceptation");
   const referencesCourrier = dossier.donnees["referencesCourrier"];
   const dateEmission = dossier.donnees["dateEmission"] || dossier.dateMiseAJour;
+  const dateCreation = dossier.evenements[0]?.dateCreation;
 
   return (
     <div className="space-y-3">
@@ -1224,7 +1241,7 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
                   </div>
                   {montantRemiseOk && (
                     <div className="text-[10.5px] text-[#64748b]">
-                      Type de frais : {String(typeFrais || "—")}
+                      Frais Maroc : {String(fraisAuMaroc || "—")} · Étranger : {String(fraisAEtranger || "—")}
                     </div>
                   )}
                 </div>
@@ -1235,15 +1252,15 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
                       className="h-full bg-[#2a9d6f]"
                       style={{ width: `${getBarPct(dossier.donnees["montantRemise"], dossier.donnees["montantRegle"])}%` }}
                     />
-                    <div className="h-full bg-[#e8632b] flex-1" />
+                    <div className={`h-full flex-1 ${encoursNonZero ? "bg-[#dc2626]" : "bg-[#2a9d6f]"}`} />
                   </div>
                   <div className="flex justify-between text-[11px] mt-2">
                     <span className="flex items-center gap-1 text-[#2a9d6f]">
                       <span className="w-2 h-2 rounded-full bg-[#2a9d6f]" />
                       Réglé {isMontantAvecDevise(dossier.donnees["montantRegle"]) ? formatMontant(dossier.donnees["montantRegle"].valeur, dossier.donnees["montantRegle"].devise) : "—"}
                     </span>
-                    <span className="flex items-center gap-1 text-[#e8632b]">
-                      <span className="w-2 h-2 rounded-full bg-[#e8632b]" />
+                    <span className={`flex items-center gap-1 ${encoursNonZero ? "text-[#dc2626]" : "text-[#64748b]"}`}>
+                      <span className={`w-2 h-2 rounded-full ${encoursNonZero ? "bg-[#dc2626]" : "bg-[#64748b]"}`} />
                       Encours {encoursOk ? formatMontant(encoursOk.valeur, encoursOk.devise) : "—"}
                       {encoursOk && formatContreValeurMAD(encoursOk.valeur, encoursOk.devise) && (
                         <span className="text-[#94a3b8] ml-1">≈ {formatContreValeurMAD(encoursOk.valeur, encoursOk.devise)}</span>
@@ -1271,7 +1288,7 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
               <div className="border-t border-[#e5e8ec] pt-2.5 grid grid-cols-[92px_1fr] gap-y-2 gap-x-2 text-[12px]">
                 <span className="text-[#94a3b8]">Tiré</span>
                 <span className="font-medium text-[#0f172a]">{String(dossier.donnees["tire"] || "—")}</span>
-                <span className="text-[#94a3b8]">Banque encaiss.</span>
+                <span className="text-[#94a3b8]">Banque présentatrice</span>
                 <span className="font-medium text-[#0f172a]">{String(dossier.donnees["partieRemettante"] || "—")}</span>
               </div>
             </div>
@@ -1281,10 +1298,10 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
 
       <BandeauEcheanceV2
         date={dateEcheanceStr}
-        dateDebut={dateEmission ? String(dateEmission) : undefined}
+        dateDebut={dateCreation ? String(dateCreation) : dateEmission ? String(dateEmission) : undefined}
         contexte={String(conditionsRemise || "")}
         label="DATE D'ÉCHÉANCE"
-        labelDebut="Ouverture"
+        labelDebut="Création"
         labelFin="Échéance"
         isPaiementAVue={isPaiementAVue}
         documentsRecusLe={dossier.donnees["dateReceptionDocuments"]}
@@ -1298,6 +1315,8 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
             <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["referenceOperation"] || "—")}</span>
             <span className="text-[#94a3b8]">Autre référence</span>
             <span className="font-medium text-[#0f172a] font-mono">{String(dossier.donnees["autreReference"] || "—")}</span>
+            <span className="text-[#94a3b8]">Date de création</span>
+            <span className="font-medium text-[#0f172a]">{dateCreation ? formatDate(dateCreation) : "—"}</span>
             <span className="text-[#94a3b8]">Conditions de remise</span>
             <span className="font-medium text-[#0f172a]">{String(conditionsRemise || "—")}</span>
             <span className="text-[#94a3b8]">Échéance</span>
@@ -1311,9 +1330,11 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
             <span className="text-[#94a3b8]">Montant de la remise</span>
             <span className="font-semibold text-[#0f172a]">{montantRemiseOk ? formatMontant(montantRemiseOk.valeur, montantRemiseOk.devise) : "—"}</span>
             <span className="text-[#94a3b8]">Encours</span>
-            <span className="font-semibold text-[#e8632b]">{encoursOk ? formatMontant(encoursOk.valeur, encoursOk.devise) : "—"}</span>
-            <span className="text-[#94a3b8]">Type de frais</span>
-            <span className="font-medium text-[#0f172a]">{String(typeFrais || "—")}</span>
+            <span className={`font-semibold ${encoursNonZero ? "text-[#dc2626]" : "text-[#2a9d6f]"}`}>{encoursOk ? formatMontant(encoursOk.valeur, encoursOk.devise) : "—"}</span>
+            <span className="text-[#94a3b8]">Frais au Maroc</span>
+            <span className="font-medium text-[#0f172a]">{String(fraisAuMaroc || "—")}</span>
+            <span className="text-[#94a3b8]">Frais à l'étranger</span>
+            <span className="font-medium text-[#0f172a]">{String(fraisAEtranger || "—")}</span>
             <span className="text-[#94a3b8]">Contre-valeur MAD</span>
             <span className="font-semibold text-[#0f172a]">
               {(() => {

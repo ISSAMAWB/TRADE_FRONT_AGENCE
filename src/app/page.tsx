@@ -24,11 +24,11 @@ export default function Dashboard() {
   const createCourrierIrd = useTomStore(s => s.createCourrierIrd);
   const nouveauCourrier = () => {
     const c = createCourrierIrd();
-    router.push(`/courriers/${c.id}`);
+    router.push(`/remises-doc/import/${c.id}`);
   };
 
   const cardsKpi = [
-    { label: "En préparation",    value: courriers.filter(c => c.statut_workflow === "EN_PREPARATION").length,                icon: Mail,          color: "text-gray-900 bg-orange-50" },
+    { label: "Brouillon",        value: courriers.filter(c => c.statut_workflow === "EN_PREPARATION").length,                icon: Mail,          color: "text-gray-900 bg-orange-50" },
     { label: "OCR analysé",       value: courriers.filter(c => c.statut_ocr === "OCR_ANALYSE").length,                        icon: ScanLine,      color: "text-green-700 bg-green-50" },
     { label: "À valider agence",  value: courriers.filter(c => c.statut_workflow === "EN_ATTENTE_VALIDATION_AGENCE").length,   icon: AlertTriangle, color: "text-amber-700 bg-amber-50" },
     { label: "Envoyés CTN",       value: courriers.filter(c => c.statut_workflow === "ENVOYE_CTN").length,                     icon: Send,          color: "text-orange-700 bg-orange-100" },
@@ -40,10 +40,10 @@ export default function Dashboard() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-display">Tableau de bord</h1>
-            <p className="text-subtitle">Remise Documentaire Import — Centralisation des courriers IRD</p>
+            <p className="text-subtitle">REMDOC Import — Centralisation des documents REMDOC Import</p>
           </div>
           <Button onClick={nouveauCourrier}>
-            <Mail size={16} /> Nouveau courrier
+            <Mail size={16} /> Centralisation REMDOC Import
           </Button>
         </div>
 
@@ -88,7 +88,7 @@ export default function Dashboard() {
                     return (
                       <tr key={c.id}>
                         <td>
-                          <Link href={`/courriers/${c.id}`} className="text-orange-600 font-medium hover:underline">
+                          <Link href={`/remises-doc/import/${c.id}`} className="text-orange-600 font-medium hover:underline">
                             {c.reference_courrier}
                           </Link>
                         </td>
@@ -115,14 +115,14 @@ export default function Dashboard() {
 
           <Card>
             <div className="text-title flex items-center gap-2 mb-3">
-              <FileSpreadsheet size={18} className="text-gray-400" /> Gestion des opérations IRD
+              <FileSpreadsheet size={18} className="text-gray-400" /> Gestion des opérations REMDOC Import
             </div>
             <p className="text-sm text-gray-600">
-              Le module <b>Gestion des opérations IRD</b> n'est pas développé dans cette phase MVP.
-              Périmètre actuel : centralisation des courriers IRD — validation agence avant envoi CTN devise.
+              Le module <b>Gestion des opérations REMDOC Import</b> n'est pas développé dans cette phase MVP.
+              Périmètre actuel : centralisation des documents REMDOC Import — validation agence avant envoi CTN devise.
             </p>
             <div className="mt-3 text-xs text-gray-400 italic">
-              La création réelle du dossier IRD métier est gérée par le CTN devise (hors périmètre).
+              La création réelle du dossier REMDOC Import métier est gérée par le CTN devise (hors périmètre).
             </div>
           </Card>
         </div>

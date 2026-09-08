@@ -107,7 +107,7 @@ export const PRODUIT_SCHEMAS: ProduitSchema[] = [
   },
   {
     code: "IRD",
-    libelle: "Remise documentaire import",
+    libelle: "REMDOC Import",
     blocs: [
       {
         titre: "Détails de l'opération",

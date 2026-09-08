@@ -18,7 +18,7 @@ type CorbeilleKey = "TOUS" | "EN_PREPARATION" | "A_VALIDER_AGENCE" | "ENVOYES";
 
 const CORBEILLE_DEFS: { key: CorbeilleKey; label: string; filter: ((c: CourrierIrd) => boolean) | null }[] = [
   { key: "TOUS",            label: "Tous",              filter: null },
-  { key: "EN_PREPARATION",  label: "En préparation",    filter: c => c.statut_workflow === "EN_PREPARATION" },
+  { key: "EN_PREPARATION",  label: "Brouillon",       filter: c => c.statut_workflow === "EN_PREPARATION" },
   { key: "A_VALIDER_AGENCE",label: "À valider agence",  filter: c => c.statut_workflow === "EN_ATTENTE_VALIDATION_AGENCE" },
   { key: "ENVOYES",         label: "Envoyés",           filter: c => c.statut_workflow === "ENVOYE_CTN" },
 ];
@@ -34,7 +34,7 @@ export default function CourriersListPage() {
 
   function nouveauCourrier() {
     const c = createCourrierIrd();
-    router.push(`/courriers/${c.id}`);
+    router.push(`/remises-doc/import/${c.id}`);
   }
 
   const [corbeille, setCorbeille] = useState<CorbeilleKey>("TOUS");
@@ -73,10 +73,10 @@ export default function CourriersListPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <h1 className="text-display flex items-center gap-2">
-            <Mail className="text-orange-500" size={24} /> Centralisation des courriers IRD
+            <Mail className="text-orange-500" size={24} /> Centralisation des documents REMDOC Import
           </h1>
           <Button onClick={nouveauCourrier}>
-            <Plus size={16} /> Nouveau courrier
+            <Plus size={16} /> Centralisation REMDOC Import
           </Button>
         </div>
 
@@ -164,7 +164,7 @@ export default function CourriersListPage() {
                 return (
                   <tr key={c.id}>
                     <td>
-                      <Link href={`/courriers/${c.id}`} className="font-medium hover:underline text-orange-500">
+                      <Link href={`/remises-doc/import/${c.id}`} className="font-medium hover:underline text-orange-500">
                         {c.reference_courrier}
                       </Link>
                     </td>

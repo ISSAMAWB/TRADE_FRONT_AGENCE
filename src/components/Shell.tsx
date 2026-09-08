@@ -56,7 +56,7 @@ const NAV_GROUPS: NavGroup[] = [
             icon: <ArrowRight size={14} />, 
             isSubItem: true,
             children: [
-              { href: "/courriers", label: "Centralisation des documents", icon: <Mail size={14} />, isSubItem: true },
+              { href: "/remises-doc/import", label: "Centralisation des documents", icon: <Mail size={14} />, isSubItem: true },
               { href: "/remises-doc/import/acceptation-aval", label: "Acceptation & Aval", icon: <FileText size={14} />, isSubItem: true },
               { href: "/remises-doc/import/paiement", label: "Paiement", icon: <DollarSign size={14} />, isSubItem: true },
               { href: "/remises-doc/import/instruction-client", label: "Instruction du client", icon: <FileText size={14} />, isSubItem: true },

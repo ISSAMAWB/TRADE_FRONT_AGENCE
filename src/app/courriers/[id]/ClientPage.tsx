@@ -99,7 +99,7 @@ export default function CourrierDetail({ id }: { id: string }) {
       <div className="flex items-center gap-2 text-xs text-ink-500">
         <Link href="/" className="hover:text-brand-600">Tableau de bord</Link>
         <span>/</span>
-        <Link href="/courriers" className="hover:text-brand-600">Centralisation des courriers IRD</Link>
+        <Link href="/courriers" className="hover:text-brand-600">Centralisation des documents REMDOC Import</Link>
         <span>/</span>
         <span className="text-ink-700 font-medium">{courrier.reference_courrier}</span>
       </div>
@@ -240,11 +240,11 @@ export default function CourrierDetail({ id }: { id: string }) {
         </ul>
       </section>
 
-      {/* ===== Informations courrier IRD ===== */}
+      {/* ===== Informations REMDOC Import ===== */}
       <section className="card p-5">
         <div className="flex items-start justify-between flex-wrap gap-2">
           <div>
-            <div className="font-semibold text-sm">Informations courrier IRD</div>
+            <div className="font-semibold text-sm">Informations REMDOC Import</div>
             <div className="text-xs text-ink-500 mt-0.5">
               Saisie manuelle ou enrichissement OCR — vous gardez toujours la main finale.
               {ocrFields.size > 0 && <> · <span className="text-green-600 font-medium">Les champs avec un contour vert proviennent de l'OCR.</span></>}
@@ -500,7 +500,7 @@ function ClientSearchPopup({
 /* ====== TIMELINE HORIZONTALE DE TRAITEMENT ====== */
 
 const TIMELINE_STEPS: { key: StatutCourrierWorkflow; label: string; desc: string }[] = [
-  { key: "EN_PREPARATION", label: "Création du courrier", desc: "Rattachement documentaire, OCR, saisie métier" },
+  { key: "EN_PREPARATION", label: "Création de la centralisation", desc: "Rattachement documentaire, OCR, saisie métier" },
   { key: "EN_ATTENTE_VALIDATION_AGENCE", label: "Validation agence", desc: "Contrôle et validation responsable agence" },
   { key: "ENVOYE_CTN", label: "Envoyé CTN devise", desc: "Transmission vers CTN devise" },
 ];

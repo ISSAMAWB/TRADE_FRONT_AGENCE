@@ -535,7 +535,7 @@
   {
     "reference": "IRD260000004",
     "produit": "IRD",
-    "produitLibelle": "Remise documentaire import",
+    "produitLibelle": "REMDOC Import",
     "client": "STE VIVO ENERGY MAROC",
     "statut": "EN_COURS",
     "dateMiseAJour": "2026-05-20T16:45:00",
@@ -2222,7 +2222,7 @@
   {
     "reference": "IRD260000001",
     "produit": "IRD",
-    "produitLibelle": "Remise documentaire import",
+    "produitLibelle": "REMDOC Import",
     "client": "MAGHREB STEEL SA",
     "statut": "EXPIRE",
     "dateMiseAJour": "2026-04-25T16:45:00",
@@ -3313,7 +3313,7 @@
   {
     "reference": "IRD260000002",
     "produit": "IRD",
-    "produitLibelle": "Remise documentaire import",
+    "produitLibelle": "REMDOC Import",
     "client": "DELICES DU SUD SARL",
     "statut": "EN_COURS",
     "dateMiseAJour": "2026-08-10T16:45:00",
@@ -3337,7 +3337,7 @@
     },
     "donnees": {
       "client": "DELICES DU SUD SARL",
-      "tireur": "Société Générale Paris",
+      "tireur": "Lyratechnilogie UTD",
       "partieRemettante": "Société Générale Paris",
       "referenceCorrespondant": "CORR0011",
       "montantRemise": {
@@ -4376,7 +4376,7 @@
   {
     "reference": "IRD260000003",
     "produit": "IRD",
-    "produitLibelle": "Remise documentaire import",
+    "produitLibelle": "REMDOC Import",
     "client": "SAHARA LOGISTICS",
     "statut": "EN_COURS",
     "dateMiseAJour": "2026-07-30T16:45:00",
@@ -4876,7 +4876,7 @@
   {
     "reference": "IRD260000004",
     "produit": "IRD",
-    "produitLibelle": "Remise documentaire import",
+    "produitLibelle": "REMDOC Import",
     "client": "AGRO EXPORT MAROC",
     "statut": "EN_COURS",
     "dateMiseAJour": "2026-06-20T10:00:00",

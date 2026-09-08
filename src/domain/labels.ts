@@ -6,7 +6,7 @@ import type {
 } from "./types";
 
 export const WORKFLOW_LABEL: Record<StatutWorkflow, string> = {
-  EN_PREPARATION: "En préparation",
+  EN_PREPARATION: "Brouillon",
   OCR_EN_COURS: "OCR en cours",
   A_CONTROLER: "À contrôler",
   PRET_A_TRANSMETTRE: "Prêt à transmettre",
@@ -73,7 +73,7 @@ export const DOC_LABEL: Record<TypeDocument, string> = {
 };
 
 export const COURRIER_WORKFLOW_LABEL: Record<StatutCourrierWorkflow, string> = {
-  EN_PREPARATION:                "En préparation",
+  EN_PREPARATION:                "Brouillon",
   EN_ATTENTE_VALIDATION_AGENCE:  "À valider agence",
   ENVOYE_CTN:                    "Envoyé CTN",
 };
@@ -107,7 +107,7 @@ export const MOTIF_RETOUR_LABEL: Record<MotifRetourCtn, string> = {
 };
 
 export const PRODUIT_IRD_LABEL: Record<ProduitIrd, string> = {
-  REMISE_DOCUMENTAIRE_IMPORT: "Remise documentaire import",
+  REMISE_DOCUMENTAIRE_IMPORT: "REMDOC Import",
 };
 
 export function badgeForWorkflow(s: StatutWorkflow): string {
