@@ -30,7 +30,8 @@ export default function CompactSidebar({ groups, onReset, isCollapsed = false, o
   const pathname = usePathname();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
-  const toggleExpanded = (label: string) => {
+  const toggleExpanded = (label: string, depth: number) => {
+    if (depth === 0) return;
     setExpandedItems(prev => {
       const next = new Set(prev);
       if (next.has(label)) {
@@ -49,7 +50,88 @@ export default function CompactSidebar({ groups, onReset, isCollapsed = false, o
 
   const isChildActive = (item: NavItem): boolean => {
     if (!item.children) return false;
-    return item.children.some(child => isActive(child));
+    return item.children.some(child => isActive(child) || isChildActive(child));
+  };
+
+  const NavItemRenderer = ({ item, depth = 0 }: { item: NavItem; depth?: number }) => {
+    const active = isActive(item);
+    const hasChildren = item.children && item.children.length > 0;
+    const isExpanded = depth === 0 || expandedItems.has(item.label);
+    const childActive = isChildActive(item);
+
+    if (item.disabled) {
+      return (
+        <div
+          key={item.href + depth}
+          className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2.5 rounded-lg cursor-not-allowed text-slate-500`}
+          title={item.label}
+          style={{ marginLeft: isCollapsed ? 0 : depth * 12 }}
+        >
+          <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+            {item.icon}
+          </div>
+          {!isCollapsed && <span className="text-sm text-slate-500">{item.label}</span>}
+        </div>
+      );
+    }
+
+    if (hasChildren) {
+      return (
+        <div key={item.label + depth} className="w-full">
+          {/* Parent Item */}
+          <button
+            onClick={() => !isCollapsed && toggleExpanded(item.label, depth)}
+            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} px-3 py-2.5 rounded-lg transition-all ${
+              childActive || active
+                ? "bg-orange-500/10 text-orange-500 border-l-2 border-orange-500"
+                : "text-slate-300 hover:bg-slate-800"
+            }`}
+            title={item.label}
+            style={{ marginLeft: isCollapsed ? 0 : depth * 12 }}
+          >
+            <div className={`flex items-center ${isCollapsed ? '' : 'gap-3'}`}>
+              <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                {item.icon}
+              </div>
+              {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+            </div>
+            {!isCollapsed && hasChildren && depth > 0 && (isExpanded ? (
+              <ChevronDown size={14} className="text-slate-400" />
+            ) : (
+              <ChevronRight size={14} className="text-slate-400" />
+            ))}
+          </button>
+
+          {/* Children - hidden in collapsed mode */}
+          {!isCollapsed && isExpanded && item.children && (
+            <div className="mt-1 space-y-1">
+              {item.children.map((child) => (
+                <NavItemRenderer key={child.label + (depth + 1)} item={child} depth={depth + 1} />
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <Link
+        key={item.href + depth}
+        href={item.href}
+        className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2.5 rounded-lg transition-all ${
+          active
+            ? "bg-orange-500/10 text-orange-500 border-l-2 border-orange-500"
+            : "text-slate-300 hover:bg-slate-800"
+        }`}
+        title={item.label}
+        style={{ marginLeft: isCollapsed ? 0 : depth * 12 }}
+      >
+        <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+          {item.icon}
+        </div>
+        {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+      </Link>
+    );
   };
 
   return (
@@ -80,113 +162,9 @@ export default function CompactSidebar({ groups, onReset, isCollapsed = false, o
             )}
 
             {/* Group Items */}
-            {group.items.map((item) => {
-              const active = isActive(item);
-              const hasChildren = item.children && item.children.length > 0;
-              const isExpanded = expandedItems.has(item.label);
-              const childActive = isChildActive(item);
-
-              if (item.disabled) {
-                return (
-                  <div
-                    key={item.href}
-                    className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2.5 rounded-lg cursor-not-allowed text-slate-500`}
-                    title={item.label}
-                  >
-                    <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                      {item.icon}
-                    </div>
-                    {!isCollapsed && <span className="text-sm text-slate-500">{item.label}</span>}
-                  </div>
-                );
-              }
-
-              if (hasChildren) {
-                return (
-                  <div key={item.label} className="w-full">
-                    {/* Parent Item */}
-                    <button
-                      onClick={() => !isCollapsed && toggleExpanded(item.label)}
-                      className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} px-3 py-2.5 rounded-lg transition-all ${
-                        childActive
-                          ? "bg-orange-500/10 text-orange-500 border-l-2 border-orange-500"
-                          : "text-slate-300 hover:bg-slate-800"
-                      }`}
-                      title={item.label}
-                    >
-                      <div className={`flex items-center ${isCollapsed ? '' : 'gap-3'}`}>
-                        <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                          {item.icon}
-                        </div>
-                        {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
-                      </div>
-                      {!isCollapsed && (isExpanded ? (
-                        <ChevronDown size={14} className="text-slate-400" />
-                      ) : (
-                        <ChevronRight size={14} className="text-slate-400" />
-                      ))}
-                    </button>
-
-                    {/* Children - hidden in collapsed mode */}
-                    {!isCollapsed && isExpanded && item.children && (
-                      <div className="ml-4 mt-1 space-y-1">
-                        {item.children.map((child) => {
-                          const childActiveState = isActive(child);
-                          if (child.disabled) {
-                            return (
-                              <div
-                                key={child.href}
-                                className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-not-allowed text-slate-500"
-                                title={child.label}
-                              >
-                                <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">
-                                  {child.icon}
-                                </div>
-                                <span className="text-xs text-slate-500">{child.label}</span>
-                              </div>
-                            );
-                          }
-                          return (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
-                                childActiveState
-                                  ? "bg-orange-500/10 text-orange-500 border-l-2 border-orange-500"
-                                  : "text-slate-400 hover:bg-slate-800 hover:text-slate-300"
-                              }`}
-                            >
-                              <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">
-                                {child.icon}
-                              </div>
-                              <span className="text-xs">{child.label}</span>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2.5 rounded-lg transition-all ${
-                    active
-                      ? "bg-orange-500/10 text-orange-500 border-l-2 border-orange-500"
-                      : "text-slate-300 hover:bg-slate-800"
-                  }`}
-                  title={item.label}
-                >
-                  <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                    {item.icon}
-                  </div>
-                  {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
-                </Link>
-              );
-            })}
+            {group.items.map((item) => (
+              <NavItemRenderer key={item.label} item={item} />
+            ))}
           </div>
         ))}
       </nav>

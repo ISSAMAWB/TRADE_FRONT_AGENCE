@@ -449,6 +449,54 @@
     "referenceCorrespondant": "REFCOR0007"
   },
   {
+    "id": "IRD260000004",
+    "produit": "IRD",
+    "client": {
+      "nom": "AGRO EXPORT MAROC",
+      "compte": "007 780 0000 512",
+      "ice": "006120512000078",
+      "code": "CLI-0201"
+    },
+    "montant": 320000,
+    "devise": "USD",
+    "dateCreation": "2026-06-20",
+    "dateEcheance": "2026-07-20",
+    "banqueCorrespondante": "BNP Paribas London",
+    "paysOrigine": "Royaume-Uni",
+    "statut": "En cours",
+    "refCTN": "CTN-IRD-0102-26",
+    "codeAgence": "AGC-TANGER-02",
+    "agentCTN": {
+      "nom": "El Alami",
+      "prenom": "Fatima Zahra",
+      "code": "FZ02"
+    },
+    "datePriseEnCharge": "2026-06-20",
+    "statutOperationnel": "En traitement",
+    "controleDocumentaire": "0 réserve",
+    "encours": {
+      "utilise": 320000,
+      "autorise": 500000,
+      "devise": "USD"
+    },
+    "commission": 0.08,
+    "tauxChange": 1,
+    "derniereInteraction": "2026-06-20",
+    "canalInteraction": "plateforme",
+    "notes": [],
+    "evenements": [
+      {
+        "id": "EVT-016",
+        "date": "2026-06-20",
+        "type": "Réception de la remise",
+        "statut": "Validé",
+        "montant": 320000
+      }
+    ],
+    "evenementCourant": "Réception de la remise",
+    "referenceCorrespondant": "REFCOR0008"
+  },
+  {
     "id": "ERD260000001",
     "produit": "ERD",
     "client": {

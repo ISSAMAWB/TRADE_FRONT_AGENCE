@@ -6,6 +6,7 @@ import { useState } from "react";
 import dossiersDetail from "@/mocks/dossiersDetail.json";
 import Button from "@/components/ui/Button";
 import Shell from "@/components/Shell";
+import ReceptionRemiseDetail from "@/components/consultation/ReceptionRemiseDetail";
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -27,6 +28,14 @@ export default function EventDetailPage() {
         <div className="p-8">
           <div className="text-center text-gray-500">Événement non trouvé</div>
         </div>
+      </Shell>
+    );
+  }
+
+  if ((event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && event.receptionRemise) {
+    return (
+      <Shell>
+        <ReceptionRemiseDetail dossier={dossier} event={event} />
       </Shell>
     );
   }
@@ -60,28 +69,66 @@ export default function EventDetailPage() {
             <h2 className="text-lg font-semibold text-gray-900">Informations générales</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence de la remise</label>
-              <p className="font-semibold text-gray-900">{dossier.reference}</p>
-            </div>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date de création</label>
-              <p className="font-semibold text-gray-900">{new Date(event.dateCreation).toLocaleDateString('fr-FR')}</p>
-            </div>
-            <div className={`bg-gray-50 rounded-lg p-4 ${event.nature === "Modification de la remise" ? "border-2 border-orange-500 shadow-md" : ""}`}>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Conditions de remise des documents</label>
-                {event.nature === "Modification de la remise" && (
-                  <span className="text-xs font-medium text-orange-600 uppercase tracking-wider bg-orange-100 px-2 py-1 rounded">Modifié</span>
-                )}
+            {event.nature !== "Centralisation des documents" && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence de la remise</label>
+                <p className="font-semibold text-gray-900">{dossier.reference}</p>
               </div>
-              <p className="font-semibold text-gray-900">{dossier.donnees.conditionsRemiseDocuments}</p>
-            </div>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence du correspondant</label>
-              <p className="font-semibold text-gray-900">{dossier.donnees.autreReference}</p>
-            </div>
-            {event.nature !== "Paiement" && (
+            )}
+            {event.nature !== "Centralisation des documents" && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date de création</label>
+                <p className="font-semibold text-gray-900">{new Date(event.dateCreation).toLocaleDateString('fr-FR')}</p>
+              </div>
+            )}
+            {event.nature !== "Correspondance" && event.nature !== "Ecritures comptables manuelles" && event.nature !== "Frais et commission" && event.nature !== "Retour des documents" && event.nature !== "Demande de remise des documents" && event.nature !== "Centralisation des documents" && event.nature !== "Accusé de réception des documents" && (
+              <div className={`bg-gray-50 rounded-lg p-4 ${event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise" ? "border-2 border-orange-500 shadow-md" : ""}`}>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Conditions de remise des documents</label>
+                  {(event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
+                    <span className="text-xs font-medium text-orange-600 uppercase tracking-wider bg-orange-100 px-2 py-1 rounded">Modifié</span>
+                  )}
+                </div>
+                <p className="font-semibold text-gray-900">{dossier.donnees.conditionsRemiseDocuments}</p>
+              </div>
+            )}
+            {event.nature === "Accusé de réception des documents" && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence du courrier</label>
+                <p className="font-semibold text-gray-900">{event.accuseReception?.numeroCourrier}</p>
+              </div>
+            )}
+            {event.nature === "Correspondance" && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type de la correspondance</label>
+                <p className="font-semibold text-gray-900">Externe</p>
+              </div>
+            )}
+            {event.nature === "Centralisation des documents" && (
+              <>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence de centralisation</label>
+                  <p className="font-semibold text-gray-900">{event.centralisationDocument?.referenceCentralisation}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date de création</label>
+                  <p className="font-semibold text-gray-900">{new Date(event.dateCreation).toLocaleDateString("fr-FR")}</p>
+                </div>
+              </>
+            )}
+            {(event.nature === "Retour des documents" || event.nature === "Demande de remise des documents") && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type de la demande</label>
+                <p className="font-semibold text-gray-900">{event.retourDocument?.typeDemande || "Demande"}</p>
+              </div>
+            )}
+            {event.nature === "Accusé de réception des documents" && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type d'évènement</label>
+                <p className="font-semibold text-gray-900">{event.accuseReception?.typeEvenement} / {event.reference}</p>
+              </div>
+            )}
+            {event.nature !== "Paiement" && event.nature !== "Correspondance" && event.nature !== "Ecritures comptables manuelles" && event.nature !== "Frais et commission" && event.nature !== "Retour des documents" && event.nature !== "Demande de remise des documents" && event.nature !== "Centralisation des documents" && event.nature !== "Accusé de réception des documents" && (
               <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
@@ -97,20 +144,98 @@ export default function EventDetailPage() {
           </div>
         </div>
 
-        {/* Détails de la modification - uniquement pour Modification de la remise */}
-        {event.nature === "Modification de la remise" && (
+        {/* Message reçu - uniquement pour Correspondance */}
+        {event.nature === "Correspondance" && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Message reçu</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type du message</label>
+                <p className="font-semibold text-gray-900">MT799</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date de la réception</label>
+                <p className="font-semibold text-gray-900">07/08/2026</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Emetteur du message</label>
+                <div className="bg-white border border-gray-200 rounded-lg p-3 mt-1">
+                  <p className="text-sm text-gray-900 whitespace-pre-line">Société Générale Paris
+29, Boulevard Haussmann
+75009 Paris
+France</p>
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence</label>
+                <p className="font-semibold text-gray-900">SWIFT-2026-0440-01</p>
+              </div>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Instructions reçues</label>
+              <div className="bg-white border border-gray-200 rounded-lg p-4 mt-2">
+                <p className="text-sm text-gray-900 whitespace-pre-line">Veuillez nous confirmer l'acceptation des documents présentés et nous transmettre les instructions de paiement correspondantes.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Message envoyé - uniquement pour Correspondance */}
+        {event.nature === "Correspondance" && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-green-500 to-green-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Message envoyé</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type du message</label>
+                <p className="font-semibold text-gray-900">MT799</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date d'envoi</label>
+                <p className="font-semibold text-gray-900">08/08/2026</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Destinataire</label>
+                <div className="bg-white border border-gray-200 rounded-lg p-3 mt-1">
+                  <p className="text-sm text-gray-900 whitespace-pre-line">Société Générale Paris
+29, Boulevard Haussmann
+75009 Paris
+France</p>
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence</label>
+                <p className="font-semibold text-gray-900">SWIFT-2026-0440-01</p>
+              </div>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Instructions envoyées</label>
+              <div className="bg-white border border-gray-200 rounded-lg p-4 mt-2">
+                <p className="text-sm text-gray-900 whitespace-pre-line">Nous confirmons l'acceptation des documents présentés et vous prions de procéder au paiement à l'échéance convenue.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Détails de la modification / ajustement - uniquement pour Modification de la remise et Ajustement de la remise */}
+        {(event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Détails de la modification</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{event.nature === "Ajustement de la remise" ? "Détails de l'ajustement" : "Détails de la modification"}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date de la modification</label>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{event.nature === "Ajustement de la remise" ? "Date de l'ajustement" : "Date de la modification"}</label>
                 <p className="font-semibold text-gray-900">{new Date(event.dateCreation).toLocaleDateString('fr-FR')}</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Description de la modification</label>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{event.nature === "Ajustement de la remise" ? "Description de l'ajustement" : "Description de la modification"}</label>
                 <p className="font-semibold text-gray-900">Extension de la date d'échéance</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4 md:col-span-3">
@@ -122,7 +247,7 @@ export default function EventDetailPage() {
         )}
 
         {/* Partie remettante - uniquement pour Réception de la remise et Modification de la remise */}
-        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+        {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full"></div>
@@ -570,6 +695,7 @@ FRANCE</p>
                     <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Description</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
                     <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Supportée par</th>
                     <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de règlement</th>
                   </tr>
@@ -580,6 +706,7 @@ FRANCE</p>
                     <td className="py-3 px-4 text-gray-600">Commission sur acceptation de traite</td>
                     <td className="py-3 px-4 text-gray-600">EUR</td>
                     <td className="py-3 px-4 text-right font-semibold text-gray-900">1,500 EUR</td>
+                    <td className="py-3 px-4 text-gray-600">Tiré</td>
                     <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
                     <td className="py-3 px-4 text-gray-600">02/02/2026</td>
                   </tr>
@@ -588,6 +715,7 @@ FRANCE</p>
                     <td className="py-3 px-4 text-gray-600">Frais de transmission SWIFT</td>
                     <td className="py-3 px-4 text-gray-600">EUR</td>
                     <td className="py-3 px-4 text-right font-semibold text-gray-900">1,000 EUR</td>
+                    <td className="py-3 px-4 text-gray-600">Tireur</td>
                     <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
                     <td className="py-3 px-4 text-gray-600">02/02/2026</td>
                   </tr>
@@ -632,7 +760,7 @@ FRANCE</p>
         )}
 
         {/* Importateur - uniquement pour Réception de la remise et Modification de la remise */}
-        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+        {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
@@ -656,7 +784,7 @@ FRANCE</p>
         )}
 
         {/* Exportateur - uniquement pour Réception de la remise et Modification de la remise */}
-        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+        {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-green-500 to-green-600 rounded-full"></div>
@@ -680,7 +808,7 @@ FRANCE</p>
         )}
 
         {/* Informations financières - uniquement pour Réception de la remise et Modification de la remise */}
-        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+        {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full"></div>
@@ -691,10 +819,10 @@ FRANCE</p>
                 <label className="text-xs font-medium text-purple-700 uppercase tracking-wider mb-2">Montant des documents présentés</label>
                 <p className="font-bold text-2xl text-purple-900">5,140,000 EUR</p>
               </div>
-              <div className={`bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-6 ${event.nature === "Modification de la remise" ? "border-2 border-orange-500 shadow-md" : ""}`}>
+              <div className={`bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-6 ${event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise" ? "border-2 border-orange-500 shadow-md" : ""}`}>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-medium text-purple-700 uppercase tracking-wider">Date d'échéance</label>
-                  {event.nature === "Modification de la remise" && (
+                  {(event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
                     <span className="text-xs font-medium text-orange-600 uppercase tracking-wider bg-orange-100 px-2 py-1 rounded">Modifié</span>
                   )}
                 </div>
@@ -734,7 +862,7 @@ FRANCE</p>
         )}
 
         {/* Informations sur l'expédition - uniquement pour Réception de la remise et Modification de la remise */}
-        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+        {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
@@ -770,7 +898,7 @@ FRANCE</p>
         )}
 
         {/* Répartition des frais - uniquement pour Réception de la remise et Modification de la remise */}
-        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+        {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
@@ -795,6 +923,7 @@ FRANCE</p>
                     <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Description</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
                     <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Supportée par</th>
                     <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de règlement</th>
                   </tr>
@@ -805,6 +934,7 @@ FRANCE</p>
                     <td className="py-3 px-4 text-gray-600">Commission sur remise documentaire</td>
                     <td className="py-3 px-4 text-gray-600">EUR</td>
                     <td className="py-3 px-4 text-right font-semibold text-gray-900">15,420 EUR</td>
+                    <td className="py-3 px-4 text-gray-600">Tireur</td>
                     <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
                     <td className="py-3 px-4 text-gray-600">11/11/2024</td>
                   </tr>
@@ -813,6 +943,7 @@ FRANCE</p>
                     <td className="py-3 px-4 text-gray-600">Frais de transmission SWIFT</td>
                     <td className="py-3 px-4 text-gray-600">EUR</td>
                     <td className="py-3 px-4 text-right font-semibold text-gray-900">5,140 EUR</td>
+                    <td className="py-3 px-4 text-gray-600">Tiré</td>
                     <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
                     <td className="py-3 px-4 text-gray-600">11/11/2024</td>
                   </tr>
@@ -821,6 +952,7 @@ FRANCE</p>
                     <td className="py-3 px-4 text-gray-600">Frais bancaires correspondant</td>
                     <td className="py-3 px-4 text-gray-600">EUR</td>
                     <td className="py-3 px-4 text-right font-semibold text-gray-900">3,084 EUR</td>
+                    <td className="py-3 px-4 text-gray-600">Tiré</td>
                     <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
                     <td className="py-3 px-4 text-gray-600">11/11/2024</td>
                   </tr>
@@ -829,6 +961,7 @@ FRANCE</p>
                     <td className="py-3 px-4 text-gray-600">Frais postaux</td>
                     <td className="py-3 px-4 text-gray-600">EUR</td>
                     <td className="py-3 px-4 text-right font-semibold text-gray-900">1,028 EUR</td>
+                    <td className="py-3 px-4 text-gray-600">Tiré</td>
                     <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
                     <td className="py-3 px-4 text-gray-600">11/11/2024</td>
                   </tr>
@@ -837,6 +970,7 @@ FRANCE</p>
                     <td className="py-3 px-4 text-gray-600">Taxe sur la valeur ajoutée</td>
                     <td className="py-3 px-4 text-gray-600">EUR</td>
                     <td className="py-3 px-4 text-right font-semibold text-gray-900">1,028 EUR</td>
+                    <td className="py-3 px-4 text-gray-600">Tiré</td>
                     <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
                     <td className="py-3 px-4 text-gray-600">11/11/2024</td>
                   </tr>
@@ -851,7 +985,7 @@ FRANCE</p>
         )}
 
         {/* Informations complémentaires - uniquement pour Réception de la remise et Modification de la remise */}
-        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+        {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-violet-500 to-violet-600 rounded-full"></div>
@@ -887,7 +1021,7 @@ FRANCE</p>
         )}
 
         {/* Détails des documents reçus - uniquement pour Réception de la remise et Modification de la remise */}
-        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+        {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full"></div>
@@ -941,7 +1075,7 @@ FRANCE</p>
         )}
 
         {/* Documents attachés - uniquement pour Réception de la remise et Modification de la remise */}
-        {event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Paiement" && (
+        {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
@@ -996,6 +1130,7 @@ FRANCE</p>
                     <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Description</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
                     <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Supportée par</th>
                     <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de règlement</th>
                   </tr>
@@ -1006,6 +1141,7 @@ FRANCE</p>
                     <td className="py-3 px-4 text-gray-600">Commission sur paiement international</td>
                     <td className="py-3 px-4 text-gray-600">EUR</td>
                     <td className="py-3 px-4 text-right font-semibold text-gray-900">1,500 EUR</td>
+                    <td className="py-3 px-4 text-gray-600">Tiré</td>
                     <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
                     <td className="py-3 px-4 text-gray-600">12/12/2024</td>
                   </tr>
@@ -1014,6 +1150,7 @@ FRANCE</p>
                     <td className="py-3 px-4 text-gray-600">Frais de transmission SWIFT</td>
                     <td className="py-3 px-4 text-gray-600">EUR</td>
                     <td className="py-3 px-4 text-right font-semibold text-gray-900">1,000 EUR</td>
+                    <td className="py-3 px-4 text-gray-600">Tireur</td>
                     <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
                     <td className="py-3 px-4 text-gray-600">12/12/2024</td>
                   </tr>
@@ -1022,6 +1159,7 @@ FRANCE</p>
                     <td className="py-3 px-4 text-gray-600">Frais bancaires correspondant</td>
                     <td className="py-3 px-4 text-gray-600">EUR</td>
                     <td className="py-3 px-4 text-right font-semibold text-gray-900">500 EUR</td>
+                    <td className="py-3 px-4 text-gray-600">Tiré</td>
                     <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
                     <td className="py-3 px-4 text-gray-600">12/12/2024</td>
                   </tr>
@@ -1059,6 +1197,499 @@ FRANCE</p>
                 </div>
               ))}
             </div>
+          </div>
+        )}
+        {/* Documents attachés - uniquement pour Correspondance */}
+        {event.nature === "Correspondance" && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { name: "Message SWIFT MT799", icon: <FileText size={16} /> },
+              ].map((doc, index) => (
+                <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                  <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
+                    {doc.icon}
+                  </div>
+                  <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{doc.name}</span>
+                  <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
+                    <Download size={18} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {/* Écritures comptables - uniquement pour Ecritures comptables manuelles */}
+        {event.nature === "Ecritures comptables manuelles" && event.ecrituresComptables && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Écritures comptables</h2>
+            </div>
+            {(() => {
+              const ecritures = event.ecrituresComptables || [];
+              const totalDebit = ecritures
+                .filter(e => e.sens === "DR")
+                .reduce((sum, e) => sum + e.montant, 0);
+              const totalCredit = ecritures
+                .filter(e => e.sens === "CR")
+                .reduce((sum, e) => sum + e.montant, 0);
+              const devises = Array.from(new Set(ecritures.map(e => e.devise)));
+              const deviseTotal = devises.length === 1 ? devises[0] : "-";
+
+              const formatMontantCell = (montant: number | null) => {
+                if (montant === null || montant === undefined || montant === 0) return "-";
+                return montant.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+              };
+
+              return (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Compte</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Libellé</th>
+                        <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant débit</th>
+                        <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant crédit</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de valeur</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ecritures.map((ecriture, index) => (
+                        <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition">
+                          <td className="py-3 px-4 font-medium text-gray-900 align-top">{ecriture.compte}</td>
+                          <td className="py-3 px-4 text-gray-600 align-top">
+                            <span className="break-words whitespace-normal">{ecriture.libelle}</span>
+                          </td>
+                          <td className="py-3 px-4 text-right font-semibold text-gray-900 align-top">
+                            {ecriture.sens === "DR" ? formatMontantCell(ecriture.montant) : "-"}
+                          </td>
+                          <td className="py-3 px-4 text-right font-semibold text-gray-900 align-top">
+                            {ecriture.sens === "CR" ? formatMontantCell(ecriture.montant) : "-"}
+                          </td>
+                          <td className="py-3 px-4 text-gray-600 align-top">{ecriture.devise}</td>
+                          <td className="py-3 px-4 text-gray-600 align-top">{new Date(ecriture.dateValeur).toLocaleDateString("fr-FR")}</td>
+                        </tr>
+                      ))}
+                      <tr className="bg-indigo-50 font-semibold">
+                        <td className="py-3 px-4 text-gray-900 uppercase tracking-wider text-xs">TOTAL</td>
+                        <td className="py-3 px-4"></td>
+                        <td className="py-3 px-4 text-right text-gray-900">{formatMontantCell(totalDebit)}</td>
+                        <td className="py-3 px-4 text-right text-gray-900">{formatMontantCell(totalCredit)}</td>
+                        <td className="py-3 px-4 text-gray-900">{deviseTotal}</td>
+                        <td className="py-3 px-4 text-gray-900">-</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* Documents attachés - uniquement pour Ecritures comptables manuelles */}
+        {event.nature === "Ecritures comptables manuelles" && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
+            </div>
+            {event.swifts && event.swifts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {event.swifts.map((swift, index) => (
+                  <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                    <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
+                      <FileText size={16} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{swift.type} - {swift.reference}</span>
+                    <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
+                      <Download size={18} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
+            )}
+          </div>
+        )}
+      
+      {/* Frais et commissions - uniquement pour Frais et commission */}
+        {event.nature === "Frais et commission" && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Répartition des frais</h2>
+            </div>
+
+            {/* Répartition Maroc / Étranger */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions au Maroc</label>
+                <p className="font-semibold text-gray-900">{event.fraisMaroc || dossier.donnees.fraisAuMaroc || "-"}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions à l'étranger</label>
+                <p className="font-semibold text-gray-900">{event.fraisEtranger || dossier.donnees.fraisAEtranger || "-"}</p>
+              </div>
+            </div>
+
+            <h3 className="text-md font-semibold text-gray-900 mb-4">Détails des charges</h3>
+            {(() => {
+              const frais = event.fraisCommissions || [];
+              const totalParDevise = frais.reduce((acc, f) => {
+                acc[f.devise] = (acc[f.devise] || 0) + f.montant;
+                return acc;
+              }, {} as Record<string, number>);
+
+              const formatMontant = (montant: number) =>
+                montant.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+              return (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Frais</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Description</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
+                          <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Supportée par</th>
+                          <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de règlement</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {frais.map((f, index) => (
+                          <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition">
+                            <td className="py-3 px-4 font-medium text-gray-900">{f.type}</td>
+                            <td className="py-3 px-4 text-gray-600">{f.description}</td>
+                            <td className="py-3 px-4 text-gray-600">{f.devise}</td>
+                            <td className="py-3 px-4 text-right font-semibold text-gray-900">{formatMontant(f.montant)} {f.devise}</td>
+                            <td className="py-3 px-4 text-gray-600">{f.supportePar}</td>
+                            <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">{f.statut}</span></td>
+                            <td className="py-3 px-4 text-gray-600">{new Date(f.dateReglement).toLocaleDateString("fr-FR")}</td>
+                          </tr>
+                        ))}
+                        <tr className="bg-amber-50 font-semibold">
+                          <td className="py-3 px-4 text-gray-900 uppercase tracking-wider text-xs">TOTAL</td>
+                          <td className="py-3 px-4" colSpan={2}></td>
+                          <td className="py-3 px-4 text-right text-gray-900">
+                            {Object.entries(totalParDevise).map(([devise, montant], i, arr) => (
+                              <span key={devise}>
+                                {formatMontant(montant)} {devise}
+                                {i < arr.length - 1 && <br />}
+                              </span>
+                            ))}
+                          </td>
+                          <td className="py-3 px-4" colSpan={3}></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        )}
+
+      {/* Documents attachés - uniquement pour Frais et commission */}
+        {event.nature === "Frais et commission" && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
+            </div>
+            {event.swifts && event.swifts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {event.swifts.map((swift, index) => (
+                  <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                    <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
+                      <FileText size={16} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{swift.type} - {swift.reference}</span>
+                    <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
+                      <Download size={18} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
+            )}
+          </div>
+        )}
+
+        {/* Détails du retour des documents - uniquement pour Retour des documents */}
+        {event.nature === "Retour des documents" && event.retourDocument?.demande && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Détails du retour des documents</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Initiateur</label>
+                <p className="font-semibold text-gray-900">{event.retourDocument.demande.origine}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date de création</label>
+                <p className="font-semibold text-gray-900">{new Date(event.retourDocument.demande.dateDemande).toLocaleDateString("fr-FR")}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Motif</label>
+                <p className="font-semibold text-gray-900">{event.retourDocument.demande.motif}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Description de la demande</label>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 mt-2">
+                  <p className="text-sm text-gray-900 whitespace-pre-line">{event.retourDocument.demande.description}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Détail de la réponse - uniquement pour Retour des documents et Demande de remise des documents */}
+        {(event.nature === "Retour des documents" || event.nature === "Demande de remise des documents") && event.retourDocument?.reponse && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Détail de la réponse</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Origine de la réponse</label>
+                <p className="font-semibold text-gray-900">{event.retourDocument.reponse.origine}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date de la réponse</label>
+                <p className="font-semibold text-gray-900">{new Date(event.retourDocument.reponse.dateReponse).toLocaleDateString("fr-FR")}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Raison</label>
+                <p className="font-semibold text-gray-900">{event.retourDocument.reponse.raison}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Description de la réponse</label>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 mt-2">
+                  <p className="text-sm text-gray-900 whitespace-pre-line">{event.retourDocument.reponse.description}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Détails de la personne autorisée - uniquement pour Demande de remise des documents */}
+        {event.nature === "Demande de remise des documents" && event.retourDocument?.personneAutorisee && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-violet-500 to-violet-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Détails de la personne autorisée à récupérer les documents</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nom & Prénom</label>
+                <p className="font-semibold text-gray-900">{event.retourDocument.personneAutorisee.nomPrenom}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">N° CIN</label>
+                <p className="font-semibold text-gray-900">{event.retourDocument.personneAutorisee.cin}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Instruction du client</label>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 mt-2">
+                  <p className="text-sm text-gray-900 whitespace-pre-line">{event.retourDocument.personneAutorisee.instructionClient}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Détails des documents - uniquement pour Centralisation des documents */}
+        {event.nature === "Centralisation des documents" && event.centralisationDocument && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Informations sur la remise</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Produit</label>
+                <p className="font-semibold text-gray-900">{event.centralisationDocument.produit}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Client</label>
+                <p className="font-semibold text-gray-900">{event.centralisationDocument.client}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Montant</label>
+                <p className="font-semibold text-gray-900">{event.centralisationDocument.montant.toLocaleString("fr-FR")} {event.centralisationDocument.devise}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Devise</label>
+                <p className="font-semibold text-gray-900">{event.centralisationDocument.devise}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence de la remise</label>
+                <p className="font-semibold text-gray-900">{event.centralisationDocument.referenceInterne}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence externe</label>
+                <p className="font-semibold text-gray-900">{event.centralisationDocument.referenceExterne}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Complétude documentaire - uniquement pour Centralisation des documents */}
+        {event.nature === "Centralisation des documents" && event.centralisationDocument && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Complétude documentaire</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Type document</th>
+                    <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Nombre attendu</th>
+                    <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Nombre reçu</th>
+                    <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Écart</th>
+                    <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {event.centralisationDocument.documents.map((doc, index) => (
+                    <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition">
+                      <td className="py-3 px-4 font-medium text-gray-900">{doc.type}</td>
+                      <td className="py-3 px-4 text-center text-gray-600">{doc.nombreAttendu}</td>
+                      <td className="py-3 px-4 text-center text-gray-600">{doc.nombreRecu}</td>
+                      <td className="py-3 px-4 text-center text-gray-600">{doc.ecart}</td>
+                      <td className="py-3 px-4 text-center">
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${doc.statut === "OK" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
+                          {doc.statut}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  <tr className="bg-amber-50 font-semibold">
+                    <td className="py-3 px-4 text-gray-900 uppercase tracking-wider text-xs" colSpan={4}>Total</td>
+                    <td className="py-3 px-4 text-center text-gray-900">
+                      {event.centralisationDocument.documents.every(d => d.statut === "OK") ? (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Complet</span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Incomplet</span>
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Détails de la transmission - uniquement pour Accusé de réception des documents */}
+        {event.nature === "Accusé de réception des documents" && event.accuseReception && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Détails de la transmission</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Emetteur</label>
+                <p className="font-semibold text-gray-900">{event.accuseReception.emetteur}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Numéro du courrier</label>
+                <p className="font-semibold text-gray-900">{event.accuseReception.numeroCourrier}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date d'envoi</label>
+                <p className="font-semibold text-gray-900">{new Date(event.accuseReception.dateEnvoi).toLocaleDateString("fr-FR")}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Code/Evènement concerné</label>
+                <p className="font-semibold text-gray-900">Réception de la remise</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Motif</label>
+                <p className="font-semibold text-gray-900">{event.accuseReception.motif}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Commentaire</label>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 mt-2">
+                  <p className="text-sm text-gray-900 whitespace-pre-line">{event.accuseReception.commentaire}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Accusé de réception des documents - uniquement pour Accusé de réception des documents */}
+        {event.nature === "Accusé de réception des documents" && event.accuseReception && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-sky-500 to-sky-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Accusé de réception des documents</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Réception effectuée par</label>
+                <p className="font-semibold text-gray-900">{event.accuseReception.receptionEffectueePar}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date et heure de réception</label>
+                <p className="font-semibold text-gray-900">{new Date(event.accuseReception.dateHeureReception).toLocaleString("fr-FR")}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Statut</label>
+                <p className="font-semibold text-gray-900">{event.accuseReception.statutReception}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Commentaire</label>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 mt-2">
+                  <p className="text-sm text-gray-900 whitespace-pre-line">{event.accuseReception.commentaireReception}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Documents attachés - pour Accusé de réception des documents, Centralisation des documents, Retour des documents et Demande de remise des documents */}
+        {(event.nature === "Accusé de réception des documents" || event.nature === "Centralisation des documents" || event.nature === "Retour des documents" || event.nature === "Demande de remise des documents") && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
+            </div>
+            {event.swifts && event.swifts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {event.swifts.map((swift, index) => (
+                  <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                    <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
+                      <FileText size={16} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">
+                      {event.nature === "Demande de remise des documents" ? "Autorisation client" : `${swift.type} - ${swift.reference}`}
+                    </span>
+                    <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
+                      <Download size={18} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
+            )}
           </div>
         )}
       </div>

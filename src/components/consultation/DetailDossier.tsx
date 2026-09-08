@@ -654,35 +654,11 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
                 <td className="py-[7px] px-3 text-[#64748b]">{formatDate(e.dateCreation)}</td>
                 <td className="py-[7px] px-3 text-center">
                   <div className="flex items-center justify-center gap-2">
-                    {e.nature === "Réception de la remise" ? (
+                    {e.nature === "Réception de la remise" || e.nature === "Modification de la remise" || e.nature === "Ajustement de la remise" || e.nature === "Acceptation & Aval de la traite" || e.nature === "Paiement" || e.nature === "Correspondance" || e.nature === "Ecritures comptables manuelles" || e.nature === "Frais et commission" || e.nature === "Retour des documents" || e.nature === "Demande de remise des documents" || e.nature === "Centralisation des documents" || e.nature === "Accusé de réception des documents" || e.nature === "Expiration" ? (
                       <button
                         className="text-[#94a3b8] hover:text-[#e8632b] transition"
                         onClick={() => router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`)}
-                        title="Voir le détail de la réception"
-                      >
-                        <Eye size={15} />
-                      </button>
-                    ) : e.nature === "Modification de la remise" ? (
-                      <button
-                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
-                        onClick={() => router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`)}
-                        title="Voir le détail de la modification"
-                      >
-                        <Eye size={15} />
-                      </button>
-                    ) : e.nature === "Acceptation & Aval de la traite" ? (
-                      <button
-                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
-                        onClick={() => router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`)}
-                        title="Voir le détail de l'acceptation"
-                      >
-                        <Eye size={15} />
-                      </button>
-                    ) : e.nature === "Paiement" ? (
-                      <button
-                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
-                        onClick={() => router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`)}
-                        title="Voir le détail du paiement"
+                        title={`Voir le détail de ${e.nature.toLowerCase()}`}
                       >
                         <Eye size={15} />
                       </button>

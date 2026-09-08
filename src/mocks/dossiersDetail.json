@@ -611,6 +611,49 @@
         "devise": "EUR",
         "dateCreation": "2026-03-05T09:45:00",
         "statut": "VALIDE",
+        "receptionRemise": {
+          "dateEcheance": "2026-09-15",
+          "paiementMultiple": false,
+          "codeAgence": "AGC-TGM-03",
+          "natureOfficeChanges": "0130-Import Export Incoterms",
+          "changementDomiciliation": "Non",
+          "retourRemise": "Non",
+          "escompteDemande": "Non",
+          "financement": "Non",
+          "descriptionMarchandises": "Produits pétroliers",
+          "referenceTransporteur": "BL-445566778",
+          "lieuExpedition": "Trieste",
+          "lieuDestination": "Tanger Med",
+          "dateExpeditionPrevue": "2026-02-20",
+          "navireAvion": "MSC GULSUN",
+          "montantDocumentsPresentes": 21000,
+          "totalFrais": 1050,
+          "intervenants": [
+            { "role": "Partie remettante", "nom": "INTESA SANPAOLO SPA", "adresse": "Piazza San Carlo, Turin", "pays": "Italie" },
+            { "role": "Importateur (Tiré)", "nom": "STE VIVO ENERGY MAROC", "adresse": "Zone Tanger Med", "pays": "Maroc" },
+            { "role": "Exportateur (Tireur)", "nom": "CAVAGNA GROUP SPA", "adresse": "Via Milano 45, Bergamo", "pays": "Italie" }
+          ],
+          "paiements": [
+            { "montant": 21000, "devise": "EUR", "typeTraite": "Contre acceptation", "dateEcheance": "2026-09-15" }
+          ],
+          "frais": [
+            { "type": "Commission d'encaissement", "description": "Commission de traitement", "montant": 630, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "Frais SWIFT", "description": "Frais d'émission SWIFT", "montant": 210, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "Frais de port", "description": "Frais d'envoi des documents", "montant": 105, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "TVA", "description": "Taxe sur la valeur ajoutée", "montant": 105, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" }
+          ],
+          "documentsRecus": [
+            { "type": "Facture commerciale", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
+            { "type": "Packing List", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
+            { "type": "Connaissement (B/L)", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
+            { "type": "Certificat d'origine", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 }
+          ],
+          "suivi": [],
+          "modificationDetails": {
+            "dateModification": "2026-03-05",
+            "description": "Extension de la date d'échéance du 15/08/2026 au 15/09/2026."
+          }
+        },
         "swifts": [
           {
             "reference": "SWIFT-2026-0312-01",
@@ -681,6 +724,37 @@
         "devise": "EUR",
         "dateCreation": "2026-03-20T14:00:00",
         "statut": "VALIDE",
+        "fraisMaroc": "Tiré",
+        "fraisEtranger": "Tireur",
+        "fraisCommissions": [
+          {
+            "type": "Commission d'encaissement",
+            "description": "Commission sur remise documentaire",
+            "devise": "EUR",
+            "montant": 150,
+            "supportePar": "Tireur",
+            "statut": "Réglé",
+            "dateReglement": "2026-03-20"
+          },
+          {
+            "type": "Frais SWIFT",
+            "description": "Frais de transmission SWIFT",
+            "devise": "EUR",
+            "montant": 100,
+            "supportePar": "Tiré",
+            "statut": "Réglé",
+            "dateReglement": "2026-03-20"
+          },
+          {
+            "type": "Frais de correspondant",
+            "description": "Frais bancaires correspondant",
+            "devise": "EUR",
+            "montant": 65,
+            "supportePar": "Tiré",
+            "statut": "Réglé",
+            "dateReglement": "2026-03-20"
+          }
+        ],
         "swifts": [
           {
             "reference": "SWIFT-2026-0340-01",
@@ -715,7 +789,33 @@
         "devise": "EUR",
         "dateCreation": "2026-04-21T10:00:00",
         "statut": "VALIDE",
-        "swifts": []
+        "swifts": [],
+        "ecrituresComptables": [
+          {
+            "compte": "00 0002 R 000031432",
+            "libelle": "FABRITISS",
+            "montant": 3062.04,
+            "devise": "MAD",
+            "sens": "DR",
+            "dateValeur": "2026-02-24"
+          },
+          {
+            "compte": "00 0145 H 000939000-1",
+            "libelle": "+TVA Site central",
+            "montant": 278.37,
+            "devise": "MAD",
+            "sens": "CR",
+            "dateValeur": "2026-02-24"
+          },
+          {
+            "compte": "00 0145 S 000939696",
+            "libelle": "INT.PER S/CPT COURANT EN DEV",
+            "montant": 2783.67,
+            "devise": "MAD",
+            "sens": "CR",
+            "dateValeur": "2026-02-24"
+          }
+        ]
       },
       {
         "reference": "EVT-2026-0335",
@@ -1973,6 +2073,51 @@
         "devise": "USD",
         "dateCreation": "2026-02-15T14:15:00",
         "statut": "VALIDE",
+        "receptionRemise": {
+          "dateEcheance": "2026-05-25",
+          "paiementMultiple": false,
+          "codeAgence": "AGC-CASA-01",
+          "natureOfficeChanges": "0130-Import Export Incoterms",
+          "changementDomiciliation": "Non",
+          "retourRemise": "Non",
+          "escompteDemande": "Non",
+          "financement": "Non",
+          "descriptionMarchandises": "Acier laminé",
+          "referenceTransporteur": "BL-220011993",
+          "lieuExpedition": "Hambourg",
+          "lieuDestination": "Casablanca",
+          "dateExpeditionPrevue": "2026-01-10",
+          "navireAvion": "CMA CGM JULES VERNE",
+          "montantDocumentsPresentes": 1800000,
+          "totalFrais": 90000,
+          "intervenants": [
+            { "role": "Partie remettante", "nom": "Deutsche Bank Frankfurt", "adresse": "Taunusanlage 12, Frankfurt", "pays": "Allemagne" },
+            { "role": "Importateur (Tiré)", "nom": "MAGHREB STEEL SA", "adresse": "Zone Industrielle, Casablanca", "pays": "Maroc" },
+            { "role": "Exportateur (Tireur)", "nom": "MAGHREB STEEL SA", "adresse": "119, Av. de l'Europe, Barcelone", "pays": "Espagne" }
+          ],
+          "paiements": [
+            { "montant": 1800000, "devise": "USD", "typeTraite": "Contre acceptation", "dateEcheance": "2026-05-25" }
+          ],
+          "frais": [
+            { "type": "Commission d'encaissement", "description": "Commission de traitement", "montant": 54000, "devise": "USD", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "Frais SWIFT", "description": "Frais d'émission SWIFT", "montant": 18000, "devise": "USD", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "Frais de correspondant", "description": "Frais banque étrangère", "montant": 10800, "devise": "USD", "supportePar": "Tireur", "statut": "Réglé" },
+            { "type": "Frais de port", "description": "Frais d'envoi documents", "montant": 3600, "devise": "USD", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "TVA", "description": "Taxe sur la valeur ajoutée", "montant": 3600, "devise": "USD", "supportePar": "Tiré", "statut": "Réglé" }
+          ],
+          "documentsRecus": [
+            { "type": "Facture commerciale", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Packing List", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Connaissement (B/L)", "premierEnvoi": 3, "deuxiemeEnvoi": 0, "total": 3 },
+            { "type": "Certificat d'origine", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
+            { "type": "Certificat d'assurance", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 }
+          ],
+          "suivi": [],
+          "modificationDetails": {
+            "dateModification": "2026-02-15",
+            "description": "Extension de la date d'échéance du 25/04/2026 au 25/05/2026."
+          }
+        },
         "swifts": [
           {
             "reference": "SWIFT-2026-0250-01",
@@ -2043,6 +2188,37 @@
         "devise": "USD",
         "dateCreation": "2026-04-24T14:00:00",
         "statut": "VALIDE",
+        "fraisMaroc": "Tiré",
+        "fraisEtranger": "Tireur",
+        "fraisCommissions": [
+          {
+            "type": "Commission d'encaissement",
+            "description": "Commission sur remise documentaire",
+            "devise": "USD",
+            "montant": 25000,
+            "supportePar": "Tireur",
+            "statut": "Réglé",
+            "dateReglement": "2026-04-24"
+          },
+          {
+            "type": "Frais SWIFT",
+            "description": "Frais de transmission SWIFT",
+            "devise": "USD",
+            "montant": 1000,
+            "supportePar": "Tiré",
+            "statut": "Réglé",
+            "dateReglement": "2026-04-24"
+          },
+          {
+            "type": "Frais de correspondant",
+            "description": "Frais bancaires correspondant",
+            "devise": "USD",
+            "montant": 1000,
+            "supportePar": "Tiré",
+            "statut": "Réglé",
+            "dateReglement": "2026-04-24"
+          }
+        ],
         "swifts": [
           {
             "reference": "SWIFT-2026-0330-01",
@@ -2077,7 +2253,33 @@
         "devise": "USD",
         "dateCreation": "2026-04-26T10:00:00",
         "statut": "VALIDE",
-        "swifts": []
+        "swifts": [],
+        "ecrituresComptables": [
+          {
+            "compte": "00 0002 R 000031432",
+            "libelle": "FABRITISS",
+            "montant": 3062.04,
+            "devise": "MAD",
+            "sens": "DR",
+            "dateValeur": "2026-02-24"
+          },
+          {
+            "compte": "00 0145 H 000939000-1",
+            "libelle": "+TVA Site central",
+            "montant": 278.37,
+            "devise": "MAD",
+            "sens": "CR",
+            "dateValeur": "2026-02-24"
+          },
+          {
+            "compte": "00 0145 S 000939696",
+            "libelle": "INT.PER S/CPT COURANT EN DEV",
+            "montant": 2783.67,
+            "devise": "MAD",
+            "sens": "CR",
+            "dateValeur": "2026-02-24"
+          }
+        ]
       }
     ]
   },
@@ -2707,16 +2909,162 @@
       {
         "reference": "EVT-2026-0400",
         "nature": "Réception de la remise",
-        "montant": 650000,
+        "montant": 5140000,
         "devise": "EUR",
         "dateCreation": "2026-05-05T11:10:00",
         "statut": "VALIDE",
+        "receptionRemise": {
+          "dateEcheance": "2026-05-15",
+          "paiementMultiple": true,
+          "codeAgence": "AGC-CASA-01",
+          "natureOfficeChanges": "0130-Import Export Incoterms",
+          "changementDomiciliation": "Non",
+          "retourRemise": "Non",
+          "escompteDemande": "Non",
+          "financement": "Non",
+          "descriptionMarchandises": "Équipements industriels",
+          "referenceTransporteur": "BL-560451598",
+          "lieuExpedition": "Shanghai",
+          "lieuDestination": "Agadir",
+          "dateExpeditionPrevue": "2024-11-15",
+          "navireAvion": "MSC ALEXANDRA",
+          "montantDocumentsPresentes": 5140000,
+          "totalFrais": 25700,
+          "intervenants": [
+            {
+              "role": "Partie remettante",
+              "nom": "Société Générale Paris",
+              "adresse": "15, Rue de la Banque, Paris",
+              "pays": "France"
+            },
+            {
+              "role": "Importateur (Tiré)",
+              "nom": "MAGHREB STEEL SA",
+              "adresse": "56, Bd de la Résistance, Kénitra",
+              "pays": "Maroc"
+            },
+            {
+              "role": "Exportateur (Tireur)",
+              "nom": "MAGHREB STEEL SA",
+              "adresse": "119, Av. de l'Europe, Barcelone",
+              "pays": "Espagne"
+            }
+          ],
+          "paiements": [
+            {
+              "montant": 2570000,
+              "devise": "EUR",
+              "typeTraite": "À vue",
+              "dateEcheance": null
+            },
+            {
+              "montant": 1542000,
+              "devise": "EUR",
+              "typeTraite": "Contre acceptation",
+              "dateEcheance": "2025-01-28"
+            },
+            {
+              "montant": 1028000,
+              "devise": "EUR",
+              "typeTraite": "Pour aval",
+              "dateEcheance": "2025-03-29"
+            }
+          ],
+          "frais": [
+            {
+              "type": "Commission d'encaissement",
+              "description": "Commission de traitement de la remise documentaire",
+              "montant": 15420,
+              "devise": "EUR",
+              "supportePar": "Tireur",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais SWIFT",
+              "description": "Frais d'émission de message SWIFT",
+              "montant": 5140,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de correspondant",
+              "description": "Frais facturés par la banque étrangère",
+              "montant": 3084,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de port",
+              "description": "Frais d'envoi des documents",
+              "montant": 1028,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "TVA",
+              "description": "Taxe sur la valeur ajoutée",
+              "montant": 1028,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            }
+          ],
+          "documentsRecus": [
+            { "type": "Facture commerciale", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Packing List", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Connaissement (B/L)", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Certificat d'origine", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Certificat d'assurance", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 }
+          ],
+          "suivi": [
+            {
+              "titre": "Documents reçus",
+              "statut": "Terminé",
+              "champs": [
+                { "label": "Reçu au niveau", "valeur": "CTN-DEVISES" },
+                { "label": "Date de création", "valeur": "05/05/2026" }
+              ]
+            },
+            {
+              "titre": "Documents transmis à l'agence",
+              "statut": "Terminé",
+              "champs": [
+                { "label": "Emetteur", "valeur": "Bureau d'ordre - CTN-Devises" },
+                { "label": "Numéro du courrier", "valeur": "COUR-2026-0405" },
+                { "label": "Date et heure d'envoi", "valeur": "06/05/2026 09:15:00" }
+              ]
+            },
+            {
+              "titre": "Accusé de réception des documents",
+              "statut": "Reçu",
+              "champs": [
+                { "label": "Réception effectuée par", "valeur": "Préposé A" },
+                { "label": "Date et heure de réception", "valeur": "07/05/2026 14:30:00" },
+                { "label": "Statut", "valeur": "Reçu" },
+                { "label": "Observation", "valeur": "Documents reçus en agence." }
+              ]
+            }
+          ],
+          "accuseReception": {
+            "emetteur": "Bureau d'ordre - CTN-Devises",
+            "numeroCourrier": "COUR-2026-0405",
+            "dateEnvoi": "06/05/2026",
+            "heureEnvoi": "09:15:00",
+            "receptionEffectueePar": "Préposé A",
+            "dateHeureReception": "07/05/2026 14:30:00",
+            "statut": "Reçu",
+            "observation": "Documents reçus en agence."
+          }
+        },
         "swifts": [
           {
             "reference": "SWIFT-2026-0400-01",
             "type": "MT400",
             "dateEmission": "2026-05-05T11:10:00",
-            "contenu": "Réception de la remise documentaire import IRD260000002. Montant : 650 000,00 EUR. Tireur : Société Générale Paris.",
+            "contenu": "Réception de la remise documentaire import IRD260000002. Montant : 5 140 000,00 EUR. Tireur : Société Générale Paris.",
             "fichier": "MT400_IRD260000002_20260505.pdf"
           }
         ]
@@ -2724,10 +3072,122 @@
       {
         "reference": "EVT-2026-0410",
         "nature": "Modification de la remise",
-        "montant": 650000,
+        "montant": 5140000,
         "devise": "EUR",
         "dateCreation": "2026-06-15T14:15:00",
         "statut": "VALIDE",
+        "receptionRemise": {
+          "dateEcheance": "2026-06-30",
+          "paiementMultiple": true,
+          "codeAgence": "AGC-CASA-01",
+          "natureOfficeChanges": "0130-Import Export Incoterms",
+          "changementDomiciliation": "Non",
+          "retourRemise": "Non",
+          "escompteDemande": "Non",
+          "financement": "Non",
+          "descriptionMarchandises": "Équipements industriels",
+          "referenceTransporteur": "BL-560451598",
+          "lieuExpedition": "Shanghai",
+          "lieuDestination": "Agadir",
+          "dateExpeditionPrevue": "2024-11-15",
+          "navireAvion": "MSC ALEXANDRA",
+          "montantDocumentsPresentes": 5140000,
+          "totalFrais": 25700,
+          "intervenants": [
+            {
+              "role": "Partie remettante",
+              "nom": "Société Générale Paris",
+              "adresse": "15, Rue de la Banque, Paris",
+              "pays": "France"
+            },
+            {
+              "role": "Importateur (Tiré)",
+              "nom": "MAGHREB STEEL SA",
+              "adresse": "56, Bd de la Résistance, Kénitra",
+              "pays": "Maroc"
+            },
+            {
+              "role": "Exportateur (Tireur)",
+              "nom": "MAGHREB STEEL SA",
+              "adresse": "119, Av. de l'Europe, Barcelone",
+              "pays": "Espagne"
+            }
+          ],
+          "paiements": [
+            {
+              "montant": 2570000,
+              "devise": "EUR",
+              "typeTraite": "À vue",
+              "dateEcheance": null
+            },
+            {
+              "montant": 1542000,
+              "devise": "EUR",
+              "typeTraite": "Contre acceptation",
+              "dateEcheance": "2025-02-28"
+            },
+            {
+              "montant": 1028000,
+              "devise": "EUR",
+              "typeTraite": "Pour aval",
+              "dateEcheance": "2025-04-29"
+            }
+          ],
+          "frais": [
+            {
+              "type": "Commission d'encaissement",
+              "description": "Commission de traitement de la remise documentaire",
+              "montant": 15420,
+              "devise": "EUR",
+              "supportePar": "Tireur",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais SWIFT",
+              "description": "Frais d'émission de message SWIFT",
+              "montant": 5140,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de correspondant",
+              "description": "Frais facturés par la banque étrangère",
+              "montant": 3084,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de port",
+              "description": "Frais d'envoi des documents",
+              "montant": 1028,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "TVA",
+              "description": "Taxe sur la valeur ajoutée",
+              "montant": 1028,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            }
+          ],
+          "documentsRecus": [
+            { "type": "Facture commerciale", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Packing List", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Connaissement (B/L)", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Certificat d'origine", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Certificat d'assurance", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 }
+          ],
+          "suivi": [],
+          "modificationDetails": {
+            "dateModification": "2026-06-15",
+            "description": "Extension de la date d'échéance du 15/05/2026 au 30/06/2026. Ajustement des conditions de paiement."
+          }
+        },
         "swifts": [
           {
             "reference": "SWIFT-2026-0410-01",
@@ -2798,6 +3258,37 @@
         "devise": "EUR",
         "dateCreation": "2026-08-08T14:00:00",
         "statut": "VALIDE",
+        "fraisMaroc": "Tiré",
+        "fraisEtranger": "Tireur",
+        "fraisCommissions": [
+          {
+            "type": "Commission d'encaissement",
+            "description": "Commission sur remise documentaire",
+            "devise": "EUR",
+            "montant": 9000,
+            "supportePar": "Tireur",
+            "statut": "Réglé",
+            "dateReglement": "2026-08-08"
+          },
+          {
+            "type": "Frais SWIFT",
+            "description": "Frais de transmission SWIFT",
+            "devise": "EUR",
+            "montant": 500,
+            "supportePar": "Tiré",
+            "statut": "Réglé",
+            "dateReglement": "2026-08-08"
+          },
+          {
+            "type": "Frais de correspondant",
+            "description": "Frais bancaires correspondant",
+            "devise": "EUR",
+            "montant": 250,
+            "supportePar": "Tiré",
+            "statut": "Réglé",
+            "dateReglement": "2026-08-08"
+          }
+        ],
         "swifts": [
           {
             "reference": "SWIFT-2026-0450-01",
@@ -2809,19 +3300,72 @@
         ]
       },
       {
-        "reference": "EVT-2026-0460",
-        "nature": "Clôture de la remise",
+        "reference": "EVT-2026-0490",
+        "nature": "Retour des documents",
         "montant": 0,
         "devise": "EUR",
-        "dateCreation": "2026-08-10T16:00:00",
+        "dateCreation": "2026-08-13T10:00:00",
         "statut": "VALIDE",
+        "retourDocument": {
+          "typeDemande": "Demande",
+          "demande": {
+            "origine": "Back-office",
+            "dateDemande": "2026-08-13",
+            "motif": "Documents à retourner",
+            "description": "Demande de retour des documents suite au non-paiement."
+          },
+          "reponse": {
+            "origine": "Agence",
+            "dateReponse": "2026-08-14",
+            "raison": "Retour effectué",
+            "description": "Les documents ont été retournés."
+          }
+        },
         "swifts": [
           {
-            "reference": "SWIFT-2026-0460-01",
+            "reference": "SWIFT-2026-0490-01",
             "type": "MT799",
-            "dateEmission": "2026-08-10T16:00:00",
-            "contenu": "Clôture de la remise documentaire import IRD260000002. Opération terminée.",
-            "fichier": "MT799_IRD260000002_20260810.pdf"
+            "dateEmission": "2026-08-13T10:00:00",
+            "contenu": "Demande de retour des documents pour la remise documentaire import IRD260000002.",
+            "fichier": "MT799_IRD260000002_20260813.pdf"
+          },
+          {
+            "reference": "SWIFT-2026-0490-02",
+            "type": "MT799",
+            "dateEmission": "2026-08-14T11:00:00",
+            "contenu": "Réponse au retour des documents pour la remise documentaire import IRD260000002.",
+            "fichier": "MT799_IRD260000002_20260814.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0500",
+        "nature": "Demande de remise des documents",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-08-14T11:00:00",
+        "statut": "VALIDE",
+        "retourDocument": {
+          "typeDemande": "Demande",
+          "demande": {
+            "origine": "Client",
+            "dateDemande": "2026-08-14",
+            "motif": "Récupération des documents",
+            "description": "Demande de remise des documents à un tiers autorisé."
+          },
+          "personneAutorisee": {
+            "nomPrenom": "Ahmed Benjelloun",
+            "cin": "AB123456",
+            "instructionClient": "Autorisation de remettre les documents à Monsieur Ahmed Benjelloun, porteur de la CIN ci-contre."
+          }
+        },
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0500-01",
+            "type": "MT799",
+            "dateEmission": "2026-08-14T11:00:00",
+            "contenu": "Instruction du client pour la remise documentaire import IRD260000002.",
+            "fichier": "MT799_IRD260000002_20260814.pdf"
           }
         ]
       },
@@ -2832,7 +3376,176 @@
         "devise": "EUR",
         "dateCreation": "2026-08-11T10:00:00",
         "statut": "VALIDE",
-        "swifts": []
+        "swifts": [],
+        "ecrituresComptables": [
+          {
+            "compte": "00 0002 R 000031432",
+            "libelle": "FABRITISS",
+            "montant": 3062.04,
+            "devise": "MAD",
+            "sens": "DR",
+            "dateValeur": "2026-02-24"
+          },
+          {
+            "compte": "00 0145 H 000939000-1",
+            "libelle": "+TVA Site central",
+            "montant": 278.37,
+            "devise": "MAD",
+            "sens": "CR",
+            "dateValeur": "2026-02-24"
+          },
+          {
+            "compte": "00 0145 S 000939696",
+            "libelle": "INT.PER S/CPT COURANT EN DEV",
+            "montant": 2783.67,
+            "devise": "MAD",
+            "sens": "CR",
+            "dateValeur": "2026-02-24"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0480",
+        "nature": "Ajustement de la remise",
+        "montant": 5140000,
+        "devise": "EUR",
+        "dateCreation": "2026-08-12T09:30:00",
+        "statut": "VALIDE",
+        "receptionRemise": {
+          "dateEcheance": "2026-07-15",
+          "paiementMultiple": true,
+          "codeAgence": "AGC-CASA-01",
+          "natureOfficeChanges": "0130-Import Export Incoterms",
+          "changementDomiciliation": "Non",
+          "retourRemise": "Non",
+          "escompteDemande": "Non",
+          "financement": "Non",
+          "descriptionMarchandises": "Équipements industriels",
+          "referenceTransporteur": "BL-560451598",
+          "lieuExpedition": "Shanghai",
+          "lieuDestination": "Agadir",
+          "dateExpeditionPrevue": "2024-11-15",
+          "navireAvion": "MSC ALEXANDRA",
+          "montantDocumentsPresentes": 5140000,
+          "totalFrais": 25700,
+          "intervenants": [
+            { "role": "Partie remettante", "nom": "Société Générale Paris", "adresse": "15, Rue de la Banque, Paris", "pays": "France" },
+            { "role": "Importateur (Tiré)", "nom": "MAGHREB STEEL SA", "adresse": "56, Bd de la Résistance, Kénitra", "pays": "Maroc" },
+            { "role": "Exportateur (Tireur)", "nom": "MAGHREB STEEL SA", "adresse": "119, Av. de l'Europe, Barcelone", "pays": "Espagne" }
+          ],
+          "paiements": [
+            { "montant": 2570000, "devise": "EUR", "typeTraite": "À vue", "dateEcheance": null },
+            { "montant": 1542000, "devise": "EUR", "typeTraite": "Contre acceptation", "dateEcheance": "2025-03-28" },
+            { "montant": 1028000, "devise": "EUR", "typeTraite": "Pour aval", "dateEcheance": "2025-05-29" }
+          ],
+          "frais": [
+            { "type": "Commission d'encaissement", "description": "Commission de traitement", "montant": 15420, "devise": "EUR", "supportePar": "Tireur", "statut": "Réglé" },
+            { "type": "Frais SWIFT", "description": "Frais d'émission SWIFT", "montant": 5140, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "Frais de correspondant", "description": "Frais banque étrangère", "montant": 3084, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "Frais de port", "description": "Frais d'envoi documents", "montant": 1028, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "TVA", "description": "Taxe sur la valeur ajoutée", "montant": 1028, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" }
+          ],
+          "documentsRecus": [
+            { "type": "Facture commerciale", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Packing List", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Connaissement (B/L)", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Certificat d'origine", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Certificat d'assurance", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 }
+          ],
+          "suivi": [],
+          "modificationDetails": {
+            "dateModification": "2026-08-12",
+            "description": "Ajustement du montant et des conditions de paiement. Modification des traites."
+          }
+        },
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0480-01",
+            "type": "MT799",
+            "dateEmission": "2026-08-12T09:30:00",
+            "contenu": "Ajustement de la remise documentaire import IRD260000002. Modification du montant et des conditions.",
+            "fichier": "MT799_IRD260000002_20260812.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0460",
+        "nature": "Clôture de la remise",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-08-15T16:00:00",
+        "statut": "VALIDE",
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0460-01",
+            "type": "MT799",
+            "dateEmission": "2026-08-15T16:00:00",
+            "contenu": "Clôture de la remise documentaire import IRD260000002. Opération terminée.",
+            "fichier": "MT799_IRD260000002_20260810.pdf"
+          }
+        ]
+      },
+      {
+        "reference": "EVT-2026-0510",
+        "nature": "Expiration",
+        "montant": 5140000,
+        "devise": "EUR",
+        "dateCreation": "2026-08-20T10:00:00",
+        "statut": "EXPIRE",
+        "expiration": {
+          "libelleEvenement": "Expiration",
+          "referenceCorrespondant": "COR-451598",
+          "montantDocuments": 5140000,
+          "montantPaye": 5140000,
+          "montantRestant": 0,
+          "frais": [
+            {
+              "type": "Commission d'encaissement",
+              "description": "Commission de traitement de la remise documentaire",
+              "devise": "EUR",
+              "montant": 10280,
+              "supportePar": "Tireur",
+              "statut": "En attente",
+              "dateReglement": null
+            },
+            {
+              "type": "Frais SWIFT",
+              "description": "Frais d'émission de message SWIFT",
+              "devise": "EUR",
+              "montant": 150,
+              "supportePar": "Tireur",
+              "statut": "En attente",
+              "dateReglement": null
+            },
+            {
+              "type": "Frais de correspondant",
+              "description": "Frais facturés par la banque étrangère",
+              "devise": "EUR",
+              "montant": 5140,
+              "supportePar": "Tireur",
+              "statut": "En attente",
+              "dateReglement": null
+            },
+            {
+              "type": "Frais de port",
+              "description": "Frais d'envoi des documents",
+              "devise": "EUR",
+              "montant": 120,
+              "supportePar": "Tireur",
+              "statut": "En attente",
+              "dateReglement": null
+            }
+          ]
+        },
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0510-01",
+            "type": "MT799",
+            "dateEmission": "2026-08-20T10:00:00",
+            "contenu": "Expiration de la remise documentaire import IRD260000002. Montant : 5 140 000,00 EUR.",
+            "fichier": "MT799_IRD260000002_20260820.pdf"
+          }
+        ]
       }
     ]
   },
@@ -2904,6 +3617,49 @@
         "devise": "MAD",
         "dateCreation": "2026-06-20T14:15:00",
         "statut": "VALIDE",
+        "receptionRemise": {
+          "dateEcheance": "2026-08-30",
+          "paiementMultiple": false,
+          "codeAgence": "AGC-AGADIR-05",
+          "natureOfficeChanges": "0130-Import Export Incoterms",
+          "changementDomiciliation": "Non",
+          "retourRemise": "Non",
+          "escompteDemande": "Non",
+          "financement": "Non",
+          "descriptionMarchandises": "Matériel logistique",
+          "referenceTransporteur": "BL-778899001",
+          "lieuExpedition": "Marseille",
+          "lieuDestination": "Agadir",
+          "dateExpeditionPrevue": "2026-04-05",
+          "navireAvion": "MSC GENEVA",
+          "montantDocumentsPresentes": 950000,
+          "totalFrais": 47500,
+          "intervenants": [
+            { "role": "Partie remettante", "nom": "BMCE Bank", "adresse": "Bd Mohammed V, Casablanca", "pays": "Maroc" },
+            { "role": "Importateur (Tiré)", "nom": "SAHARA LOGISTICS", "adresse": "Zone Industrielle, Agadir", "pays": "Maroc" },
+            { "role": "Exportateur (Tireur)", "nom": "CMA CGM Marseille", "adresse": "Quai d'Arenc, Marseille", "pays": "France" }
+          ],
+          "paiements": [
+            { "montant": 950000, "devise": "MAD", "typeTraite": "Contre acceptation", "dateEcheance": "2026-08-30" }
+          ],
+          "frais": [
+            { "type": "Commission d'encaissement", "description": "Commission de traitement", "montant": 28500, "devise": "MAD", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "Frais SWIFT", "description": "Frais d'émission SWIFT", "montant": 9500, "devise": "MAD", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "Frais de port", "description": "Frais d'envoi documents", "montant": 4750, "devise": "MAD", "supportePar": "Tiré", "statut": "Réglé" },
+            { "type": "TVA", "description": "Taxe sur la valeur ajoutée", "montant": 4750, "devise": "MAD", "supportePar": "Tiré", "statut": "Réglé" }
+          ],
+          "documentsRecus": [
+            { "type": "Facture commerciale", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
+            { "type": "Packing List", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
+            { "type": "Connaissement (B/L)", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
+            { "type": "Certificat d'origine", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 }
+          ],
+          "suivi": [],
+          "modificationDetails": {
+            "dateModification": "2026-06-20",
+            "description": "Extension de la date d'échéance du 30/07/2026 au 30/08/2026."
+          }
+        },
         "swifts": [
           {
             "reference": "SWIFT-2026-0360-01",
@@ -2974,6 +3730,37 @@
         "devise": "MAD",
         "dateCreation": "2026-07-28T14:00:00",
         "statut": "VALIDE",
+        "fraisMaroc": "Tiré",
+        "fraisEtranger": "Tireur",
+        "fraisCommissions": [
+          {
+            "type": "Commission d'encaissement",
+            "description": "Commission sur remise documentaire",
+            "devise": "MAD",
+            "montant": 12000,
+            "supportePar": "Tireur",
+            "statut": "Réglé",
+            "dateReglement": "2026-07-28"
+          },
+          {
+            "type": "Frais SWIFT",
+            "description": "Frais de transmission SWIFT",
+            "devise": "MAD",
+            "montant": 1500,
+            "supportePar": "Tiré",
+            "statut": "Réglé",
+            "dateReglement": "2026-07-28"
+          },
+          {
+            "type": "Frais de correspondant",
+            "description": "Frais bancaires correspondant",
+            "devise": "MAD",
+            "montant": 750,
+            "supportePar": "Tiré",
+            "statut": "Réglé",
+            "dateReglement": "2026-07-28"
+          }
+        ],
         "swifts": [
           {
             "reference": "SWIFT-2026-0400-01",
@@ -3008,7 +3795,213 @@
         "devise": "MAD",
         "dateCreation": "2026-07-31T10:00:00",
         "statut": "VALIDE",
-        "swifts": []
+        "swifts": [],
+        "ecrituresComptables": [
+          {
+            "compte": "00 0002 R 000031432",
+            "libelle": "FABRITISS",
+            "montant": 3062.04,
+            "devise": "MAD",
+            "sens": "DR",
+            "dateValeur": "2026-02-24"
+          },
+          {
+            "compte": "00 0145 H 000939000-1",
+            "libelle": "+TVA Site central",
+            "montant": 278.37,
+            "devise": "MAD",
+            "sens": "CR",
+            "dateValeur": "2026-02-24"
+          },
+          {
+            "compte": "00 0145 S 000939696",
+            "libelle": "INT.PER S/CPT COURANT EN DEV",
+            "montant": 2783.67,
+            "devise": "MAD",
+            "sens": "CR",
+            "dateValeur": "2026-02-24"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "reference": "IRD260000004",
+    "produit": "IRD",
+    "produitLibelle": "Remise documentaire import",
+    "client": "AGRO EXPORT MAROC",
+    "statut": "EN_COURS",
+    "dateMiseAJour": "2026-06-20T10:00:00",
+    "clientInfo": {
+      "codeClient": "CLI-0201",
+      "agenceRattachement": "Agence Tanger",
+      "roleOperation": "Importateur (Tiré)"
+    },
+    "agenceInfo": {
+      "referenceCTN": "CTN-IRD-0102-26",
+      "agenceTraitante": "AGC-TANGER-02",
+      "gestionnaire": "Fatima Zahra El Alami",
+      "datePriseEnCharge": "20/06/2026",
+      "statutOperationnel": "En traitement",
+      "controleDocumentaire": "0 réserve",
+      "prochaineAction": "Suivi paiement",
+      "noteInterne": "Client agroalimentaire, remise à vue."
+    },
+    "donnees": {
+      "client": "AGRO EXPORT MAROC",
+      "tireur": "BNP Paribas London",
+      "partieRemettante": "BNP Paribas London",
+      "montantRemise": { "valeur": 320000, "devise": "USD" },
+      "encours": { "valeur": 320000, "devise": "USD" },
+      "typeFrais": "Tiré",
+      "referenceOperation": "IRD260000004",
+      "autreReference": "EXT778501",
+      "conditionsRemiseDocuments": "Documents contre paiement",
+      "dateEcheance": "2026-07-20",
+      "fraisAuMaroc": "Tiré",
+      "fraisAEtranger": "Tireur",
+      "referencesTitresImportation": [
+        "TI-2025-10201"
+      ]
+    },
+    "evenements": [
+      {
+        "reference": "EVT-2026-0610",
+        "nature": "Réception de la remise",
+        "montant": 320000,
+        "devise": "USD",
+        "dateCreation": "2026-06-20T10:00:00",
+        "statut": "VALIDE",
+        "receptionRemise": {
+          "dateEcheance": "2026-07-20",
+          "paiementMultiple": false,
+          "codeAgence": "AGC-TANGER-02",
+          "natureOfficeChanges": "0130-Import Export Incoterms",
+          "changementDomiciliation": "Non",
+          "retourRemise": "Non",
+          "escompteDemande": "Non",
+          "financement": "Non",
+          "descriptionMarchandises": "Produits agricoles surgelés",
+          "referenceTransporteur": "BL-998877665",
+          "lieuExpedition": "Rotterdam",
+          "lieuDestination": "Tanger Med",
+          "dateExpeditionPrevue": "2026-06-10",
+          "navireAvion": "CMA CGM ANTIBES",
+          "montantDocumentsPresentes": 320000,
+          "totalFrais": 6400,
+          "intervenants": [
+            {
+              "role": "Partie remettante",
+              "nom": "BNP Paribas London",
+              "adresse": "10, Queen Victoria Street, London",
+              "pays": "Royaume-Uni"
+            },
+            {
+              "role": "Importateur (Tiré)",
+              "nom": "AGRO EXPORT MAROC",
+              "adresse": "Zone Portuaire, Tanger Med",
+              "pays": "Maroc"
+            },
+            {
+              "role": "Exportateur (Tireur)",
+              "nom": "FROZEN FOODS LTD",
+              "adresse": "45, Thames Road, London",
+              "pays": "Royaume-Uni"
+            }
+          ],
+          "paiements": [
+            {
+              "montant": 320000,
+              "devise": "USD",
+              "typeTraite": "À vue",
+              "dateEcheance": null
+            }
+          ],
+          "frais": [
+            {
+              "type": "Commission d'encaissement",
+              "description": "Commission de traitement de la remise documentaire",
+              "montant": 3840,
+              "devise": "USD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais SWIFT",
+              "description": "Frais d'émission de message SWIFT",
+              "montant": 640,
+              "devise": "USD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de correspondant",
+              "description": "Frais facturés par la banque étrangère",
+              "montant": 1280,
+              "devise": "USD",
+              "supportePar": "Tireur",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de port",
+              "description": "Frais d'envoi des documents",
+              "montant": 320,
+              "devise": "USD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "TVA",
+              "description": "Taxe sur la valeur ajoutée",
+              "montant": 320,
+              "devise": "USD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            }
+          ],
+          "documentsRecus": [
+            { "type": "Facture commerciale", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
+            { "type": "Packing List", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
+            { "type": "Connaissement (B/L)", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
+            { "type": "Certificat d'origine", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
+            { "type": "Certificat phytosanitaire", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 }
+          ],
+          "suivi": [
+            {
+              "titre": "Documents reçus",
+              "statut": "Terminé",
+              "champs": [
+                { "label": "Reçu au niveau", "valeur": "CTN-DEVISES" },
+                { "label": "Date de création", "valeur": "20/06/2026" }
+              ]
+            },
+            {
+              "titre": "Documents transmis à l'agence",
+              "statut": "Terminé",
+              "champs": [
+                { "label": "Emetteur", "valeur": "Bureau d'ordre - CTN-Devises" },
+                { "label": "Numéro du courrier", "valeur": "COUR-2026-0610" },
+                { "label": "Date et heure d'envoi", "valeur": "21/06/2026 08:45:00" }
+              ]
+            },
+            {
+              "titre": "Accusé de réception des documents",
+              "statut": "Non reçu",
+              "champs": [
+                { "label": "Statut", "valeur": "Non reçu" }
+              ]
+            }
+          ]
+        },
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0610-01",
+            "type": "MT400",
+            "dateEmission": "2026-06-20T10:00:00",
+            "contenu": "Réception de la remise documentaire import IRD260000004. Montant : 320 000,00 USD. Tireur : BNP Paribas London.",
+            "fichier": "MT400_IRD260000004_20260620.pdf"
+          }
+        ]
       }
     ]
   }

@@ -50,9 +50,20 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Remises documentaires", 
         icon: <FileSpreadsheet size={18} />,
         children: [
-          { href: "/remises-doc/import", label: "Import", icon: <ArrowRight size={14} />, isSubItem: true },
+          { 
+            href: "/remises-doc/import", 
+            label: "Import", 
+            icon: <ArrowRight size={14} />, 
+            isSubItem: true,
+            children: [
+              { href: "/courriers", label: "Centralisation des documents", icon: <Mail size={14} />, isSubItem: true },
+              { href: "/remises-doc/import/acceptation-aval", label: "Acceptation & Aval", icon: <FileText size={14} />, isSubItem: true },
+              { href: "/remises-doc/import/paiement", label: "Paiement", icon: <DollarSign size={14} />, isSubItem: true },
+              { href: "/remises-doc/import/instruction-client", label: "Instruction du client", icon: <FileText size={14} />, isSubItem: true },
+              { href: "/remises-doc/import/retour-documents", label: "Retour des documents", icon: <ArrowLeft size={14} />, isSubItem: true },
+            ]
+          },
           { href: "/remises-doc/export", label: "Export", icon: <ArrowLeft size={14} />, isSubItem: true },
-          { href: "/courriers", label: "Centralisation des courriers", icon: <Mail size={14} />, isSubItem: true },
         ]
       },
       { 
