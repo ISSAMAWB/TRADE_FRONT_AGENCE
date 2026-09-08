@@ -8,19 +8,71 @@ import Button from "@/components/ui/Button";
 import Shell from "@/components/Shell";
 import ReceptionRemiseDetail from "@/components/consultation/ReceptionRemiseDetail";
 
+function TrackingDocuments({ suivi }: { suivi: any[] }) {
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-1 h-6 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
+        <h2 className="text-lg font-semibold text-gray-900">Tracking de l'envoi des documents</h2>
+      </div>
+      <div className="relative pl-4">
+        {suivi.map((etape, idx) => (
+          <div key={idx} className="relative pb-8 last:pb-0">
+            {idx < suivi.length - 1 && (
+              <div className="absolute left-[9px] top-6 w-0.5 h-full bg-gray-200"></div>
+            )}
+            <div className="flex items-start gap-4">
+              <div className="relative z-10 w-5 h-5 rounded-full bg-teal-600 ring-4 ring-teal-50"></div>
+              <div className="flex-1 -mt-1">
+                <div className="flex flex-wrap items-center gap-3 mb-2">
+                  <h3 className="text-sm font-bold text-gray-900">{etape.titre}</h3>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                    etape.statut === "Terminé" || etape.statut === "Reçu"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}>
+                    {etape.statut}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {etape.champs.map((champ, cidx) => (
+                    <div key={cidx}>
+                      <p className="text-xs text-gray-500">{champ.label}</p>
+                      <p className="text-sm font-semibold text-gray-900">{champ.valeur}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function EventDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const [paiementMultiple, setPaiementMultiple] = useState(false);
   const [changementDomiciliation, setChangementDomiciliation] = useState("NON");
   const [retourRemise, setRetourRemise] = useState("NON");
   const [escompteDemande, setEscompteDemande] = useState("NON");
   const [financement, setFinancement] = useState("NON");
+  const [ongletPaiement, setOngletPaiement] = useState<"frais" | "titres" | "attaches">("frais");
+  const [ongletAcceptation, setOngletAcceptation] = useState<"frais" | "attaches">("frais");
+  const [ongletPaiementTop, setOngletPaiementTop] = useState<"detail" | "tracking">("detail");
+  const [ongletAcceptationTop, setOngletAcceptationTop] = useState<"detail" | "tracking">("detail");
   const dossierId = params.id as string;
   const eventId = params.eventId as string;
 
   const dossier = dossiersDetail.find((d) => d.reference === dossierId);
   const event = dossier?.evenements.find((e) => e.reference === eventId);
+
+  const showInfosGenerales = !event
+    ? false
+    : (event.nature !== "Paiement" && event.nature !== "Acceptation & Aval de la traite") ||
+      (event.nature === "Paiement" && ongletPaiementTop === "detail") ||
+      (event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail");
 
   if (!dossier || !event) {
     return (
@@ -62,13 +114,60 @@ export default function EventDetailPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Onglets top - Paiement */}
+        {event.nature === "Paiement" ? (
+          <div className="flex flex-wrap border-b border-gray-200 mb-6">
+            {[
+              { id: "detail", label: "Détail de l'événement" },
+              { id: "tracking", label: "Tracking de l'envoi des documents" },
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setOngletPaiementTop(t.id as "detail" | "tracking")}
+                className={`px-5 py-3 text-sm font-semibold transition border-b-2 ${
+                  ongletPaiementTop === t.id
+                    ? "border-orange-600 text-orange-600"
+                    : "border-transparent text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {/* Onglets top - Acceptation & Aval de la traite */}
+        {event.nature === "Acceptation & Aval de la traite" ? (
+          <div className="flex flex-wrap border-b border-gray-200 mb-6">
+            {[
+              { id: "detail", label: "Détail de l'événement" },
+              { id: "tracking", label: "Tracking de l'envoi des documents" },
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setOngletAcceptationTop(t.id as "detail" | "tracking")}
+                className={`px-5 py-3 text-sm font-semibold transition border-b-2 ${
+                  ongletAcceptationTop === t.id
+                    ? "border-orange-600 text-orange-600"
+                    : "border-transparent text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {/* Tracking de l'envoi des documents - Paiement */}
+
         {/* Informations générales */}
+        {showInfosGenerales ? (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-1 h-6 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
             <h2 className="text-lg font-semibold text-gray-900">Informations générales</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className={`grid grid-cols-1 ${event.nature === "Expiration" ? "md:grid-cols-3" : "md:grid-cols-2"} gap-6`}>
             {event.nature !== "Centralisation des documents" && (
               <div className="bg-gray-50 rounded-lg p-4">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence de la remise</label>
@@ -81,7 +180,19 @@ export default function EventDetailPage() {
                 <p className="font-semibold text-gray-900">{new Date(event.dateCreation).toLocaleDateString('fr-FR')}</p>
               </div>
             )}
-            {event.nature !== "Correspondance" && event.nature !== "Ecritures comptables manuelles" && event.nature !== "Frais et commission" && event.nature !== "Retour des documents" && event.nature !== "Demande de remise des documents" && event.nature !== "Centralisation des documents" && event.nature !== "Accusé de réception des documents" && (
+            {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence du correspondant</label>
+                <p className="font-semibold text-gray-900">{dossier.donnees["referenceCorrespondant"] ? String(dossier.donnees["referenceCorrespondant"]) : "—"}</p>
+              </div>
+            )}
+            {event.nature === "Expiration" && event.expiration && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence du correspondant</label>
+                <p className="font-semibold text-gray-900">{event.expiration.referenceCorrespondant}</p>
+              </div>
+            )}
+            {event.nature !== "Correspondance" && event.nature !== "Ecritures comptables manuelles" && event.nature !== "Frais et commission" && event.nature !== "Retour des documents" && event.nature !== "Demande de remise des documents" && event.nature !== "Centralisation des documents" && event.nature !== "Accusé de réception des documents" && event.nature !== "Expiration" && (
               <div className={`bg-gray-50 rounded-lg p-4 ${event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise" ? "border-2 border-orange-500 shadow-md" : ""}`}>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Conditions de remise des documents</label>
@@ -128,21 +239,16 @@ export default function EventDetailPage() {
                 <p className="font-semibold text-gray-900">{event.accuseReception?.typeEvenement} / {event.reference}</p>
               </div>
             )}
-            {event.nature !== "Paiement" && event.nature !== "Correspondance" && event.nature !== "Ecritures comptables manuelles" && event.nature !== "Frais et commission" && event.nature !== "Retour des documents" && event.nature !== "Demande de remise des documents" && event.nature !== "Centralisation des documents" && event.nature !== "Accusé de réception des documents" && (
-              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={paiementMultiple}
-                    onChange={(e) => setPaiementMultiple(e.target.checked)}
-                    className="w-5 h-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                  />
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Paiement multiple</span>
-                </label>
-              </div>
-            )}
+
           </div>
         </div>
+        ) : null}
+
+
+        {event.nature === "Paiement" && ongletPaiementTop === "tracking" && <TrackingDocuments suivi={event.suivi} />}
+
+        {/* Tracking de l'envoi des documents - Acceptation & Aval de la traite */}
+        {event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "tracking" && <TrackingDocuments suivi={event.suivi} />}
 
         {/* Message reçu - uniquement pour Correspondance */}
         {event.nature === "Correspondance" && (
@@ -253,7 +359,11 @@ France</p>
               <div className="w-1 h-6 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full"></div>
               <h2 className="text-lg font-semibold text-gray-900">Partie remettante</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nature de la partie remettante</label>
+                <p className="font-semibold text-gray-900">Banque étrangère</p>
+              </div>
               <div className="bg-gray-50 rounded-lg p-4">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nom</label>
                 <p className="font-semibold text-gray-900">{dossier.donnees.partieRemettante}</p>
@@ -271,7 +381,7 @@ France</p>
         )}
 
         {/* Détails de l'acceptation - uniquement pour Acceptation & Aval de la traite */}
-        {event.nature === "Acceptation & Aval de la traite" && (
+        {event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
@@ -323,7 +433,7 @@ MAROC</p>
         )}
 
         {/* Information de la partie à notifier - uniquement pour Acceptation & Aval de la traite */}
-        {event.nature === "Acceptation & Aval de la traite" && (
+        {event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-green-500 to-green-600 rounded-full"></div>
@@ -377,7 +487,7 @@ FRANCE</p>
         )}
 
         {/* Paiements à accepter - uniquement pour Acceptation & Aval de la traite */}
-        {event.nature === "Acceptation & Aval de la traite" && (
+        {event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full"></div>
@@ -426,32 +536,40 @@ FRANCE</p>
           </div>
         )}
 
-        {/* Importateur - uniquement pour Paiement */}
-        {event.nature === "Paiement" && (
+        {/* Détails du paiement reçu - uniquement pour Paiement */}
+        {event.nature === "Paiement" && ongletPaiementTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Importateur (Tiré)</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Détails du paiement reçu</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nom</label>
-                <p className="font-semibold text-gray-900">MAGHREB STEEL SA</p>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence du paiement reçu</label>
+                <p className="font-semibold text-gray-900">LIC3344992</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Adresse</label>
-                <p className="font-semibold text-gray-900">56, Boulevard de la Résistance, Kénitra, Maroc</p>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Partie à l'origine du paiement</label>
+                <p className="font-semibold text-gray-900">Tiré</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Pays</label>
-                <p className="font-semibold text-gray-900">Maroc</p>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Paiement reçu de</label>
+                <p className="font-semibold text-gray-900">MAGHREB STEEL - 56, Boulevard de la Résistance, Kénitra, Maroc</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date de réception</label>
+                <p className="font-semibold text-gray-900">01/01/2026</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Instruction du paiement</label>
+                <p className="font-semibold text-gray-900">—</p>
               </div>
             </div>
           </div>
         )}
 
         {/* Bénéficiaire du paiement - uniquement pour Paiement */}
-        {event.nature === "Paiement" && (
+        {event.nature === "Paiement" && ongletPaiementTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
@@ -465,7 +583,7 @@ FRANCE</p>
                   <p className="font-semibold text-gray-900">Banque étrangère</p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nom & Adresse</label>
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Partie à payer</label>
                   <div className="bg-white border border-gray-200 rounded-lg p-3 mt-1">
                     <p className="text-sm text-gray-900 whitespace-pre-line">ERCO LUMIERES EURL
 6 TER RUE DES SAINTS PERES 75007
@@ -509,7 +627,7 @@ FRANCE</p>
         )}
 
         {/* Détails du paiement - uniquement pour Paiement */}
-        {event.nature === "Paiement" && (
+        {event.nature === "Paiement" && ongletPaiementTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"></div>
@@ -549,7 +667,7 @@ FRANCE</p>
         )}
 
         {/* Informations sur le règlement - uniquement pour Paiement */}
-        {event.nature === "Paiement" && (
+        {event.nature === "Paiement" && ongletPaiementTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
@@ -576,186 +694,108 @@ FRANCE</p>
           </div>
         )}
 
-        {/* Titres d'importation - uniquement pour Paiement */}
-        {event.nature === "Paiement" && (
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Titres d'importation</h2>
-            </div>
-            <div className="overflow-hidden rounded-lg border border-gray-200">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Numéro d'enregistrement</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant utilisé</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de validité</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0001</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0002</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0003</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0004</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0005</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0006</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0007</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0008</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0009</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                  <tr className="hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0010</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">31/12/2025</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="flex items-center justify-between mt-4">
-              <p className="text-sm text-gray-500">20 titre(s) - Page 1 sur 2</p>
-              <div className="flex gap-2">
-                <button className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded">Précédent</button>
-                <button className="px-3 py-1 text-sm text-white bg-orange-600 hover:bg-orange-700 rounded">1</button>
-                <button className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded">2</button>
-                <button className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded">Suivant</button>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {/* Répartition des frais - uniquement pour Acceptation & Aval de la traite */}
-        {event.nature === "Acceptation & Aval de la traite" && (
+        {/* Répartition des frais et Documents attachés - 2 onglets pour Acceptation & Aval de la traite */}
+        {event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Répartition des frais</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions au Maroc</label>
-                <p className="font-semibold text-gray-900">Tiré</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions à l'étranger</label>
-                <p className="font-semibold text-gray-900">Tireur</p>
-              </div>
-            </div>
-            <h3 className="text-md font-semibold text-gray-900 mb-4">Détails des charges</h3>
-            <div className="overflow-hidden rounded-lg border border-gray-200">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Frais</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Description</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
-                    <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Supportée par</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de règlement</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">Commission d'acceptation</td>
-                    <td className="py-3 px-4 text-gray-600">Commission sur acceptation de traite</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 text-right font-semibold text-gray-900">1,500 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">Tiré</td>
-                    <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
-                    <td className="py-3 px-4 text-gray-600">02/02/2026</td>
-                  </tr>
-                  <tr className="hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">Frais SWIFT</td>
-                    <td className="py-3 px-4 text-gray-600">Frais de transmission SWIFT</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 text-right font-semibold text-gray-900">1,000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">Tireur</td>
-                    <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
-                    <td className="py-3 px-4 text-gray-600">02/02/2026</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mt-6">
-              <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
-              <p className="font-bold text-2xl text-amber-900">2,500 EUR</p>
-            </div>
-          </div>
-        )}
-
-        {/* Documents attachés - uniquement pour Acceptation & Aval de la traite */}
-        {event.nature === "Acceptation & Aval de la traite" && (
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-wrap border-b border-gray-200 mb-6">
               {[
-                { name: "Lettre d'acceptation", icon: <FileText size={16} /> },
-                { name: "Traite acceptée", icon: <FileText size={16} /> },
-                { name: "Aval de la traite", icon: <FileText size={16} /> },
-              { name: "Confirmation SWIFT", icon: <FileText size={16} /> },
-              { name: "Bordereau de frais", icon: <FileText size={16} /> },
-                { name: "Reçu de paiement", icon: <FileText size={16} /> },
-              ].map((doc, index) => (
-                <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
-                  <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
-                    {doc.icon}
-                  </div>
-                  <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{doc.name}</span>
-                  <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
-                    <Download size={18} />
-                  </button>
-                </div>
+                { id: "frais", label: "Répartition des frais" },
+                { id: "attaches", label: "Documents attachés" },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setOngletAcceptation(t.id as "frais" | "attaches")}
+                  className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
+                    ongletAcceptation === t.id
+                      ? "border-orange-600 text-orange-600"
+                      : "border-transparent text-gray-500 hover:text-gray-900"
+                  }`}
+                >
+                  {t.label}
+                </button>
               ))}
             </div>
+
+            {ongletAcceptation === "frais" && (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions au Maroc</label>
+                    <p className="font-semibold text-gray-900">Tiré</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions à l'étranger</label>
+                    <p className="font-semibold text-gray-900">Tireur</p>
+                  </div>
+                </div>
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Détails des charges</h3>
+                <div className="overflow-hidden rounded-lg border border-gray-200">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Frais</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Description</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
+                        <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Supportée par</th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de règlement</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">Commission d'acceptation</td>
+                        <td className="py-3 px-4 text-gray-600">Commission sur acceptation de traite</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 text-right font-semibold text-gray-900">1,500 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">Tiré</td>
+                        <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
+                        <td className="py-3 px-4 text-gray-600">02/02/2026</td>
+                      </tr>
+                      <tr className="hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">Frais SWIFT</td>
+                        <td className="py-3 px-4 text-gray-600">Frais de transmission SWIFT</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 text-right font-semibold text-gray-900">1,000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">Tireur</td>
+                        <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
+                        <td className="py-3 px-4 text-gray-600">02/02/2026</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mt-6">
+                  <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
+                  <p className="font-bold text-2xl text-amber-900">2,500 EUR</p>
+                </div>
+              </div>
+            )}
+
+            {ongletAcceptation === "attaches" && (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { name: "Lettre d'acceptation", icon: <FileText size={16} /> },
+                    { name: "Traite acceptée", icon: <FileText size={16} /> },
+                    { name: "Aval de la traite", icon: <FileText size={16} /> },
+                    { name: "Confirmation SWIFT", icon: <FileText size={16} /> },
+                    { name: "Bordereau de frais", icon: <FileText size={16} /> },
+                    { name: "Reçu de paiement", icon: <FileText size={16} /> },
+                  ].map((doc, index) => (
+                    <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                      <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
+                        {doc.icon}
+                      </div>
+                      <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{doc.name}</span>
+                      <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
+                        <Download size={18} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -1016,6 +1056,10 @@ FRANCE</p>
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Financement</label>
                 <p className="font-semibold text-gray-900">NON</p>
               </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Envoi à l'agence</label>
+                <p className="font-semibold text-gray-900">1543</p>
+              </div>
             </div>
           </div>
         )}
@@ -1104,101 +1148,205 @@ FRANCE</p>
           </div>
         )}
 
-        {/* Répartition des frais - uniquement pour Paiement */}
-        {event.nature === "Paiement" && (
+        {/* Répartition des frais et Titres d'importation - 2 onglets pour Paiement */}
+        {event.nature === "Paiement" && ongletPaiementTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Répartition des frais</h2>
+            <div className="flex flex-wrap border-b border-gray-200 mb-6">
+              {[
+                { id: "frais", label: "Répartition des frais" },
+                { id: "titres", label: "Titres d'importation" },
+                { id: "attaches", label: "Documents attachés" },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setOngletPaiement(t.id as "frais" | "titres" | "attaches")}
+                  className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
+                    ongletPaiement === t.id
+                      ? "border-orange-600 text-orange-600"
+                      : "border-transparent text-gray-500 hover:text-gray-900"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions au Maroc</label>
-                <p className="font-semibold text-gray-900">Tiré</p>
+
+            {ongletPaiement === "frais" && (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions au Maroc</label>
+                    <p className="font-semibold text-gray-900">Tiré</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions à l'étranger</label>
+                    <p className="font-semibold text-gray-900">Tireur</p>
+                  </div>
+                </div>
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Détails des charges</h3>
+                <div className="overflow-hidden rounded-lg border border-gray-200">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Frais</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Description</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
+                        <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Supportée par</th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de règlement</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">Commission de paiement</td>
+                        <td className="py-3 px-4 text-gray-600">Commission sur paiement international</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 text-right font-semibold text-gray-900">1,500 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">Tiré</td>
+                        <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
+                        <td className="py-3 px-4 text-gray-600">12/12/2024</td>
+                      </tr>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">Frais SWIFT</td>
+                        <td className="py-3 px-4 text-gray-600">Frais de transmission SWIFT</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 text-right font-semibold text-gray-900">1,000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">Tireur</td>
+                        <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
+                        <td className="py-3 px-4 text-gray-600">12/12/2024</td>
+                      </tr>
+                      <tr className="hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">Frais de correspondant</td>
+                        <td className="py-3 px-4 text-gray-600">Frais bancaires correspondant</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 text-right font-semibold text-gray-900">500 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">Tiré</td>
+                        <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
+                        <td className="py-3 px-4 text-gray-600">12/12/2024</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mt-6">
+                  <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
+                  <p className="font-bold text-2xl text-amber-900">3,000 EUR</p>
+                </div>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions à l'étranger</label>
-                <p className="font-semibold text-gray-900">Tireur</p>
+            )}
+
+            {ongletPaiement === "titres" && (
+              <div>
+                <div className="overflow-hidden rounded-lg border border-gray-200">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Numéro d'enregistrement</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant utilisé</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de validité</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0001</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">31/12/2025</td>
+                      </tr>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0002</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">31/12/2025</td>
+                      </tr>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0003</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">31/12/2025</td>
+                      </tr>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0004</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">31/12/2025</td>
+                      </tr>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0005</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">31/12/2025</td>
+                      </tr>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0006</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">31/12/2025</td>
+                      </tr>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0007</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">31/12/2025</td>
+                      </tr>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0008</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">31/12/2025</td>
+                      </tr>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0009</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">31/12/2025</td>
+                      </tr>
+                      <tr className="hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">TIT-2024-0010</td>
+                        <td className="py-3 px-4 text-gray-600">EUR</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900">5 140 000 EUR</td>
+                        <td className="py-3 px-4 text-gray-600">31/12/2025</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="flex items-center justify-between mt-4">
+                  <p className="text-sm text-gray-500">20 titre(s) - Page 1 sur 2</p>
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded">Précédent</button>
+                    <button className="px-3 py-1 text-sm text-white bg-orange-600 hover:bg-orange-700 rounded">1</button>
+                    <button className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded">2</button>
+                    <button className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded">Suivant</button>
+                  </div>
+                </div>
               </div>
-            </div>
-            <h3 className="text-md font-semibold text-gray-900 mb-4">Détails des charges</h3>
-            <div className="overflow-hidden rounded-lg border border-gray-200">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Frais</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Description</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
-                    <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Supportée par</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de règlement</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">Commission de paiement</td>
-                    <td className="py-3 px-4 text-gray-600">Commission sur paiement international</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 text-right font-semibold text-gray-900">1,500 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">Tiré</td>
-                    <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
-                    <td className="py-3 px-4 text-gray-600">12/12/2024</td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">Frais SWIFT</td>
-                    <td className="py-3 px-4 text-gray-600">Frais de transmission SWIFT</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 text-right font-semibold text-gray-900">1,000 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">Tireur</td>
-                    <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
-                    <td className="py-3 px-4 text-gray-600">12/12/2024</td>
-                  </tr>
-                  <tr className="hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">Frais de correspondant</td>
-                    <td className="py-3 px-4 text-gray-600">Frais bancaires correspondant</td>
-                    <td className="py-3 px-4 text-gray-600">EUR</td>
-                    <td className="py-3 px-4 text-right font-semibold text-gray-900">500 EUR</td>
-                    <td className="py-3 px-4 text-gray-600">Tiré</td>
-                    <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
-                    <td className="py-3 px-4 text-gray-600">12/12/2024</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mt-6">
-              <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
-              <p className="font-bold text-2xl text-amber-900">3,000 EUR</p>
-            </div>
+            )}
+
+            {ongletPaiement === "attaches" && (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[
+                    { name: "Avis de paiement", icon: <FileText size={16} /> },
+                    { name: "Ordre de virement", icon: <FileText size={16} /> },
+                    { name: "Avis de débit", icon: <FileText size={16} /> },
+                  ].map((doc, index) => (
+                    <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                      <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
+                        {doc.icon}
+                      </div>
+                      <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{doc.name}</span>
+                      <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
+                        <Download size={18} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Documents attachés - uniquement pour Paiement */}
-        {event.nature === "Paiement" && (
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { name: "Avis de paiement", icon: <FileText size={16} /> },
-                { name: "Ordre de virement", icon: <FileText size={16} /> },
-                { name: "Avis de débit", icon: <FileText size={16} /> },
-              ].map((doc, index) => (
-                <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
-                  <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
-                    {doc.icon}
-                  </div>
-                  <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{doc.name}</span>
-                  <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
-                    <Download size={18} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
         {/* Documents attachés - uniquement pour Correspondance */}
         {event.nature === "Correspondance" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
@@ -1691,6 +1839,94 @@ FRANCE</p>
               <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
             )}
           </div>
+        )}
+
+        {/* Informations financières, Détails des charges et Documents attachés - uniquement pour Expiration */}
+        {event.nature === "Expiration" && event.expiration && (
+          <>
+            {/* Informations financières */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full"></div>
+                <h2 className="text-lg font-semibold text-gray-900">Informations financières</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Montant des documents</label>
+                  <p className="font-semibold text-gray-900">{event.expiration.montantDocuments.toLocaleString("fr-FR")} {event.devise}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Montant payé</label>
+                  <p className="font-semibold text-gray-900">{event.expiration.montantPaye.toLocaleString("fr-FR")} {event.devise}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Montant restant à régler</label>
+                  <p className="font-semibold text-gray-900">{event.expiration.montantRestant.toLocaleString("fr-FR")} {event.devise}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Détails des charges */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+                <h2 className="text-lg font-semibold text-gray-900">Détails des charges</h2>
+              </div>
+              <div className="overflow-hidden rounded-lg border border-gray-200">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Frais</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Description</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
+                      <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Supporté par</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de règlement</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {event.expiration.frais.map((f, idx) => (
+                      <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-3 px-4 font-medium text-gray-900">{f.type}</td>
+                        <td className="py-3 px-4 text-gray-600">{f.description}</td>
+                        <td className="py-3 px-4 text-gray-600">{f.devise}</td>
+                        <td className="py-3 px-4 text-right font-semibold text-gray-900">{f.montant.toLocaleString("fr-FR")} {f.devise}</td>
+                        <td className="py-3 px-4 text-gray-600">{f.supportePar}</td>
+                        <td className="py-3 px-4 text-gray-600">{f.statut}</td>
+                        <td className="py-3 px-4 text-gray-600">{f.dateReglement ? new Date(f.dateReglement).toLocaleDateString("fr-FR") : "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Documents attachés */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
+                <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
+              </div>
+              {event.expiration.documentsAttaches && event.expiration.documentsAttaches.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {event.expiration.documentsAttaches.map((doc, index) => (
+                    <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                      <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
+                        <FileText size={16} />
+                      </div>
+                      <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{doc.nom}</span>
+                      <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
+                        <Download size={18} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

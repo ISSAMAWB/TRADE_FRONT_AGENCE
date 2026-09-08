@@ -95,7 +95,7 @@ export default function EventTable({
                 className="cursor-pointer"
               >
                 <td className="text-sm font-medium text-orange-500">{e.reference}</td>
-                <td className="text-sm">{e.nature}</td>
+                <td className="text-sm">{e.expiration?.libelleEvenement || e.nature}</td>
                 <td className="text-sm text-right">{formatMontant(e.montant, e.devise)}</td>
                 <td className="text-sm">{formatDate(e.dateCreation)}</td>
                 <td><StatutBadge statut={e.statut} /></td>
@@ -136,7 +136,7 @@ export default function EventTable({
                 </div>
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-0.5">Nature</div>
-                  <div className="text-sm">{selected.nature}</div>
+                  <div className="text-sm">{selected.expiration?.libelleEvenement || selected.nature}</div>
                 </div>
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-0.5">Montant</div>

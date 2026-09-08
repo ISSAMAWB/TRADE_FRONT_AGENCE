@@ -629,26 +629,149 @@
           "montantDocumentsPresentes": 21000,
           "totalFrais": 1050,
           "intervenants": [
-            { "role": "Partie remettante", "nom": "INTESA SANPAOLO SPA", "adresse": "Piazza San Carlo, Turin", "pays": "Italie" },
-            { "role": "Importateur (Tiré)", "nom": "STE VIVO ENERGY MAROC", "adresse": "Zone Tanger Med", "pays": "Maroc" },
-            { "role": "Exportateur (Tireur)", "nom": "CAVAGNA GROUP SPA", "adresse": "Via Milano 45, Bergamo", "pays": "Italie" }
+            {
+              "role": "Partie remettante",
+              "nom": "INTESA SANPAOLO SPA",
+              "adresse": "Piazza San Carlo, Turin",
+              "pays": "Italie"
+            },
+            {
+              "role": "Importateur (Tiré)",
+              "nom": "STE VIVO ENERGY MAROC",
+              "adresse": "Zone Tanger Med",
+              "pays": "Maroc"
+            },
+            {
+              "role": "Exportateur (Tireur)",
+              "nom": "CAVAGNA GROUP SPA",
+              "adresse": "Via Milano 45, Bergamo",
+              "pays": "Italie"
+            }
           ],
           "paiements": [
-            { "montant": 21000, "devise": "EUR", "typeTraite": "Contre acceptation", "dateEcheance": "2026-09-15" }
+            {
+              "montant": 21000,
+              "devise": "EUR",
+              "typeTraite": "Contre acceptation",
+              "dateEcheance": "2026-09-15"
+            }
           ],
           "frais": [
-            { "type": "Commission d'encaissement", "description": "Commission de traitement", "montant": 630, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "Frais SWIFT", "description": "Frais d'émission SWIFT", "montant": 210, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "Frais de port", "description": "Frais d'envoi des documents", "montant": 105, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "TVA", "description": "Taxe sur la valeur ajoutée", "montant": 105, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" }
+            {
+              "type": "Commission d'encaissement",
+              "description": "Commission de traitement",
+              "montant": 630,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais SWIFT",
+              "description": "Frais d'émission SWIFT",
+              "montant": 210,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de port",
+              "description": "Frais d'envoi des documents",
+              "montant": 105,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "TVA",
+              "description": "Taxe sur la valeur ajoutée",
+              "montant": 105,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            }
           ],
           "documentsRecus": [
-            { "type": "Facture commerciale", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
-            { "type": "Packing List", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
-            { "type": "Connaissement (B/L)", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
-            { "type": "Certificat d'origine", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 }
+            {
+              "type": "Facture commerciale",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            },
+            {
+              "type": "Packing List",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            },
+            {
+              "type": "Certificat d'origine",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            }
           ],
-          "suivi": [],
+          "suivi": [
+            {
+              "titre": "Documents reçus",
+              "statut": "Terminé",
+              "champs": [
+                {
+                  "label": "Reçu au niveau",
+                  "valeur": "CTN-DEVISES"
+                },
+                {
+                  "label": "Date de création",
+                  "valeur": "05/05/2026"
+                }
+              ]
+            },
+            {
+              "titre": "Documents transmis à l'agence",
+              "statut": "Terminé",
+              "champs": [
+                {
+                  "label": "Emetteur",
+                  "valeur": "Bureau d'ordre - CTN-Devises"
+                },
+                {
+                  "label": "Numéro du courrier",
+                  "valeur": "COUR-2026-0405"
+                },
+                {
+                  "label": "Date et heure d'envoi",
+                  "valeur": "06/05/2026 09:15:00"
+                }
+              ]
+            },
+            {
+              "titre": "Accusé de réception des documents",
+              "statut": "Reçu",
+              "champs": [
+                {
+                  "label": "Réception effectuée par",
+                  "valeur": "Préposé A"
+                },
+                {
+                  "label": "Date et heure de réception",
+                  "valeur": "07/05/2026 14:30:00"
+                },
+                {
+                  "label": "Statut",
+                  "valeur": "Reçu"
+                },
+                {
+                  "label": "Observation",
+                  "valeur": "Documents reçus en agence."
+                }
+              ]
+            }
+          ],
           "modificationDetails": {
             "dateModification": "2026-03-05",
             "description": "Extension de la date d'échéance du 15/08/2026 au 15/09/2026."
@@ -681,6 +804,62 @@
             "contenu": "Paiement de 21 000,00 EUR au titre de la remise documentaire import IRD93903039. UETR : a1b2c3d4-e5f6-7890-abcd-ef1234567890.",
             "fichier": "MT103_IRD93903039_20260308.pdf"
           }
+        ],
+        "suivi": [
+          {
+            "titre": "Documents reçus",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Reçu au niveau",
+                "valeur": "CTN-DEVISES"
+              },
+              {
+                "label": "Date de création",
+                "valeur": "05/05/2026"
+              }
+            ]
+          },
+          {
+            "titre": "Documents transmis à l'agence",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Emetteur",
+                "valeur": "Bureau d'ordre - CTN-Devises"
+              },
+              {
+                "label": "Numéro du courrier",
+                "valeur": "COUR-2026-0405"
+              },
+              {
+                "label": "Date et heure d'envoi",
+                "valeur": "06/05/2026 09:15:00"
+              }
+            ]
+          },
+          {
+            "titre": "Accusé de réception des documents",
+            "statut": "Reçu",
+            "champs": [
+              {
+                "label": "Réception effectuée par",
+                "valeur": "Préposé A"
+              },
+              {
+                "label": "Date et heure de réception",
+                "valeur": "07/05/2026 14:30:00"
+              },
+              {
+                "label": "Statut",
+                "valeur": "Reçu"
+              },
+              {
+                "label": "Observation",
+                "valeur": "Documents reçus en agence."
+              }
+            ]
+          }
         ]
       },
       {
@@ -697,6 +876,62 @@
             "dateEmission": "2026-03-10T14:15:00",
             "contenu": "Acceptation & Aval de la traite pour la remise documentaire import IRD93903039.",
             "fichier": "MT732_IRD93903039_20260310.pdf"
+          }
+        ],
+        "suivi": [
+          {
+            "titre": "Documents reçus",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Reçu au niveau",
+                "valeur": "CTN-DEVISES"
+              },
+              {
+                "label": "Date de création",
+                "valeur": "05/05/2026"
+              }
+            ]
+          },
+          {
+            "titre": "Documents transmis à l'agence",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Emetteur",
+                "valeur": "Bureau d'ordre - CTN-Devises"
+              },
+              {
+                "label": "Numéro du courrier",
+                "valeur": "COUR-2026-0405"
+              },
+              {
+                "label": "Date et heure d'envoi",
+                "valeur": "06/05/2026 09:15:00"
+              }
+            ]
+          },
+          {
+            "titre": "Accusé de réception des documents",
+            "statut": "Reçu",
+            "champs": [
+              {
+                "label": "Réception effectuée par",
+                "valeur": "Préposé A"
+              },
+              {
+                "label": "Date et heure de réception",
+                "valeur": "07/05/2026 14:30:00"
+              },
+              {
+                "label": "Statut",
+                "valeur": "Reçu"
+              },
+              {
+                "label": "Observation",
+                "valeur": "Documents reçus en agence."
+              }
+            ]
           }
         ]
       },
@@ -762,23 +997,6 @@
             "dateEmission": "2026-03-20T14:00:00",
             "contenu": "Débit de frais et commissions de 315,00 EUR sur la remise documentaire import IRD93903039.",
             "fichier": "MT191_IRD93903039_20260320.pdf"
-          }
-        ]
-      },
-      {
-        "reference": "EVT-2026-0345",
-        "nature": "Clôture de la remise",
-        "montant": 0,
-        "devise": "EUR",
-        "dateCreation": "2026-04-20T16:00:00",
-        "statut": "VALIDE",
-        "swifts": [
-          {
-            "reference": "SWIFT-2026-0345-01",
-            "type": "MT799",
-            "dateEmission": "2026-04-20T16:00:00",
-            "contenu": "Clôture de la remise documentaire import IRD93903039. Opération terminée.",
-            "fichier": "MT799_IRD93903039_20260420.pdf"
           }
         ]
       },
@@ -2091,28 +2309,163 @@
           "montantDocumentsPresentes": 1800000,
           "totalFrais": 90000,
           "intervenants": [
-            { "role": "Partie remettante", "nom": "Deutsche Bank Frankfurt", "adresse": "Taunusanlage 12, Frankfurt", "pays": "Allemagne" },
-            { "role": "Importateur (Tiré)", "nom": "MAGHREB STEEL SA", "adresse": "Zone Industrielle, Casablanca", "pays": "Maroc" },
-            { "role": "Exportateur (Tireur)", "nom": "MAGHREB STEEL SA", "adresse": "119, Av. de l'Europe, Barcelone", "pays": "Espagne" }
+            {
+              "role": "Partie remettante",
+              "nom": "Deutsche Bank Frankfurt",
+              "adresse": "Taunusanlage 12, Frankfurt",
+              "pays": "Allemagne"
+            },
+            {
+              "role": "Importateur (Tiré)",
+              "nom": "MAGHREB STEEL SA",
+              "adresse": "Zone Industrielle, Casablanca",
+              "pays": "Maroc"
+            },
+            {
+              "role": "Exportateur (Tireur)",
+              "nom": "MAGHREB STEEL SA",
+              "adresse": "119, Av. de l'Europe, Barcelone",
+              "pays": "Espagne"
+            }
           ],
           "paiements": [
-            { "montant": 1800000, "devise": "USD", "typeTraite": "Contre acceptation", "dateEcheance": "2026-05-25" }
+            {
+              "montant": 1800000,
+              "devise": "USD",
+              "typeTraite": "Contre acceptation",
+              "dateEcheance": "2026-05-25"
+            }
           ],
           "frais": [
-            { "type": "Commission d'encaissement", "description": "Commission de traitement", "montant": 54000, "devise": "USD", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "Frais SWIFT", "description": "Frais d'émission SWIFT", "montant": 18000, "devise": "USD", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "Frais de correspondant", "description": "Frais banque étrangère", "montant": 10800, "devise": "USD", "supportePar": "Tireur", "statut": "Réglé" },
-            { "type": "Frais de port", "description": "Frais d'envoi documents", "montant": 3600, "devise": "USD", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "TVA", "description": "Taxe sur la valeur ajoutée", "montant": 3600, "devise": "USD", "supportePar": "Tiré", "statut": "Réglé" }
+            {
+              "type": "Commission d'encaissement",
+              "description": "Commission de traitement",
+              "montant": 54000,
+              "devise": "USD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais SWIFT",
+              "description": "Frais d'émission SWIFT",
+              "montant": 18000,
+              "devise": "USD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de correspondant",
+              "description": "Frais banque étrangère",
+              "montant": 10800,
+              "devise": "USD",
+              "supportePar": "Tireur",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de port",
+              "description": "Frais d'envoi documents",
+              "montant": 3600,
+              "devise": "USD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "TVA",
+              "description": "Taxe sur la valeur ajoutée",
+              "montant": 3600,
+              "devise": "USD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            }
           ],
           "documentsRecus": [
-            { "type": "Facture commerciale", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Packing List", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Connaissement (B/L)", "premierEnvoi": 3, "deuxiemeEnvoi": 0, "total": 3 },
-            { "type": "Certificat d'origine", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
-            { "type": "Certificat d'assurance", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 }
+            {
+              "type": "Facture commerciale",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Packing List",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "premierEnvoi": 3,
+              "deuxiemeEnvoi": 0,
+              "total": 3
+            },
+            {
+              "type": "Certificat d'origine",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            },
+            {
+              "type": "Certificat d'assurance",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            }
           ],
-          "suivi": [],
+          "suivi": [
+            {
+              "titre": "Documents reçus",
+              "statut": "Terminé",
+              "champs": [
+                {
+                  "label": "Reçu au niveau",
+                  "valeur": "CTN-DEVISES"
+                },
+                {
+                  "label": "Date de création",
+                  "valeur": "05/05/2026"
+                }
+              ]
+            },
+            {
+              "titre": "Documents transmis à l'agence",
+              "statut": "Terminé",
+              "champs": [
+                {
+                  "label": "Emetteur",
+                  "valeur": "Bureau d'ordre - CTN-Devises"
+                },
+                {
+                  "label": "Numéro du courrier",
+                  "valeur": "COUR-2026-0405"
+                },
+                {
+                  "label": "Date et heure d'envoi",
+                  "valeur": "06/05/2026 09:15:00"
+                }
+              ]
+            },
+            {
+              "titre": "Accusé de réception des documents",
+              "statut": "Reçu",
+              "champs": [
+                {
+                  "label": "Réception effectuée par",
+                  "valeur": "Préposé A"
+                },
+                {
+                  "label": "Date et heure de réception",
+                  "valeur": "07/05/2026 14:30:00"
+                },
+                {
+                  "label": "Statut",
+                  "valeur": "Reçu"
+                },
+                {
+                  "label": "Observation",
+                  "valeur": "Documents reçus en agence."
+                }
+              ]
+            }
+          ],
           "modificationDetails": {
             "dateModification": "2026-02-15",
             "description": "Extension de la date d'échéance du 25/04/2026 au 25/05/2026."
@@ -2145,6 +2498,62 @@
             "contenu": "Paiement de 1 800 000,00 USD au titre de la remise documentaire import IRD260000001. UETR : xyz789abc123-4567-8901-234567890123.",
             "fichier": "MT103_IRD260000001_20260420.pdf"
           }
+        ],
+        "suivi": [
+          {
+            "titre": "Documents reçus",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Reçu au niveau",
+                "valeur": "CTN-DEVISES"
+              },
+              {
+                "label": "Date de création",
+                "valeur": "05/05/2026"
+              }
+            ]
+          },
+          {
+            "titre": "Documents transmis à l'agence",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Emetteur",
+                "valeur": "Bureau d'ordre - CTN-Devises"
+              },
+              {
+                "label": "Numéro du courrier",
+                "valeur": "COUR-2026-0405"
+              },
+              {
+                "label": "Date et heure d'envoi",
+                "valeur": "06/05/2026 09:15:00"
+              }
+            ]
+          },
+          {
+            "titre": "Accusé de réception des documents",
+            "statut": "Reçu",
+            "champs": [
+              {
+                "label": "Réception effectuée par",
+                "valeur": "Préposé A"
+              },
+              {
+                "label": "Date et heure de réception",
+                "valeur": "07/05/2026 14:30:00"
+              },
+              {
+                "label": "Statut",
+                "valeur": "Reçu"
+              },
+              {
+                "label": "Observation",
+                "valeur": "Documents reçus en agence."
+              }
+            ]
+          }
         ]
       },
       {
@@ -2161,6 +2570,62 @@
             "dateEmission": "2026-04-22T14:15:00",
             "contenu": "Acceptation & Aval de la traite pour la remise documentaire import IRD260000001.",
             "fichier": "MT732_IRD260000001_20260422.pdf"
+          }
+        ],
+        "suivi": [
+          {
+            "titre": "Documents reçus",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Reçu au niveau",
+                "valeur": "CTN-DEVISES"
+              },
+              {
+                "label": "Date de création",
+                "valeur": "05/05/2026"
+              }
+            ]
+          },
+          {
+            "titre": "Documents transmis à l'agence",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Emetteur",
+                "valeur": "Bureau d'ordre - CTN-Devises"
+              },
+              {
+                "label": "Numéro du courrier",
+                "valeur": "COUR-2026-0405"
+              },
+              {
+                "label": "Date et heure d'envoi",
+                "valeur": "06/05/2026 09:15:00"
+              }
+            ]
+          },
+          {
+            "titre": "Accusé de réception des documents",
+            "statut": "Reçu",
+            "champs": [
+              {
+                "label": "Réception effectuée par",
+                "valeur": "Préposé A"
+              },
+              {
+                "label": "Date et heure de réception",
+                "valeur": "07/05/2026 14:30:00"
+              },
+              {
+                "label": "Statut",
+                "valeur": "Reçu"
+              },
+              {
+                "label": "Observation",
+                "valeur": "Documents reçus en agence."
+              }
+            ]
           }
         ]
       },
@@ -2226,23 +2691,6 @@
             "dateEmission": "2026-04-24T14:00:00",
             "contenu": "Débit de frais et commissions de 27 000,00 USD sur la remise documentaire import IRD260000001.",
             "fichier": "MT191_IRD260000001_20260424.pdf"
-          }
-        ]
-      },
-      {
-        "reference": "EVT-2026-0340",
-        "nature": "Clôture de la remise",
-        "montant": 0,
-        "devise": "USD",
-        "dateCreation": "2026-04-25T16:00:00",
-        "statut": "VALIDE",
-        "swifts": [
-          {
-            "reference": "SWIFT-2026-0340-01",
-            "type": "MT799",
-            "dateEmission": "2026-04-25T16:00:00",
-            "contenu": "Clôture de la remise documentaire import IRD260000001. Opération terminée.",
-            "fichier": "MT799_IRD260000001_20260425.pdf"
           }
         ]
       },
@@ -2891,8 +3339,15 @@
       "client": "DELICES DU SUD SARL",
       "tireur": "Société Générale Paris",
       "partieRemettante": "Société Générale Paris",
-      "montantRemise": { "valeur": 650000, "devise": "EUR" },
-      "encours": { "valeur": 650000, "devise": "EUR" },
+      "referenceCorrespondant": "CORR0011",
+      "montantRemise": {
+        "valeur": 650000,
+        "devise": "EUR"
+      },
+      "encours": {
+        "valeur": 650000,
+        "devise": "EUR"
+      },
       "typeFrais": "Partagés",
       "referenceOperation": "IRD260000002",
       "autreReference": "EXT928290",
@@ -3013,38 +3468,90 @@
             }
           ],
           "documentsRecus": [
-            { "type": "Facture commerciale", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Packing List", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Connaissement (B/L)", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Certificat d'origine", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Certificat d'assurance", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 }
+            {
+              "type": "Facture commerciale",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Packing List",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Certificat d'origine",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Certificat d'assurance",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            }
           ],
           "suivi": [
             {
               "titre": "Documents reçus",
               "statut": "Terminé",
               "champs": [
-                { "label": "Reçu au niveau", "valeur": "CTN-DEVISES" },
-                { "label": "Date de création", "valeur": "05/05/2026" }
+                {
+                  "label": "Reçu au niveau",
+                  "valeur": "CTN-DEVISES"
+                },
+                {
+                  "label": "Date de création",
+                  "valeur": "05/05/2026"
+                }
               ]
             },
             {
               "titre": "Documents transmis à l'agence",
               "statut": "Terminé",
               "champs": [
-                { "label": "Emetteur", "valeur": "Bureau d'ordre - CTN-Devises" },
-                { "label": "Numéro du courrier", "valeur": "COUR-2026-0405" },
-                { "label": "Date et heure d'envoi", "valeur": "06/05/2026 09:15:00" }
+                {
+                  "label": "Emetteur",
+                  "valeur": "Bureau d'ordre - CTN-Devises"
+                },
+                {
+                  "label": "Numéro du courrier",
+                  "valeur": "COUR-2026-0405"
+                },
+                {
+                  "label": "Date et heure d'envoi",
+                  "valeur": "06/05/2026 09:15:00"
+                }
               ]
             },
             {
               "titre": "Accusé de réception des documents",
               "statut": "Reçu",
               "champs": [
-                { "label": "Réception effectuée par", "valeur": "Préposé A" },
-                { "label": "Date et heure de réception", "valeur": "07/05/2026 14:30:00" },
-                { "label": "Statut", "valeur": "Reçu" },
-                { "label": "Observation", "valeur": "Documents reçus en agence." }
+                {
+                  "label": "Réception effectuée par",
+                  "valeur": "Préposé A"
+                },
+                {
+                  "label": "Date et heure de réception",
+                  "valeur": "07/05/2026 14:30:00"
+                },
+                {
+                  "label": "Statut",
+                  "valeur": "Reçu"
+                },
+                {
+                  "label": "Observation",
+                  "valeur": "Documents reçus en agence."
+                }
               ]
             }
           ],
@@ -3176,13 +3683,93 @@
             }
           ],
           "documentsRecus": [
-            { "type": "Facture commerciale", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Packing List", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Connaissement (B/L)", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Certificat d'origine", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Certificat d'assurance", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 }
+            {
+              "type": "Facture commerciale",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Packing List",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Certificat d'origine",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Certificat d'assurance",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            }
           ],
-          "suivi": [],
+          "suivi": [
+            {
+              "titre": "Documents reçus",
+              "statut": "Terminé",
+              "champs": [
+                {
+                  "label": "Reçu au niveau",
+                  "valeur": "CTN-DEVISES"
+                },
+                {
+                  "label": "Date de création",
+                  "valeur": "05/05/2026"
+                }
+              ]
+            },
+            {
+              "titre": "Documents transmis à l'agence",
+              "statut": "Terminé",
+              "champs": [
+                {
+                  "label": "Emetteur",
+                  "valeur": "Bureau d'ordre - CTN-Devises"
+                },
+                {
+                  "label": "Numéro du courrier",
+                  "valeur": "COUR-2026-0405"
+                },
+                {
+                  "label": "Date et heure d'envoi",
+                  "valeur": "06/05/2026 09:15:00"
+                }
+              ]
+            },
+            {
+              "titre": "Accusé de réception des documents",
+              "statut": "Reçu",
+              "champs": [
+                {
+                  "label": "Réception effectuée par",
+                  "valeur": "Préposé A"
+                },
+                {
+                  "label": "Date et heure de réception",
+                  "valeur": "07/05/2026 14:30:00"
+                },
+                {
+                  "label": "Statut",
+                  "valeur": "Reçu"
+                },
+                {
+                  "label": "Observation",
+                  "valeur": "Documents reçus en agence."
+                }
+              ]
+            }
+          ],
           "modificationDetails": {
             "dateModification": "2026-06-15",
             "description": "Extension de la date d'échéance du 15/05/2026 au 30/06/2026. Ajustement des conditions de paiement."
@@ -3207,6 +3794,84 @@
         "statut": "VALIDE",
         "uetr": "abc123def456-7890-abcd-ef1234567890",
         "datePaiement": "2026-08-05",
+        "suivi": [
+          {
+            "titre": "Documents reçus",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Reçu au niveau",
+                "valeur": "CTN-DEVISES"
+              },
+              {
+                "label": "Date de création",
+                "valeur": "05/05/2026"
+              }
+            ]
+          },
+          {
+            "titre": "Documents transmis à l'agence",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Emetteur",
+                "valeur": "Bureau d'ordre - CTN-Devises"
+              },
+              {
+                "label": "Numéro du courrier",
+                "valeur": "COUR-2026-0405"
+              },
+              {
+                "label": "Date et heure d'envoi",
+                "valeur": "06/05/2026 09:15:00"
+              }
+            ]
+          },
+          {
+            "titre": "Accusé de réception des documents",
+            "statut": "Reçu",
+            "champs": [
+              {
+                "label": "Réception effectuée par",
+                "valeur": "Préposé A"
+              },
+              {
+                "label": "Date et heure de réception",
+                "valeur": "07/05/2026 14:30:00"
+              },
+              {
+                "label": "Statut",
+                "valeur": "Reçu"
+              },
+              {
+                "label": "Observation",
+                "valeur": "Documents reçus en agence."
+              }
+            ]
+          },
+          {
+            "titre": "Remise des documents au client",
+            "statut": "Remis",
+            "champs": [
+              {
+                "label": "Remise effectuée par",
+                "valeur": "—"
+              },
+              {
+                "label": "Date et heure de la remise",
+                "valeur": "—"
+              },
+              {
+                "label": "Statut",
+                "valeur": "Remis"
+              },
+              {
+                "label": "Observation",
+                "valeur": "—"
+              }
+            ]
+          }
+        ],
         "swifts": [
           {
             "reference": "SWIFT-2026-0420-01",
@@ -3224,6 +3889,84 @@
         "devise": "EUR",
         "dateCreation": "2026-08-06T14:15:00",
         "statut": "VALIDE",
+        "suivi": [
+          {
+            "titre": "Documents reçus",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Reçu au niveau",
+                "valeur": "CTN-DEVISES"
+              },
+              {
+                "label": "Date de création",
+                "valeur": "05/05/2026"
+              }
+            ]
+          },
+          {
+            "titre": "Documents transmis à l'agence",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Emetteur",
+                "valeur": "Bureau d'ordre - CTN-Devises"
+              },
+              {
+                "label": "Numéro du courrier",
+                "valeur": "COUR-2026-0405"
+              },
+              {
+                "label": "Date et heure d'envoi",
+                "valeur": "06/05/2026 09:15:00"
+              }
+            ]
+          },
+          {
+            "titre": "Accusé de réception des documents",
+            "statut": "Reçu",
+            "champs": [
+              {
+                "label": "Réception effectuée par",
+                "valeur": "Préposé A"
+              },
+              {
+                "label": "Date et heure de réception",
+                "valeur": "07/05/2026 14:30:00"
+              },
+              {
+                "label": "Statut",
+                "valeur": "Reçu"
+              },
+              {
+                "label": "Observation",
+                "valeur": "Documents reçus en agence."
+              }
+            ]
+          },
+          {
+            "titre": "Remise des documents au client",
+            "statut": "Remis",
+            "champs": [
+              {
+                "label": "Remise effectuée par",
+                "valeur": "—"
+              },
+              {
+                "label": "Date et heure de la remise",
+                "valeur": "—"
+              },
+              {
+                "label": "Statut",
+                "valeur": "Remis"
+              },
+              {
+                "label": "Observation",
+                "valeur": "—"
+              }
+            ]
+          }
+        ],
         "swifts": [
           {
             "reference": "SWIFT-2026-0430-01",
@@ -3309,10 +4052,10 @@
         "retourDocument": {
           "typeDemande": "Demande",
           "demande": {
-            "origine": "Back-office",
+            "origine": "CTN-Devises",
             "dateDemande": "2026-08-13",
             "motif": "Documents à retourner",
-            "description": "Demande de retour des documents suite au non-paiement."
+            "description": "Demande de retour des documents suite à la demande du fournisseur."
           },
           "reponse": {
             "origine": "Agence",
@@ -3429,28 +4172,118 @@
           "montantDocumentsPresentes": 5140000,
           "totalFrais": 25700,
           "intervenants": [
-            { "role": "Partie remettante", "nom": "Société Générale Paris", "adresse": "15, Rue de la Banque, Paris", "pays": "France" },
-            { "role": "Importateur (Tiré)", "nom": "MAGHREB STEEL SA", "adresse": "56, Bd de la Résistance, Kénitra", "pays": "Maroc" },
-            { "role": "Exportateur (Tireur)", "nom": "MAGHREB STEEL SA", "adresse": "119, Av. de l'Europe, Barcelone", "pays": "Espagne" }
+            {
+              "role": "Partie remettante",
+              "nom": "Société Générale Paris",
+              "adresse": "15, Rue de la Banque, Paris",
+              "pays": "France"
+            },
+            {
+              "role": "Importateur (Tiré)",
+              "nom": "MAGHREB STEEL SA",
+              "adresse": "56, Bd de la Résistance, Kénitra",
+              "pays": "Maroc"
+            },
+            {
+              "role": "Exportateur (Tireur)",
+              "nom": "MAGHREB STEEL SA",
+              "adresse": "119, Av. de l'Europe, Barcelone",
+              "pays": "Espagne"
+            }
           ],
           "paiements": [
-            { "montant": 2570000, "devise": "EUR", "typeTraite": "À vue", "dateEcheance": null },
-            { "montant": 1542000, "devise": "EUR", "typeTraite": "Contre acceptation", "dateEcheance": "2025-03-28" },
-            { "montant": 1028000, "devise": "EUR", "typeTraite": "Pour aval", "dateEcheance": "2025-05-29" }
+            {
+              "montant": 2570000,
+              "devise": "EUR",
+              "typeTraite": "À vue",
+              "dateEcheance": null
+            },
+            {
+              "montant": 1542000,
+              "devise": "EUR",
+              "typeTraite": "Contre acceptation",
+              "dateEcheance": "2025-03-28"
+            },
+            {
+              "montant": 1028000,
+              "devise": "EUR",
+              "typeTraite": "Pour aval",
+              "dateEcheance": "2025-05-29"
+            }
           ],
           "frais": [
-            { "type": "Commission d'encaissement", "description": "Commission de traitement", "montant": 15420, "devise": "EUR", "supportePar": "Tireur", "statut": "Réglé" },
-            { "type": "Frais SWIFT", "description": "Frais d'émission SWIFT", "montant": 5140, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "Frais de correspondant", "description": "Frais banque étrangère", "montant": 3084, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "Frais de port", "description": "Frais d'envoi documents", "montant": 1028, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "TVA", "description": "Taxe sur la valeur ajoutée", "montant": 1028, "devise": "EUR", "supportePar": "Tiré", "statut": "Réglé" }
+            {
+              "type": "Commission d'encaissement",
+              "description": "Commission de traitement",
+              "montant": 15420,
+              "devise": "EUR",
+              "supportePar": "Tireur",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais SWIFT",
+              "description": "Frais d'émission SWIFT",
+              "montant": 5140,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de correspondant",
+              "description": "Frais banque étrangère",
+              "montant": 3084,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de port",
+              "description": "Frais d'envoi documents",
+              "montant": 1028,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "TVA",
+              "description": "Taxe sur la valeur ajoutée",
+              "montant": 1028,
+              "devise": "EUR",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            }
           ],
           "documentsRecus": [
-            { "type": "Facture commerciale", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Packing List", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Connaissement (B/L)", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Certificat d'origine", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Certificat d'assurance", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 }
+            {
+              "type": "Facture commerciale",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Packing List",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Certificat d'origine",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Certificat d'assurance",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            }
           ],
           "suivi": [],
           "modificationDetails": {
@@ -3469,23 +4302,6 @@
         ]
       },
       {
-        "reference": "EVT-2026-0460",
-        "nature": "Clôture de la remise",
-        "montant": 0,
-        "devise": "EUR",
-        "dateCreation": "2026-08-15T16:00:00",
-        "statut": "VALIDE",
-        "swifts": [
-          {
-            "reference": "SWIFT-2026-0460-01",
-            "type": "MT799",
-            "dateEmission": "2026-08-15T16:00:00",
-            "contenu": "Clôture de la remise documentaire import IRD260000002. Opération terminée.",
-            "fichier": "MT799_IRD260000002_20260810.pdf"
-          }
-        ]
-      },
-      {
         "reference": "EVT-2026-0510",
         "nature": "Expiration",
         "montant": 5140000,
@@ -3493,7 +4309,7 @@
         "dateCreation": "2026-08-20T10:00:00",
         "statut": "EXPIRE",
         "expiration": {
-          "libelleEvenement": "Expiration",
+          "libelleEvenement": "Clôture de la remise",
           "referenceCorrespondant": "COR-451598",
           "montantDocuments": 5140000,
           "montantPaye": 5140000,
@@ -3534,6 +4350,14 @@
               "supportePar": "Tireur",
               "statut": "En attente",
               "dateReglement": null
+            }
+          ],
+          "documentsAttaches": [
+            {
+              "nom": "Avis de sort"
+            },
+            {
+              "nom": "Bordereau de restitution des documents"
             }
           ]
         },
@@ -3578,8 +4402,14 @@
       "client": "SAHARA LOGISTICS",
       "tireur": "BMCE Bank",
       "partieRemettante": "BMCE Bank",
-      "montantRemise": { "valeur": 950000, "devise": "MAD" },
-      "encours": { "valeur": 950000, "devise": "MAD" },
+      "montantRemise": {
+        "valeur": 950000,
+        "devise": "MAD"
+      },
+      "encours": {
+        "valeur": 950000,
+        "devise": "MAD"
+      },
       "typeFrais": "Partagés",
       "referenceOperation": "IRD260000003",
       "autreReference": "EXT928291",
@@ -3635,26 +4465,149 @@
           "montantDocumentsPresentes": 950000,
           "totalFrais": 47500,
           "intervenants": [
-            { "role": "Partie remettante", "nom": "BMCE Bank", "adresse": "Bd Mohammed V, Casablanca", "pays": "Maroc" },
-            { "role": "Importateur (Tiré)", "nom": "SAHARA LOGISTICS", "adresse": "Zone Industrielle, Agadir", "pays": "Maroc" },
-            { "role": "Exportateur (Tireur)", "nom": "CMA CGM Marseille", "adresse": "Quai d'Arenc, Marseille", "pays": "France" }
+            {
+              "role": "Partie remettante",
+              "nom": "BMCE Bank",
+              "adresse": "Bd Mohammed V, Casablanca",
+              "pays": "Maroc"
+            },
+            {
+              "role": "Importateur (Tiré)",
+              "nom": "SAHARA LOGISTICS",
+              "adresse": "Zone Industrielle, Agadir",
+              "pays": "Maroc"
+            },
+            {
+              "role": "Exportateur (Tireur)",
+              "nom": "CMA CGM Marseille",
+              "adresse": "Quai d'Arenc, Marseille",
+              "pays": "France"
+            }
           ],
           "paiements": [
-            { "montant": 950000, "devise": "MAD", "typeTraite": "Contre acceptation", "dateEcheance": "2026-08-30" }
+            {
+              "montant": 950000,
+              "devise": "MAD",
+              "typeTraite": "Contre acceptation",
+              "dateEcheance": "2026-08-30"
+            }
           ],
           "frais": [
-            { "type": "Commission d'encaissement", "description": "Commission de traitement", "montant": 28500, "devise": "MAD", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "Frais SWIFT", "description": "Frais d'émission SWIFT", "montant": 9500, "devise": "MAD", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "Frais de port", "description": "Frais d'envoi documents", "montant": 4750, "devise": "MAD", "supportePar": "Tiré", "statut": "Réglé" },
-            { "type": "TVA", "description": "Taxe sur la valeur ajoutée", "montant": 4750, "devise": "MAD", "supportePar": "Tiré", "statut": "Réglé" }
+            {
+              "type": "Commission d'encaissement",
+              "description": "Commission de traitement",
+              "montant": 28500,
+              "devise": "MAD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais SWIFT",
+              "description": "Frais d'émission SWIFT",
+              "montant": 9500,
+              "devise": "MAD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "Frais de port",
+              "description": "Frais d'envoi documents",
+              "montant": 4750,
+              "devise": "MAD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            },
+            {
+              "type": "TVA",
+              "description": "Taxe sur la valeur ajoutée",
+              "montant": 4750,
+              "devise": "MAD",
+              "supportePar": "Tiré",
+              "statut": "Réglé"
+            }
           ],
           "documentsRecus": [
-            { "type": "Facture commerciale", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
-            { "type": "Packing List", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
-            { "type": "Connaissement (B/L)", "premierEnvoi": 2, "deuxiemeEnvoi": 0, "total": 2 },
-            { "type": "Certificat d'origine", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 }
+            {
+              "type": "Facture commerciale",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            },
+            {
+              "type": "Packing List",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "premierEnvoi": 2,
+              "deuxiemeEnvoi": 0,
+              "total": 2
+            },
+            {
+              "type": "Certificat d'origine",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            }
           ],
-          "suivi": [],
+          "suivi": [
+            {
+              "titre": "Documents reçus",
+              "statut": "Terminé",
+              "champs": [
+                {
+                  "label": "Reçu au niveau",
+                  "valeur": "CTN-DEVISES"
+                },
+                {
+                  "label": "Date de création",
+                  "valeur": "05/05/2026"
+                }
+              ]
+            },
+            {
+              "titre": "Documents transmis à l'agence",
+              "statut": "Terminé",
+              "champs": [
+                {
+                  "label": "Emetteur",
+                  "valeur": "Bureau d'ordre - CTN-Devises"
+                },
+                {
+                  "label": "Numéro du courrier",
+                  "valeur": "COUR-2026-0405"
+                },
+                {
+                  "label": "Date et heure d'envoi",
+                  "valeur": "06/05/2026 09:15:00"
+                }
+              ]
+            },
+            {
+              "titre": "Accusé de réception des documents",
+              "statut": "Reçu",
+              "champs": [
+                {
+                  "label": "Réception effectuée par",
+                  "valeur": "Préposé A"
+                },
+                {
+                  "label": "Date et heure de réception",
+                  "valeur": "07/05/2026 14:30:00"
+                },
+                {
+                  "label": "Statut",
+                  "valeur": "Reçu"
+                },
+                {
+                  "label": "Observation",
+                  "valeur": "Documents reçus en agence."
+                }
+              ]
+            }
+          ],
           "modificationDetails": {
             "dateModification": "2026-06-20",
             "description": "Extension de la date d'échéance du 30/07/2026 au 30/08/2026."
@@ -3687,6 +4640,62 @@
             "contenu": "Paiement de 950 000,00 MAD au titre de la remise documentaire import IRD260000003. UETR : def456ghi789-0123-4567-8901234567890.",
             "fichier": "MT103_IRD260000003_20260725.pdf"
           }
+        ],
+        "suivi": [
+          {
+            "titre": "Documents reçus",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Reçu au niveau",
+                "valeur": "CTN-DEVISES"
+              },
+              {
+                "label": "Date de création",
+                "valeur": "05/05/2026"
+              }
+            ]
+          },
+          {
+            "titre": "Documents transmis à l'agence",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Emetteur",
+                "valeur": "Bureau d'ordre - CTN-Devises"
+              },
+              {
+                "label": "Numéro du courrier",
+                "valeur": "COUR-2026-0405"
+              },
+              {
+                "label": "Date et heure d'envoi",
+                "valeur": "06/05/2026 09:15:00"
+              }
+            ]
+          },
+          {
+            "titre": "Accusé de réception des documents",
+            "statut": "Reçu",
+            "champs": [
+              {
+                "label": "Réception effectuée par",
+                "valeur": "Préposé A"
+              },
+              {
+                "label": "Date et heure de réception",
+                "valeur": "07/05/2026 14:30:00"
+              },
+              {
+                "label": "Statut",
+                "valeur": "Reçu"
+              },
+              {
+                "label": "Observation",
+                "valeur": "Documents reçus en agence."
+              }
+            ]
+          }
         ]
       },
       {
@@ -3703,6 +4712,62 @@
             "dateEmission": "2026-07-26T14:15:00",
             "contenu": "Acceptation & Aval de la traite pour la remise documentaire import IRD260000003.",
             "fichier": "MT732_IRD260000003_20260726.pdf"
+          }
+        ],
+        "suivi": [
+          {
+            "titre": "Documents reçus",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Reçu au niveau",
+                "valeur": "CTN-DEVISES"
+              },
+              {
+                "label": "Date de création",
+                "valeur": "05/05/2026"
+              }
+            ]
+          },
+          {
+            "titre": "Documents transmis à l'agence",
+            "statut": "Terminé",
+            "champs": [
+              {
+                "label": "Emetteur",
+                "valeur": "Bureau d'ordre - CTN-Devises"
+              },
+              {
+                "label": "Numéro du courrier",
+                "valeur": "COUR-2026-0405"
+              },
+              {
+                "label": "Date et heure d'envoi",
+                "valeur": "06/05/2026 09:15:00"
+              }
+            ]
+          },
+          {
+            "titre": "Accusé de réception des documents",
+            "statut": "Reçu",
+            "champs": [
+              {
+                "label": "Réception effectuée par",
+                "valeur": "Préposé A"
+              },
+              {
+                "label": "Date et heure de réception",
+                "valeur": "07/05/2026 14:30:00"
+              },
+              {
+                "label": "Statut",
+                "valeur": "Reçu"
+              },
+              {
+                "label": "Observation",
+                "valeur": "Documents reçus en agence."
+              }
+            ]
           }
         ]
       },
@@ -3772,23 +4837,6 @@
         ]
       },
       {
-        "reference": "EVT-2026-0410",
-        "nature": "Clôture de la remise",
-        "montant": 0,
-        "devise": "MAD",
-        "dateCreation": "2026-07-30T16:00:00",
-        "statut": "VALIDE",
-        "swifts": [
-          {
-            "reference": "SWIFT-2026-0410-01",
-            "type": "MT799",
-            "dateEmission": "2026-07-30T16:00:00",
-            "contenu": "Clôture de la remise documentaire import IRD260000003. Opération terminée.",
-            "fichier": "MT799_IRD260000003_20260730.pdf"
-          }
-        ]
-      },
-      {
         "reference": "EVT-2026-0420",
         "nature": "Ecritures comptables manuelles",
         "montant": 0,
@@ -3851,8 +4899,14 @@
       "client": "AGRO EXPORT MAROC",
       "tireur": "BNP Paribas London",
       "partieRemettante": "BNP Paribas London",
-      "montantRemise": { "valeur": 320000, "devise": "USD" },
-      "encours": { "valeur": 320000, "devise": "USD" },
+      "montantRemise": {
+        "valeur": 320000,
+        "devise": "USD"
+      },
+      "encours": {
+        "valeur": 320000,
+        "devise": "USD"
+      },
       "typeFrais": "Tiré",
       "referenceOperation": "IRD260000004",
       "autreReference": "EXT778501",
@@ -3960,35 +5014,78 @@
             }
           ],
           "documentsRecus": [
-            { "type": "Facture commerciale", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
-            { "type": "Packing List", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
-            { "type": "Connaissement (B/L)", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
-            { "type": "Certificat d'origine", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 },
-            { "type": "Certificat phytosanitaire", "premierEnvoi": 1, "deuxiemeEnvoi": 0, "total": 1 }
+            {
+              "type": "Facture commerciale",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            },
+            {
+              "type": "Packing List",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            },
+            {
+              "type": "Certificat d'origine",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            },
+            {
+              "type": "Certificat phytosanitaire",
+              "premierEnvoi": 1,
+              "deuxiemeEnvoi": 0,
+              "total": 1
+            }
           ],
           "suivi": [
             {
               "titre": "Documents reçus",
               "statut": "Terminé",
               "champs": [
-                { "label": "Reçu au niveau", "valeur": "CTN-DEVISES" },
-                { "label": "Date de création", "valeur": "20/06/2026" }
+                {
+                  "label": "Reçu au niveau",
+                  "valeur": "CTN-DEVISES"
+                },
+                {
+                  "label": "Date de création",
+                  "valeur": "20/06/2026"
+                }
               ]
             },
             {
               "titre": "Documents transmis à l'agence",
               "statut": "Terminé",
               "champs": [
-                { "label": "Emetteur", "valeur": "Bureau d'ordre - CTN-Devises" },
-                { "label": "Numéro du courrier", "valeur": "COUR-2026-0610" },
-                { "label": "Date et heure d'envoi", "valeur": "21/06/2026 08:45:00" }
+                {
+                  "label": "Emetteur",
+                  "valeur": "Bureau d'ordre - CTN-Devises"
+                },
+                {
+                  "label": "Numéro du courrier",
+                  "valeur": "COUR-2026-0610"
+                },
+                {
+                  "label": "Date et heure d'envoi",
+                  "valeur": "21/06/2026 08:45:00"
+                }
               ]
             },
             {
               "titre": "Accusé de réception des documents",
               "statut": "Non reçu",
               "champs": [
-                { "label": "Statut", "valeur": "Non reçu" }
+                {
+                  "label": "Statut",
+                  "valeur": "Non reçu"
+                }
               ]
             }
           ]

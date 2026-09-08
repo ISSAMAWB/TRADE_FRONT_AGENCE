@@ -229,6 +229,7 @@ export interface ExpirationInfo {
   montantPaye: number;
   montantRestant: number;
   frais: FraisCommission[];
+  documentsAttaches?: { nom: string }[];
 }
 
 export interface EvenementTrade {
@@ -250,6 +251,7 @@ export interface EvenementTrade {
   expiration?: ExpirationInfo;
   accuseReception?: AccuseReceptionInfo;
   receptionRemise?: ReceptionRemise;
+  suivi?: SuiviEtape[];
 }
 
 export type MontantAvecDevise = { valeur: number; devise: string };

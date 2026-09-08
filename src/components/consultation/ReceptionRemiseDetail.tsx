@@ -58,7 +58,7 @@ export default function ReceptionRemiseDetail({ dossier, event }: Props) {
         <div className="flex flex-wrap border-b border-[#e4e7ec] mb-6">
           {[
             { id: "detail", label: "Détail de l'événement" },
-            ...(data.suivi && data.suivi.length > 0 ? [{ id: "suivi", label: "Suivi des documents" }] : []),
+            ...(data.suivi && data.suivi.length > 0 ? [{ id: "suivi", label: "Tracking de l'envoi des documents" }] : []),
           ].map((tab) => (
             <button
               key={tab.id}
@@ -78,10 +78,9 @@ export default function ReceptionRemiseDetail({ dossier, event }: Props) {
           <div className="space-y-6" style={{ fontFamily: "Manrope, Helvetica, Arial, sans-serif" }}>
             {/* Détails de la modification - uniquement pour Modification/Ajustement de la remise */}
             {(event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (data as any).modificationDetails && (
-              <div className="bg-white rounded-xl border-2 border-[#ea580c] p-5 shadow-md">
-                <div className="flex items-center gap-3 mb-4">
+              <div className="bg-white rounded-xl border border-[#e4e7ec] p-5 shadow-sm">
+                <div className="mb-4">
                   <h2 className="text-sm font-bold text-[#101828]">Détails de {event.nature === "Ajustement de la remise" ? "l'ajustement" : "la modification"}</h2>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fff4ed] text-[#b54708]">Modifié</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Info label={event.nature === "Ajustement de la remise" ? "Date de l'ajustement" : "Date de la modification"} value={new Date((data as any).modificationDetails.dateModification).toLocaleDateString("fr-FR")} />
@@ -98,10 +97,11 @@ export default function ReceptionRemiseDetail({ dossier, event }: Props) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                 <Info label="Référence de la remise" value={dossier.reference} />
                 <Info label="Date de création" value={new Date(event.dateCreation).toLocaleDateString("fr-FR")} />
+                <Info label="Référence du correspondant" value={dossier.donnees["referenceCorrespondant"] ? String(dossier.donnees["referenceCorrespondant"]) : "—"} />
                 <Info label="Montant des documents présentés" value={formatMontant(data.montantDocumentsPresentes, event.devise)} />
                 <Info label="Conditions de remise des documents" value={dossier.donnees.conditionsRemiseDocuments as string} />
                 {(dossier.donnees.conditionsRemiseDocuments as string)?.toLowerCase().includes("contre acceptation") && (
-                  <div className="bg-[#f7f8fa] rounded-lg p-4 border-2 border-[#ea580c]">
+                  <div className="bg-[#f7f8fa] rounded-lg p-4">
                     <div className="flex items-center justify-between mb-1">
                       <label className="text-xs text-[#8b95a8]">Date d'échéance</label>
                       {(event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise") && (
@@ -144,7 +144,11 @@ export default function ReceptionRemiseDetail({ dossier, event }: Props) {
 
               <div className="border-t border-[#f7f8fa] pt-5">
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8b95a8] mb-3">Intervenants</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="bg-[#f7f8fa] rounded-lg p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#ea580c]">Nature de la partie remettante</p>
+                    <p className="text-sm font-semibold text-[#101828] mt-1">Banque étrangère</p>
+                  </div>
                   {data.intervenants.map((i, idx) => (
                     <div key={idx} className="bg-[#f7f8fa] rounded-lg p-4">
                       <p className="text-xs font-semibold uppercase tracking-wider text-[#ea580c]">{i.role}</p>
@@ -179,6 +183,7 @@ export default function ReceptionRemiseDetail({ dossier, event }: Props) {
                 <Info label="Retour de la remise" value={data.retourRemise} />
                 <Info label="Escompte demandé" value={data.escompteDemande} />
                 <Info label="Financement" value={data.financement} />
+                <Info label="Envoi à l'agence" value="1543" />
               </div>
             </div>
 
@@ -187,7 +192,7 @@ export default function ReceptionRemiseDetail({ dossier, event }: Props) {
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-[#e4e7ec] p-6 shadow-sm" style={{ fontFamily: "Manrope, Helvetica, Arial, sans-serif" }}>
-            <h2 className="text-sm font-bold text-[#101828] mb-6">Suivi des documents</h2>
+            <h2 className="text-sm font-bold text-[#101828] mb-6">Tracking de l'envoi des documents</h2>
             <div className="relative pl-4">
               {data.suivi.map((etape, idx) => (
                 <div key={idx} className="relative pb-8 last:pb-0">
@@ -412,6 +417,7 @@ function RepartitionDocumentsAttaches({ data, event }: { data: any; event: Evene
           </div>
         </div>
       )}
+
     </div>
   );
 }

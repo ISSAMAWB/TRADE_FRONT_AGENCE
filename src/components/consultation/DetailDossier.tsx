@@ -647,7 +647,7 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
             {evenements.map((e) => (
               <tr key={e.reference} className="border-b border-[#e5e8ec] hover:bg-[#f8fafc] transition-colors cursor-pointer">
                 <td className="py-[7px] px-3 font-mono text-[11px] text-[#64748b]">{e.reference}</td>
-                <td className="py-[7px] px-3 font-semibold text-[#0f172a]">{e.nature}</td>
+                <td className="py-[7px] px-3 font-semibold text-[#0f172a]">{e.expiration?.libelleEvenement || e.nature}</td>
                 <td className="py-[7px] px-3 text-right font-mono text-[#0f172a] tabular-nums">
                   {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-[#94a3b8]">—</span>}
                 </td>
@@ -658,7 +658,7 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
                       <button
                         className="text-[#94a3b8] hover:text-[#e8632b] transition"
                         onClick={() => router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`)}
-                        title={`Voir le détail de ${e.nature.toLowerCase()}`}
+                        title={`Voir le détail de ${(e.expiration?.libelleEvenement || e.nature).toLowerCase()}`}
                       >
                         <Eye size={15} />
                       </button>
@@ -700,7 +700,7 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b]">Détail de l'événement</div>
-                  <div className="text-lg font-semibold text-[#0f172a]">{selectedEvent.nature}</div>
+                  <div className="text-lg font-semibold text-[#0f172a]">{selectedEvent.expiration?.libelleEvenement || selectedEvent.nature}</div>
                   <div className="text-xs text-[#64748b]">{selectedEvent.reference} · {formatDate(selectedEvent.dateCreation)}</div>
                 </div>
                 <button
@@ -714,7 +714,7 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
               <div className="grid md:grid-cols-3 gap-4 mb-5">
                 <div className="rounded-lg border border-[#e5e8ec] p-3">
                   <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Nature</div>
-                  <div className="text-sm font-medium text-[#0f172a]">{selectedEvent.nature}</div>
+                  <div className="text-sm font-medium text-[#0f172a]">{selectedEvent.expiration?.libelleEvenement || selectedEvent.nature}</div>
                 </div>
                 <div className="rounded-lg border border-[#e5e8ec] p-3">
                   <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Montant</div>
@@ -1365,7 +1365,7 @@ function EvenementsTable({ evenements }: { evenements: DossierTrade["evenements"
             {evenements.map((e) => (
               <tr key={e.reference} className="border-b border-ink-100 transition">
                 <td className="px-3 py-2 font-mono text-xs">{e.reference}</td>
-                <td className="px-3 py-2 font-medium text-ink-800">{e.nature}</td>
+                <td className="px-3 py-2 font-medium text-ink-800">{e.expiration?.libelleEvenement || e.nature}</td>
                 <td className="px-3 py-2 text-right text-ink-700">
                   {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-ink-300">—</span>}
                 </td>
