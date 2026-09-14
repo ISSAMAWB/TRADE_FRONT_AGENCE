@@ -385,7 +385,7 @@ France</p>
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Détails de l'acceptation</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Détails de l'acceptation et aval</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gray-50 rounded-lg p-4">
@@ -411,6 +411,10 @@ MAROC</p>
               <div className="bg-gray-50 rounded-lg p-4">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence</label>
                 <p className="font-semibold text-gray-900">-</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence de l'aval</label>
+                <p className="font-semibold text-gray-900">—</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Montant accepté</label>
@@ -1692,54 +1696,14 @@ FRANCE</p>
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence externe</label>
                 <p className="font-semibold text-gray-900">{event.centralisationDocument.referenceExterne}</p>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Complétude documentaire - uniquement pour Centralisation des documents */}
-        {event.nature === "Centralisation des documents" && event.centralisationDocument && (
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Complétude documentaire</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Type document</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Nombre attendu</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Nombre reçu</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Écart</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {event.centralisationDocument.documents.map((doc, index) => (
-                    <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition">
-                      <td className="py-3 px-4 font-medium text-gray-900">{doc.type}</td>
-                      <td className="py-3 px-4 text-center text-gray-600">{doc.nombreAttendu}</td>
-                      <td className="py-3 px-4 text-center text-gray-600">{doc.nombreRecu}</td>
-                      <td className="py-3 px-4 text-center text-gray-600">{doc.ecart}</td>
-                      <td className="py-3 px-4 text-center">
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${doc.statut === "OK" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
-                          {doc.statut}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                  <tr className="bg-amber-50 font-semibold">
-                    <td className="py-3 px-4 text-gray-900 uppercase tracking-wider text-xs" colSpan={4}>Total</td>
-                    <td className="py-3 px-4 text-center text-gray-900">
-                      {event.centralisationDocument.documents.every(d => d.statut === "OK") ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Complet</span>
-                      ) : (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Incomplet</span>
-                      )}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Code évènement</label>
+                <p className="font-semibold text-gray-900">CRE001</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type d'évènement</label>
+                <p className="font-semibold text-gray-900">Création</p>
+              </div>
             </div>
           </div>
         )}

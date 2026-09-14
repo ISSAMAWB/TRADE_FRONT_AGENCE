@@ -197,6 +197,27 @@ export default function CentralisationRDIDetail() {
             <EditField label="Référence externe" value={courrier.reference_externe ?? ""}
               onChange={v => updateField("reference_externe", { reference_externe: v || undefined })} disabled={!isEditable} />
           </div>
+
+          {/* Ligne 3 : Type d'évènement + Code d'évènement */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Field label="Type d'évènement">
+              <select
+                className={clsx("input w-full", !isEditable && "bg-ink-50")}
+                value={courrier.type_evenement ?? "CREATION"}
+                onChange={e => {
+                  const t = e.target.value as import("@/domain/types").TypeEvenementCentralisation;
+                  const code = t === "CREATION" ? "CRE001" : t === "MODIFICATION" ? "MOD002" : "CHG003";
+                  updateField("type_evenement", { type_evenement: t, code_evenement: code });
+                }}
+                disabled={!isEditable}
+              >
+                <option value="CREATION">Création</option>
+                <option value="MODIFICATION">Modification</option>
+                <option value="CHANGEMENT_DOMICILIATION">Changement de domiciliation</option>
+              </select>
+            </Field>
+            <EditField label="Code d'évènement" value={courrier.code_evenement ?? "—"} onChange={() => {}} disabled={true} />
+          </div>
         </div>
       </section>
 

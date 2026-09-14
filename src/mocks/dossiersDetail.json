@@ -588,6 +588,54 @@
     },
     "evenements": [
       {
+        "reference": "EVT-2026-CENT-001",
+        "nature": "Centralisation des documents",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-04-15T10:00:00",
+        "statut": "VALIDE",
+        "centralisationDocument": {
+          "referenceCentralisation": "CENT-IRD260000004",
+          "produit": "REMDOC Import",
+          "client": "STE VIVO ENERGY MAROC",
+          "montant": 21000,
+          "devise": "EUR",
+          "referenceInterne": "IRD260000004",
+          "referenceExterne": "EXT928289",
+          "documents": [
+            {
+              "type": "Facture commerciale",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Packing List",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Certificat d'origine",
+              "nombreAttendu": 1,
+              "nombreRecu": 0,
+              "ecart": -1,
+              "statut": "Manquant"
+            }
+          ]
+        },
+        "swifts": []
+      },
+      {
         "reference": "EVT-2026-0301",
         "nature": "Réception de la remise",
         "montant": 21000,
@@ -2268,6 +2316,54 @@
     },
     "evenements": [
       {
+        "reference": "EVT-2026-CENT-002",
+        "nature": "Centralisation des documents",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-04-15T10:00:00",
+        "statut": "VALIDE",
+        "centralisationDocument": {
+          "referenceCentralisation": "CENT-IRD260000001",
+          "produit": "REMDOC Import",
+          "client": "MAGHREB STEEL SA",
+          "montant": 1800000,
+          "devise": "USD",
+          "referenceInterne": "IRD260000001",
+          "referenceExterne": "EXT928291",
+          "documents": [
+            {
+              "type": "Facture commerciale",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Packing List",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Certificat d'origine",
+              "nombreAttendu": 1,
+              "nombreRecu": 0,
+              "ecart": -1,
+              "statut": "Manquant"
+            }
+          ]
+        },
+        "swifts": []
+      },
+      {
         "reference": "EVT-2026-0201",
         "nature": "Réception de la remise",
         "montant": 1800000,
@@ -3362,6 +3458,54 @@
     },
     "evenements": [
       {
+        "reference": "EVT-2026-CENT-003",
+        "nature": "Centralisation des documents",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-04-15T10:00:00",
+        "statut": "VALIDE",
+        "centralisationDocument": {
+          "referenceCentralisation": "CENT-IRD260000002",
+          "produit": "REMDOC Import",
+          "client": "DELICES DU SUD SARL",
+          "montant": 650000,
+          "devise": "EUR",
+          "referenceInterne": "IRD260000002",
+          "referenceExterne": "EXT928290",
+          "documents": [
+            {
+              "type": "Facture commerciale",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Packing List",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Certificat d'origine",
+              "nombreAttendu": 1,
+              "nombreRecu": 0,
+              "ecart": -1,
+              "statut": "Manquant"
+            }
+          ]
+        },
+        "swifts": []
+      },
+      {
         "reference": "EVT-2026-0400",
         "nature": "Réception de la remise",
         "montant": 5140000,
@@ -4424,6 +4568,54 @@
     },
     "evenements": [
       {
+        "reference": "EVT-2026-CENT-004",
+        "nature": "Centralisation des documents",
+        "montant": 0,
+        "devise": "MAD",
+        "dateCreation": "2026-04-15T10:00:00",
+        "statut": "VALIDE",
+        "centralisationDocument": {
+          "referenceCentralisation": "CENT-IRD260000003",
+          "produit": "REMDOC Import",
+          "client": "SAHARA LOGISTICS",
+          "montant": 950000,
+          "devise": "MAD",
+          "referenceInterne": "IRD260000003",
+          "referenceExterne": "EXT928291",
+          "documents": [
+            {
+              "type": "Facture commerciale",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Packing List",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Certificat d'origine",
+              "nombreAttendu": 1,
+              "nombreRecu": 0,
+              "ecart": -1,
+              "statut": "Manquant"
+            }
+          ]
+        },
+        "swifts": []
+      },
+      {
         "reference": "EVT-2026-0350",
         "nature": "Réception de la remise",
         "montant": 950000,
@@ -4919,6 +5111,54 @@
       ]
     },
     "evenements": [
+      {
+        "reference": "EVT-2026-CENT-005",
+        "nature": "Centralisation des documents",
+        "montant": 0,
+        "devise": "USD",
+        "dateCreation": "2026-04-15T10:00:00",
+        "statut": "VALIDE",
+        "centralisationDocument": {
+          "referenceCentralisation": "CENT-IRD260000004",
+          "produit": "REMDOC Import",
+          "client": "AGRO EXPORT MAROC",
+          "montant": 320000,
+          "devise": "USD",
+          "referenceInterne": "IRD260000004",
+          "referenceExterne": "EXT778501",
+          "documents": [
+            {
+              "type": "Facture commerciale",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Packing List",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Connaissement (B/L)",
+              "nombreAttendu": 1,
+              "nombreRecu": 1,
+              "ecart": 0,
+              "statut": "OK"
+            },
+            {
+              "type": "Certificat d'origine",
+              "nombreAttendu": 1,
+              "nombreRecu": 0,
+              "ecart": -1,
+              "statut": "Manquant"
+            }
+          ]
+        },
+        "swifts": []
+      },
       {
         "reference": "EVT-2026-0610",
         "nature": "Réception de la remise",

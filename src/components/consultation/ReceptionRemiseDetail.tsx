@@ -96,6 +96,7 @@ export default function ReceptionRemiseDetail({ dossier, event }: Props) {
               <h2 className="text-sm font-bold text-[#101828] mb-4">Caractéristiques de l'opération</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                 <Info label="Référence de la remise" value={dossier.reference} />
+                <Info label="Référence de centralisation" value={dossier.donnees["referenceCentralisation"] ? String(dossier.donnees["referenceCentralisation"]) : "—"} />
                 <Info label="Date de création" value={new Date(event.dateCreation).toLocaleDateString("fr-FR")} />
                 <Info label="Référence du correspondant" value={dossier.donnees["referenceCorrespondant"] ? String(dossier.donnees["referenceCorrespondant"]) : "—"} />
                 <Info label="Montant des documents présentés" value={formatMontant(data.montantDocumentsPresentes, event.devise)} />

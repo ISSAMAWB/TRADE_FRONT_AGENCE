@@ -114,6 +114,11 @@ export type MotifRetourCtn =
   | "OCR_INCOHERENT"
   | "REFERENCE_INTROUVABLE";
 
+export type TypeEvenementCentralisation =
+  | "CREATION"
+  | "MODIFICATION"
+  | "CHANGEMENT_DOMICILIATION";
+
 /* ---------- Entities ---------- */
 
 export interface Courrier {
@@ -159,6 +164,8 @@ export interface CourrierIrd {
   devise?: string;
   reference_interne?: string;
   reference_externe?: string;
+  type_evenement?: TypeEvenementCentralisation;
+  code_evenement?: string;
   controle_doc: LigneControleDoc[];
   score_completude?: number;
   /** Field names enriched by OCR (for green border indicator) */

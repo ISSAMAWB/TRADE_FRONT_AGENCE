@@ -610,6 +610,22 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
   const [selectedEvent, setSelectedEvent] = useState<EvenementTrade | null>(null);
   const router = useRouter();
 
+  const NATURES_AVEC_DETAIL = [
+    "Réception de la remise", "Modification de la remise", "Ajustement de la remise",
+    "Acceptation & Aval de la traite", "Paiement", "Correspondance",
+    "Ecritures comptables manuelles", "Frais et commission", "Retour des documents",
+    "Demande de remise des documents", "Centralisation des documents",
+    "Accusé de réception des documents", "Expiration",
+  ];
+
+  function ouvrirDetail(e: EvenementTrade) {
+    if (NATURES_AVEC_DETAIL.includes(e.nature)) {
+      router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`);
+    } else {
+      setSelectedEvent(e);
+    }
+  }
+
   function downloadSwift(swift: SwiftMessage) {
     const blob = new Blob([swift.contenu], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -645,7 +661,12 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
           </thead>
           <tbody>
             {evenements.map((e) => (
-              <tr key={e.reference} className="border-b border-[#e5e8ec] hover:bg-[#f8fafc] transition-colors cursor-pointer">
+              <tr
+                key={e.reference}
+                className="border-b border-[#e5e8ec] hover:bg-[#f8fafc] transition-colors cursor-pointer"
+                onClick={() => ouvrirDetail(e)}
+                title={`Voir le détail de ${(e.expiration?.libelleEvenement || e.nature).toLowerCase()}`}
+              >
                 <td className="py-[7px] px-3 font-mono text-[11px] text-[#64748b]">{e.reference}</td>
                 <td className="py-[7px] px-3 font-semibold text-[#0f172a]">{e.expiration?.libelleEvenement || e.nature}</td>
                 <td className="py-[7px] px-3 text-right font-mono text-[#0f172a] tabular-nums">
@@ -654,27 +675,17 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
                 <td className="py-[7px] px-3 text-[#64748b]">{formatDate(e.dateCreation)}</td>
                 <td className="py-[7px] px-3 text-center">
                   <div className="flex items-center justify-center gap-2">
-                    {e.nature === "Réception de la remise" || e.nature === "Modification de la remise" || e.nature === "Ajustement de la remise" || e.nature === "Acceptation & Aval de la traite" || e.nature === "Paiement" || e.nature === "Correspondance" || e.nature === "Ecritures comptables manuelles" || e.nature === "Frais et commission" || e.nature === "Retour des documents" || e.nature === "Demande de remise des documents" || e.nature === "Centralisation des documents" || e.nature === "Accusé de réception des documents" || e.nature === "Expiration" ? (
-                      <button
-                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
-                        onClick={() => router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`)}
-                        title={`Voir le détail de ${(e.expiration?.libelleEvenement || e.nature).toLowerCase()}`}
-                      >
-                        <Eye size={15} />
-                      </button>
-                    ) : (
-                      <button
-                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
-                        onClick={() => setSelectedEvent(e)}
-                        title="Voir le détail et les SWIFT"
-                      >
-                        <Eye size={15} />
-                      </button>
-                    )}
+                    <button
+                      className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                      onClick={(ev) => { ev.stopPropagation(); ouvrirDetail(e); }}
+                      title={`Voir le détail de ${(e.expiration?.libelleEvenement || e.nature).toLowerCase()}`}
+                    >
+                      <Eye size={15} />
+                    </button>
                     {e.swifts && e.swifts.length > 0 && (
                       <button
                         className="text-[#94a3b8] hover:text-[#e8632b] transition"
-                        onClick={() => setSelectedEvent(e)}
+                        onClick={(ev) => { ev.stopPropagation(); setSelectedEvent(e); }}
                         title="Voir le détail et les SWIFT"
                       >
                         <Download size={15} />
@@ -1132,6 +1143,14 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
             )}
             <span className="text-[#94a3b8]">{isCredoc ? "Mode de réalisation" : "Conditions de remise"}</span>
             <span className="font-medium text-[#0f172a]">{String(isCredoc ? modeRealisation : conditionsRemise || "—")}</span>
+            {!isCredoc && (
+              <>
+                <span className="text-[#94a3b8]">Financement</span>
+                <span className="font-medium text-[#0f172a]">
+                  {String(dossier.evenements.find(e => e.nature === "Réception de la remise" && e.receptionRemise)?.receptionRemise?.financement || "—")}
+                </span>
+              </>
+            )}
             <span className="text-[#94a3b8]">{isCredoc ? "Confirmation" : "Échéance"}</span>
             <span className={`font-semibold ${isCredoc ? (isConfirme ? "text-[#177a52]" : "text-[#6d4fc4]") : "text-[#e8632b]"}`}>
               {isCredoc ? (isConfirme ? "Confirmed" : "Unconfirmed") : (dateEcheance ? formatDate(String(dateEcheance)) : "—")}

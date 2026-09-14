@@ -478,6 +478,8 @@ export const useTomStore = create<AppState>((set, get) => ({
       documents: [],
       controle_doc: [],
       ocr_fields: [],
+      type_evenement: "CREATION",
+      code_evenement: "CRE001",
       historique: [{
         id: nanoid(8), date: nowIso(), acteur: get().acteurCourant,
         type: "CREATION", message: "Courrier IRD créé — EN_PREPARATION",
