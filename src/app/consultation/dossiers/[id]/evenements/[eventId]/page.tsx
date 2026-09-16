@@ -106,7 +106,7 @@ export default function EventDetailPage() {
               <ArrowLeft size={20} className="text-gray-600" />
             </button>
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">{event.nature}</h1>
+              <h1 className="text-xl font-semibold text-gray-900">{event.expiration?.libelleEvenement || event.nature}</h1>
               <p className="text-sm text-gray-500">{event.reference} · {new Date(event.dateCreation).toLocaleDateString('fr-FR')}</p>
             </div>
           </div>
