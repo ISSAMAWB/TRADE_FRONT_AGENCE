@@ -8,6 +8,7 @@ import type {
   StatutPhysique, OcrExtractionDossier, OcrExtractionCourrier,
   CourrierIrd, StatutCourrierWorkflow, TypeTransporteur,
   LocalisationPhysique, ClientReferentiel,
+  RetourInfo, TypeRetour, MotifRetour,
 } from "@/domain/types";
 import { WORKFLOWS, getAllowedTransitions } from "@/domain/workflow";
 
@@ -93,7 +94,12 @@ interface AppState {
 export type CourrierIrdAction =
   | "VALIDER_CREATION"
   | "VALIDER_ET_ENVOYER"
-  | "RETOURNER_CORRECTION";
+  | "RETOURNER_CORRECTION"
+  | "CORRIGER"
+  | "SOUMETTRE_NOUVEAU"
+  | "ENREGISTRER_BROUILLON"
+  | "RELANCER"
+  | "RETOURNER_DOCUMENTS";
 
 function newRef(prefix: string) {
   return `${prefix}-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000 + 10000)}`;
@@ -480,6 +486,8 @@ export const useTomStore = create<AppState>((set, get) => ({
       ocr_fields: [],
       type_evenement: "CREATION",
       code_evenement: "CRE001",
+      retours: [],
+      champs_a_corriger: [],
       historique: [{
         id: nanoid(8), date: nowIso(), acteur: get().acteurCourant,
         type: "CREATION", message: "Courrier IRD créé — EN_PREPARATION",
@@ -670,32 +678,80 @@ export const useTomStore = create<AppState>((set, get) => ({
         let next: CourrierIrd = { ...x, updated_at: nowIso() };
         switch (action) {
           case "VALIDER_CREATION":
-            if (x.statut_workflow !== "EN_PREPARATION") return x;
+            if (x.statut_workflow !== "EN_PREPARATION" && x.statut_workflow !== "EN_CORRECTION") return x;
             if (acteur !== "AGENCE") return x;
             next.statut_workflow = "EN_ATTENTE_VALIDATION_AGENCE";
             next.commentaire_retour_validation = undefined;
+            next.champs_a_corriger = [];
+            next.historique = [...next.historique, {
+              id: nanoid(8), date: nowIso(), acteur,
+              type: "SOUMISSION", message: "Soumission pour validation",
+            }];
             break;
           case "VALIDER_ET_ENVOYER":
             if (x.statut_workflow !== "EN_ATTENTE_VALIDATION_AGENCE") return x;
             if (acteur !== "RESPONSABLE_AGENCE") return x;
-            next.statut_workflow = "ENVOYE_CTN";
+            next.statut_workflow = "EN_ATTENTE_VALIDATION_CTN";
             next.responsable_validation = "Responsable agence Casablanca";
             next.date_validation_agence = nowIso();
             next.localisation_physique = "EN_TRANSIT_CTN";
+            next.historique = [...next.historique, {
+              id: nanoid(8), date: nowIso(), acteur,
+              type: "VALIDATION_AGENCE", message: "Validation agence — transmission au CTN Devise",
+            }];
             break;
           case "RETOURNER_CORRECTION":
-            if (x.statut_workflow !== "EN_ATTENTE_VALIDATION_AGENCE") return x;
-            if (acteur !== "RESPONSABLE_AGENCE") return x;
-            next.statut_workflow = "EN_PREPARATION";
-            next.commentaire_retour_validation = payload?.commentaire;
+            // géré via mock retours, pas d'action directe du saisisseur
+            break;
+          case "CORRIGER":
+            if (x.statut_workflow !== "RETOUR_AGENCE" && x.statut_workflow !== "RETOUR_CTN") return x;
+            next.statut_workflow = "EN_CORRECTION";
+            next.historique = [...next.historique, {
+              id: nanoid(8), date: nowIso(), acteur,
+              type: "CORRECTION", message: "Correction",
+            }];
+            break;
+          case "SOUMETTRE_NOUVEAU": {
+            const isRetour = x.statut_workflow === "RETOUR_AGENCE" || x.statut_workflow === "RETOUR_CTN";
+            if (!isRetour && x.statut_workflow !== "EN_CORRECTION" && x.statut_workflow !== "EN_PREPARATION") return x;
+            const events: HistoriqueEvent[] = [];
+            if (isRetour) {
+              events.push({ id: nanoid(8), date: nowIso(), acteur, type: "CORRECTION", message: "Correction" });
+            }
+            events.push({ id: nanoid(8), date: nowIso(), acteur, type: "SOUMISSION", message: "Soumission à nouveau" });
+            next.statut_workflow = "EN_ATTENTE_VALIDATION_AGENCE";
+            next.champs_a_corriger = [];
+            next.historique = [...next.historique, ...events];
+            break;
+          }
+          case "ENREGISTRER_BROUILLON":
+            next.historique = [...next.historique, {
+              id: nanoid(8), date: nowIso(), acteur,
+              type: "BROUILLON", message: "Modifications enregistrées",
+            }];
+            break;
+          case "RELANCER":
+            next.historique = [...next.historique, {
+              id: nanoid(8), date: nowIso(), acteur,
+              type: "RELANCE", message: "Relance client",
+            }];
+            break;
+          case "RETOURNER_DOCUMENTS":
+            next.retour_documents_effectue = true;
+            next.historique = [...next.historique, {
+              id: nanoid(8), date: nowIso(), acteur,
+              type: "RETOUR_DOCS", message: "Retour documents",
+            }];
             break;
         }
-        next.historique = [...next.historique, {
-          id: nanoid(8), date: nowIso(), acteur,
-          type: "WORKFLOW",
-          message: `${x.statut_workflow} → ${next.statut_workflow} (${action})`
-            + (payload?.commentaire ? ` — ${payload.commentaire}` : ""),
-        }];
+        if (action !== "CORRIGER" && action !== "SOUMETTRE_NOUVEAU" && action !== "ENREGISTRER_BROUILLON" && action !== "RELANCER" && action !== "RETOURNER_DOCUMENTS") {
+          next.historique = [...next.historique, {
+            id: nanoid(8), date: nowIso(), acteur,
+            type: "WORKFLOW",
+            message: `${x.statut_workflow} → ${next.statut_workflow} (${action})`
+              + (payload?.commentaire ? ` — ${payload.commentaire}` : ""),
+          }];
+        }
         return next;
       }),
     }));
@@ -744,45 +800,43 @@ function seedDemo() {
     { type_document: "FACTURE", filename: "INV_022.pdf" },
   ]);
 
-  /* ===== Seed module Centralisation des courriers IRD ===== */
-  // Courrier 1 — EN_PREPARATION (à OCRiser)
-  const ci1 = s.createCourrierIrd({
+  /* ===== Seed module Centralisation REMDOC Import — Scénarios A-G ===== */
+
+  // SCÉNARIO A — Brouillon
+  const ciA = s.createCourrierIrd({
     type_transporteur: "DHL",
     reference_transporteur: "DHL5582019",
+    agence_reception: "Agence Casablanca",
   });
-  s.addDocumentsCourrierIrd(ci1.id, [
+  s.addDocumentsCourrierIrd(ciA.id, [
     { type_document: "LETTRE_ACCOMPAGNEMENT", filename: "LAC_BNP_001.pdf" },
     { type_document: "FACTURE", filename: "INV_001.pdf" },
-    { type_document: "FACTURE", filename: "INV_002.pdf" },
     { type_document: "BL", filename: "BL_001.pdf" },
   ]);
+  setTimeout(() => {
+    useTomStore.getState().updateCourrierIrd(ciA.id, {
+      reference_courrier: "CIR-2026-68346",
+      client: "ATLAS TEXTILE SARL",
+      montant: 85_000,
+      devise: "EUR",
+      reference_interne: "INT/4421",
+    });
+  }, 50);
 
-  // Courrier 2 — OCR_EN_COURS
-  const ci2 = s.createCourrierIrd({
-    type_transporteur: "UPS",
-    reference_transporteur: "UPS7732001",
-  });
-  s.addDocumentsCourrierIrd(ci2.id, [
-    { type_document: "LETTRE_ACCOMPAGNEMENT", filename: "LAC_SG.pdf" },
-    { type_document: "FACTURE", filename: "INV_010.pdf" },
-    { type_document: "FACTURE", filename: "INV_011.pdf" },
-    { type_document: "FACTURE", filename: "INV_012.pdf" },
-    { type_document: "CERTIFICAT_ORIGINE", filename: "CO_010.pdf" },
-  ]);
-  useTomStore.getState().lancerOcrCourrierIrd(ci2.id);
-
-  // Courrier 3 — EN_ATTENTE_VALIDATION_AGENCE (prêt pour responsable)
-  const ci3 = s.createCourrierIrd({
+  // SCÉNARIO B — À valider Agence
+  const ciB = s.createCourrierIrd({
     type_transporteur: "FEDEX",
     reference_transporteur: "FX99204411",
+    agence_reception: "Agence Casablanca",
   });
-  s.addDocumentsCourrierIrd(ci3.id, [
+  s.addDocumentsCourrierIrd(ciB.id, [
     { type_document: "FACTURE", filename: "INV_300.pdf" },
     { type_document: "BL", filename: "BL_300.pdf" },
     { type_document: "CERTIFICAT_ORIGINE", filename: "CO_300.pdf" },
   ]);
   setTimeout(() => {
-    useTomStore.getState().updateCourrierIrd(ci3.id, {
+    useTomStore.getState().updateCourrierIrd(ciB.id, {
+      reference_courrier: "CIR-2026-73893",
       statut_workflow: "EN_ATTENTE_VALIDATION_AGENCE",
       statut_ocr: "OCR_ANALYSE",
       statut_completude: "COMPLET",
@@ -793,47 +847,551 @@ function seedDemo() {
       devise: "EUR",
       reference_interne: "INT/4421",
       reference_externe: "EXT/8842",
-      localisation_physique: "AGENCE",
+      modalite: "CONTRE_PAIEMENT",
+      statut_paiement: "A_EFFECTUER",
+      date_echeance: "2026-09-23T00:00:00.000Z",
       ocr_fields: ["produit", "client", "montant", "devise", "reference_interne", "reference_externe"],
-      controle_doc: [
-        { type_document: "FACTURE", nombre_attendu: 1, nombre_detecte: 1, statut_detection: "DETECTE" },
-        { type_document: "BL", nombre_attendu: 1, nombre_detecte: 1, statut_detection: "DETECTE" },
-        { type_document: "CERTIFICAT_ORIGINE", nombre_attendu: 1, nombre_detecte: 1, statut_detection: "DETECTE" },
-      ],
     });
-  }, 200);
+    const c = useTomStore.getState().courriersIrd.find(x => x.id === ciB.id);
+    if (c) {
+      useTomStore.getState().updateCourrierIrd(ciB.id, {
+        historique: [...c.historique, {
+          id: nanoid(8), date: "2026-09-15T09:15:00.000Z", acteur: "AGENCE",
+          type: "SOUMISSION", message: "Soumission pour validation",
+        }],
+      });
+    }
+  }, 100);
 
-  // Courrier 4 — ENVOYE_CTN (validé et envoyé)
-  const ci4 = s.createCourrierIrd({
-    type_transporteur: "ARAMEX",
-    reference_transporteur: "ARX2204188",
+  // SCÉNARIO C — Retour Agence → à corriger
+  const ciC = s.createCourrierIrd({
+    type_transporteur: "UPS",
+    reference_transporteur: "UPS7732001",
+    agence_reception: "Agence Casablanca",
   });
-  s.addDocumentsCourrierIrd(ci4.id, [
-    { type_document: "FACTURE", filename: "INV_400.pdf" },
-    { type_document: "BL", filename: "BL_400.pdf" },
+  s.addDocumentsCourrierIrd(ciC.id, [
+    { type_document: "FACTURE", filename: "INV_500.pdf" },
+    { type_document: "BL", filename: "BL_500.pdf" },
   ]);
   setTimeout(() => {
-    useTomStore.getState().updateCourrierIrd(ci4.id, {
-      statut_workflow: "ENVOYE_CTN",
+    const retourC: RetourInfo = {
+      id: nanoid(8),
+      type_retour: "RETOUR_AGENCE",
+      motif: "INFORMATIONS_INCOMPLETES",
+      commentaire: "Merci de compléter la référence externe.",
+      auteur: "Responsable Agence",
+      date: "2026-09-16T09:42:00.000Z",
+      champs_a_corriger: ["reference_externe"],
+    };
+    useTomStore.getState().updateCourrierIrd(ciC.id, {
+      reference_courrier: "CIR-2026-72813",
+      statut_workflow: "RETOUR_AGENCE",
       statut_ocr: "OCR_ANALYSE",
       statut_completude: "COMPLET",
       score_completude: 100,
       produit: "REMISE_DOCUMENTAIRE_IMPORT",
-      client: "OCEANIC SHIPPING",
+      client: "DELICES DU SUD SARL",
+      montant: 98_000,
+      devise: "EUR",
+      reference_interne: "INT/5501",
+      reference_externe: "",
+      modalite: "CONTRE_PAIEMENT",
+      statut_paiement: "A_EFFECTUER",
+      date_echeance: "2026-09-30T00:00:00.000Z",
+      ocr_fields: ["produit", "client", "montant", "devise", "reference_interne"],
+      retours: [retourC],
+      dernier_retour: retourC,
+      champs_a_corriger: ["reference_externe"],
+      historique: [
+        { id: nanoid(8), date: "2026-09-16T08:42:00.000Z", acteur: "AGENCE", type: "CREATION", message: "Création de la centralisation" },
+        { id: nanoid(8), date: "2026-09-16T09:15:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission pour validation" },
+        { id: nanoid(8), date: "2026-09-16T09:42:00.000Z", acteur: "RESPONSABLE_AGENCE", type: "RETOUR_AGENCE",
+          message: "Retour Agence", motif: "Informations incomplètes", commentaire: "Merci de compléter la référence externe." },
+      ],
+    });
+  }, 150);
+
+  // SCÉNARIO D — Retour CTN → à corriger
+  const ciD = s.createCourrierIrd({
+    type_transporteur: "ARAMEX",
+    reference_transporteur: "ARX2204188",
+    agence_reception: "Agence Rabat",
+  });
+  s.addDocumentsCourrierIrd(ciD.id, [
+    { type_document: "FACTURE", filename: "INV_600.pdf" },
+    { type_document: "BL", filename: "BL_600.pdf" },
+    { type_document: "CERTIFICAT_ORIGINE", filename: "CO_600.pdf" },
+  ]);
+  setTimeout(() => {
+    const retourD: RetourInfo = {
+      id: nanoid(8),
+      type_retour: "RETOUR_CTN",
+      motif: "DOCUMENT_NON_CONFORME",
+      commentaire: "Merci de fournir une version conforme du Bill of Lading.",
+      auteur: "CTN Devise",
+      date: "2026-09-18T14:20:00.000Z",
+      champs_a_corriger: [],
+      documents_a_remplacer: [],
+    };
+    useTomStore.getState().updateCourrierIrd(ciD.id, {
+      reference_courrier: "CIR-2026-72814",
+      statut_workflow: "RETOUR_CTN",
+      statut_ocr: "OCR_ANALYSE",
+      statut_completude: "COMPLET",
+      score_completude: 100,
+      produit: "REMISE_DOCUMENTAIRE_IMPORT",
+      client: "OCEANIC SHIPPING LTD",
       montant: 275_000,
       devise: "USD",
-      reference_interne: "INT/5501",
+      reference_interne: "INT/5502",
       reference_externe: "EXT/7720",
-      localisation_physique: "EN_TRANSIT_CTN",
+      modalite: "CONTRE_ACCEPTATION",
+      statut_paiement: "EN_RETARD",
+      date_echeance: "2026-09-12T00:00:00.000Z",
       ocr_fields: ["produit", "client", "montant", "devise", "reference_interne", "reference_externe"],
-      responsable_validation: "Responsable agence Casablanca",
-      date_validation_agence: nowIso(),
-      controle_doc: [
-        { type_document: "FACTURE", nombre_attendu: 1, nombre_detecte: 1, statut_detection: "DETECTE" },
-        { type_document: "BL", nombre_attendu: 1, nombre_detecte: 1, statut_detection: "DETECTE" },
+      responsable_validation: "Responsable agence Rabat",
+      date_validation_agence: "2026-09-17T16:00:00.000Z",
+      retours: [retourD],
+      dernier_retour: retourD,
+      champs_a_corriger: [],
+      historique: [
+        { id: nanoid(8), date: "2026-09-16T10:00:00.000Z", acteur: "AGENCE", type: "CREATION", message: "Création de la centralisation" },
+        { id: nanoid(8), date: "2026-09-16T10:30:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission pour validation" },
+        { id: nanoid(8), date: "2026-09-17T16:00:00.000Z", acteur: "RESPONSABLE_AGENCE", type: "VALIDATION_AGENCE", message: "Validation Agence" },
+        { id: nanoid(8), date: "2026-09-17T16:05:00.000Z", acteur: "SYSTEM", type: "TRANSMISSION_CTN", message: "Transmission CTN Devise" },
+        { id: nanoid(8), date: "2026-09-18T14:20:00.000Z", acteur: "CTN_DEVISE", type: "RETOUR_CTN",
+          message: "Retour CTN", motif: "Document non conforme", commentaire: "Merci de fournir une version conforme du Bill of Lading." },
       ],
     });
   }, 200);
+
+  // SCÉNARIO E — Retour Agence → correction → resoumission (en attente validation)
+  const ciE = s.createCourrierIrd({
+    type_transporteur: "DHL",
+    reference_transporteur: "DHL6612345",
+    agence_reception: "Agence Casablanca",
+  });
+  s.addDocumentsCourrierIrd(ciE.id, [
+    { type_document: "FACTURE", filename: "INV_700.pdf" },
+    { type_document: "BL", filename: "BL_700.pdf" },
+  ]);
+  setTimeout(() => {
+    const retourE: RetourInfo = {
+      id: nanoid(8),
+      type_retour: "RETOUR_AGENCE",
+      motif: "INFORMATIONS_INCORRECTES",
+      commentaire: "Le montant ne correspond pas à la facture.",
+      auteur: "Responsable Agence",
+      date: "2026-09-14T11:00:00.000Z",
+      champs_a_corriger: ["montant"],
+    };
+    useTomStore.getState().updateCourrierIrd(ciE.id, {
+      reference_courrier: "CIR-2026-73895",
+      statut_workflow: "EN_ATTENTE_VALIDATION_AGENCE",
+      statut_ocr: "OCR_ANALYSE",
+      statut_completude: "COMPLET",
+      score_completude: 100,
+      produit: "REMISE_DOCUMENTAIRE_IMPORT",
+      client: "ROYAL CERAMICS SA",
+      montant: 156_000,
+      devise: "EUR",
+      reference_interne: "INT/6601",
+      reference_externe: "EXT/9920",
+      modalite: "CONTRE_ACCEPTATION",
+      statut_paiement: "PARTIEL",
+      date_echeance: "2026-09-18T00:00:00.000Z",
+      ocr_fields: ["produit", "client", "devise", "reference_interne", "reference_externe"],
+      retours: [retourE],
+      historique: [
+        { id: nanoid(8), date: "2026-09-13T08:00:00.000Z", acteur: "AGENCE", type: "CREATION", message: "Création de la centralisation" },
+        { id: nanoid(8), date: "2026-09-13T09:00:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission pour validation" },
+        { id: nanoid(8), date: "2026-09-14T11:00:00.000Z", acteur: "RESPONSABLE_AGENCE", type: "RETOUR_AGENCE",
+          message: "Retour Agence", motif: "Informations incorrectes", commentaire: "Le montant ne correspond pas à la facture." },
+        { id: nanoid(8), date: "2026-09-14T15:30:00.000Z", acteur: "AGENCE", type: "CORRECTION", message: "Correction" },
+        { id: nanoid(8), date: "2026-09-14T16:00:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission à nouveau" },
+      ],
+    });
+  }, 250);
+
+  // SCÉNARIO F — Retour CTN → correction → resoumission (en attente validation agence)
+  const ciF = s.createCourrierIrd({
+    type_transporteur: "FEDEX",
+    reference_transporteur: "FX8812345",
+    agence_reception: "Agence Tanger",
+  });
+  s.addDocumentsCourrierIrd(ciF.id, [
+    { type_document: "FACTURE", filename: "INV_800.pdf" },
+    { type_document: "BL", filename: "BL_800.pdf" },
+    { type_document: "CERTIFICAT_ORIGINE", filename: "CO_800.pdf" },
+  ]);
+  setTimeout(() => {
+    const retourF: RetourInfo = {
+      id: nanoid(8),
+      type_retour: "RETOUR_CTN",
+      motif: "DOCUMENT_MANQUANT",
+      commentaire: "Certificat d'origine manquant.",
+      auteur: "CTN Devise",
+      date: "2026-09-15T10:00:00.000Z",
+      champs_a_corriger: [],
+    };
+    useTomStore.getState().updateCourrierIrd(ciF.id, {
+      reference_courrier: "CIR-2026-73896",
+      statut_workflow: "EN_ATTENTE_VALIDATION_AGENCE",
+      statut_ocr: "OCR_ANALYSE",
+      statut_completude: "COMPLET",
+      score_completude: 100,
+      produit: "REMISE_DOCUMENTAIRE_IMPORT",
+      client: "MAGHREB STEEL SA",
+      montant: 320_000,
+      devise: "USD",
+      reference_interne: "INT/6602",
+      reference_externe: "EXT/9921",
+      modalite: "CONTRE_PAIEMENT",
+      statut_paiement: "A_EFFECTUER",
+      date_echeance: "2026-10-05T00:00:00.000Z",
+      ocr_fields: ["produit", "client", "montant", "devise", "reference_interne", "reference_externe"],
+      responsable_validation: "Responsable agence Tanger",
+      date_validation_agence: "2026-09-14T14:00:00.000Z",
+      retours: [retourF],
+      historique: [
+        { id: nanoid(8), date: "2026-09-12T08:00:00.000Z", acteur: "AGENCE", type: "CREATION", message: "Création de la centralisation" },
+        { id: nanoid(8), date: "2026-09-12T09:00:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission pour validation" },
+        { id: nanoid(8), date: "2026-09-13T14:00:00.000Z", acteur: "RESPONSABLE_AGENCE", type: "VALIDATION_AGENCE", message: "Validation Agence" },
+        { id: nanoid(8), date: "2026-09-13T14:05:00.000Z", acteur: "SYSTEM", type: "TRANSMISSION_CTN", message: "Transmission CTN Devise" },
+        { id: nanoid(8), date: "2026-09-15T10:00:00.000Z", acteur: "CTN_DEVISE", type: "RETOUR_CTN",
+          message: "Retour CTN", motif: "Document manquant", commentaire: "Certificat d'origine manquant." },
+        { id: nanoid(8), date: "2026-09-15T14:00:00.000Z", acteur: "AGENCE", type: "CORRECTION", message: "Correction" },
+        { id: nanoid(8), date: "2026-09-15T15:00:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission à nouveau" },
+      ],
+    });
+  }, 300);
+
+  // SCÉNARIO G — Plusieurs retours successifs (validée CTN)
+  const ciG = s.createCourrierIrd({
+    type_transporteur: "ARAMEX",
+    reference_transporteur: "ARX9988776",
+    agence_reception: "Agence Casablanca",
+  });
+  s.addDocumentsCourrierIrd(ciG.id, [
+    { type_document: "FACTURE", filename: "INV_900.pdf" },
+    { type_document: "BL", filename: "BL_900.pdf" },
+    { type_document: "CERTIFICAT_ORIGINE", filename: "CO_900.pdf" },
+  ]);
+  setTimeout(() => {
+    const retourG1: RetourInfo = {
+      id: nanoid(8),
+      type_retour: "RETOUR_CTN",
+      motif: "INFORMATIONS_INCOMPLETES",
+      commentaire: "Référence externe manquante.",
+      auteur: "CTN Devise",
+      date: "2026-09-10T10:00:00.000Z",
+      champs_a_corriger: ["reference_externe"],
+    };
+    const retourG2: RetourInfo = {
+      id: nanoid(8),
+      type_retour: "RETOUR_CTN",
+      motif: "DOCUMENT_NON_CONFORME",
+      commentaire: "Bill of Lading illisible, merci de fournir une version claire.",
+      auteur: "CTN Devise",
+      date: "2026-09-12T14:00:00.000Z",
+      champs_a_corriger: [],
+    };
+    useTomStore.getState().updateCourrierIrd(ciG.id, {
+      reference_courrier: "CIR-2026-63712",
+      statut_workflow: "VALIDEE_CTN",
+      statut_ocr: "OCR_ANALYSE",
+      statut_completude: "COMPLET",
+      score_completude: 100,
+      produit: "REMISE_DOCUMENTAIRE_IMPORT",
+      client: "GLOBAL TRADE MAROC",
+      montant: 450_000,
+      devise: "EUR",
+      reference_interne: "INT/7701",
+      reference_externe: "EXT/4451",
+      modalite: "CONTRE_ACCEPTATION",
+      statut_paiement: "EFFECTUE",
+      date_echeance: "2026-09-13T00:00:00.000Z",
+      ocr_fields: ["produit", "client", "montant", "devise", "reference_interne", "reference_externe"],
+      responsable_validation: "Responsable agence Casablanca",
+      date_validation_agence: "2026-09-13T16:00:00.000Z",
+      retours: [retourG1, retourG2],
+      historique: [
+        { id: nanoid(8), date: "2026-09-08T08:00:00.000Z", acteur: "AGENCE", type: "CREATION", message: "Création de la centralisation" },
+        { id: nanoid(8), date: "2026-09-08T09:00:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission pour validation" },
+        { id: nanoid(8), date: "2026-09-08T16:00:00.000Z", acteur: "RESPONSABLE_AGENCE", type: "VALIDATION_AGENCE", message: "Validation Agence" },
+        { id: nanoid(8), date: "2026-09-08T16:05:00.000Z", acteur: "SYSTEM", type: "TRANSMISSION_CTN", message: "Transmission CTN Devise" },
+        { id: nanoid(8), date: "2026-09-10T10:00:00.000Z", acteur: "CTN_DEVISE", type: "RETOUR_CTN",
+          message: "Retour CTN", motif: "Informations incomplètes", commentaire: "Référence externe manquante." },
+        { id: nanoid(8), date: "2026-09-10T15:00:00.000Z", acteur: "AGENCE", type: "CORRECTION", message: "Correction" },
+        { id: nanoid(8), date: "2026-09-10T16:00:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission à nouveau" },
+        { id: nanoid(8), date: "2026-09-11T10:00:00.000Z", acteur: "RESPONSABLE_AGENCE", type: "VALIDATION_AGENCE", message: "Validation Agence" },
+        { id: nanoid(8), date: "2026-09-11T10:05:00.000Z", acteur: "SYSTEM", type: "TRANSMISSION_CTN", message: "Transmission CTN Devise" },
+        { id: nanoid(8), date: "2026-09-12T14:00:00.000Z", acteur: "CTN_DEVISE", type: "RETOUR_CTN",
+          message: "Retour CTN", motif: "Document non conforme", commentaire: "Bill of Lading illisible, merci de fournir une version claire." },
+        { id: nanoid(8), date: "2026-09-12T16:00:00.000Z", acteur: "AGENCE", type: "CORRECTION", message: "Correction" },
+        { id: nanoid(8), date: "2026-09-12T17:00:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission à nouveau" },
+        { id: nanoid(8), date: "2026-09-13T10:00:00.000Z", acteur: "RESPONSABLE_AGENCE", type: "VALIDATION_AGENCE", message: "Validation Agence" },
+        { id: nanoid(8), date: "2026-09-13T10:05:00.000Z", acteur: "SYSTEM", type: "TRANSMISSION_CTN", message: "Transmission CTN Devise" },
+        { id: nanoid(8), date: "2026-09-13T16:00:00.000Z", acteur: "CTN_DEVISE", type: "VALIDATION_CTN", message: "Validation CTN Devise" },
+        { id: nanoid(8), date: "2026-09-14T10:30:00.000Z", acteur: "AGENCE", type: "PAIEMENT", message: "Paiement enregistré" },
+      ],
+    });
+  }, 350);
+
+  // SCÉNARIO H — Workflow nominal transmis CTN (sans retour)
+  const ciH = s.createCourrierIrd({
+    type_transporteur: "DHL",
+    reference_transporteur: "DHL7766554",
+    agence_reception: "Agence Casablanca",
+  });
+  s.addDocumentsCourrierIrd(ciH.id, [
+    { type_document: "FACTURE", filename: "INV_950.pdf" },
+    { type_document: "BL", filename: "BL_950.pdf" },
+  ]);
+  setTimeout(() => {
+    useTomStore.getState().updateCourrierIrd(ciH.id, {
+      reference_courrier: "CIR-2026-64120",
+      statut_workflow: "EN_ATTENTE_VALIDATION_CTN",
+      statut_ocr: "OCR_ANALYSE",
+      statut_completude: "COMPLET",
+      score_completude: 100,
+      produit: "REMISE_DOCUMENTAIRE_IMPORT",
+      client: "SAHARA LOGISTICS",
+      montant: 210_000,
+      devise: "EUR",
+      reference_interne: "INT/8801",
+      reference_externe: "EXT/5560",
+      modalite: "CONTRE_ACCEPTATION",
+      statut_paiement: "A_EFFECTUER",
+      date_echeance: "2026-09-18T00:00:00.000Z",
+      ocr_fields: ["produit", "client", "montant", "devise", "reference_interne", "reference_externe"],
+      responsable_validation: "Responsable agence Casablanca",
+      date_validation_agence: "2026-09-17T11:00:00.000Z",
+      historique: [
+        { id: nanoid(8), date: "2026-09-16T09:00:00.000Z", acteur: "AGENCE", type: "CREATION", message: "Création de la centralisation" },
+        { id: nanoid(8), date: "2026-09-16T09:30:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission pour validation" },
+        { id: nanoid(8), date: "2026-09-17T11:00:00.000Z", acteur: "RESPONSABLE_AGENCE", type: "VALIDATION_AGENCE", message: "Validation Agence" },
+        { id: nanoid(8), date: "2026-09-17T11:05:00.000Z", acteur: "SYSTEM", type: "TRANSMISSION_CTN", message: "Transmission CTN Devise" },
+      ],
+    });
+  }, 400);
+
+  // SCÉNARIO I — Brouillon incomplet → à compléter
+  const ciI = s.createCourrierIrd({
+    type_transporteur: "UPS",
+    reference_transporteur: "UPS9911223",
+    agence_reception: "Agence Agadir",
+  });
+  s.addDocumentsCourrierIrd(ciI.id, [
+    { type_document: "LETTRE_ACCOMPAGNEMENT", filename: "LAC_DDS_045.pdf" },
+  ]);
+  setTimeout(() => {
+    useTomStore.getState().updateCourrierIrd(ciI.id, {
+      reference_courrier: "CIR-2026-74502",
+    });
+  }, 450);
+
+  // SCÉNARIO J — Correction en cours (retour Agence déjà ouvert en correction)
+  const ciJ = s.createCourrierIrd({
+    type_transporteur: "DHL",
+    reference_transporteur: "DHL3344556",
+    agence_reception: "Agence Tanger",
+  });
+  s.addDocumentsCourrierIrd(ciJ.id, [
+    { type_document: "FACTURE", filename: "INV_990.pdf" },
+    { type_document: "BL", filename: "BL_990.pdf" },
+  ]);
+  setTimeout(() => {
+    const retourJ: RetourInfo = {
+      id: nanoid(8),
+      type_retour: "RETOUR_AGENCE",
+      motif: "CORRECTION_NECESSAIRE",
+      commentaire: "Vérifier le montant et la devise avant soumission.",
+      auteur: "Responsable Agence",
+      date: "2026-09-16T08:10:00.000Z",
+      champs_a_corriger: ["montant", "devise"],
+    };
+    useTomStore.getState().updateCourrierIrd(ciJ.id, {
+      reference_courrier: "CIR-2026-74399",
+      statut_workflow: "EN_CORRECTION",
+      statut_ocr: "OCR_ANALYSE",
+      statut_completude: "COMPLET",
+      score_completude: 100,
+      produit: "REMISE_DOCUMENTAIRE_IMPORT",
+      client: "TANGER MED FREIGHT",
+      montant: 64_000,
+      devise: "EUR",
+      reference_interne: "INT/9910",
+      reference_externe: "EXT/3301",
+      ocr_fields: ["produit", "client", "montant", "devise", "reference_interne", "reference_externe"],
+      retours: [retourJ],
+      dernier_retour: retourJ,
+      champs_a_corriger: ["montant", "devise"],
+      modalite: "CONTRE_PAIEMENT",
+      statut_paiement: "A_EFFECTUER",
+      date_echeance: "2026-09-22T00:00:00.000Z",
+      historique: [
+        { id: nanoid(8), date: "2026-09-15T08:00:00.000Z", acteur: "AGENCE", type: "CREATION", message: "Création de la centralisation" },
+        { id: nanoid(8), date: "2026-09-15T08:30:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission pour validation" },
+        { id: nanoid(8), date: "2026-09-16T08:10:00.000Z", acteur: "RESPONSABLE_AGENCE", type: "RETOUR_AGENCE",
+          message: "Retour Agence", motif: "Correction nécessaire", commentaire: "Vérifier le montant et la devise avant soumission." },
+        { id: nanoid(8), date: "2026-09-16T09:05:00.000Z", acteur: "AGENCE", type: "CORRECTION", message: "Correction" },
+      ],
+    });
+  }, 500);
+
+  /* ===== Seed pilotage agence — cas spec dashboard v5 ===== */
+
+  const seedPilotage = (input: {
+    ref: string; client: string; montant: number; devise: string;
+    statut: StatutCourrierWorkflow;
+    date_reception?: string; date_envoi_ctn?: string; date_reception_agence_ctn?: string;
+    modalite?: "CONTRE_PAIEMENT" | "CONTRE_ACCEPTATION";
+    statut_paiement?: "A_EFFECTUER" | "EFFECTUE" | "EN_RETARD" | "PARTIEL";
+    date_echeance?: string; effet?: "AVEC_AVAL" | "SANS_AVAL";
+    remise_effectuee?: boolean; acceptation_enregistree?: boolean;
+    agence?: string; extraHistorique?: Omit<HistoriqueEvent, "id">[];
+  }) => {
+    const ci = s.createCourrierIrd({
+      type_transporteur: "DHL",
+      agence_reception: input.agence ?? "Agence Casablanca",
+    });
+    s.addDocumentsCourrierIrd(ci.id, [
+      { type_document: "FACTURE", filename: `INV_${input.ref.slice(-5)}.pdf` },
+      { type_document: "BL", filename: `BL_${input.ref.slice(-5)}.pdf` },
+    ]);
+    setTimeout(() => {
+      useTomStore.getState().updateCourrierIrd(ci.id, {
+        reference_courrier: input.ref,
+        statut_workflow: input.statut,
+        statut_ocr: "OCR_ANALYSE",
+        statut_completude: "COMPLET",
+        produit: "REMISE_DOCUMENTAIRE_IMPORT",
+        client: input.client,
+        montant: input.montant,
+        devise: input.devise,
+        reference_interne: `INT/${input.ref.slice(-4)}`,
+        reference_externe: `EXT/${input.ref.slice(-4)}`,
+        date_reception: input.date_reception,
+        date_envoi_ctn: input.date_envoi_ctn,
+        date_reception_agence_ctn: input.date_reception_agence_ctn,
+        modalite: input.modalite,
+        statut_paiement: input.statut_paiement,
+        date_echeance: input.date_echeance,
+        effet: input.effet,
+        remise_effectuee: input.remise_effectuee,
+        acceptation_enregistree: input.acceptation_enregistree,
+        localisation_physique: input.date_envoi_ctn && !input.date_reception_agence_ctn ? "EN_TRANSIT_CTN" : "AGENCE",
+        historique: [
+          { id: nanoid(8), date: input.date_reception ?? "2026-09-10T08:00:00.000Z", acteur: "AGENCE", type: "CREATION", message: "Création de la centralisation" },
+          { id: nanoid(8), date: "2026-09-11T09:00:00.000Z", acteur: "AGENCE", type: "SOUMISSION", message: "Soumission pour validation" },
+          { id: nanoid(8), date: "2026-09-11T16:00:00.000Z", acteur: "RESPONSABLE_AGENCE", type: "VALIDATION_AGENCE", message: "Validation Agence" },
+          { id: nanoid(8), date: "2026-09-11T16:05:00.000Z", acteur: "SYSTEM", type: "TRANSMISSION_CTN", message: "Transmission CTN Devise" },
+          ...(input.extraHistorique ?? []).map(h => ({ id: nanoid(8), ...h })),
+        ],
+      });
+    }, 550);
+  };
+
+  // Cas 1 — Envoyé CTN, non reçu en agence
+  seedPilotage({
+    ref: "CIR-2026-74601", client: "OCEANIC SHIPPING LTD", montant: 184_000, devise: "USD",
+    statut: "ENVOYE_CTN", date_envoi_ctn: "2026-09-12T10:00:00.000Z",
+    modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER",
+    extraHistorique: [
+      { date: "2026-09-12T10:00:00.000Z", acteur: "CTN_DEVISE", type: "ENVOI_CTN", message: "Envoi des documents par le CTN" },
+    ],
+  });
+
+  // Cas 2 — Envoyé CTN puis reçu agence (hors alerte)
+  seedPilotage({
+    ref: "CIR-2026-74588", client: "DELICES DU SUD SARL", montant: 96_500, devise: "EUR",
+    statut: "ENVOYE_CTN",
+    date_reception: "2026-09-15T09:00:00.000Z",
+    date_envoi_ctn: "2026-09-10T10:00:00.000Z", date_reception_agence_ctn: "2026-09-15T09:00:00.000Z",
+    modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER",
+    extraHistorique: [
+      { date: "2026-09-10T10:00:00.000Z", acteur: "CTN_DEVISE", type: "ENVOI_CTN", message: "Envoi des documents par le CTN" },
+      { date: "2026-09-15T09:00:00.000Z", acteur: "AGENCE", type: "RECEPTION_AGENCE", message: "Réception Agence" },
+    ],
+  });
+
+  // Cas 3 — Docs reçus ~11 j, remise non effectuée (sous surveillance)
+  seedPilotage({
+    ref: "CIR-2026-74310", client: "SAHARA LOGISTICS", montant: 210_000, devise: "EUR",
+    statut: "ENVOYE_CTN", date_reception: "2026-09-06T09:00:00.000Z",
+    modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER", date_echeance: "2026-10-02T00:00:00.000Z",
+  });
+
+  // Cas 4 — Docs reçus ~21 j → relance client (bande J+20)
+  seedPilotage({
+    ref: "CIR-2026-74180", client: "ROYAL CERAMICS SA", montant: 132_000, devise: "EUR",
+    statut: "ENVOYE_CTN", date_reception: "2026-08-27T09:00:00.000Z",
+    modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER",
+  });
+
+  // Cas 5 — Docs reçus ~32 j → retour documents à effectuer (bande J+30)
+  seedPilotage({
+    ref: "CIR-2026-74110", client: "GLOBAL TRADE MAROC", montant: 410_000, devise: "USD",
+    statut: "ENVOYE_CTN", date_reception: "2026-08-16T09:00:00.000Z",
+    modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER",
+  });
+
+  // Cas 6 — Échéance J-10, effet avec aval
+  seedPilotage({
+    ref: "CIR-2026-72815", client: "ATLAS TEXTILE SARL", montant: 145_000, devise: "EUR",
+    statut: "EN_ATTENTE_VALIDATION_CTN",
+    modalite: "CONTRE_ACCEPTATION", statut_paiement: "A_EFFECTUER",
+    date_echeance: "2026-09-26T00:00:00.000Z", effet: "AVEC_AVAL",
+  });
+
+  // Cas 7 — Échéance ~J-1, effet sans aval
+  seedPilotage({
+    ref: "CIR-2026-72819", client: "MEDITERRANEA TRADING CO", montant: 88_000, devise: "EUR",
+    statut: "EN_ATTENTE_VALIDATION_CTN",
+    modalite: "CONTRE_ACCEPTATION", statut_paiement: "A_EFFECTUER",
+    date_echeance: "2026-09-18T00:00:00.000Z", effet: "SANS_AVAL",
+  });
+
+  // Cas 8 — Échu depuis ~11 j
+  seedPilotage({
+    ref: "CIR-2026-72817", client: "OCEANIC SHIPPING LTD", montant: 275_000, devise: "USD",
+    statut: "VALIDEE_CTN",
+    modalite: "CONTRE_ACCEPTATION", statut_paiement: "EN_RETARD",
+    date_echeance: "2026-09-06T00:00:00.000Z", effet: "AVEC_AVAL",
+  });
+
+  // Cas 9 — Échu depuis ~43 j (toujours visible, < 45 j)
+  seedPilotage({
+    ref: "CIR-2026-72812", client: "DELICES DU SUD SARL", montant: 67_000, devise: "EUR",
+    statut: "VALIDEE_CTN",
+    modalite: "CONTRE_PAIEMENT", statut_paiement: "EN_RETARD",
+    date_echeance: "2026-08-05T00:00:00.000Z",
+  });
+
+  // Cas 10 — Échu ≥ 45 j → sorti de l'échéancier
+  seedPilotage({
+    ref: "CIR-2026-72810", client: "MAGHREB STEEL SA", montant: 190_000, devise: "USD",
+    statut: "VALIDEE_CTN",
+    modalite: "CONTRE_ACCEPTATION", statut_paiement: "EN_RETARD",
+    date_echeance: "2026-07-26T00:00:00.000Z", effet: "SANS_AVAL",
+  });
+
+  // Cas 11 — Effet avec aval (MAGHREB STEEL)
+  seedPilotage({
+    ref: "CIR-2026-72816", client: "MAGHREB STEEL SA", montant: 320_000, devise: "USD",
+    statut: "EN_ATTENTE_VALIDATION_CTN",
+    modalite: "CONTRE_ACCEPTATION", statut_paiement: "A_EFFECTUER",
+    date_echeance: "2026-09-25T00:00:00.000Z", effet: "AVEC_AVAL",
+  });
+
+  // Cas 12 — Effet sans aval (CIMENTS DU DETROIT)
+  seedPilotage({
+    ref: "CIR-2026-72818", client: "CIMENTS DU DETROIT", montant: 74_500, devise: "EUR",
+    statut: "EN_ATTENTE_VALIDATION_CTN",
+    modalite: "CONTRE_ACCEPTATION", statut_paiement: "A_EFFECTUER",
+    date_echeance: "2026-09-20T00:00:00.000Z", effet: "SANS_AVAL",
+  });
 }
 
 if (typeof window !== "undefined" && useTomStore.getState().dossiers.length === 0) {

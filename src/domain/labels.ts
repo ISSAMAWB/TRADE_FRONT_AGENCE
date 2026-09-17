@@ -2,7 +2,8 @@ import type {
   StatutWorkflow, StatutOcr, StatutCompletude, StatutPhysique,
   TypeTache, TypeEvenement, TypeDocument,
   StatutCourrierWorkflow, StatutOcrCourrier, LocalisationPhysique, TypeTransporteur,
-  MotifRetourCtn, ProduitIrd,
+  MotifRetourCtn, ProduitIrd, TypeRetour, MotifRetour,
+  ModaliteRemdoc, StatutPaiement, EtatEcheance, EffetRemdoc, BandeRemise,
 } from "./types";
 
 export const WORKFLOW_LABEL: Record<StatutWorkflow, string> = {
@@ -73,18 +74,107 @@ export const DOC_LABEL: Record<TypeDocument, string> = {
 };
 
 export const COURRIER_WORKFLOW_LABEL: Record<StatutCourrierWorkflow, string> = {
-  EN_PREPARATION:                "Brouillon",
-  EN_ATTENTE_VALIDATION_AGENCE:  "À valider agence",
-  ENVOYE_CTN:                    "Envoyé CTN",
+  EN_PREPARATION:                    "Brouillon",
+  EN_ATTENTE_VALIDATION_AGENCE:      "À valider agence",
+  RETOUR_AGENCE:                     "Retour Agence",
+  RETOUR_CTN:                        "Retour CTN",
+  EN_CORRECTION:                     "En correction",
+  EN_ATTENTE_VALIDATION_CTN:         "Transmis au CTN Devise",
+  VALIDEE_CTN:                       "Validée CTN",
+  ENVOYE_CTN:                        "Envoyé CTN",
 };
 
 export function badgeForCourrierWorkflow(s: StatutCourrierWorkflow): string {
   switch (s) {
     case "EN_PREPARATION":               return "badge-gray";
     case "EN_ATTENTE_VALIDATION_AGENCE":  return "badge-amber";
+    case "RETOUR_AGENCE":                 return "badge-red";
+    case "RETOUR_CTN":                    return "badge-red";
+    case "EN_CORRECTION":                 return "badge-amber";
+    case "EN_ATTENTE_VALIDATION_CTN":     return "badge-blue";
+    case "VALIDEE_CTN":                   return "badge-green";
     case "ENVOYE_CTN":                    return "badge-green";
   }
 }
+
+export const TYPE_RETOUR_LABEL: Record<TypeRetour, string> = {
+  RETOUR_AGENCE: "Retour Agence",
+  RETOUR_CTN: "Retour CTN",
+};
+
+export const MOTIF_RETOUR_CENTRALISATION_LABEL: Record<MotifRetour, string> = {
+  INFORMATIONS_INCOMPLETES: "Informations incomplètes",
+  INFORMATIONS_INCORRECTES: "Informations incorrectes",
+  DOCUMENT_MANQUANT: "Document manquant",
+  DOCUMENT_NON_CONFORME: "Document non conforme",
+  CORRECTION_NECESSAIRE: "Correction nécessaire",
+  AUTRE: "Autre",
+};
+
+/* ---------- Paiements & échéances ---------- */
+
+export const MODALITE_LABEL: Record<ModaliteRemdoc, string> = {
+  CONTRE_PAIEMENT: "Contre paiement",
+  CONTRE_ACCEPTATION: "Contre acceptation",
+};
+
+export const STATUT_PAIEMENT_LABEL: Record<StatutPaiement, string> = {
+  A_EFFECTUER: "À effectuer",
+  EFFECTUE: "Effectué",
+  EN_RETARD: "En retard",
+  PARTIEL: "Partiel",
+};
+
+export function badgeForStatutPaiement(s: StatutPaiement): string {
+  switch (s) {
+    case "A_EFFECTUER": return "badge-blue";
+    case "EFFECTUE":    return "badge-green";
+    case "EN_RETARD":   return "badge-red";
+    case "PARTIEL":     return "badge-amber";
+  }
+}
+
+export const ETAT_ECHEANCE_LABEL: Record<EtatEcheance, string> = {
+  A_VENIR: "À venir",
+  IMMINENTE: "Imminente",
+  DEPASSEE: "Dépassée",
+};
+
+export function badgeForEtatEcheance(e: EtatEcheance): string {
+  switch (e) {
+    case "A_VENIR":   return "badge-gray";
+    case "IMMINENTE": return "badge-amber";
+    case "DEPASSEE":  return "badge-red";
+  }
+}
+
+/** État d'une échéance : dépassée (< aujourd'hui), imminente (≤ 3 jours), à venir. */
+export function etatEcheance(dateIso?: string): EtatEcheance | null {
+  if (!dateIso) return null;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const e = new Date(dateIso);
+  const eDay = new Date(e.getFullYear(), e.getMonth(), e.getDate());
+  const diffJours = Math.round((eDay.getTime() - today.getTime()) / 86400000);
+  if (diffJours < 0) return "DEPASSEE";
+  if (diffJours <= 3) return "IMMINENTE";
+  return "A_VENIR";
+}
+
+/* ---------- Pilotage agence ---------- */
+
+/** Effet de commerce — affichage dans l'échéancier (colonne optionnelle produit). */
+export function effetLabel(c: { effet?: EffetRemdoc; modalite?: ModaliteRemdoc }): { label: string; badge: string } {
+  if (c.effet === "AVEC_AVAL") return { label: "Avec aval", badge: "badge-green" };
+  if (c.effet === "SANS_AVAL") return { label: "Sans aval", badge: "badge-gray" };
+  return { label: "Non applicable", badge: "badge-gray" };
+}
+
+export const BANDE_REMISE_LABEL: Record<BandeRemise, string> = {
+  SURVEILLANCE: "Sous surveillance",
+  RELANCE: "Remise non effectuée depuis 20 jours",
+  RETOUR_DOCS: "Documents reçus depuis ≥ 30 jours",
+};
 
 export const LOCALISATION_LABEL: Record<LocalisationPhysique, string> = {
   AGENCE:         "Agence",

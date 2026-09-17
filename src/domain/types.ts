@@ -90,6 +90,11 @@ export type EquipeActeur = "AGENCE" | "RESPONSABLE_AGENCE" | "BO_IRD" | "RESPONS
 export type StatutCourrierWorkflow =
   | "EN_PREPARATION"
   | "EN_ATTENTE_VALIDATION_AGENCE"
+  | "RETOUR_AGENCE"
+  | "RETOUR_CTN"
+  | "EN_CORRECTION"
+  | "EN_ATTENTE_VALIDATION_CTN"
+  | "VALIDEE_CTN"
   | "ENVOYE_CTN";
 
 export type StatutOcrCourrier = "OCR_A_REALISER" | "OCR_ANALYSE";
@@ -118,6 +123,48 @@ export type TypeEvenementCentralisation =
   | "CREATION"
   | "MODIFICATION"
   | "CHANGEMENT_DOMICILIATION";
+
+/* ---------- Retours de centralisation (prototype) ---------- */
+
+export type TypeRetour = "RETOUR_AGENCE" | "RETOUR_CTN";
+
+export type MotifRetour =
+  | "INFORMATIONS_INCOMPLETES"
+  | "INFORMATIONS_INCORRECTES"
+  | "DOCUMENT_MANQUANT"
+  | "DOCUMENT_NON_CONFORME"
+  | "CORRECTION_NECESSAIRE"
+  | "AUTRE";
+
+export interface RetourInfo {
+  id: string;
+  type_retour: TypeRetour;
+  motif: MotifRetour;
+  commentaire?: string;
+  auteur: string;
+  date: string; // ISO
+  champs_a_corriger?: string[]; // noms de champs concernés
+  documents_a_remplacer?: string[]; // ids de documents concernés
+}
+
+/* ---------- Paiements & échéances (prototype) ---------- */
+
+export type ModaliteRemdoc = "CONTRE_PAIEMENT" | "CONTRE_ACCEPTATION";
+
+export type StatutPaiement = "A_EFFECTUER" | "EFFECTUE" | "EN_RETARD" | "PARTIEL";
+
+export type EtatEcheance = "A_VENIR" | "IMMINENTE" | "DEPASSEE";
+
+/* ---------- Pilotage agence (prototype) ---------- */
+
+/** Effet de commerce — information propre au produit REMDOC Import. */
+export type EffetRemdoc = "AVEC_AVAL" | "SANS_AVAL";
+
+/** Bandes d'ancienneté de la remise (J0 = date de réception docs en agence). */
+export type BandeRemise = "SURVEILLANCE" | "RELANCE" | "RETOUR_DOCS";
+
+/** États échéance v5 : à venir ≤ J-10, échue < 45 j, sortie ≥ J+45. */
+export type EtatEcheanceV5 = "A_VENIR" | "ECHUE" | "HORS_INDICATEUR";
 
 /* ---------- Entities ---------- */
 
@@ -176,6 +223,30 @@ export interface CourrierIrd {
   date_validation_agence?: string;
   commentaire_retour_validation?: string;
 
+  // retours (prototype — plusieurs cycles possibles)
+  retours: RetourInfo[];
+  dernier_retour?: RetourInfo;
+  champs_a_corriger?: string[]; // champs marqués pour correction
+
+  // paiement / échéance (prototype)
+  modalite?: ModaliteRemdoc;
+  statut_paiement?: StatutPaiement;
+  date_echeance?: string; // ISO
+
+  // pilotage agence (prototype)
+  /** Envoi physique des documents par le CTN vers l'agence. */
+  date_envoi_ctn?: string; // ISO
+  /** Réception en agence des documents renvoyés par le CTN (absent = non reçu). */
+  date_reception_agence_ctn?: string; // ISO
+  /** Remise des documents au client effectuée. */
+  remise_effectuee?: boolean;
+  /** Retour des documents effectué (action agence J+30). */
+  retour_documents_effectue?: boolean;
+  /** Effet de commerce (REMDOC Import uniquement). */
+  effet?: EffetRemdoc;
+  /** Acceptation enregistrée (modalité contre acceptation). */
+  acceptation_enregistree?: boolean;
+
   historique: HistoriqueEvent[];
   created_at: string;
   updated_at: string;
@@ -184,7 +255,8 @@ export interface CourrierIrd {
 export const COURRIER_CORBEILLES = {
   EN_PREPARATION:     ["EN_PREPARATION"] as StatutCourrierWorkflow[],
   A_VALIDER_AGENCE:   ["EN_ATTENTE_VALIDATION_AGENCE"] as StatutCourrierWorkflow[],
-  ENVOYES:            ["ENVOYE_CTN"] as StatutCourrierWorkflow[],
+  A_CORRIGER:         ["RETOUR_AGENCE", "RETOUR_CTN", "EN_CORRECTION"] as StatutCourrierWorkflow[],
+  ENVOYES:            ["EN_ATTENTE_VALIDATION_CTN", "VALIDEE_CTN", "ENVOYE_CTN"] as StatutCourrierWorkflow[],
 } as const;
 
 export type StatutOcrDoc = "NON_LANCE" | "EN_COURS" | "TERMINE" | "ECHEC";
@@ -246,8 +318,10 @@ export interface HistoriqueEvent {
   id: string;
   date: string;
   acteur: string;
-  type: string; // e.g. WORKFLOW_TRANSITION, OCR, TACHE, etc.
+  type: string; // e.g. WORKFLOW_TRANSITION, OCR, TACHE, RETOUR, CORRECTION, etc.
   message: string;
+  motif?: string;
+  commentaire?: string;
 }
 
 export interface ClientReferentiel {

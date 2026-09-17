@@ -63,7 +63,7 @@ body {
 
 .card-header { @apply flex items-center justify-between pb-3 border-b border-gray-200 mb-4; }
 
-.table-container { @apply bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden; }
+.table-container { @apply bg-white rounded-lg shadow-sm border border-gray-200 overflow-x-auto; }
 .table { @apply w-full text-sm }
 .table thead { @apply bg-gray-50; }
 .table thead th { @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600; }

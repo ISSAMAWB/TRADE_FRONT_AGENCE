@@ -1,13 +1,14 @@
 "use client";
 
 import { ReactNode, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Mail, FileSpreadsheet, FolderOpen, Clock, Bell, Settings, Lock,
   FolderOpen as FolderOpenIcon, ArrowRight, ArrowLeft, DollarSign, BarChart3,
   FileText, ChevronRight, ChevronDown
 } from "lucide-react";
 import { useTomStore } from "@/store/useTomStore";
+import { nbAlertes } from "@/domain/pilotage";
 import type { EquipeActeur } from "@/domain/types";
 import CompactSidebar from "@/components/ui/CompactSidebar";
 import FilterToggleButton from "@/components/ui/FilterToggleButton";
@@ -80,7 +81,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     title: "SUIVI ET PILOTAGE",
     items: [
-      { href: "/consultation/alertes", label: "Alertes et échéances", icon: <Bell size={18} /> },
+      { href: "/echeancier", label: "Alertes et échéances", icon: <Bell size={18} /> },
       { href: "/reporting", label: "Reporting", icon: <BarChart3 size={18} />, disabled: true },
     ],
   },
@@ -103,17 +104,32 @@ interface ShellProps {
 
 export default function Shell({ children, showFilterButton = false, onFilterToggle, isFilterOpen = false }: ShellProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const acteur = useTomStore(s => s.acteurCourant);
   const reset = useTomStore(s => s.resetSeed);
+  const courriersIrd = useTomStore(s => s.courriersIrd);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const alertesCount = nbAlertes(courriersIrd);
+  const groups = NAV_GROUPS.map(g => ({
+    ...g,
+    items: g.items.map(i =>
+      i.label === "Alertes et échéances" ? { ...i, badge: alertesCount } : i
+    ),
+  }));
+
+  function submitSearch() {
+    const q = searchQuery.trim();
+    router.push(q ? `/listes/recherche?q=${encodeURIComponent(q)}` : "/listes/en-cours");
+  }
 
   return (
     <div className="min-h-screen flex">
       {/* Compact Sidebar */}
-      <CompactSidebar 
-        groups={NAV_GROUPS} 
-        onReset={reset} 
+      <CompactSidebar
+        groups={groups}
+        onReset={reset}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
@@ -133,6 +149,7 @@ export default function Shell({ children, showFilterButton = false, onFilterTogg
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && submitSearch()}
                 placeholder="Rechercher un dossier, client, référence..."
                 className="input-lg pl-12 w-full"
               />

@@ -11,6 +11,7 @@ interface NavItem {
   icon: ReactNode;
   disabled?: boolean;
   isSubItem?: boolean;
+  badge?: number;
   children?: NavItem[];
 }
 
@@ -129,7 +130,12 @@ export default function CompactSidebar({ groups, onReset, isCollapsed = false, o
         <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
           {item.icon}
         </div>
-        {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+        {!isCollapsed && <span className="text-sm font-medium flex-1">{item.label}</span>}
+        {!isCollapsed && item.badge != null && item.badge > 0 && (
+          <span className="ml-auto min-w-[20px] h-5 px-1.5 rounded-full bg-orange-500 text-white text-[10px] font-semibold grid place-items-center">
+            {item.badge}
+          </span>
+        )}
       </Link>
     );
   };
