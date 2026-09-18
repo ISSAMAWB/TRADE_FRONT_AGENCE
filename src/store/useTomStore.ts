@@ -11,6 +11,7 @@ import type {
   RetourInfo, TypeRetour, MotifRetour,
 } from "@/domain/types";
 import { WORKFLOWS, getAllowedTransitions } from "@/domain/workflow";
+import type { EvenementTrade } from "@/domain/consultation-detail";
 
 /* -------------- Mock OCR pool -------------- */
 const FAKE_CLIENTS = [
@@ -87,6 +88,10 @@ interface AppState {
   lancerOcrCourrierIrd: (id: string) => void;
   applyCourrierIrdAction: (id: string, action: CourrierIrdAction, payload?: { commentaire?: string }) => void;
 
+  /* événements créés depuis la consultation (clé = dossier.reference) */
+  evenementsCrees: Record<string, EvenementTrade[]>;
+  ajouterEvenementDossier: (dossierRef: string, ev: Omit<EvenementTrade, "reference" | "statut" | "dateCreation">) => EvenementTrade;
+
   /* seed */
   resetSeed: () => void;
 }
@@ -103,6 +108,12 @@ export type CourrierIrdAction =
 
 function newRef(prefix: string) {
   return `${prefix}-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000 + 10000)}`;
+}
+
+let seqIrd = 100;
+function nextRefIrd() {
+  seqIrd += 1;
+  return `IRD26${String(seqIrd).padStart(7, "0")}`;
 }
 
 function nowIso() { return new Date().toISOString(); }
@@ -471,7 +482,7 @@ export const useTomStore = create<AppState>((set, get) => ({
   createCourrierIrd: (input) => {
     const ci: CourrierIrd = {
       id: nanoid(8),
-      reference_courrier: newRef("CIR"),
+      reference_courrier: nextRefIrd(),
       date_reception: nowIso(),
       agence_reception: input?.agence_reception ?? "Agence Casablanca",
       reference_transporteur: input?.reference_transporteur,
@@ -757,7 +768,27 @@ export const useTomStore = create<AppState>((set, get) => ({
     }));
   },
 
+  /* événements créés depuis l'écran de consultation d'un dossier Trade */
+  evenementsCrees: {},
+  ajouterEvenementDossier: (dossierRef, ev) => {
+    const n = Object.values(get().evenementsCrees).reduce((s, l) => s + l.length, 0);
+    const created: EvenementTrade = {
+      ...ev,
+      reference: `EVT-2026-${String(600 + n).padStart(4, "0")}`,
+      statut: "EN_ATTENTE",
+      dateCreation: nowIso(),
+    };
+    set(s => ({
+      evenementsCrees: {
+        ...s.evenementsCrees,
+        [dossierRef]: [created, ...(s.evenementsCrees[dossierRef] ?? [])],
+      },
+    }));
+    return created;
+  },
+
   resetSeed: () => {
+    seqIrd = 100;
     set({ courriers: [], dossiers: [], courriersIrd: [] });
     seedDemo();
   },
@@ -815,7 +846,7 @@ function seedDemo() {
   ]);
   setTimeout(() => {
     useTomStore.getState().updateCourrierIrd(ciA.id, {
-      reference_courrier: "CIR-2026-68346",
+      reference_courrier: "IRD260000101",
       client: "ATLAS TEXTILE SARL",
       montant: 85_000,
       devise: "EUR",
@@ -836,7 +867,7 @@ function seedDemo() {
   ]);
   setTimeout(() => {
     useTomStore.getState().updateCourrierIrd(ciB.id, {
-      reference_courrier: "CIR-2026-73893",
+      reference_courrier: "IRD260000102",
       statut_workflow: "EN_ATTENTE_VALIDATION_AGENCE",
       statut_ocr: "OCR_ANALYSE",
       statut_completude: "COMPLET",
@@ -884,7 +915,7 @@ function seedDemo() {
       champs_a_corriger: ["reference_externe"],
     };
     useTomStore.getState().updateCourrierIrd(ciC.id, {
-      reference_courrier: "CIR-2026-72813",
+      reference_courrier: "IRD260000103",
       statut_workflow: "RETOUR_AGENCE",
       statut_ocr: "OCR_ANALYSE",
       statut_completude: "COMPLET",
@@ -934,7 +965,7 @@ function seedDemo() {
       documents_a_remplacer: [],
     };
     useTomStore.getState().updateCourrierIrd(ciD.id, {
-      reference_courrier: "CIR-2026-72814",
+      reference_courrier: "IRD260000104",
       statut_workflow: "RETOUR_CTN",
       statut_ocr: "OCR_ANALYSE",
       statut_completude: "COMPLET",
@@ -986,7 +1017,7 @@ function seedDemo() {
       champs_a_corriger: ["montant"],
     };
     useTomStore.getState().updateCourrierIrd(ciE.id, {
-      reference_courrier: "CIR-2026-73895",
+      reference_courrier: "IRD260000105",
       statut_workflow: "EN_ATTENTE_VALIDATION_AGENCE",
       statut_ocr: "OCR_ANALYSE",
       statut_completude: "COMPLET",
@@ -1035,7 +1066,7 @@ function seedDemo() {
       champs_a_corriger: [],
     };
     useTomStore.getState().updateCourrierIrd(ciF.id, {
-      reference_courrier: "CIR-2026-73896",
+      reference_courrier: "IRD260000106",
       statut_workflow: "EN_ATTENTE_VALIDATION_AGENCE",
       statut_ocr: "OCR_ANALYSE",
       statut_completude: "COMPLET",
@@ -1097,7 +1128,7 @@ function seedDemo() {
       champs_a_corriger: [],
     };
     useTomStore.getState().updateCourrierIrd(ciG.id, {
-      reference_courrier: "CIR-2026-63712",
+      reference_courrier: "IRD260000107",
       statut_workflow: "VALIDEE_CTN",
       statut_ocr: "OCR_ANALYSE",
       statut_completude: "COMPLET",
@@ -1150,7 +1181,7 @@ function seedDemo() {
   ]);
   setTimeout(() => {
     useTomStore.getState().updateCourrierIrd(ciH.id, {
-      reference_courrier: "CIR-2026-64120",
+      reference_courrier: "IRD260000108",
       statut_workflow: "EN_ATTENTE_VALIDATION_CTN",
       statut_ocr: "OCR_ANALYSE",
       statut_completude: "COMPLET",
@@ -1187,7 +1218,7 @@ function seedDemo() {
   ]);
   setTimeout(() => {
     useTomStore.getState().updateCourrierIrd(ciI.id, {
-      reference_courrier: "CIR-2026-74502",
+      reference_courrier: "IRD260000109",
     });
   }, 450);
 
@@ -1212,7 +1243,7 @@ function seedDemo() {
       champs_a_corriger: ["montant", "devise"],
     };
     useTomStore.getState().updateCourrierIrd(ciJ.id, {
-      reference_courrier: "CIR-2026-74399",
+      reference_courrier: "IRD260000110",
       statut_workflow: "EN_CORRECTION",
       statut_ocr: "OCR_ANALYSE",
       statut_completude: "COMPLET",
@@ -1295,7 +1326,7 @@ function seedDemo() {
 
   // Cas 1 — Envoyé CTN, non reçu en agence
   seedPilotage({
-    ref: "CIR-2026-74601", client: "OCEANIC SHIPPING LTD", montant: 184_000, devise: "USD",
+    ref: "IRD260000111", client: "OCEANIC SHIPPING LTD", montant: 184_000, devise: "USD",
     statut: "ENVOYE_CTN", date_envoi_ctn: "2026-09-12T10:00:00.000Z",
     modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER",
     extraHistorique: [
@@ -1305,7 +1336,7 @@ function seedDemo() {
 
   // Cas 2 — Envoyé CTN puis reçu agence (hors alerte)
   seedPilotage({
-    ref: "CIR-2026-74588", client: "DELICES DU SUD SARL", montant: 96_500, devise: "EUR",
+    ref: "IRD260000112", client: "DELICES DU SUD SARL", montant: 96_500, devise: "EUR",
     statut: "ENVOYE_CTN",
     date_reception: "2026-09-15T09:00:00.000Z",
     date_envoi_ctn: "2026-09-10T10:00:00.000Z", date_reception_agence_ctn: "2026-09-15T09:00:00.000Z",
@@ -1318,28 +1349,28 @@ function seedDemo() {
 
   // Cas 3 — Docs reçus ~11 j, remise non effectuée (sous surveillance)
   seedPilotage({
-    ref: "CIR-2026-74310", client: "SAHARA LOGISTICS", montant: 210_000, devise: "EUR",
+    ref: "IRD260000113", client: "SAHARA LOGISTICS", montant: 210_000, devise: "EUR",
     statut: "ENVOYE_CTN", date_reception: "2026-09-06T09:00:00.000Z",
     modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER", date_echeance: "2026-10-02T00:00:00.000Z",
   });
 
   // Cas 4 — Docs reçus ~21 j → relance client (bande J+20)
   seedPilotage({
-    ref: "CIR-2026-74180", client: "ROYAL CERAMICS SA", montant: 132_000, devise: "EUR",
+    ref: "IRD260000114", client: "ROYAL CERAMICS SA", montant: 132_000, devise: "EUR",
     statut: "ENVOYE_CTN", date_reception: "2026-08-27T09:00:00.000Z",
     modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER",
   });
 
   // Cas 5 — Docs reçus ~32 j → retour documents à effectuer (bande J+30)
   seedPilotage({
-    ref: "CIR-2026-74110", client: "GLOBAL TRADE MAROC", montant: 410_000, devise: "USD",
+    ref: "IRD260000115", client: "GLOBAL TRADE MAROC", montant: 410_000, devise: "USD",
     statut: "ENVOYE_CTN", date_reception: "2026-08-16T09:00:00.000Z",
     modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER",
   });
 
   // Cas 6 — Échéance J-10, effet avec aval
   seedPilotage({
-    ref: "CIR-2026-72815", client: "ATLAS TEXTILE SARL", montant: 145_000, devise: "EUR",
+    ref: "IRD260000116", client: "ATLAS TEXTILE SARL", montant: 145_000, devise: "EUR",
     statut: "EN_ATTENTE_VALIDATION_CTN",
     modalite: "CONTRE_ACCEPTATION", statut_paiement: "A_EFFECTUER",
     date_echeance: "2026-09-26T00:00:00.000Z", effet: "AVEC_AVAL",
@@ -1347,7 +1378,7 @@ function seedDemo() {
 
   // Cas 7 — Échéance ~J-1, effet sans aval
   seedPilotage({
-    ref: "CIR-2026-72819", client: "MEDITERRANEA TRADING CO", montant: 88_000, devise: "EUR",
+    ref: "IRD260000117", client: "MEDITERRANEA TRADING CO", montant: 88_000, devise: "EUR",
     statut: "EN_ATTENTE_VALIDATION_CTN",
     modalite: "CONTRE_ACCEPTATION", statut_paiement: "A_EFFECTUER",
     date_echeance: "2026-09-18T00:00:00.000Z", effet: "SANS_AVAL",
@@ -1355,7 +1386,7 @@ function seedDemo() {
 
   // Cas 8 — Échu depuis ~11 j
   seedPilotage({
-    ref: "CIR-2026-72817", client: "OCEANIC SHIPPING LTD", montant: 275_000, devise: "USD",
+    ref: "IRD260000118", client: "OCEANIC SHIPPING LTD", montant: 275_000, devise: "USD",
     statut: "VALIDEE_CTN",
     modalite: "CONTRE_ACCEPTATION", statut_paiement: "EN_RETARD",
     date_echeance: "2026-09-06T00:00:00.000Z", effet: "AVEC_AVAL",
@@ -1363,7 +1394,7 @@ function seedDemo() {
 
   // Cas 9 — Échu depuis ~43 j (toujours visible, < 45 j)
   seedPilotage({
-    ref: "CIR-2026-72812", client: "DELICES DU SUD SARL", montant: 67_000, devise: "EUR",
+    ref: "IRD260000119", client: "DELICES DU SUD SARL", montant: 67_000, devise: "EUR",
     statut: "VALIDEE_CTN",
     modalite: "CONTRE_PAIEMENT", statut_paiement: "EN_RETARD",
     date_echeance: "2026-08-05T00:00:00.000Z",
@@ -1371,7 +1402,7 @@ function seedDemo() {
 
   // Cas 10 — Échu ≥ 45 j → sorti de l'échéancier
   seedPilotage({
-    ref: "CIR-2026-72810", client: "MAGHREB STEEL SA", montant: 190_000, devise: "USD",
+    ref: "IRD260000120", client: "MAGHREB STEEL SA", montant: 190_000, devise: "USD",
     statut: "VALIDEE_CTN",
     modalite: "CONTRE_ACCEPTATION", statut_paiement: "EN_RETARD",
     date_echeance: "2026-07-26T00:00:00.000Z", effet: "SANS_AVAL",
@@ -1379,7 +1410,7 @@ function seedDemo() {
 
   // Cas 11 — Effet avec aval (MAGHREB STEEL)
   seedPilotage({
-    ref: "CIR-2026-72816", client: "MAGHREB STEEL SA", montant: 320_000, devise: "USD",
+    ref: "IRD260000121", client: "MAGHREB STEEL SA", montant: 320_000, devise: "USD",
     statut: "EN_ATTENTE_VALIDATION_CTN",
     modalite: "CONTRE_ACCEPTATION", statut_paiement: "A_EFFECTUER",
     date_echeance: "2026-09-25T00:00:00.000Z", effet: "AVEC_AVAL",
@@ -1387,7 +1418,7 @@ function seedDemo() {
 
   // Cas 12 — Effet sans aval (CIMENTS DU DETROIT)
   seedPilotage({
-    ref: "CIR-2026-72818", client: "CIMENTS DU DETROIT", montant: 74_500, devise: "EUR",
+    ref: "IRD260000122", client: "CIMENTS DU DETROIT", montant: 74_500, devise: "EUR",
     statut: "EN_ATTENTE_VALIDATION_CTN",
     modalite: "CONTRE_ACCEPTATION", statut_paiement: "A_EFFECTUER",
     date_echeance: "2026-09-20T00:00:00.000Z", effet: "SANS_AVAL",

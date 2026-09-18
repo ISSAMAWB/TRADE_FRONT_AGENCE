@@ -247,7 +247,7 @@ function CentralisationRDIListInner() {
                 <input
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
-                  placeholder="Ex. CIR-2026-…"
+                  placeholder="Ex. IRD26…"
                   className="input w-full"
                 />
               </div>

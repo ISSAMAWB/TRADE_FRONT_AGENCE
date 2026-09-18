@@ -9,12 +9,15 @@ import eventsByProduct from "@/mocks/eventsByProduct.json";
 import type { DossierTrade } from "@/domain/consultation-detail";
 import Shell from "@/components/Shell";
 import CollapsibleFilterPanel from "@/components/ui/CollapsibleFilterPanel";
+import { useTomStore } from "@/store/useTomStore";
 
 export default function ConsultationDossierDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id as string;
   const dossiers = dossiersDetail as DossierTrade[];
   const dossier = dossiers.find((d) => d.reference === id);
+
+  const evenementsCrees = useTomStore((s) => s.evenementsCrees[id]) ?? [];
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [evenement, setEvenement] = useState("");
@@ -115,7 +118,7 @@ export default function ConsultationDossierDetailPage() {
           </div>
         </div>
       </CollapsibleFilterPanel>
-      <DetailDossier dossier={dossier} />
+      <DetailDossier dossier={{ ...dossier, evenements: [...evenementsCrees, ...dossier.evenements] }} />
     </Shell>
   );
 }
