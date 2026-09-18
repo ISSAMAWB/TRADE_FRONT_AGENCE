@@ -252,6 +252,7 @@ export interface EvenementTrade {
   accuseReception?: AccuseReceptionInfo;
   receptionRemise?: ReceptionRemise;
   suivi?: SuiviEtape[];
+  saisieAgence?: { commentaire?: string; effet?: "Avec aval" | "Sans aval"; dateEcheance?: string; motif?: string; destinataire?: string; datePaiement?: string; dateEvenement?: string };
 }
 
 export type MontantAvecDevise = { valeur: number; devise: string };

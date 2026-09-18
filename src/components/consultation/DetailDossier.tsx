@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye, Clock, Check, Circle, Diamond, AlertCircle, X, Download } from "lucide-react";
+import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye, Clock, Check, Circle, Diamond, AlertCircle, X, Download, Plus, ChevronDown } from "lucide-react";
 import StatutBadge from "./StatutBadge";
+import { useTomStore } from "@/store/useTomStore";
 import { getProduitSchema } from "@/lib/produits";
 import type { DossierTrade, BlocSchema, ChampSchema, MontantAvecDevise, Paiement, Courrier, EvenementTrade, SwiftMessage } from "@/domain/consultation-detail";
 
@@ -606,9 +607,79 @@ function BandeauEcheanceV2({
   );
 }
 
-function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade["evenements"]; dossierId: string }) {
+function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["evenements"]; dossier: DossierTrade }) {
+  const dossierId = dossier.reference;
   const [selectedEvent, setSelectedEvent] = useState<EvenementTrade | null>(null);
+  const [segment, setSegment] = useState<"TOUS" | "EN_COURS" | "TRAITES">("TRAITES");
+  const [menuOuvert, setMenuOuvert] = useState(false);
+  const [natureEnCours, setNatureEnCours] = useState<string | null>(null);
+  const [derniereRefCreee, setDerniereRefCreee] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const ajouterEvenementDossier = useTomStore((s) => s.ajouterEvenementDossier);
   const router = useRouter();
+
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  const [dateEvenement, setDateEvenement] = useState(aujourdhui);
+  const [commentaire, setCommentaire] = useState("");
+  const [montant, setMontant] = useState(0);
+  const [datePaiement, setDatePaiement] = useState(aujourdhui);
+  const [effet, setEffet] = useState<"Avec aval" | "Sans aval">("Avec aval");
+  const [dateEcheanceEvt, setDateEcheanceEvt] = useState("");
+  const [motif, setMotif] = useState("Refus de paiement");
+  const [destinataire, setDestinataire] = useState("");
+
+  useEffect(() => {
+    const h = (e: MouseEvent) => { if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOuvert(false); };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
+
+  const encours = dossier.donnees["encours"];
+  const encoursOk = isMontantAvecDevise(encours) ? encours : null;
+  const montantRemise = dossier.donnees["montantRemise"];
+  const montantRemiseOk = isMontantAvecDevise(montantRemise) ? montantRemise : null;
+  const deviseDossier = encoursOk?.devise ?? montantRemiseOk?.devise ?? "";
+
+  const dossierCloture = dossier.statut === "VALIDE";
+  const isAcceptation = String(dossier.donnees["conditionsRemiseDocuments"] ?? "").toLowerCase().includes("acceptation");
+  const acceptationValidee = evenements.some((e) => e.nature === "Acceptation & Aval de la traite" && e.statut === "VALIDE");
+  const retourDejaFait = evenements.some((e) => e.nature === "Retour des documents" || e.nature === "Clôture de la remise");
+  const demandeDejaEnAttente = evenements.some((e) => e.nature === "Demande de remise des documents" && (e.statut === "EN_ATTENTE" || e.statut === "EN_COURS"));
+
+  const naturesCreation: { nature: string; eligible: boolean; raison: string }[] = [
+    {
+      nature: "Paiement",
+      eligible: !dossierCloture && !!encoursOk && encoursOk.valeur > 0,
+      raison: dossierCloture ? "Dossier clôturé" : "Encours nul",
+    },
+    {
+      nature: "Acceptation & Aval de la traite",
+      eligible: isAcceptation && !acceptationValidee,
+      raison: !isAcceptation ? "Remise contre paiement" : "Acceptation déjà enregistrée",
+    },
+    {
+      nature: "Retour des documents",
+      eligible: !dossierCloture && !retourDejaFait,
+      raison: dossierCloture ? "Dossier clôturé" : "Documents déjà retournés",
+    },
+    {
+      nature: "Demande de remise des documents",
+      eligible: !dossierCloture && !demandeDejaEnAttente,
+      raison: dossierCloture ? "Dossier clôturé" : "Demande déjà en attente",
+    },
+  ];
+
+  const montantRequis = natureEnCours === "Paiement" || natureEnCours === "Acceptation & Aval de la traite";
+
+  const nbEnCours = evenements.filter((e) => e.statut === "EN_ATTENTE" || e.statut === "EN_COURS").length;
+  const nbValides = evenements.filter((e) => e.statut === "VALIDE").length;
+  const evenementsFiltres = evenements.filter((e) =>
+    segment === "EN_COURS"
+      ? e.statut === "EN_ATTENTE" || e.statut === "EN_COURS"
+      : segment === "TRAITES"
+        ? e.statut === "VALIDE"
+        : true
+  );
 
   const NATURES_AVEC_DETAIL = [
     "Réception de la remise", "Modification de la remise", "Ajustement de la remise",
@@ -619,11 +690,50 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
   ];
 
   function ouvrirDetail(e: EvenementTrade) {
-    if (NATURES_AVEC_DETAIL.includes(e.nature)) {
+    if (!e.saisieAgence && NATURES_AVEC_DETAIL.includes(e.nature)) {
       router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`);
     } else {
       setSelectedEvent(e);
     }
+  }
+
+  function ouvrirNouvelEvenement(nature: string) {
+    setMenuOuvert(false);
+    setDateEvenement(aujourdhui);
+    setCommentaire("");
+    setDatePaiement(aujourdhui);
+    setEffet("Avec aval");
+    setMotif("Refus de paiement");
+    setDestinataire(dossier.client ?? "");
+    setMontant(
+      nature === "Paiement" ? (encoursOk?.valeur ?? 0)
+      : nature === "Acceptation & Aval de la traite" ? (montantRemiseOk?.valeur ?? 0)
+      : 0
+    );
+    const ech = dossier.donnees["dateEcheance"];
+    setDateEcheanceEvt(nature === "Acceptation & Aval de la traite" && ech ? String(ech).slice(0, 10) : "");
+    setNatureEnCours(nature);
+  }
+
+  function enregistrerEvenement() {
+    if (!natureEnCours) return;
+    const ev = ajouterEvenementDossier(dossier.reference, {
+      nature: natureEnCours,
+      montant: montantRequis ? montant : null,
+      devise: deviseDossier,
+      saisieAgence: {
+        dateEvenement,
+        commentaire: commentaire || undefined,
+        datePaiement: natureEnCours === "Paiement" ? datePaiement : undefined,
+        effet: natureEnCours === "Acceptation & Aval de la traite" ? effet : undefined,
+        dateEcheance: natureEnCours === "Acceptation & Aval de la traite" && dateEcheanceEvt ? dateEcheanceEvt : undefined,
+        motif: natureEnCours === "Retour des documents" ? motif : undefined,
+        destinataire: natureEnCours === "Demande de remise des documents" ? destinataire : undefined,
+      },
+    });
+    setDerniereRefCreee(ev.reference);
+    setTimeout(() => setDerniereRefCreee((r) => (r === ev.reference ? null : r)), 4000);
+    setNatureEnCours(null);
   }
 
   function downloadSwift(swift: SwiftMessage) {
@@ -640,13 +750,62 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
 
   return (
     <Card>
-      <div className="flex items-center justify-between mb-2.5">
-        <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b] flex items-center gap-2">
-          Événements du dossier
+      <div className="flex items-center justify-between mb-2.5 flex-wrap gap-2">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b] flex items-center gap-2">
+            Événements du dossier
+          </div>
+          <div className="flex items-center gap-1.5">
+            {([
+              { key: "TRAITES", label: `Traités (${nbValides})` },
+              { key: "EN_COURS", label: `En cours (${nbEnCours})` },
+              { key: "TOUS", label: `Tous (${evenements.length})` },
+            ] as const).map((s) => (
+              <button
+                key={s.key}
+                onClick={() => setSegment(s.key)}
+                className={`h-6 px-2.5 rounded-full text-[11px] font-medium border transition ${
+                  segment === s.key
+                    ? "border-[#e8632b] text-[#e8632b] bg-[#fffaf4]"
+                    : "border-[#e5e8ec] text-[#64748b] hover:border-[#cbd5e1]"
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <span className="bg-[#0f172a] text-white px-2 py-0.5 rounded-full text-[11px] font-medium">
-          {evenements.length}
-        </span>
+        <div className="flex items-center gap-2">
+          {dossier.produit === "IRD" && (
+            <div className="relative" ref={menuRef}>
+              <button
+                className="btn-primary h-8 px-3 inline-flex items-center gap-1 text-xs"
+                onClick={() => setMenuOuvert((o) => !o)}
+              >
+                <Plus size={13} /> Nouvel événement <ChevronDown size={12} />
+              </button>
+              {menuOuvert && (
+                <div className="absolute right-0 mt-1 w-72 bg-white rounded-lg shadow-lg border border-gray-200 z-30 py-1">
+                  <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Nature de l'événement</div>
+                  {naturesCreation.map((n) => (
+                    <button
+                      key={n.nature}
+                      disabled={!n.eligible}
+                      title={n.eligible ? undefined : n.raison}
+                      onClick={() => ouvrirNouvelEvenement(n.nature)}
+                      className={`w-full text-left px-3 py-2 text-sm ${n.eligible ? "hover:bg-orange-50 text-gray-700" : "text-gray-400 cursor-not-allowed"}`}
+                    >
+                      {n.nature}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          <span className="bg-[#0f172a] text-white px-2 py-0.5 rounded-full text-[11px] font-medium">
+            {evenements.length}
+          </span>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-[13px]">
@@ -656,11 +815,12 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
               <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Nature</th>
               <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant</th>
               <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Date de création</th>
+              <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Statut</th>
               <th className="text-center py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider"></th>
             </tr>
           </thead>
           <tbody>
-            {evenements.map((e) => (
+            {evenementsFiltres.map((e) => (
               <tr
                 key={e.reference}
                 className="border-b border-[#e5e8ec] hover:bg-[#f8fafc] transition-colors cursor-pointer"
@@ -668,11 +828,17 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
                 title={`Voir le détail de ${(e.expiration?.libelleEvenement || e.nature).toLowerCase()}`}
               >
                 <td className="py-[7px] px-3 font-mono text-[11px] text-[#64748b]">{e.reference}</td>
-                <td className="py-[7px] px-3 font-semibold text-[#0f172a]">{e.expiration?.libelleEvenement || e.nature}</td>
+                <td className="py-[7px] px-3 font-semibold text-[#0f172a]">
+                  {e.expiration?.libelleEvenement || e.nature}
+                  {e.reference === derniereRefCreee && (
+                    <span className="ml-1.5 bg-orange-100 text-orange-700 text-[10px] rounded-full px-1.5 py-0.5 font-medium">Nouveau</span>
+                  )}
+                </td>
                 <td className="py-[7px] px-3 text-right font-mono text-[#0f172a] tabular-nums">
                   {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-[#94a3b8]">—</span>}
                 </td>
                 <td className="py-[7px] px-3 text-[#64748b]">{formatDate(e.dateCreation)}</td>
+                <td className="py-[7px] px-3"><StatutBadge statut={e.statut} /></td>
                 <td className="py-[7px] px-3 text-center">
                   <div className="flex items-center justify-center gap-2">
                     <button
@@ -743,6 +909,47 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
                 </div>
               </div>
 
+              {selectedEvent.saisieAgence && (
+                <div className="grid md:grid-cols-3 gap-4 mb-5">
+                  {selectedEvent.saisieAgence.effet && (
+                    <div className="rounded-lg border border-[#e5e8ec] p-3">
+                      <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Effet</div>
+                      <div className="text-sm font-medium text-[#0f172a]">{selectedEvent.saisieAgence.effet}</div>
+                    </div>
+                  )}
+                  {selectedEvent.saisieAgence.dateEcheance && (
+                    <div className="rounded-lg border border-[#e5e8ec] p-3">
+                      <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Date d'échéance</div>
+                      <div className="text-sm font-medium text-[#0f172a]">{formatDate(selectedEvent.saisieAgence.dateEcheance)}</div>
+                    </div>
+                  )}
+                  {selectedEvent.saisieAgence.motif && (
+                    <div className="rounded-lg border border-[#e5e8ec] p-3">
+                      <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Motif</div>
+                      <div className="text-sm font-medium text-[#0f172a]">{selectedEvent.saisieAgence.motif}</div>
+                    </div>
+                  )}
+                  {selectedEvent.saisieAgence.destinataire && (
+                    <div className="rounded-lg border border-[#e5e8ec] p-3">
+                      <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Destinataire</div>
+                      <div className="text-sm font-medium text-[#0f172a]">{selectedEvent.saisieAgence.destinataire}</div>
+                    </div>
+                  )}
+                  {selectedEvent.saisieAgence.datePaiement && (
+                    <div className="rounded-lg border border-[#e5e8ec] p-3">
+                      <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Date de paiement</div>
+                      <div className="text-sm font-medium text-[#0f172a]">{formatDate(selectedEvent.saisieAgence.datePaiement)}</div>
+                    </div>
+                  )}
+                  {selectedEvent.saisieAgence.commentaire && (
+                    <div className="rounded-lg border border-[#e5e8ec] p-3">
+                      <div className="text-[10px] uppercase tracking-wider text-[#64748b] mb-1">Commentaire</div>
+                      <div className="text-sm font-medium text-[#0f172a]">{selectedEvent.saisieAgence.commentaire}</div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {selectedEvent.swifts && selectedEvent.swifts.length > 0 ? (
                 <div>
                   <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b] mb-3">SWIFT associés</div>
@@ -771,6 +978,112 @@ function EvenementsTableV2({ evenements, dossierId }: { evenements: DossierTrade
                   Aucun message SWIFT associé à cet événement.
                 </div>
               )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Drawer nouvel événement */}
+      {natureEnCours && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/30 z-40"
+            onClick={() => setNatureEnCours(null)}
+          />
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100%-2rem)] sm:max-w-[1240px] bg-white rounded-t-2xl shadow-2xl z-50 max-h-[70vh] overflow-y-auto">
+            <div className="p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <div className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#e8632b]">Nouvel événement</div>
+                  <div className="text-lg font-semibold text-[#0f172a]">{natureEnCours}</div>
+                  <div className="text-xs text-[#64748b]">{dossier.reference} · {dossier.client}</div>
+                </div>
+                <button
+                  className="h-8 w-8 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center"
+                  onClick={() => setNatureEnCours(null)}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="bg-[#FAEEDA] text-[#854F0B] text-xs rounded-lg p-2 mb-4">
+                L'événement sera créé en statut En attente. L'encours et le dossier seront mis à jour après validation.
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                  <label className="text-label">Date de l'événement</label>
+                  <input type="date" className="input w-full" value={dateEvenement} onChange={(e) => setDateEvenement(e.target.value)} />
+                </div>
+
+                {(natureEnCours === "Paiement" || natureEnCours === "Acceptation & Aval de la traite") && (
+                  <>
+                    <div>
+                      <label className="text-label">Montant</label>
+                      <input type="number" className="input w-full" value={montant} onChange={(e) => setMontant(Number(e.target.value))} />
+                    </div>
+                    <div>
+                      <label className="text-label">Devise</label>
+                      <input className="input w-full" value={deviseDossier} readOnly />
+                    </div>
+                  </>
+                )}
+
+                {natureEnCours === "Paiement" && (
+                  <div>
+                    <label className="text-label">Date de paiement</label>
+                    <input type="date" className="input w-full" value={datePaiement} onChange={(e) => setDatePaiement(e.target.value)} />
+                  </div>
+                )}
+
+                {natureEnCours === "Acceptation & Aval de la traite" && (
+                  <>
+                    <div>
+                      <label className="text-label">Effet</label>
+                      <select className="input w-full" value={effet} onChange={(e) => setEffet(e.target.value as "Avec aval" | "Sans aval")}>
+                        <option value="Avec aval">Avec aval</option>
+                        <option value="Sans aval">Sans aval</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-label">Date d'échéance</label>
+                      <input type="date" className="input w-full" value={dateEcheanceEvt} onChange={(e) => setDateEcheanceEvt(e.target.value)} />
+                    </div>
+                  </>
+                )}
+
+                {natureEnCours === "Retour des documents" && (
+                  <div>
+                    <label className="text-label">Motif</label>
+                    <select className="input w-full" value={motif} onChange={(e) => setMotif(e.target.value)}>
+                      <option>Refus de paiement</option>
+                      <option>Refus d'acceptation</option>
+                      <option>Documents non conformes</option>
+                      <option>Demande du remettant</option>
+                      <option>Autre</option>
+                    </select>
+                  </div>
+                )}
+
+                {natureEnCours === "Demande de remise des documents" && (
+                  <div>
+                    <label className="text-label">Destinataire</label>
+                    <input className="input w-full" value={destinataire} onChange={(e) => setDestinataire(e.target.value)} />
+                  </div>
+                )}
+
+                <div className="md:col-span-3">
+                  <label className="text-label">Commentaire</label>
+                  <textarea className="input w-full" rows={2} value={commentaire} onChange={(e) => setCommentaire(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <button className="btn-secondary" onClick={() => setNatureEnCours(null)}>Annuler</button>
+                <button className="btn-primary" disabled={montantRequis && montant <= 0} onClick={enregistrerEvenement}>
+                  Enregistrer l'événement
+                </button>
+              </div>
             </div>
           </div>
         </>
@@ -929,7 +1242,7 @@ function DetailFIN({ dossier }: { dossier: DossierTrade }) {
         </Card>
       </div>
 
-      <EvenementsTableV2 evenements={dossier.evenements} dossierId={dossier.reference} />
+      <EvenementsTableV2 evenements={dossier.evenements} dossier={dossier} />
     </div>
   );
 }
@@ -1196,7 +1509,7 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
         </Card>
       </div>
 
-      <EvenementsTableV2 evenements={dossier.evenements} dossierId={dossier.reference} />
+      <EvenementsTableV2 evenements={dossier.evenements} dossier={dossier} />
     </div>
   );
 }
@@ -1374,7 +1687,7 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
         </Card>
       )}
 
-      <EvenementsTableV2 evenements={dossier.evenements} dossierId={dossier.reference} />
+      <EvenementsTableV2 evenements={dossier.evenements} dossier={dossier} />
     </div>
   );
 }
