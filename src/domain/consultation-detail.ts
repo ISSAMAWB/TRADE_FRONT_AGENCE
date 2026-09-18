@@ -1,6 +1,6 @@
 export type ProduitCode = "ILC" | "IRD" | "ELC" | "ERD" | "FIN";
 export type StatutDossier = "VALIDE" | "EN_COURS" | "EN_ATTENTE" | "REJETE";
-export type StatutEvenement = "VALIDE" | "EN_COURS" | "EN_ATTENTE" | "REJETE";
+export type StatutEvenement = "VALIDE" | "EN_COURS" | "EN_ATTENTE" | "REJETE" | "EXPIRE";
 
 export type FormatChamp =
   | "montant"
@@ -252,7 +252,43 @@ export interface EvenementTrade {
   accuseReception?: AccuseReceptionInfo;
   receptionRemise?: ReceptionRemise;
   suivi?: SuiviEtape[];
-  saisieAgence?: { commentaire?: string; effet?: "Avec aval" | "Sans aval"; dateEcheance?: string; motif?: string; destinataire?: string; datePaiement?: string; dateEvenement?: string };
+  saisieAgence?: {
+    commentaire?: string;
+    effet?: "Avec aval" | "Sans aval";
+    dateEcheance?: string;
+    motif?: string;
+    destinataire?: string;
+    datePaiement?: string;
+    dateEvenement?: string;
+    /** Champs saisis à l'initiation d'un événement Paiement — mêmes blocs que la consultation. */
+    paiement?: {
+      // Détails du paiement reçu
+      referencePaiementRecu?: string;
+      partieOriginePaiement?: string;
+      paiementRecuDe?: string;
+      dateReception?: string;
+      instructionPaiement?: string;
+      // Bénéficiaire du paiement
+      naturePartieAPayer?: string;
+      partieAPayer?: string;
+      referenceBeneficiaire?: string;
+      banqueBeneficiaire?: string;
+      adresseBanqueBeneficiaire?: string;
+      compteBeneficiaire?: string;
+      remiseAExpirer?: boolean;
+      // Détails du paiement
+      coursApplique?: number;
+      montantPaye?: number;
+      contrevaleurDirhams?: number;
+      naturePaiement?: string;
+      montantRestant?: number;
+      // Informations sur le règlement
+      numeroUetr?: string;
+      dateValeur?: string;
+      compteDebite?: string;
+      agenceDomiciliation?: string;
+    };
+  };
 }
 
 export type MontantAvecDevise = { valeur: number; devise: string };

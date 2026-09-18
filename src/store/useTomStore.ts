@@ -92,6 +92,7 @@ interface AppState {
   /* événements créés depuis la consultation (clé = dossier.reference) */
   evenementsCrees: Record<string, EvenementTrade[]>;
   ajouterEvenementDossier: (dossierRef: string, ev: Omit<EvenementTrade, "reference" | "statut" | "dateCreation">) => EvenementTrade;
+  modifierEvenementDossier: (dossierRef: string, eventRef: string, patch: Partial<EvenementTrade>) => void;
 
   /* seed */
   resetSeed: () => void;
@@ -806,6 +807,17 @@ export const useTomStore = create<AppState>((set, get) => ({
       },
     }));
     return created;
+  },
+
+  modifierEvenementDossier: (dossierRef, eventRef, patch) => {
+    set(s => ({
+      evenementsCrees: {
+        ...s.evenementsCrees,
+        [dossierRef]: (s.evenementsCrees[dossierRef] ?? []).map(e =>
+          e.reference === eventRef ? { ...e, ...patch, reference: e.reference, statut: e.statut, dateCreation: e.dateCreation } : e
+        ),
+      },
+    }));
   },
 
   resetSeed: () => {

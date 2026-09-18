@@ -190,7 +190,7 @@ function CentralisationRDIListInner() {
       <div className="space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <h1 className="text-display flex items-center gap-2">
-            <FileSpreadsheet className="text-orange-500" size={24} /> Centralisation des REMDOC Import
+            <FileSpreadsheet className="text-orange-500" size={24} /> Centralisation des remises documentaires import
           </h1>
           <Button onClick={nouvelleCentralisation}>
             <Plus size={16} /> Nouvelle centralisation

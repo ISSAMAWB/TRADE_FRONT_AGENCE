@@ -5,6 +5,7 @@ const STATUS_STYLES: Record<string, { label: string; bg: string; color: string }
   EN_COURS: { label: "En cours", bg: "#E6F1FB", color: "#0C447C" },
   EN_ATTENTE: { label: "En attente", bg: "#FAEEDA", color: "#854F0B" },
   REJETE: { label: "Rejeté", bg: "#FCEBEB", color: "#A32D2D" },
+  EXPIRE: { label: "Expiré", bg: "#F1EFE8", color: "#5F5E5A" },
 };
 
 export default function StatutBadge({ statut }: { statut: StatutDossier | StatutEvenement }) {
