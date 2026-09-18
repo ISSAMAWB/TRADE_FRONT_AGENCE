@@ -284,7 +284,7 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="text-label">RÉFÉRENCE CENTRALISATION</label>
-                    <input className="input w-full" value={fRef} onChange={e => setFRef(e.target.value)} placeholder="CIR-2026-…" />
+                    <input className="input w-full" value={fRef} onChange={e => setFRef(e.target.value)} placeholder="IRD26…" />
                   </div>
                   <div>
                     <label className="text-label">RÉFÉRENCE INTERNE</label>
