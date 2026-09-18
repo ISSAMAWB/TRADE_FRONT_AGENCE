@@ -32,7 +32,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const p = s?.paiement;
 
   const [dateEvenement, setDateEvenement] = useState(s?.dateEvenement ?? aujourdhui);
-  const [commentaire, setCommentaire] = useState(s?.commentaire ?? "");
+
   const [montant, setMontant] = useState(
     evenement?.montant
     ?? (nature === "Paiement" ? (encoursOk?.valeur ?? 0)
@@ -83,7 +83,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       devise: deviseDossier,
       saisieAgence: {
         dateEvenement,
-        commentaire: commentaire || undefined,
+
         datePaiement: nature === "Paiement" ? datePaiement : undefined,
         effet: nature === "Acceptation & Aval de la traite" ? effet : undefined,
         dateEcheance: nature === "Acceptation & Aval de la traite" && dateEcheanceEvt ? dateEcheanceEvt : undefined,
@@ -133,22 +133,21 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
-          <label className="text-label">Date de l'événement</label>
-          <input type="date" className="input w-full" value={dateEvenement} onChange={(e) => setDateEvenement(e.target.value)} />
+          <label className="text-label">Référence de la remise</label>
+          <input className="input w-full bg-gray-50" value={dossier.reference} readOnly />
         </div>
-
-        {(nature === "Paiement" || nature === "Acceptation & Aval de la traite") && (
-          <>
-            <div>
-              <label className="text-label">Montant</label>
-              <input type="number" className="input w-full" value={montant} onChange={(e) => setMontant(Number(e.target.value))} />
-            </div>
-            <div>
-              <label className="text-label">Devise</label>
-              <input className="input w-full" value={deviseDossier} readOnly />
-            </div>
-          </>
-        )}
+        <div>
+          <label className="text-label">Date de création</label>
+          <input
+            className="input w-full bg-gray-50"
+            value={dossier.evenements[0]?.dateCreation ? new Date(dossier.evenements[0].dateCreation).toLocaleDateString("fr-FR") : "—"}
+            readOnly
+          />
+        </div>
+        <div>
+          <label className="text-label">Conditions de remise des documents</label>
+          <input className="input w-full bg-gray-50" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
+        </div>
 
         {nature === "Acceptation & Aval de la traite" && (
           <>
@@ -185,11 +184,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <input className="input w-full" value={destinataire} onChange={(e) => setDestinataire(e.target.value)} />
           </div>
         )}
-
-        <div className="md:col-span-3">
-          <label className="text-label">Commentaire</label>
-          <textarea className="input w-full" rows={2} value={commentaire} onChange={(e) => setCommentaire(e.target.value)} />
-        </div>
       </div>
 
       {/* ===== Blocs Paiement — mêmes blocs que la page de consultation ===== */}

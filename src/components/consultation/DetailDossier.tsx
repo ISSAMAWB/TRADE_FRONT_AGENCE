@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye, Clock, Check, Circle, Diamond, AlertCircle, X, Download, Plus, ChevronDown, Pencil } from "lucide-react";
+import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye, Clock, Check, Circle, Diamond, AlertCircle, X, Download, Plus, ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { useTomStore } from "@/store/useTomStore";
 import StatutBadge from "./StatutBadge";
 import { getProduitSchema } from "@/lib/produits";
 import type { DossierTrade, BlocSchema, ChampSchema, MontantAvecDevise, Paiement, Courrier, EvenementTrade, SwiftMessage } from "@/domain/consultation-detail";
@@ -613,6 +614,7 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [derniereRefCreee, setDerniereRefCreee] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const supprimerEvenementDossier = useTomStore((s) => s.supprimerEvenementDossier);
   const router = useRouter();
 
   useEffect(() => {
@@ -811,6 +813,15 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
                         title={`Modifier ${(e.expiration?.libelleEvenement || e.nature).toLowerCase()}`}
                       >
                         <Pencil size={14} />
+                      </button>
+                    )}
+                    {e.saisieAgence && e.statut === "EN_ATTENTE" && (
+                      <button
+                        className="text-[#94a3b8] hover:text-[#dc2626] transition"
+                        onClick={(ev) => { ev.stopPropagation(); supprimerEvenementDossier(dossierId, e.reference); }}
+                        title={`Supprimer ${(e.expiration?.libelleEvenement || e.nature).toLowerCase()}`}
+                      >
+                        <Trash2 size={14} />
                       </button>
                     )}
                     {e.swifts && e.swifts.length > 0 && (
