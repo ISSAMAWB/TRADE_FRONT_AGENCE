@@ -8,7 +8,7 @@ import type {
   StatutPhysique, OcrExtractionDossier, OcrExtractionCourrier,
   CourrierIrd, StatutCourrierWorkflow, TypeTransporteur,
   LocalisationPhysique, ClientReferentiel,
-  RetourInfo, TypeRetour, MotifRetour,
+  RetourInfo, TypeRetour, MotifRetour, PaiementIrd,
 } from "@/domain/types";
 import { WORKFLOWS, getAllowedTransitions } from "@/domain/workflow";
 import type { EvenementTrade } from "@/domain/consultation-detail";
@@ -87,10 +87,13 @@ interface AppState {
   removeDocumentCourrierIrd: (id: string, docId: string) => void;
   lancerOcrCourrierIrd: (id: string) => void;
   applyCourrierIrdAction: (id: string, action: CourrierIrdAction, payload?: { commentaire?: string }) => void;
+  initierPaiementIrd: (id: string, data: PaiementIrd) => void;
 
   /* événements créés depuis la consultation (clé = dossier.reference) */
   evenementsCrees: Record<string, EvenementTrade[]>;
   ajouterEvenementDossier: (dossierRef: string, ev: Omit<EvenementTrade, "reference" | "statut" | "dateCreation">) => EvenementTrade;
+  modifierEvenementDossier: (dossierRef: string, eventRef: string, patch: Partial<EvenementTrade>) => void;
+  supprimerEvenementDossier: (dossierRef: string, eventRef: string) => void;
 
   /* seed */
   resetSeed: () => void;
@@ -768,6 +771,26 @@ export const useTomStore = create<AppState>((set, get) => ({
     }));
   },
 
+  initierPaiementIrd: (id, data) => {
+    const acteur = get().acteurCourant;
+    set(s => ({
+      courriersIrd: s.courriersIrd.map(x => {
+        if (x.id !== id) return x;
+        return {
+          ...x,
+          paiement: data,
+          statut_paiement: "EFFECTUE" as const,
+          updated_at: nowIso(),
+          historique: [...x.historique, {
+            id: nanoid(8), date: nowIso(), acteur,
+            type: "PAIEMENT",
+            message: `Paiement initié${data.reference_paiement ? ` — réf. ${data.reference_paiement}` : ""}`,
+          }],
+        };
+      }),
+    }));
+  },
+
   /* événements créés depuis l'écran de consultation d'un dossier Trade */
   evenementsCrees: {},
   ajouterEvenementDossier: (dossierRef, ev) => {
@@ -785,6 +808,26 @@ export const useTomStore = create<AppState>((set, get) => ({
       },
     }));
     return created;
+  },
+
+  modifierEvenementDossier: (dossierRef, eventRef, patch) => {
+    set(s => ({
+      evenementsCrees: {
+        ...s.evenementsCrees,
+        [dossierRef]: (s.evenementsCrees[dossierRef] ?? []).map(e =>
+          e.reference === eventRef ? { ...e, ...patch, reference: e.reference, statut: e.statut, dateCreation: e.dateCreation } : e
+        ),
+      },
+    }));
+  },
+
+  supprimerEvenementDossier: (dossierRef, eventRef) => {
+    set(s => ({
+      evenementsCrees: {
+        ...s.evenementsCrees,
+        [dossierRef]: (s.evenementsCrees[dossierRef] ?? []).filter(e => e.reference !== eventRef),
+      },
+    }));
   },
 
   resetSeed: () => {
@@ -1274,7 +1317,7 @@ function seedDemo() {
   /* ===== Seed pilotage agence — cas spec dashboard v5 ===== */
 
   const seedPilotage = (input: {
-    ref: string; client: string; montant: number; devise: string;
+    ref?: string; client: string; montant: number; devise: string;
     statut: StatutCourrierWorkflow;
     date_reception?: string; date_envoi_ctn?: string; date_reception_agence_ctn?: string;
     modalite?: "CONTRE_PAIEMENT" | "CONTRE_ACCEPTATION";
@@ -1287,13 +1330,14 @@ function seedDemo() {
       type_transporteur: "DHL",
       agence_reception: input.agence ?? "Agence Casablanca",
     });
+    const ref = input.ref ?? ci.reference_courrier;
     s.addDocumentsCourrierIrd(ci.id, [
-      { type_document: "FACTURE", filename: `INV_${input.ref.slice(-5)}.pdf` },
-      { type_document: "BL", filename: `BL_${input.ref.slice(-5)}.pdf` },
+      { type_document: "FACTURE", filename: `INV_${ref.slice(-5)}.pdf` },
+      { type_document: "BL", filename: `BL_${ref.slice(-5)}.pdf` },
     ]);
     setTimeout(() => {
       useTomStore.getState().updateCourrierIrd(ci.id, {
-        reference_courrier: input.ref,
+        reference_courrier: ref,
         statut_workflow: input.statut,
         statut_ocr: "OCR_ANALYSE",
         statut_completude: "COMPLET",
@@ -1301,8 +1345,8 @@ function seedDemo() {
         client: input.client,
         montant: input.montant,
         devise: input.devise,
-        reference_interne: `INT/${input.ref.slice(-4)}`,
-        reference_externe: `EXT/${input.ref.slice(-4)}`,
+        reference_interne: `INT/${ref.slice(-4)}`,
+        reference_externe: `EXT/${ref.slice(-4)}`,
         date_reception: input.date_reception,
         date_envoi_ctn: input.date_envoi_ctn,
         date_reception_agence_ctn: input.date_reception_agence_ctn,

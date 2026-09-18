@@ -153,6 +153,18 @@ export type ModaliteRemdoc = "CONTRE_PAIEMENT" | "CONTRE_ACCEPTATION";
 
 export type StatutPaiement = "A_EFFECTUER" | "EFFECTUE" | "EN_RETARD" | "PARTIEL";
 
+export type PartieOriginePaiement = "TIRE" | "TIREUR" | "BANQUE_REMETTANTE" | "AUTRE";
+
+/** Données d'initiation d'un paiement REMDOC Import. */
+export interface PaiementIrd {
+  reference_paiement?: string;
+  partie_origine_paiement?: PartieOriginePaiement;
+  paiement_recu_de?: string;
+  date_reception?: string; // ISO
+  instruction?: string;
+  partie_a_payer?: string;
+}
+
 export type EtatEcheance = "A_VENIR" | "IMMINENTE" | "DEPASSEE";
 
 /* ---------- Pilotage agence (prototype) ---------- */
@@ -232,6 +244,7 @@ export interface CourrierIrd {
   modalite?: ModaliteRemdoc;
   statut_paiement?: StatutPaiement;
   date_echeance?: string; // ISO
+  paiement?: PaiementIrd;
 
   // pilotage agence (prototype)
   /** Envoi physique des documents par le CTN vers l'agence. */
