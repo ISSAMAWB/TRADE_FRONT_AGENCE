@@ -214,6 +214,11 @@ export const LISTES: Record<string, ListeDef> = {
     regle: "Échéance à ≤ 10 jours et acceptation non enregistrée — relancer le client.",
     filter: acceptationARelancer,
   },
+  "relances": {
+    titre: "Relances à effectuer",
+    regle: "Remises non effectuées depuis 20 à 29 jours + acceptations à relancer (échéance ≤ 10 j, acceptation non enregistrée).",
+    filter: estARelancer,
+  },
   "ctn-non-recus": {
     titre: "Envoyés par CTN non reçus en Agence",
     regle: "Date d'envoi CTN renseignée et date de réception Agence absente.",

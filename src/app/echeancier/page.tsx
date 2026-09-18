@@ -1,24 +1,53 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
-import { ChevronLeft, CalendarClock, BellRing, Eye } from "lucide-react";
+import { CalendarClock, BellRing, Eye, Download, Mail } from "lucide-react";
 import clsx from "clsx";
 import { useTomStore } from "@/store/useTomStore";
 import {
   MODALITE_LABEL, STATUT_PAIEMENT_LABEL, badgeForStatutPaiement,
-  badgeForCourrierWorkflow, COURRIER_WORKFLOW_LABEL, effetLabel,
+  badgeForCourrierWorkflow, COURRIER_WORKFLOW_LABEL, effetLabel, PRODUIT_IRD_LABEL,
 } from "@/domain/labels";
-import { etatEcheanceV5, joursEcheance, badgeEcheance, libelleEcheance } from "@/domain/pilotage";
+import { etatEcheanceV5, joursEcheance, badgeEcheance, libelleEcheance, echeanceASuivre } from "@/domain/pilotage";
 import type { CourrierIrd } from "@/domain/types";
 import Shell from "@/components/Shell";
+import PilotageHeader from "@/components/pilotage/PilotageHeader";
 
 type Onglet = "venir" | "echues";
 
 export default function EcheancierPage() {
+  const router = useRouter();
   const courriers = useTomStore(s => s.courriersIrd);
   const applyAction = useTomStore(s => s.applyCourrierIrdAction);
+  const createCourrierIrd = useTomStore(s => s.createCourrierIrd);
   const [onglet, setOnglet] = useState<Onglet>("venir");
+
+  const nouveauCourrier = () => {
+    const c = createCourrierIrd();
+    router.push(`/remises-doc/import/${c.id}`);
+  };
+
+  function exporterCSV() {
+    const lignes = [
+      ["Référence", "Produit", "Client/Tiré", "Montant", "Devise", "Statut", "Échéance"],
+      ...courriers.filter(echeanceASuivre).map(c => [
+        c.reference_courrier,
+        PRODUIT_IRD_LABEL[c.produit ?? "REMISE_DOCUMENTAIRE_IMPORT"],
+        c.client ?? "", String(c.montant ?? ""), c.devise ?? "",
+        COURRIER_WORKFLOW_LABEL[c.statut_workflow],
+        c.date_echeance ? new Date(c.date_echeance).toLocaleDateString("fr-FR") : "",
+      ]),
+    ];
+    const csv = lignes.map(r => r.map(v => `"${v}"`).join(";")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `echeancier-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
 
   const aVenir = useMemo(
     () => courriers.filter(c => etatEcheanceV5(c) === "A_VENIR")
@@ -40,14 +69,22 @@ export default function EcheancierPage() {
   return (
     <Shell>
       <div className="space-y-4">
+        <PilotageHeader
+          actif="echeancier"
+          fil="Échéancier"
+          actions={
+            <>
+              <button className="btn-outline h-10 inline-flex items-center gap-2" onClick={exporterCSV}>
+                <Download size={15} /> Exporter
+              </button>
+              <button className="btn-primary h-10 inline-flex items-center gap-2" onClick={nouveauCourrier}>
+                <Mail size={16} /> Nouvelle centralisation
+              </button>
+            </>
+          }
+        />
         <div>
-          <Link href="/" className="text-xs text-gray-500 hover:text-orange-600 inline-flex items-center gap-1">
-            <ChevronLeft size={12} /> Retour au pilotage
-          </Link>
-          <h1 className="text-display flex items-center gap-2 mt-2">
-            <CalendarClock className="text-orange-500" size={22} /> Échéancier
-          </h1>
-          <p className="text-subtitle mt-1">
+          <p className="text-subtitle">
             Échéances visibles : à venir ≤ 10 jours et échues &lt; 45 jours. Les échéances dépassées depuis ≥ 45 jours sortent de l'indicateur.
           </p>
         </div>
