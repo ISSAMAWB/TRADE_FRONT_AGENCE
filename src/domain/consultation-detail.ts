@@ -271,11 +271,14 @@ export interface EvenementTrade {
       // Bénéficiaire du paiement
       naturePartieAPayer?: string;
       partieAPayer?: string;
+      adressePartieAPayer?: string;
       referenceBeneficiaire?: string;
+      modePaiement?: string;
       banqueBeneficiaire?: string;
       adresseBanqueBeneficiaire?: string;
       compteBeneficiaire?: string;
       remiseAExpirer?: boolean;
+      paiementAvecRecours?: boolean;
       // Détails du paiement
       coursApplique?: number;
       montantPaye?: number;
