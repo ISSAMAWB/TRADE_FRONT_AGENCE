@@ -232,6 +232,14 @@ export interface ExpirationInfo {
   documentsAttaches?: { nom: string }[];
 }
 
+export interface DocumentAttacheAgence {
+  id: string;
+  nom: string;
+  taille: number;
+  type: string;
+  fichier: File;
+}
+
 export interface EvenementTrade {
   reference: string;
   nature: string;
@@ -260,22 +268,31 @@ export interface EvenementTrade {
     destinataire?: string;
     datePaiement?: string;
     dateEvenement?: string;
+    documentsAttaches?: DocumentAttacheAgence[];
     /** Champs saisis à l'initiation d'un événement Paiement — mêmes blocs que la consultation. */
     paiement?: {
       // Détails du paiement reçu
       referencePaiementRecu?: string;
       partieOriginePaiement?: string;
       paiementRecuDe?: string;
+      adressePaiementRecuDe?: string;
+      villePaiementRecuDe?: string;
+      paysPaiementRecuDe?: string;
       dateReception?: string;
       instructionPaiement?: string;
       // Bénéficiaire du paiement
       naturePartieAPayer?: string;
       partieAPayer?: string;
       adressePartieAPayer?: string;
+      villePartieAPayer?: string;
+      paysPartieAPayer?: string;
       referenceBeneficiaire?: string;
       modePaiement?: string;
       banqueBeneficiaire?: string;
       adresseBanqueBeneficiaire?: string;
+      villeBanqueBeneficiaire?: string;
+      paysBanqueBeneficiaire?: string;
+      banqueSansCleRma?: boolean;
       compteBeneficiaire?: string;
       remiseAExpirer?: boolean;
       paiementAvecRecours?: boolean;
