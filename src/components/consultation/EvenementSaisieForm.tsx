@@ -213,6 +213,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     compteDebite: p?.compteDebite ?? "",
     agenceDomiciliation: p?.agenceDomiciliation ?? "",
   });
+  const compteDebiteNormalise = paiementForm.compteDebite.replace(/\s/g, "");
+  const clientCompteDebite = compteDebiteNormalise && compteDebiteNormalise === dossier.clientInfo?.numeroCompte?.replace(/\s/g, "")
+    ? dossier.clientInfo
+    : undefined;
   const setP = (k: keyof typeof paiementForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setPaiementForm(f => ({ ...f, [k]: e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value }));
 
@@ -372,10 +376,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div>
                 <label className="text-label">Paiement reçu de</label>
                 <div className="relative">
-                  <textarea className="input w-full pr-9" rows={2} value={paiementForm.paiementRecuDe} onChange={setP("paiementRecuDe")} placeholder="Nom du payeur" />
+                  <input type="text" className="input w-full pr-9" value={paiementForm.paiementRecuDe} onChange={setP("paiementRecuDe")} placeholder="Nom du payeur" />
                   <button
                     type="button"
-                    className="absolute right-2 top-3 text-[#94a3b8] hover:text-[#e8632b] transition"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
                     onClick={() => paiementForm.partieOriginePaiement === "Banque remettante" ? setPopupBanque("payeur") : setPopupTire(true)}
                     title={paiementForm.partieOriginePaiement === "Banque remettante" ? "Rechercher la banque remettante" : "Rechercher le tiré"}
                   >
@@ -398,9 +402,40 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <input id="pays-paiement-recu-de" className="input w-full" value={paiementForm.paysPaiementRecuDe} onChange={setP("paysPaiementRecuDe")} />
                 </div>
               </div>
-              <div className="md:col-span-2">
-                <label className="text-label">Instruction du paiement</label>
-                <textarea className="input w-full" rows={3} value={paiementForm.instructionPaiement} onChange={setP("instructionPaiement")} />
+              <div className="md:col-span-2 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-label" htmlFor="compte-a-debiter-recu">Compte à débiter</label>
+                    <input id="compte-a-debiter-recu" className="input w-full" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
+                  </div>
+                </div>
+                <div className="w-full overflow-x-auto rounded-lg border border-[#e5e8ec]">
+                  <table className="w-full table-fixed text-xs" aria-label="Informations du compte à débiter">
+                    <thead className="bg-gray-50">
+                      <tr className="border-b border-[#e5e8ec]">
+                        <th scope="col" className="w-[34%] px-3 py-2 text-left font-semibold text-[#64748b]">Intitulé compte</th>
+                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Solde</th>
+                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Disponible</th>
+                        <th scope="col" className="w-[26%] px-3 py-2 text-left font-semibold text-[#64748b]">Identité</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="align-top">
+                        <td className="px-3 py-3 text-[#0f172a] break-words">
+                          <div className="font-mono break-all">{paiementForm.compteDebite.trim() || "—"}</div>
+                          {clientCompteDebite && <div className="mt-1">{clientCompteDebite.raisonSociale}</div>}
+                        </td>
+                        <td className="px-3 py-3 text-[#94a3b8]" title="Solde non disponible">—</td>
+                        <td className="px-3 py-3 text-[#94a3b8]" title="Montant disponible non renseigné">—</td>
+                        <td className="px-3 py-3 text-[#0f172a] break-words">{clientCompteDebite?.raisonSociale || "—"}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div>
+                  <label className="text-label">Instruction du paiement</label>
+                  <textarea className="input w-full" rows={3} value={paiementForm.instructionPaiement} onChange={setP("instructionPaiement")} />
+                </div>
               </div>
             </div>
           </div>
@@ -424,9 +459,9 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <div>
                   <label className="text-label">Partie à payer</label>
                   <div className="relative">
-                    <textarea
+                    <input
+                      type="text"
                       className={`input w-full ${paiementForm.naturePartieAPayer === "Banque étrangère" ? "pr-9" : ""}`}
-                      rows={3}
                       value={paiementForm.partieAPayer}
                       onChange={setP("partieAPayer")}
                       placeholder="Nom de la partie à payer"
@@ -434,7 +469,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     {paiementForm.naturePartieAPayer === "Banque étrangère" && (
                       <button
                         type="button"
-                        className="absolute right-2 top-3 text-[#94a3b8] hover:text-[#e8632b] transition"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
                         onClick={() => setPopupBanque("partie")}
                         title="Rechercher une banque"
                       >
@@ -460,6 +495,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 </div>
               </div>
               <div className="flex flex-col gap-4 min-w-0">
+                <div>
+                  <label className="text-label">Référence</label>
+                  <input className="input w-full" value={paiementForm.referenceBeneficiaire} onChange={setP("referenceBeneficiaire")} />
+                </div>
                 <div>
                   <label className="text-label">Banque du bénéficiaire</label>
                   <div className="relative">
@@ -489,20 +528,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <label className="text-label" htmlFor="pays-banque-beneficiaire">Pays</label>
                   <input id="pays-banque-beneficiaire" className="input w-full" value={paiementForm.paysBanqueBeneficiaire} onChange={setP("paysBanqueBeneficiaire")} />
                 </div>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.banqueSansCleRma} onChange={setP("banqueSansCleRma")} />
-                  <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Banque sans clé RMA</span>
-                </label>
-                <div>
-                  <label className="text-label">Numéro de compte du bénéficiaire</label>
-                  <input className="input w-full" value={paiementForm.compteBeneficiaire} onChange={setP("compteBeneficiaire")} />
-                </div>
               </div>
               <div className="flex flex-col gap-4 min-w-0">
-                <div>
-                  <label className="text-label">Référence</label>
-                  <input className="input w-full" value={paiementForm.referenceBeneficiaire} onChange={setP("referenceBeneficiaire")} />
-                </div>
                 <div>
                   <label className="text-label">Mode de paiement</label>
                   <select className="input w-full" value={paiementForm.modePaiement} onChange={setP("modePaiement")}>
@@ -510,6 +537,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <option>Paiement avec financement</option>
                     <option>Offre de financement</option>
                   </select>
+                </div>
+                <div>
+                  <label className="text-label">Numéro de compte du bénéficiaire</label>
+                  <input className="input w-full" value={paiementForm.compteBeneficiaire} onChange={setP("compteBeneficiaire")} />
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -519,6 +550,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.paiementAvecRecours} onChange={setP("paiementAvecRecours")} />
                     <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Paiement avec recours</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.banqueSansCleRma} onChange={setP("banqueSansCleRma")} />
+                    <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Banque sans clé RMA</span>
                   </label>
                 </div>
               </div>
