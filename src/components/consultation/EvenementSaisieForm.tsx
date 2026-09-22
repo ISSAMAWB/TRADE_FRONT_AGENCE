@@ -34,11 +34,14 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const [identiteCompteSelectionne, setIdentiteCompteSelectionne] = useState<{ numeroCompte: string; raisonSociale: string } | null>(p?.identiteCompteDebite ?? null);
 
   const fichierInputRef = useRef<HTMLInputElement>(null);
-  const typesDocuments: TypeDocumentAttacheAgence[] = ["Ordre de paiement", "Facture", "Titre d'importation"];
+  const typesDocuments: TypeDocumentAttacheAgence[] = ["Ordre de paiement", "Titre d'importation", "Autre"];
   const [typeDocument, setTypeDocument] = useState<TypeDocumentAttacheAgence | "">("");
-  const [erreurOrdrePaiement, setErreurOrdrePaiement] = useState(false);
+  const [erreurDocumentsObligatoires, setErreurDocumentsObligatoires] = useState(false);
   const [documentsAttaches, setDocumentsAttaches] = useState<DocumentAttacheAgence[]>(s?.documentsAttaches ?? []);
-  const ordrePaiementJoint = documentsAttaches.some(document => document.categorie === "Ordre de paiement" && document.fichier?.size > 0);
+  const DOCUMENTS_OBLIGATOIRES: TypeDocumentAttacheAgence[] = ["Ordre de paiement", "Titre d'importation"];
+  const documentsObligatoiresManquants = DOCUMENTS_OBLIGATOIRES.filter(type =>
+    !documentsAttaches.some(document => document.categorie === type && document.fichier?.size > 0)
+  );
   const joindreDocuments = (files: FileList | null) => {
     if (!files?.length || !typeDocument) return;
     const documents = Array.from(files).map(fichier => ({
@@ -57,17 +60,17 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const DEFAUT_ADRESSE_PAIEMENT_RECU_DE = "42-44 ANGLE BLD RACHIDI ET\nABOU HAMED EL GHAZALI\n20100 CASABLANCA\nMAROC";
 
   const BANQUES = [
-    { nom: "Société Générale Paris", pays: "France", bic: "SOGEFRPP", adresse: "29 Bd Haussmann, 75009 Paris, France" },
-    { nom: "BNP Paribas", pays: "France", bic: "BNPAFRPP", adresse: "16 Bd des Italiens, 75009 Paris, France" },
-    { nom: "Crédit Agricole", pays: "France", bic: "AGRIFRPP", adresse: "12 Pl. des États-Unis, 92120 Montrouge, France" },
-    { nom: "Commerzbank AG", pays: "Allemagne", bic: "COBADEFF", adresse: "Kaiserstraße, 60311 Frankfurt am Main, Allemagne" },
-    { nom: "Deutsche Bank", pays: "Allemagne", bic: "DEUTDEFF", adresse: "Taunusanlage 12, 60325 Frankfurt am Main, Allemagne" },
-    { nom: "UniCredit", pays: "Italie", bic: "UNCRITMM", adresse: "Piazza Gae Aulenti 3, 20154 Milano, Italie" },
-    { nom: "Banco Santander", pays: "Espagne", bic: "BSCHESMM", adresse: "Av. de Cantabria, 28660 Boadilla del Monte, Madrid, Espagne" },
-    { nom: "HSBC Bank plc", pays: "Royaume-Uni", bic: "HBUKGB4B", adresse: "8 Canada Square, London E14 5HQ, Royaume-Uni" },
-    { nom: "Attijariwafa Bank", pays: "Maroc", bic: "BCMAMAMC", adresse: "2 Bd Moulay Youssef, 20100 Casablanca, Maroc" },
-    { nom: "Banque Populaire", pays: "Maroc", bic: "BCPOMAMC", adresse: "101 Bd Mohamed Zerktouni, 20100 Casablanca, Maroc" },
-    { nom: "BMCE Bank", pays: "Maroc", bic: "BMCEMAMC", adresse: "140 Av. Hassan II, 20070 Casablanca, Maroc" },
+    { nom: "Société Générale Paris", pays: "France", ville: "Paris", bic: "SOGEFRPP", adresse: "29 Bd Haussmann, 75009 Paris, France" },
+    { nom: "BNP Paribas", pays: "France", ville: "Paris", bic: "BNPAFRPP", adresse: "16 Bd des Italiens, 75009 Paris, France" },
+    { nom: "Crédit Agricole", pays: "France", ville: "Montrouge", bic: "AGRIFRPP", adresse: "12 Pl. des États-Unis, 92120 Montrouge, France" },
+    { nom: "Commerzbank AG", pays: "Allemagne", ville: "Frankfurt am Main", bic: "COBADEFF", adresse: "Kaiserstraße, 60311 Frankfurt am Main, Allemagne" },
+    { nom: "Deutsche Bank", pays: "Allemagne", ville: "Frankfurt am Main", bic: "DEUTDEFF", adresse: "Taunusanlage 12, 60325 Frankfurt am Main, Allemagne" },
+    { nom: "UniCredit", pays: "Italie", ville: "Milano", bic: "UNCRITMM", adresse: "Piazza Gae Aulenti 3, 20154 Milano, Italie" },
+    { nom: "Banco Santander", pays: "Espagne", ville: "Madrid", bic: "BSCHESMM", adresse: "Av. de Cantabria, 28660 Boadilla del Monte, Madrid, Espagne" },
+    { nom: "HSBC Bank plc", pays: "Royaume-Uni", ville: "London", bic: "HBUKGB4B", adresse: "8 Canada Square, London E14 5HQ, Royaume-Uni" },
+    { nom: "Attijariwafa Bank", pays: "Maroc", ville: "Casablanca", bic: "BCMAMAMC", adresse: "2 Bd Moulay Youssef, 20100 Casablanca, Maroc" },
+    { nom: "Banque Populaire", pays: "Maroc", ville: "Casablanca", bic: "BCPOMAMC", adresse: "101 Bd Mohamed Zerktouni, 20100 Casablanca, Maroc" },
+    { nom: "BMCE Bank", pays: "Maroc", ville: "Casablanca", bic: "BMCEMAMC", adresse: "140 Av. Hassan II, 20070 Casablanca, Maroc" },
   ];
 
   const CLIENTS: { nom: string; compte: string }[] = [];
@@ -211,13 +214,13 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     b.pays.toLowerCase().includes(rechPays.toLowerCase())
   );
   const fermerPopupBanque = () => { setPopupBanque(null); setRechNom(""); setRechBic(""); setRechPays(""); };
-  const choisirBanque = (b: { nom: string; adresse: string }) => {
+  const choisirBanque = (b: { nom: string; adresse: string; ville: string; pays: string }) => {
     if (popupBanque === "partie") {
-      setPaiementForm(f => ({ ...f, partieAPayer: b.nom, adressePartieAPayer: b.adresse }));
+      setPaiementForm(f => ({ ...f, partieAPayer: b.nom, adressePartieAPayer: b.adresse, villePartieAPayer: b.ville, paysPartieAPayer: b.pays }));
     } else if (popupBanque === "payeur") {
-      setPaiementForm(f => ({ ...f, paiementRecuDe: b.nom, adressePaiementRecuDe: b.adresse }));
+      setPaiementForm(f => ({ ...f, paiementRecuDe: b.nom, adressePaiementRecuDe: b.adresse, villePaiementRecuDe: b.ville, paysPaiementRecuDe: b.pays }));
     } else {
-      setPaiementForm(f => ({ ...f, banqueBeneficiaire: b.nom, adresseBanqueBeneficiaire: b.adresse }));
+      setPaiementForm(f => ({ ...f, banqueBeneficiaire: b.nom, adresseBanqueBeneficiaire: b.adresse, villeBanqueBeneficiaire: b.ville, paysBanqueBeneficiaire: b.pays }));
     }
     fermerPopupBanque();
   };
@@ -244,8 +247,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     partieOriginePaiement: p?.partieOriginePaiement ?? "Tiré",
     paiementRecuDe: p?.paiementRecuDe ?? DEFAUT_PAIEMENT_RECU_DE,
     adressePaiementRecuDe: p?.adressePaiementRecuDe ?? DEFAUT_ADRESSE_PAIEMENT_RECU_DE,
-    villePaiementRecuDe: p?.villePaiementRecuDe ?? "",
-    paysPaiementRecuDe: p?.paysPaiementRecuDe ?? "",
+    villePaiementRecuDe: p?.villePaiementRecuDe ?? "Casablanca",
+    paysPaiementRecuDe: p?.paysPaiementRecuDe ?? "Maroc",
     dateReception: p?.dateReception ?? aujourdhui,
     instructionPaiement: p?.instructionPaiement ?? "",
     naturePartieAPayer: p?.naturePartieAPayer ?? "Banque étrangère",
@@ -260,6 +263,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     villeBanqueBeneficiaire: p?.villeBanqueBeneficiaire ?? "",
     paysBanqueBeneficiaire: p?.paysBanqueBeneficiaire ?? "",
     banqueSansCleRma: p?.banqueSansCleRma ?? false,
+    signatureConforme: p?.signatureConforme ?? false,
+    banqueIntermediaire: p?.banqueIntermediaire ?? false,
     compteBeneficiaire: p?.compteBeneficiaire ?? "",
     remiseAExpirer: p?.remiseAExpirer ?? false,
     paiementAvecRecours: p?.paiementAvecRecours ?? false,
@@ -320,8 +325,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   };
 
   function enregistrer() {
-    if (nature === "Paiement" && !ordrePaiementJoint) {
-      setErreurOrdrePaiement(true);
+    if (nature === "Paiement" && documentsObligatoiresManquants.length > 0) {
+      setErreurDocumentsObligatoires(true);
       setOngletPieces("documents");
       return;
     }
@@ -359,6 +364,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           villeBanqueBeneficiaire: paiementForm.villeBanqueBeneficiaire || undefined,
           paysBanqueBeneficiaire: paiementForm.paysBanqueBeneficiaire || undefined,
           banqueSansCleRma: paiementForm.banqueSansCleRma,
+          signatureConforme: paiementForm.signatureConforme,
+          banqueIntermediaire: paiementForm.banqueIntermediaire,
           compteBeneficiaire: paiementForm.compteBeneficiaire || undefined,
           remiseAExpirer: paiementForm.remiseAExpirer,
           paiementAvecRecours: paiementForm.paiementAvecRecours,
@@ -508,13 +515,20 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="md:col-span-2 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-label" htmlFor="compte-a-debiter-recu">Compte à débiter</label>
+                    <label className="text-label" htmlFor="compte-a-debiter-recu">Compte à débiter <span className="text-red-500">*</span></label>
                     <div className="relative">
                       <input id="compte-a-debiter-recu" className="input w-full pr-9" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
                       <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition" onClick={() => setPopupCompte(true)} title="Rechercher un compte" aria-label="Rechercher un compte">
                         <Search size={15} />
                       </button>
                     </div>
+                  </div>
+                  <div>
+                    <span className="text-label invisible block" aria-hidden="true">Signature conforme</span>
+                    <label className="flex items-center gap-2 cursor-pointer h-9">
+                      <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.signatureConforme} onChange={setP("signatureConforme")} />
+                      <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Signature conforme <span className="text-red-500">*</span></span>
+                    </label>
                   </div>
                 </div>
                 <div className="w-full overflow-x-auto rounded-lg border border-[#e5e8ec]">
@@ -581,7 +595,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </select>
                 </div>
                 <div>
-                  <label className="text-label">Partie à payer</label>
+                  <label className="text-label">Partie à payer <span className="text-red-500">*</span></label>
                   <div className="relative">
                     <input
                       type="text"
@@ -655,7 +669,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               </div>
               <div className="flex flex-col gap-4 min-w-0">
                 <div>
-                  <label className="text-label">Mode de paiement</label>
+                  <label className="text-label">Mode de paiement <span className="text-red-500">*</span></label>
                   <select className="input w-full" value={paiementForm.modePaiement} onChange={setP("modePaiement")}>
                     <option>Payer</option>
                     <option>Paiement avec financement</option>
@@ -678,6 +692,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.banqueSansCleRma} onChange={setP("banqueSansCleRma")} />
                     <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Banque sans clé RMA</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.banqueIntermediaire} onChange={setP("banqueIntermediaire")} />
+                    <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Banque intermédiaire</span>
                   </label>
                 </div>
               </div>
@@ -781,7 +799,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-label">Montant à payer</label>
+                  <label className="text-label">Montant à payer <span className="text-red-500">*</span></label>
                   <input type="text" className="input w-full bg-gray-50" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
                 </div>
                 <div>
@@ -922,22 +940,40 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             </div>
 
             <div role="tabpanel" id="panneau-pieces-documents" aria-labelledby="onglet-pieces-documents" hidden={ongletPieces !== "documents"}>
-              <div className="flex items-end justify-between flex-wrap gap-3 mb-3">
-                <div className="w-full sm:w-auto sm:min-w-[220px]">
-                  <label className="text-label" htmlFor="type-document-attache">Type de document</label>
-                  <select id="type-document-attache" className="input w-full" value={typeDocument} onChange={event => setTypeDocument(event.target.value as TypeDocumentAttacheAgence | "")}>
-                    <option value="">Sélectionner un type</option>
-                    {typesDocuments.map(type => <option key={type} value={type}>{type}</option>)}
-                  </select>
+              <div className="flex items-start justify-between flex-wrap gap-3 mb-3">
+                <div className="rounded-lg border border-[#e5e8ec] px-4 py-3 w-full sm:w-auto sm:min-w-[260px]">
+                  <div className="text-label mb-2">Documents à joindre</div>
+                  <div className="flex flex-col gap-2">
+                    {typesDocuments.map(type => {
+                      const joint = documentsAttaches.some(document => document.categorie === type && document.fichier?.size > 0);
+                      return (
+                        <label key={type} className="flex items-center gap-2 text-sm text-[#0f172a] cursor-pointer">
+                          <input
+                            type="checkbox"
+                            className="w-4 h-4 rounded border-gray-300 text-blue-600"
+                            checked={joint}
+                            onChange={() => {
+                              if (!joint) {
+                                setTypeDocument(type);
+                                setTimeout(() => fichierInputRef.current?.click(), 0);
+                              }
+                            }}
+                          />
+                          {type} {DOCUMENTS_OBLIGATOIRES.includes(type) && <span className="text-red-500">*</span>}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <div className="text-xs text-[#94a3b8] mt-2"><span className="text-red-500">*</span> obligatoire</div>
                 </div>
                 <button type="button" className="btn-secondary flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled={!typeDocument} onClick={() => fichierInputRef.current?.click()}>
                   <Paperclip size={15} /> Joindre des documents
                 </button>
                 <input ref={fichierInputRef} type="file" multiple disabled={!typeDocument} className="hidden" aria-label="Joindre des documents" onChange={e => joindreDocuments(e.target.files)} />
               </div>
-              <p className="text-xs text-[#64748b] mb-3">Un ordre de paiement est obligatoire pour enregistrer le paiement.</p>
-              {erreurOrdrePaiement && !ordrePaiementJoint && (
-                <p role="alert" className="text-sm text-red-600 mb-3">Veuillez joindre un fichier non vide de type « Ordre de paiement » avant d'enregistrer.</p>
+              <p className="text-xs text-[#64748b] mb-3">L'ordre de paiement et le titre d'importation sont obligatoires pour enregistrer le paiement.</p>
+              {erreurDocumentsObligatoires && documentsObligatoiresManquants.length > 0 && (
+                <p role="alert" className="text-sm text-red-600 mb-3">Veuillez joindre un fichier non vide pour chaque document obligatoire manquant : {documentsObligatoiresManquants.join(", ")}.</p>
               )}
               <p className="text-xs text-[#64748b] mb-3">Les fichiers sont conservés pendant la session uniquement, sans envoi au serveur.</p>
               {documentsAttaches.length === 0 ? (
@@ -964,6 +1000,16 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                           <Trash2 size={14} />
                         </button>
                       </div>
+                      {document.categorie === "Autre" && (
+                        <input
+                          type="text"
+                          className="input w-full mt-1"
+                          aria-label={`Description du document ${document.nom}`}
+                          placeholder="Description du document"
+                          value={document.description ?? ""}
+                          onChange={event => setDocumentsAttaches(current => current.map(item => item.id === document.id ? { ...item, description: event.target.value } : item))}
+                        />
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -976,7 +1022,13 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       <div className="flex justify-end gap-2">
         <button className="btn-secondary" onClick={onCancel}>Annuler</button>
         <button className="btn-primary" disabled={montantRequis && montant <= 0} onClick={enregistrer}>
-          {evenement ? "Enregistrer les modifications" : "Enregistrer l'événement"}
+          Enregistrer
+        </button>
+        <button className="btn-primary disabled:opacity-40 disabled:cursor-not-allowed" disabled={(montantRequis && montant <= 0) || Boolean(blocageActif)} title={blocageActif ? "Débloquer la provision avant de soumettre au GGR" : undefined} onClick={enregistrer}>
+          Soumettre au GGR
+        </button>
+        <button className="btn-primary" disabled={montantRequis && montant <= 0} onClick={enregistrer}>
+          Soumettre
         </button>
       </div>
 
@@ -1107,7 +1159,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   type="button"
                   className="w-full text-left px-5 py-3 hover:bg-orange-50 transition"
                   onClick={() => {
-                    setPaiementForm(f => ({ ...f, paiementRecuDe: c.nom }));
+                    setPaiementForm(f => ({ ...f, paiementRecuDe: c.nom, villePaiementRecuDe: "Casablanca", paysPaiementRecuDe: "Maroc" }));
                     fermerPopupTire();
                   }}
                 >

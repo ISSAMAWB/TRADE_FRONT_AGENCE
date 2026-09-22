@@ -238,7 +238,7 @@ export interface BlocageProvisionAgence {
   devise: string;
 }
 
-export type TypeDocumentAttacheAgence = "Ordre de paiement" | "Facture" | "Titre d'importation";
+export type TypeDocumentAttacheAgence = "Ordre de paiement" | "Titre d'importation" | "Autre";
 
 export interface DocumentAttacheAgence {
   id: string;
@@ -246,6 +246,7 @@ export interface DocumentAttacheAgence {
   taille: number;
   type: string;
   categorie?: TypeDocumentAttacheAgence;
+  description?: string;
   fichier: File;
 }
 
@@ -302,6 +303,8 @@ export interface EvenementTrade {
       villeBanqueBeneficiaire?: string;
       paysBanqueBeneficiaire?: string;
       banqueSansCleRma?: boolean;
+      signatureConforme?: boolean;
+      banqueIntermediaire?: boolean;
       compteBeneficiaire?: string;
       remiseAExpirer?: boolean;
       paiementAvecRecours?: boolean;
