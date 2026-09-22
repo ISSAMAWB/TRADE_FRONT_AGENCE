@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Search, X, Trash2, Plus, Paperclip, FileText } from "lucide-react";
 import { useTomStore } from "@/store/useTomStore";
 import dossiersDetail from "@/mocks/dossiersDetail.json";
-import type { DossierTrade, DocumentAttacheAgence, EvenementTrade, MontantAvecDevise } from "@/domain/consultation-detail";
+import type { DossierTrade, DocumentAttacheAgence, EvenementTrade, MontantAvecDevise, TypeDocumentAttacheAgence, BlocageProvisionAgence } from "@/domain/consultation-detail";
 
 function isMontantAvecDevise(v: unknown): v is MontantAvecDevise {
   return !!v && typeof v === "object" && "valeur" in (v as object) && "devise" in (v as object);
@@ -31,16 +31,22 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
 
   const s = evenement?.saisieAgence;
   const p = s?.paiement;
+  const [identiteCompteSelectionne, setIdentiteCompteSelectionne] = useState<{ numeroCompte: string; raisonSociale: string } | null>(p?.identiteCompteDebite ?? null);
 
   const fichierInputRef = useRef<HTMLInputElement>(null);
+  const typesDocuments: TypeDocumentAttacheAgence[] = ["Ordre de paiement", "Facture", "Titre d'importation"];
+  const [typeDocument, setTypeDocument] = useState<TypeDocumentAttacheAgence | "">("");
+  const [erreurOrdrePaiement, setErreurOrdrePaiement] = useState(false);
   const [documentsAttaches, setDocumentsAttaches] = useState<DocumentAttacheAgence[]>(s?.documentsAttaches ?? []);
+  const ordrePaiementJoint = documentsAttaches.some(document => document.categorie === "Ordre de paiement" && document.fichier?.size > 0);
   const joindreDocuments = (files: FileList | null) => {
-    if (!files?.length) return;
+    if (!files?.length || !typeDocument) return;
     const documents = Array.from(files).map(fichier => ({
       id: crypto.randomUUID(),
       nom: fichier.name,
       taille: fichier.size,
       type: fichier.type,
+      categorie: typeDocument,
       fichier,
     }));
     setDocumentsAttaches(current => [...current, ...documents]);
@@ -74,6 +80,60 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       CLIENTS.push({ nom, compte });
     }
   }
+
+  const comptesDisponibles: { nom: string; compte: string; devise: string }[] = [];
+  const comptesVus = new Set<string>();
+  for (const d of dossiersDetail as DossierTrade[]) {
+    const nom = (d.clientInfo?.raisonSociale ?? d.client ?? "").trim();
+    const compte = (d.clientInfo?.numeroCompte ?? "").trim();
+    const encoursD = d.donnees?.["encours"];
+    const montantD = d.donnees?.["montantRemise"];
+    const devise = (isMontantAvecDevise(encoursD) ? encoursD.devise : undefined)
+      ?? (isMontantAvecDevise(montantD) ? montantD.devise : undefined)
+      ?? "";
+    const cle = JSON.stringify([nom, compte.replace(/\s/g, ""), devise]);
+    if (nom && compte && !comptesVus.has(cle)) {
+      comptesVus.add(cle);
+      comptesDisponibles.push({ nom, compte, devise });
+    }
+  }
+  const comptesDevises: { nom: string; compte: string; devise: string }[] = [
+    { nom: "SOCIETE NOUVELLE HYDRAULIQUE-SNH", compte: "007 780 0000 104", devise: "EUR" },
+    { nom: "STE VIVO ENERGY MAROC", compte: "007 780 0000 215", devise: "USD" },
+    { nom: "STE IMPORT MAROC SARL", compte: "007 780 0000 377", devise: "EUR" },
+    { nom: "AGRO EXPORT MAROC", compte: "007 780 0000 548", devise: "GBP" },
+    { nom: "OCEANIC SHIPPING SARL", compte: "007 780 0000 062", devise: "USD" },
+    { nom: "MEDITERRANEA TRADING CO", compte: "007 780 0000 141", devise: "TND" },
+    { nom: "ATLAS TEXTILE SARL", compte: "007 780 0000 226", devise: "EUR" },
+    { nom: "ROYAL CERAMICS SA", compte: "007 780 0000 368", devise: "CNY" },
+    { nom: "TANGER MED FREIGHT", compte: "007 780 0000 401", devise: "USD" },
+    { nom: "ATLANTIC SHIPPING LTD", compte: "007 780 0000 767", devise: "EUR" },
+    { nom: "SAHARA LOGISTICS", compte: "007 780 0000 290", devise: "CNY" },
+    { nom: "NORTH AFRICA IMPORT", compte: "007 780 0000 658", devise: "TND" },
+  ];
+  for (const c of comptesDevises) {
+    const cle = JSON.stringify([c.nom, c.compte.replace(/\s/g, ""), c.devise]);
+    if (!comptesVus.has(cle)) {
+      comptesVus.add(cle);
+      comptesDisponibles.push(c);
+    }
+  }
+  const [popupCompte, setPopupCompte] = useState(false);
+  const [rechCompteRaisonSociale, setRechCompteRaisonSociale] = useState("");
+  const [rechCompteNumero, setRechCompteNumero] = useState("");
+  const [rechCompteDevise, setRechCompteDevise] = useState("");
+  const normaliserRaisonSociale = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  const comptesFiltres = comptesDisponibles.filter(compte =>
+    normaliserRaisonSociale(compte.nom).includes(normaliserRaisonSociale(rechCompteRaisonSociale)) &&
+    compte.compte.replace(/\s/g, "").toLowerCase().includes(rechCompteNumero.replace(/\s/g, "").toLowerCase()) &&
+    (rechCompteDevise === "" || compte.devise === rechCompteDevise)
+  );
+  const fermerPopupCompte = () => { setPopupCompte(false); setRechCompteRaisonSociale(""); setRechCompteNumero(""); setRechCompteDevise(""); };
+  const choisirCompte = (compte: { nom: string; compte: string; devise: string }) => {
+    setPaiementForm(form => ({ ...form, compteDebite: compte.compte }));
+    setIdentiteCompteSelectionne({ numeroCompte: compte.compte.replace(/\s/g, ""), raisonSociale: compte.nom });
+    fermerPopupCompte();
+  };
 
   const [popupBanque, setPopupBanque] = useState<"banque" | "partie" | "payeur" | null>(null);
   const [popupTire, setPopupTire] = useState(false);
@@ -203,9 +263,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     compteBeneficiaire: p?.compteBeneficiaire ?? "",
     remiseAExpirer: p?.remiseAExpirer ?? false,
     paiementAvecRecours: p?.paiementAvecRecours ?? false,
-    coursApplique: p?.coursApplique != null ? String(p.coursApplique) : "",
+    coursApplique: p?.coursApplique != null ? String(p.coursApplique) : "10.55",
     montantPaye: p?.montantPaye != null ? String(p.montantPaye) : "",
-    contrevaleurDirhams: p?.contrevaleurDirhams != null ? String(p.contrevaleurDirhams) : "",
     naturePaiement: p?.naturePaiement ?? "",
     montantRestant: p?.montantRestant != null ? String(p.montantRestant) : "",
     numeroUetr: p?.numeroUetr ?? "",
@@ -214,16 +273,58 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     agenceDomiciliation: p?.agenceDomiciliation ?? "",
   });
   const compteDebiteNormalise = paiementForm.compteDebite.replace(/\s/g, "");
-  const clientCompteDebite = compteDebiteNormalise && compteDebiteNormalise === dossier.clientInfo?.numeroCompte?.replace(/\s/g, "")
-    ? dossier.clientInfo
+  const compteCorrespondantFictif = comptesDisponibles.find(compte => compte.compte.replace(/\s/g, "") === compteDebiteNormalise);
+  const montantsCompteFictifs = compteDebiteNormalise && compteCorrespondantFictif
+    ? { solde: 125000, disponible: 100000, devise: compteCorrespondantFictif.devise || "MAD" }
+    : undefined;
+  const comptesCorrespondants = comptesDisponibles.filter(compte => compte.compte.replace(/\s/g, "") === compteDebiteNormalise);
+  const clientCompteDebite = !compteDebiteNormalise ? undefined
+    : identiteCompteSelectionne?.numeroCompte === compteDebiteNormalise ? identiteCompteSelectionne
+    : compteDebiteNormalise === dossier.clientInfo?.numeroCompte?.replace(/\s/g, "") ? dossier.clientInfo
+    : comptesCorrespondants.length === 1 ? { raisonSociale: comptesCorrespondants[0].nom }
     : undefined;
   const setP = (k: keyof typeof paiementForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setPaiementForm(f => ({ ...f, [k]: e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value }));
 
   const montantRequis = nature === "Paiement" || nature === "Acceptation & Aval de la traite";
   const montantAPayerTotal = (Number(paiementForm.montantPaye) || 0) + (Number(montantAVue) || 0);
+  const coursApplique = Number(paiementForm.coursApplique);
+  const contrevaleurBrute = montantAPayerTotal * coursApplique;
+  const contrevaleurDirhams = (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "")
+    && paiementForm.coursApplique.trim() !== ""
+    && Number.isFinite(montantAPayerTotal) && montantAPayerTotal >= 0
+    && Number.isFinite(coursApplique) && coursApplique > 0
+    && Number.isFinite(contrevaleurBrute)
+    ? Number(contrevaleurBrute.toFixed(2))
+    : undefined;
+  const memeDeviseComptePaiement = montantsCompteFictifs?.devise === deviseDossier;
+  const montantABloquer = montantsCompteFictifs && deviseDossier
+    ? (memeDeviseComptePaiement ? montantAPayerTotal : contrevaleurDirhams)
+    : undefined;
+  const deviseMontantABloquer = memeDeviseComptePaiement ? deviseDossier : "MAD";
+  const [blocageProvision, setBlocageProvision] = useState<BlocageProvisionAgence | null>(p?.blocageProvision ?? null);
+  const peutBloquerProvision = Boolean(montantsCompteFictifs) && Number.isFinite(montantAPayerTotal) && montantAPayerTotal > 0
+    && montantABloquer != null && Number.isFinite(montantABloquer) && montantABloquer > 0;
+  const blocageActif = peutBloquerProvision && blocageProvision?.numeroCompte === compteDebiteNormalise && blocageProvision.montant === montantABloquer && blocageProvision.devise === deviseMontantABloquer
+    ? blocageProvision
+    : null;
+  useEffect(() => {
+    setBlocageProvision(current => current && (!peutBloquerProvision || current.numeroCompte !== compteDebiteNormalise || current.montant !== montantABloquer || current.devise !== deviseMontantABloquer) ? null : current);
+  }, [compteDebiteNormalise, montantABloquer, deviseMontantABloquer, peutBloquerProvision]);
+  const basculerBlocageProvision = () => {
+    if (blocageActif) {
+      setBlocageProvision(null);
+    } else if (peutBloquerProvision && montantABloquer != null) {
+      setBlocageProvision({ numeroCompte: compteDebiteNormalise, montant: montantABloquer, devise: deviseMontantABloquer });
+    }
+  };
 
   function enregistrer() {
+    if (nature === "Paiement" && !ordrePaiementJoint) {
+      setErreurOrdrePaiement(true);
+      setOngletPieces("documents");
+      return;
+    }
     const saisie = {
       nature,
       montant: montantRequis ? montant : null,
@@ -263,12 +364,14 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           paiementAvecRecours: paiementForm.paiementAvecRecours,
           coursApplique: paiementForm.coursApplique ? Number(paiementForm.coursApplique) : undefined,
           montantPaye: montantAPayerTotal || undefined,
-          contrevaleurDirhams: paiementForm.contrevaleurDirhams ? Number(paiementForm.contrevaleurDirhams) : undefined,
+          contrevaleurDirhams,
           naturePaiement: paiementForm.naturePaiement || undefined,
           montantRestant: paiementForm.montantRestant ? Number(paiementForm.montantRestant) : undefined,
           numeroUetr: paiementForm.numeroUetr || undefined,
           dateValeur: paiementForm.dateValeur || undefined,
           compteDebite: paiementForm.compteDebite || undefined,
+          identiteCompteDebite: clientCompteDebite ? { numeroCompte: compteDebiteNormalise, raisonSociale: clientCompteDebite.raisonSociale } : undefined,
+          blocageProvision: blocageActif ?? undefined,
           agenceDomiciliation: paiementForm.agenceDomiciliation || undefined,
         } : undefined,
       },
@@ -406,17 +509,24 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-label" htmlFor="compte-a-debiter-recu">Compte à débiter</label>
-                    <input id="compte-a-debiter-recu" className="input w-full" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
+                    <div className="relative">
+                      <input id="compte-a-debiter-recu" className="input w-full pr-9" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
+                      <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition" onClick={() => setPopupCompte(true)} title="Rechercher un compte" aria-label="Rechercher un compte">
+                        <Search size={15} />
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div className="w-full overflow-x-auto rounded-lg border border-[#e5e8ec]">
-                  <table className="w-full table-fixed text-xs" aria-label="Informations du compte à débiter">
+                  <table className="w-full min-w-[800px] table-fixed text-xs" aria-label="Informations du compte à débiter">
                     <thead className="bg-gray-50">
                       <tr className="border-b border-[#e5e8ec]">
-                        <th scope="col" className="w-[34%] px-3 py-2 text-left font-semibold text-[#64748b]">Intitulé compte</th>
-                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Solde</th>
-                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Disponible</th>
-                        <th scope="col" className="w-[26%] px-3 py-2 text-left font-semibold text-[#64748b]">Identité</th>
+                        <th scope="col" className="w-[24%] px-3 py-2 text-left font-semibold text-[#64748b]">Intitulé compte</th>
+                        <th scope="col" className="w-[15%] px-3 py-2 text-left font-semibold text-[#64748b]">Solde</th>
+                        <th scope="col" className="w-[15%] px-3 py-2 text-left font-semibold text-[#64748b]">Disponible</th>
+                        <th scope="col" className="w-[18%] px-3 py-2 text-left font-semibold text-[#64748b]">Identité</th>
+                        <th scope="col" className="w-[16%] px-3 py-2 text-left font-semibold text-[#64748b]">Montant bloqué</th>
+                        <th scope="col" className="w-[12%] px-3 py-2 text-left font-semibold text-[#64748b]">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -425,9 +535,23 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                           <div className="font-mono break-all">{paiementForm.compteDebite.trim() || "—"}</div>
                           {clientCompteDebite && <div className="mt-1">{clientCompteDebite.raisonSociale}</div>}
                         </td>
-                        <td className="px-3 py-3 text-[#94a3b8]" title="Solde non disponible">—</td>
-                        <td className="px-3 py-3 text-[#94a3b8]" title="Montant disponible non renseigné">—</td>
+                        <td className="px-3 py-3 font-mono tabular-nums text-[#0f172a]">
+                          {montantsCompteFictifs ? `${montantsCompteFictifs.solde.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${montantsCompteFictifs.devise}` : "—"}
+                        </td>
+                        <td className="px-3 py-3 font-mono tabular-nums text-[#2563eb]">
+                          {montantsCompteFictifs ? `${montantsCompteFictifs.disponible.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${montantsCompteFictifs.devise}` : "—"}
+                        </td>
                         <td className="px-3 py-3 text-[#0f172a] break-words">{clientCompteDebite?.raisonSociale || "—"}</td>
+                        <td className="px-3 py-3 font-mono tabular-nums text-[#0f172a]">
+                          {peutBloquerProvision && montantABloquer != null ? `${montantABloquer.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${deviseMontantABloquer}` : "—"}
+                        </td>
+                        <td className="px-3 py-3">
+                          {montantsCompteFictifs ? (
+                            <button type="button" className="btn-secondary disabled:opacity-40 disabled:cursor-not-allowed" onClick={basculerBlocageProvision} disabled={!blocageActif && !peutBloquerProvision} title={!peutBloquerProvision ? "Renseigner un montant à payer positif et, si les devises diffèrent, un cours appliqué valide" : undefined}>
+                              {blocageActif ? "Débloquer" : "Bloquer"}
+                            </button>
+                          ) : "—"}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -592,12 +716,16 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                         : "—"}
                     </td>
                     <td className="py-2 px-3 text-right">
-                      <input
-                        type="number"
-                        className="input w-full text-right font-mono tabular-nums"
-                        value={paiementForm.montantPaye}
-                        onChange={setP("montantPaye")}
-                      />
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          className="input w-full min-w-0 text-right font-mono tabular-nums"
+                          aria-label={`Montant à payer ligne 1 ${deviseDossier}`}
+                          value={paiementForm.montantPaye}
+                          onChange={setP("montantPaye")}
+                        />
+                        <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
+                      </div>
                     </td>
                   </tr>
                   <tr className="border-b border-[#e5e8ec]">
@@ -613,12 +741,16 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                         : "—"}
                     </td>
                     <td className="py-2 px-3 text-right">
-                      <input
-                        type="number"
-                        className="input w-full text-right font-mono tabular-nums"
-                        value={montantAVue}
-                        onChange={(e) => setMontantAVue(e.target.value)}
-                      />
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          className="input w-full min-w-0 text-right font-mono tabular-nums"
+                          aria-label={`Montant à payer ligne 2 ${deviseDossier}`}
+                          value={montantAVue}
+                          onChange={(e) => setMontantAVue(e.target.value)}
+                        />
+                        <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -650,7 +782,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="space-y-4">
                 <div>
                   <label className="text-label">Montant à payer</label>
-                  <input type="number" className="input w-full bg-gray-50" value={montantAPayerTotal || ""} readOnly />
+                  <input type="text" className="input w-full bg-gray-50" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
                 </div>
                 <div>
                   <label className="text-label">Cours appliqué</label>
@@ -658,7 +790,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 </div>
                 <div>
                   <label className="text-label">Contrevaleur en dirhams</label>
-                  <input type="number" className="input w-full" value={paiementForm.contrevaleurDirhams} onChange={setP("contrevaleurDirhams")} />
+                  <input type="number" step="0.01" className="input w-full bg-gray-50" value={contrevaleurDirhams != null ? contrevaleurDirhams.toFixed(2) : ""} readOnly />
                 </div>
               </div>
               <div className="space-y-4">
@@ -790,27 +922,48 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             </div>
 
             <div role="tabpanel" id="panneau-pieces-documents" aria-labelledby="onglet-pieces-documents" hidden={ongletPieces !== "documents"}>
-              <div className="flex justify-end flex-wrap gap-3 mb-3">
-                <button type="button" className="btn-secondary flex items-center gap-2" onClick={() => fichierInputRef.current?.click()}>
+              <div className="flex items-end justify-between flex-wrap gap-3 mb-3">
+                <div className="w-full sm:w-auto sm:min-w-[220px]">
+                  <label className="text-label" htmlFor="type-document-attache">Type de document</label>
+                  <select id="type-document-attache" className="input w-full" value={typeDocument} onChange={event => setTypeDocument(event.target.value as TypeDocumentAttacheAgence | "")}>
+                    <option value="">Sélectionner un type</option>
+                    {typesDocuments.map(type => <option key={type} value={type}>{type}</option>)}
+                  </select>
+                </div>
+                <button type="button" className="btn-secondary flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled={!typeDocument} onClick={() => fichierInputRef.current?.click()}>
                   <Paperclip size={15} /> Joindre des documents
                 </button>
-                <input ref={fichierInputRef} type="file" multiple className="hidden" aria-label="Joindre des documents" onChange={e => joindreDocuments(e.target.files)} />
+                <input ref={fichierInputRef} type="file" multiple disabled={!typeDocument} className="hidden" aria-label="Joindre des documents" onChange={e => joindreDocuments(e.target.files)} />
               </div>
+              <p className="text-xs text-[#64748b] mb-3">Un ordre de paiement est obligatoire pour enregistrer le paiement.</p>
+              {erreurOrdrePaiement && !ordrePaiementJoint && (
+                <p role="alert" className="text-sm text-red-600 mb-3">Veuillez joindre un fichier non vide de type « Ordre de paiement » avant d'enregistrer.</p>
+              )}
               <p className="text-xs text-[#64748b] mb-3">Les fichiers sont conservés pendant la session uniquement, sans envoi au serveur.</p>
               {documentsAttaches.length === 0 ? (
                 <div className="py-4 text-center text-sm text-[#94a3b8]">Aucun document attaché.</div>
               ) : (
                 <ul className="divide-y divide-[#e5e8ec]">
                   {documentsAttaches.map(document => (
-                    <li key={document.id} className="flex items-center justify-between gap-3 py-3">
+                    <li key={document.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
                       <div className="flex items-center gap-3 min-w-0">
                         <FileText size={16} className="text-[#64748b] shrink-0" />
                         <span className="text-sm text-[#0f172a] break-all">{document.nom}</span>
                         <span className="text-xs text-[#64748b] whitespace-nowrap">{(document.taille / 1024).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Ko</span>
                       </div>
-                      <button type="button" className="text-[#94a3b8] hover:text-[#dc2626] transition shrink-0" title={`Retirer ${document.nom}`} aria-label={`Retirer ${document.nom}`} onClick={() => setDocumentsAttaches(current => current.filter(item => item.id !== document.id))}>
-                        <Trash2 size={14} />
-                      </button>
+                      <div className="flex items-center gap-3">
+                        <select className="input w-full sm:w-auto" aria-label={`Type du document ${document.nom}`} value={document.categorie ?? ""}
+                          onChange={event => {
+                            const categorie = (event.target.value || undefined) as TypeDocumentAttacheAgence | undefined;
+                            setDocumentsAttaches(current => current.map(item => item.id === document.id ? { ...item, categorie } : item));
+                          }}>
+                          <option value="">Sélectionner un type</option>
+                          {typesDocuments.map(type => <option key={type} value={type}>{type}</option>)}
+                        </select>
+                        <button type="button" className="text-[#94a3b8] hover:text-[#dc2626] transition shrink-0" title={`Retirer ${document.nom}`} aria-label={`Retirer ${document.nom}`} onClick={() => setDocumentsAttaches(current => current.filter(item => item.id !== document.id))}>
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -873,6 +1026,44 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <div className="font-mono text-[11px] text-[#64748b]">{b.bic}</div>
                   </div>
                   <div className="text-xs text-[#64748b]">{b.adresse} · {b.pays}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {popupCompte && (
+        <>
+          <div className="fixed inset-0 bg-black/30 z-50" onClick={fermerPopupCompte} />
+          <div role="dialog" aria-modal="true" aria-labelledby="titre-recherche-compte" onKeyDown={event => { if (event.key === "Escape") fermerPopupCompte(); }} className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-lg bg-white rounded-2xl shadow-2xl z-50 max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e8ec]">
+              <div id="titre-recherche-compte" className="text-sm font-semibold text-[#0f172a]">Rechercher un compte</div>
+              <button type="button" aria-label="Fermer la recherche de compte" className="h-8 w-8 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center" onClick={fermerPopupCompte}><X size={16} /></button>
+            </div>
+            <div className="px-5 py-3 border-b border-[#e5e8ec] grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="text-label" htmlFor="recherche-compte-raison-sociale">Raison sociale</label>
+                <input id="recherche-compte-raison-sociale" className="input w-full" value={rechCompteRaisonSociale} onChange={event => setRechCompteRaisonSociale(event.target.value)} placeholder="Saisir la raison sociale" autoFocus />
+              </div>
+              <div>
+                <label className="text-label" htmlFor="recherche-compte-numero">Numéro de compte</label>
+                <input id="recherche-compte-numero" type="text" className="input w-full font-mono" value={rechCompteNumero} onChange={event => setRechCompteNumero(event.target.value)} placeholder="Saisir le numéro de compte" />
+              </div>
+              <div>
+                <label className="text-label" htmlFor="recherche-compte-devise">Devise</label>
+                <select id="recherche-compte-devise" className="input w-full" value={rechCompteDevise} onChange={event => setRechCompteDevise(event.target.value)}>
+                  <option value="">Toutes</option>
+                  {["EUR", "MAD", "USD", "TND", "GBP", "CNY"].map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="overflow-y-auto py-2">
+              {comptesFiltres.length === 0 && <div className="px-5 py-6 text-sm text-[#64748b] text-center">Aucun compte trouvé.</div>}
+              {comptesFiltres.map(compte => (
+                <button key={JSON.stringify([compte.nom, compte.compte, compte.devise])} type="button" className="w-full text-left px-5 py-3 hover:bg-orange-50 transition" onClick={() => choisirCompte(compte)}>
+                  <div className="text-sm font-medium text-[#0f172a] break-words">{compte.nom}</div>
+                  <div className="font-mono text-xs text-[#64748b] mt-1">{compte.compte}{compte.devise ? ` — ${compte.devise}` : ""}</div>
                 </button>
               ))}
             </div>

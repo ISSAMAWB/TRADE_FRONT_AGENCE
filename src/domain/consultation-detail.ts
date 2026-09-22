@@ -232,11 +232,20 @@ export interface ExpirationInfo {
   documentsAttaches?: { nom: string }[];
 }
 
+export interface BlocageProvisionAgence {
+  numeroCompte: string;
+  montant: number;
+  devise: string;
+}
+
+export type TypeDocumentAttacheAgence = "Ordre de paiement" | "Facture" | "Titre d'importation";
+
 export interface DocumentAttacheAgence {
   id: string;
   nom: string;
   taille: number;
   type: string;
+  categorie?: TypeDocumentAttacheAgence;
   fichier: File;
 }
 
@@ -306,6 +315,8 @@ export interface EvenementTrade {
       numeroUetr?: string;
       dateValeur?: string;
       compteDebite?: string;
+      identiteCompteDebite?: { numeroCompte: string; raisonSociale: string };
+      blocageProvision?: BlocageProvisionAgence;
       agenceDomiciliation?: string;
     };
   };
