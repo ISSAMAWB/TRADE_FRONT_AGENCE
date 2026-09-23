@@ -265,6 +265,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     banqueSansCleRma: p?.banqueSansCleRma ?? false,
     signatureConforme: p?.signatureConforme ?? false,
     banqueIntermediaire: p?.banqueIntermediaire ?? false,
+    titreImportationNonRequis: p?.titreImportationNonRequis ?? false,
     compteBeneficiaire: p?.compteBeneficiaire ?? "",
     remiseAExpirer: p?.remiseAExpirer ?? false,
     paiementAvecRecours: p?.paiementAvecRecours ?? false,
@@ -316,13 +317,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   useEffect(() => {
     setBlocageProvision(current => current && (!peutBloquerProvision || current.numeroCompte !== compteDebiteNormalise || current.montant !== montantABloquer || current.devise !== deviseMontantABloquer) ? null : current);
   }, [compteDebiteNormalise, montantABloquer, deviseMontantABloquer, peutBloquerProvision]);
-  const basculerBlocageProvision = () => {
-    if (blocageActif) {
-      setBlocageProvision(null);
-    } else if (peutBloquerProvision && montantABloquer != null) {
-      setBlocageProvision({ numeroCompte: compteDebiteNormalise, montant: montantABloquer, devise: deviseMontantABloquer });
-    }
-  };
+
 
   function enregistrer() {
     if (nature === "Paiement" && documentsObligatoiresManquants.length > 0) {
@@ -366,6 +361,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           banqueSansCleRma: paiementForm.banqueSansCleRma,
           signatureConforme: paiementForm.signatureConforme,
           banqueIntermediaire: paiementForm.banqueIntermediaire,
+          titreImportationNonRequis: paiementForm.titreImportationNonRequis,
           compteBeneficiaire: paiementForm.compteBeneficiaire || undefined,
           remiseAExpirer: paiementForm.remiseAExpirer,
           paiementAvecRecours: paiementForm.paiementAvecRecours,
@@ -416,6 +412,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         <div>
           <label className="text-label">Conditions de remise des documents</label>
           <input className="input w-full bg-gray-50" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
+        </div>
+        <div>
+          <label className="text-label">Type de la remise</label>
+          <input className="input w-full bg-gray-50" value="Remise documentaire" readOnly />
         </div>
 
         {nature === "Acceptation & Aval de la traite" && (
@@ -535,12 +535,11 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <table className="w-full min-w-[800px] table-fixed text-xs" aria-label="Informations du compte à débiter">
                     <thead className="bg-gray-50">
                       <tr className="border-b border-[#e5e8ec]">
-                        <th scope="col" className="w-[24%] px-3 py-2 text-left font-semibold text-[#64748b]">Intitulé compte</th>
-                        <th scope="col" className="w-[15%] px-3 py-2 text-left font-semibold text-[#64748b]">Solde</th>
-                        <th scope="col" className="w-[15%] px-3 py-2 text-left font-semibold text-[#64748b]">Disponible</th>
-                        <th scope="col" className="w-[18%] px-3 py-2 text-left font-semibold text-[#64748b]">Identité</th>
-                        <th scope="col" className="w-[16%] px-3 py-2 text-left font-semibold text-[#64748b]">Montant bloqué</th>
-                        <th scope="col" className="w-[12%] px-3 py-2 text-left font-semibold text-[#64748b]">Action</th>
+                        <th scope="col" className="w-[26%] px-3 py-2 text-left font-semibold text-[#64748b]">Intitulé compte</th>
+                        <th scope="col" className="w-[17%] px-3 py-2 text-left font-semibold text-[#64748b]">Solde</th>
+                        <th scope="col" className="w-[17%] px-3 py-2 text-left font-semibold text-[#64748b]">Disponible</th>
+                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Identité</th>
+                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Montant à bloquer</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -556,15 +555,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                           {montantsCompteFictifs ? `${montantsCompteFictifs.disponible.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${montantsCompteFictifs.devise}` : "—"}
                         </td>
                         <td className="px-3 py-3 text-[#0f172a] break-words">{clientCompteDebite?.raisonSociale || "—"}</td>
-                        <td className="px-3 py-3 font-mono tabular-nums text-[#0f172a]">
+                        <td className={`px-3 py-3 font-mono tabular-nums ${peutBloquerProvision && montantABloquer != null ? (montantABloquer > (montantsCompteFictifs?.disponible ?? 0) ? "text-red-600" : "text-green-600") : "text-[#0f172a]"}`}>
                           {peutBloquerProvision && montantABloquer != null ? `${montantABloquer.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${deviseMontantABloquer}` : "—"}
-                        </td>
-                        <td className="px-3 py-3">
-                          {montantsCompteFictifs ? (
-                            <button type="button" className="btn-secondary disabled:opacity-40 disabled:cursor-not-allowed" onClick={basculerBlocageProvision} disabled={!blocageActif && !peutBloquerProvision} title={!peutBloquerProvision ? "Renseigner un montant à payer positif et, si les devises diffèrent, un cours appliqué valide" : undefined}>
-                              {blocageActif ? "Débloquer" : "Bloquer"}
-                            </button>
-                          ) : "—"}
                         </td>
                       </tr>
                     </tbody>
@@ -717,7 +709,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Date de paiement</th>
                     <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant réclamé</th>
                     <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Encours</th>
-                    <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant à payer</th>
+                    <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant à payer <span className="text-red-500">*</span></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -831,7 +823,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </div>
                 </div>
                 <div>
-                  <label className="text-label">Numéro du compte débité</label>
+                  <label className="text-label">Référence de l'aval</label>
                   <input className="input w-full" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
                 </div>
               </div>
@@ -861,12 +853,22 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             </div>
 
             <div role="tabpanel" id="panneau-pieces-titres" aria-labelledby="onglet-pieces-titres" hidden={ongletPieces !== "titres"}>
-              <div className="flex justify-end mb-3">
+              <div className="flex items-center justify-between mb-3">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.titreImportationNonRequis}
+                    onChange={event => {
+                      const checked = event.target.checked;
+                      setPaiementForm(f => ({ ...f, titreImportationNonRequis: checked }));
+                      if (checked) setTitresImputation([]);
+                    }} />
+                  <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Titre d'importation non requis</span>
+                </label>
                 <button
                   type="button"
-                  className="h-7 w-7 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center"
+                  className="h-7 w-7 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-[#64748b] disabled:hover:border-[#e5e8ec]"
+                  disabled={paiementForm.titreImportationNonRequis}
                   onClick={() => setPopupTitre(true)}
-                  title="Ajouter un titre d'importation"
+                  title={paiementForm.titreImportationNonRequis ? "Titre d'importation non requis" : "Ajouter un titre d'importation"}
                   aria-label="Ajouter un titre d'importation"
                 >
                   <Plus size={15} />
@@ -924,7 +926,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 text-xs font-semibold text-[#0f172a]">
                 <span>Nombre Total : {titresImputation.length}</span>
                 <span>
-                  Montant Total : {titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0).toLocaleString("fr-FR", { minimumFractionDigits: 2 })}
+                  Montant total imputé : {titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}
+                </span>
+                <span>
+                  Montant restant à imputer : <span className={montantAPayerTotal - titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0) > 0 ? "text-red-600" : undefined}>{(montantAPayerTotal - titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0)).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}</span>
                 </span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
@@ -1023,9 +1028,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         <button className="btn-secondary" onClick={onCancel}>Annuler</button>
         <button className="btn-primary" disabled={montantRequis && montant <= 0} onClick={enregistrer}>
           Enregistrer
-        </button>
-        <button className="btn-primary disabled:opacity-40 disabled:cursor-not-allowed" disabled={(montantRequis && montant <= 0) || Boolean(blocageActif)} title={blocageActif ? "Débloquer la provision avant de soumettre au GGR" : undefined} onClick={enregistrer}>
-          Soumettre au GGR
         </button>
         <button className="btn-primary" disabled={montantRequis && montant <= 0} onClick={enregistrer}>
           Soumettre

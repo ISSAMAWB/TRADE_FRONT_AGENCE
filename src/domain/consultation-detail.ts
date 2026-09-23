@@ -305,6 +305,7 @@ export interface EvenementTrade {
       banqueSansCleRma?: boolean;
       signatureConforme?: boolean;
       banqueIntermediaire?: boolean;
+      titreImportationNonRequis?: boolean;
       compteBeneficiaire?: string;
       remiseAExpirer?: boolean;
       paiementAvecRecours?: boolean;

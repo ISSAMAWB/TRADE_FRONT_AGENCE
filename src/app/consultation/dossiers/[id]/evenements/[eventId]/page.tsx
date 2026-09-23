@@ -186,6 +186,12 @@ export default function EventDetailPage() {
                 <p className="font-semibold text-gray-900">{dossier.donnees["referenceCorrespondant"] ? String(dossier.donnees["referenceCorrespondant"]) : "—"}</p>
               </div>
             )}
+            {(event.nature === "Réception de la remise" || event.nature === "Modification de la remise" || event.nature === "Ajustement de la remise" || event.nature === "Acceptation & Aval de la traite" || event.nature === "Paiement") && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type de la remise</label>
+                <p className="font-semibold text-gray-900">Remise documentaire</p>
+              </div>
+            )}
             {event.nature === "Expiration" && event.expiration && (
               <div className="bg-gray-50 rounded-lg p-4">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence du correspondant</label>
