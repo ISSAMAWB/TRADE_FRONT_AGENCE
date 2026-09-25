@@ -232,6 +232,24 @@ export interface ExpirationInfo {
   documentsAttaches?: { nom: string }[];
 }
 
+export interface BlocageProvisionAgence {
+  numeroCompte: string;
+  montant: number;
+  devise: string;
+}
+
+export type TypeDocumentAttacheAgence = "Ordre de paiement" | "Titre d'importation" | "Autre";
+
+export interface DocumentAttacheAgence {
+  id: string;
+  nom: string;
+  taille: number;
+  type: string;
+  categorie?: TypeDocumentAttacheAgence;
+  description?: string;
+  fichier: File;
+}
+
 export interface EvenementTrade {
   reference: string;
   nature: string;
@@ -260,22 +278,37 @@ export interface EvenementTrade {
     destinataire?: string;
     datePaiement?: string;
     dateEvenement?: string;
+    documentsAttaches?: DocumentAttacheAgence[];
     /** Champs saisis à l'initiation d'un événement Paiement — mêmes blocs que la consultation. */
     paiement?: {
       // Détails du paiement reçu
       referencePaiementRecu?: string;
       partieOriginePaiement?: string;
       paiementRecuDe?: string;
+      adressePaiementRecuDe?: string;
+      villePaiementRecuDe?: string;
+      paysPaiementRecuDe?: string;
       dateReception?: string;
       instructionPaiement?: string;
       // Bénéficiaire du paiement
       naturePartieAPayer?: string;
       partieAPayer?: string;
+      adressePartieAPayer?: string;
+      villePartieAPayer?: string;
+      paysPartieAPayer?: string;
       referenceBeneficiaire?: string;
+      modePaiement?: string;
       banqueBeneficiaire?: string;
       adresseBanqueBeneficiaire?: string;
+      villeBanqueBeneficiaire?: string;
+      paysBanqueBeneficiaire?: string;
+      banqueSansCleRma?: boolean;
+      signatureConforme?: boolean;
+      banqueIntermediaire?: boolean;
+      titreImportationNonRequis?: boolean;
       compteBeneficiaire?: string;
       remiseAExpirer?: boolean;
+      paiementAvecRecours?: boolean;
       // Détails du paiement
       coursApplique?: number;
       montantPaye?: number;
@@ -286,6 +319,8 @@ export interface EvenementTrade {
       numeroUetr?: string;
       dateValeur?: string;
       compteDebite?: string;
+      identiteCompteDebite?: { numeroCompte: string; raisonSociale: string };
+      blocageProvision?: BlocageProvisionAgence;
       agenceDomiciliation?: string;
     };
   };
