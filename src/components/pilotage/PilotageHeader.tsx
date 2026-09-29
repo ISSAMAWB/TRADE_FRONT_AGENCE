@@ -33,8 +33,6 @@ export default function PilotageHeader({ actif, fil, actions }: {
     { key: "dossiers", label: "Dossiers", href: "/listes/en-cours", icon: Inbox, count: nbDossiers },
   ];
 
-  const arrete = new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-
   return (
     <div>
       {/* Fil d'Ariane */}
@@ -74,16 +72,10 @@ export default function PilotageHeader({ actif, fil, actions }: {
         })}
       </div>
 
-      {/* Ligne titre */}
-      <div className="flex items-start justify-between flex-wrap gap-3 mt-4">
-        <div>
-          <h1 className="text-display">Pilotage agence Casablanca</h1>
-          <p className="text-subtitle">
-            Arrêté au {arrete} · {nbDossiers} dossiers en cours · {nbATraiter} actions à traiter · {nbEcheances} échéances à suivre
-          </p>
-        </div>
-        {actions && <div className="flex items-center gap-2 flex-wrap">{actions}</div>}
-      </div>
+      {/* Ligne d'actions (alignée à droite, sans titre : les compteurs sont dans les onglets) */}
+      {actions && (
+        <div className="flex items-center justify-end gap-2 flex-wrap mt-3">{actions}</div>
+      )}
     </div>
   );
 }
