@@ -250,7 +250,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     villePaiementRecuDe: p?.villePaiementRecuDe ?? "Casablanca",
     paysPaiementRecuDe: p?.paysPaiementRecuDe ?? "Maroc",
     dateReception: p?.dateReception ?? aujourdhui,
-    instructionPaiement: p?.instructionPaiement ?? "",
     naturePartieAPayer: p?.naturePartieAPayer ?? "Banque étrangère",
     partieAPayer: p?.partieAPayer ?? "",
     adressePartieAPayer: p?.adressePartieAPayer ?? "",
@@ -273,7 +272,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     montantPaye: p?.montantPaye != null ? String(p.montantPaye) : "",
     naturePaiement: p?.naturePaiement ?? "",
     montantRestant: p?.montantRestant != null ? String(p.montantRestant) : "",
-    numeroUetr: p?.numeroUetr ?? "",
     dateValeur: p?.dateValeur ?? aujourdhui,
     compteDebite: p?.compteDebite ?? "",
     agenceDomiciliation: p?.agenceDomiciliation ?? "",
@@ -346,7 +344,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           villePaiementRecuDe: paiementForm.villePaiementRecuDe || undefined,
           paysPaiementRecuDe: paiementForm.paysPaiementRecuDe || undefined,
           dateReception: paiementForm.dateReception || undefined,
-          instructionPaiement: paiementForm.instructionPaiement || undefined,
           naturePartieAPayer: paiementForm.naturePartieAPayer || undefined,
           partieAPayer: paiementForm.partieAPayer || undefined,
           adressePartieAPayer: paiementForm.adressePartieAPayer || undefined,
@@ -370,7 +367,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           contrevaleurDirhams,
           naturePaiement: paiementForm.naturePaiement || undefined,
           montantRestant: paiementForm.montantRestant ? Number(paiementForm.montantRestant) : undefined,
-          numeroUetr: paiementForm.numeroUetr || undefined,
           dateValeur: paiementForm.dateValeur || undefined,
           compteDebite: paiementForm.compteDebite || undefined,
           identiteCompteDebite: clientCompteDebite ? { numeroCompte: compteDebiteNormalise, raisonSociale: clientCompteDebite.raisonSociale } : undefined,
@@ -396,7 +392,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           : "L'événement sera créé en statut En attente. L'encours et le dossier seront mis à jour après validation."}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div className="border border-[#e5e8ec] rounded-xl p-4 mb-4">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
+          <div className="text-sm font-semibold text-[#0f172a]">Informations générales</div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className="text-label">Référence de la remise</label>
           <input className="input w-full bg-gray-50" value={dossier.reference} readOnly />
@@ -412,10 +413,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         <div>
           <label className="text-label">Conditions de remise des documents</label>
           <input className="input w-full bg-gray-50" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
-        </div>
-        <div>
-          <label className="text-label">Type de la remise</label>
-          <input className="input w-full bg-gray-50" value="Remise documentaire" readOnly />
         </div>
 
         {nature === "Acceptation & Aval de la traite" && (
@@ -453,17 +450,18 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <input className="input w-full" value={destinataire} onChange={(e) => setDestinataire(e.target.value)} />
           </div>
         )}
+        </div>
       </div>
 
       {/* ===== Blocs Paiement — mêmes blocs que la page de consultation ===== */}
       {nature === "Paiement" && (
-        <div className="space-y-4 mb-4">
+        <div className="space-y-6 mb-4">
 
-          {/* Détails du paiement reçu */}
+          {/* Donneur d'ordre du paiement */}
           <div className="border border-[#e5e8ec] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-1 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
-              <div className="text-sm font-semibold text-[#0f172a]">Détails du paiement reçu</div>
+              <div className="text-sm font-semibold text-[#0f172a]">Donneur d'ordre du paiement</div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -562,9 +560,137 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Liste des paiements */}
+          <div className="border border-[#e5e8ec] rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1 h-5 bg-gradient-to-r from-violet-500 to-violet-600 rounded-full"></div>
+              <div className="text-sm font-semibold text-[#0f172a]">Liste des paiements disponibles</div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-[13px]">
+                <thead>
+                  <tr className="border-b border-[#e5e8ec]">
+                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">N.Paiement</th>
+                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Type de paiement</th>
+                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Date de paiement</th>
+                    <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant réclamé</th>
+                    <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Encours</th>
+                    <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant à payer <span className="text-red-500">*</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-[#e5e8ec]">
+                    <td className="py-2 px-3 text-[#0f172a]">1</td>
+                    <td className="py-2 px-3 text-[#64748b]">{String(dossier.donnees["conditionsRemiseDocuments"] ?? "").toLowerCase().includes("acceptation") ? "Contre acceptation" : "Contre paiement"}</td>
+                    <td className="py-2 px-3 text-[#64748b]">{datePaiement ? new Date(datePaiement).toLocaleDateString("fr-FR") : "—"}</td>
+                    <td className="py-2 px-3 text-right font-mono tabular-nums text-[#0f172a]">
+                      {montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${montantRemiseOk.devise}` : "—"}
+                    </td>
+                    <td className="py-2 px-3 text-right font-mono tabular-nums text-[#0f172a]">
+                      {encoursOk
+                        ? `${Math.max(0, encoursOk.valeur - (Number(paiementForm.montantPaye) || 0)).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${encoursOk.devise}`
+                        : "—"}
+                    </td>
+                    <td className="py-2 px-3 text-right">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          className="input w-full min-w-0 text-right font-mono tabular-nums"
+                          aria-label={`Montant à payer ligne 1 ${deviseDossier}`}
+                          value={paiementForm.montantPaye}
+                          onChange={setP("montantPaye")}
+                        />
+                        <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[#e5e8ec]">
+                    <td className="py-2 px-3 text-[#0f172a]">2</td>
+                    <td className="py-2 px-3 text-[#64748b]">A vue</td>
+                    <td className="py-2 px-3 text-[#94a3b8]">—</td>
+                    <td className="py-2 px-3 text-right font-mono tabular-nums text-[#0f172a]">
+                      {montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${montantRemiseOk.devise}` : "—"}
+                    </td>
+                    <td className="py-2 px-3 text-right font-mono tabular-nums text-[#0f172a]">
+                      {encoursOk
+                        ? `${Math.max(0, encoursOk.valeur - (Number(montantAVue) || 0)).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${encoursOk.devise}`
+                        : "—"}
+                    </td>
+                    <td className="py-2 px-3 text-right">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          className="input w-full min-w-0 text-right font-mono tabular-nums"
+                          aria-label={`Montant à payer ligne 2 ${deviseDossier}`}
+                          value={montantAVue}
+                          onChange={(e) => setMontantAVue(e.target.value)}
+                        />
+                        <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Détails du paiement */}
+          <div className="border border-[#e5e8ec] rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1 h-5 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"></div>
+              <div className="text-sm font-semibold text-[#0f172a]">Détails du paiement</div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-4">
                 <div>
-                  <label className="text-label">Instruction du paiement</label>
-                  <textarea className="input w-full" rows={3} value={paiementForm.instructionPaiement} onChange={setP("instructionPaiement")} />
+                  <label className="text-label">Montant des documents</label>
+                  <input className="input w-full bg-gray-50" value={montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR")} ${montantRemiseOk.devise}` : "—"} readOnly />
+                </div>
+                <div>
+                  <label className="text-label">Montant restant à régler</label>
+                  <input type="number" className="input w-full" value={paiementForm.montantRestant} onChange={setP("montantRestant")} />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-label">Montant à payer <span className="text-red-500">*</span></label>
+                  <input type="text" className="input w-full bg-gray-50" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
+                </div>
+                <div>
+                  <label className="text-label">Cours appliqué</label>
+                  <input type="number" step="0.0001" className="input w-full" value={paiementForm.coursApplique} onChange={setP("coursApplique")} placeholder="Ex. 10,85" />
+                </div>
+                <div>
+                  <label className="text-label">Contrevaleur estimative en dirhams</label>
+                  <input type="number" step="0.01" className="input w-full bg-gray-50" value={contrevaleurDirhams != null ? contrevaleurDirhams.toFixed(2) : ""} readOnly />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-label">Date de valeur</label>
+                  <input type="date" className="input w-full" value={datePaiement} onChange={(e) => setDatePaiement(e.target.value)} />
+                </div>
+                <div>
+                  <label className="text-label">N.Ticket SDM</label>
+                  <div className="relative">
+                    <input className="input w-full pr-9" value={paiementForm.naturePaiement} onChange={setP("naturePaiement")} placeholder="N° du ticket" />
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
+                      onClick={ouvrirPopupTicket}
+                      title="Rechercher un ticket SDM"
+                    >
+                      <Search size={15} />
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-label">Référence de l'aval</label>
+                  <input className="input w-full" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
                 </div>
               </div>
             </div>
@@ -689,142 +815,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.banqueIntermediaire} onChange={setP("banqueIntermediaire")} />
                     <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Banque intermédiaire</span>
                   </label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Liste des paiements */}
-          <div className="border border-[#e5e8ec] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-1 h-5 bg-gradient-to-r from-violet-500 to-violet-600 rounded-full"></div>
-              <div className="text-sm font-semibold text-[#0f172a]">Liste des paiements disponibles</div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-[13px]">
-                <thead>
-                  <tr className="border-b border-[#e5e8ec]">
-                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">N.Paiement</th>
-                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Type de paiement</th>
-                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Date de paiement</th>
-                    <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant réclamé</th>
-                    <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Encours</th>
-                    <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant à payer <span className="text-red-500">*</span></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-[#e5e8ec]">
-                    <td className="py-2 px-3 text-[#0f172a]">1</td>
-                    <td className="py-2 px-3 text-[#64748b]">{String(dossier.donnees["conditionsRemiseDocuments"] ?? "").toLowerCase().includes("acceptation") ? "Contre acceptation" : "Contre paiement"}</td>
-                    <td className="py-2 px-3 text-[#64748b]">{datePaiement ? new Date(datePaiement).toLocaleDateString("fr-FR") : "—"}</td>
-                    <td className="py-2 px-3 text-right font-mono tabular-nums text-[#0f172a]">
-                      {montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${montantRemiseOk.devise}` : "—"}
-                    </td>
-                    <td className="py-2 px-3 text-right font-mono tabular-nums text-[#0f172a]">
-                      {encoursOk
-                        ? `${Math.max(0, encoursOk.valeur - (Number(paiementForm.montantPaye) || 0)).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${encoursOk.devise}`
-                        : "—"}
-                    </td>
-                    <td className="py-2 px-3 text-right">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          className="input w-full min-w-0 text-right font-mono tabular-nums"
-                          aria-label={`Montant à payer ligne 1 ${deviseDossier}`}
-                          value={paiementForm.montantPaye}
-                          onChange={setP("montantPaye")}
-                        />
-                        <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-[#e5e8ec]">
-                    <td className="py-2 px-3 text-[#0f172a]">2</td>
-                    <td className="py-2 px-3 text-[#64748b]">A vue</td>
-                    <td className="py-2 px-3 text-[#94a3b8]">—</td>
-                    <td className="py-2 px-3 text-right font-mono tabular-nums text-[#0f172a]">
-                      {montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${montantRemiseOk.devise}` : "—"}
-                    </td>
-                    <td className="py-2 px-3 text-right font-mono tabular-nums text-[#0f172a]">
-                      {encoursOk
-                        ? `${Math.max(0, encoursOk.valeur - (Number(montantAVue) || 0)).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${encoursOk.devise}`
-                        : "—"}
-                    </td>
-                    <td className="py-2 px-3 text-right">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          className="input w-full min-w-0 text-right font-mono tabular-nums"
-                          aria-label={`Montant à payer ligne 2 ${deviseDossier}`}
-                          value={montantAVue}
-                          onChange={(e) => setMontantAVue(e.target.value)}
-                        />
-                        <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Détails du paiement */}
-          <div className="border border-[#e5e8ec] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-1 h-5 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"></div>
-              <div className="text-sm font-semibold text-[#0f172a]">Détails du paiement</div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-4">
-                <div>
-                  <label className="text-label">Montant des documents</label>
-                  <input className="input w-full bg-gray-50" value={montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR")} ${montantRemiseOk.devise}` : "—"} readOnly />
-                </div>
-                <div>
-                  <label className="text-label">Montant restant à régler</label>
-                  <input type="number" className="input w-full" value={paiementForm.montantRestant} onChange={setP("montantRestant")} />
-                </div>
-                <div>
-                  <label className="text-label">Numéro UETR</label>
-                  <input className="input w-full" value={paiementForm.numeroUetr} onChange={setP("numeroUetr")} placeholder="Ex. 56f0c1ce-…" />
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-label">Montant à payer <span className="text-red-500">*</span></label>
-                  <input type="text" className="input w-full bg-gray-50" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
-                </div>
-                <div>
-                  <label className="text-label">Cours appliqué</label>
-                  <input type="number" step="0.0001" className="input w-full" value={paiementForm.coursApplique} onChange={setP("coursApplique")} placeholder="Ex. 10,85" />
-                </div>
-                <div>
-                  <label className="text-label">Contrevaleur en dirhams</label>
-                  <input type="number" step="0.01" className="input w-full bg-gray-50" value={contrevaleurDirhams != null ? contrevaleurDirhams.toFixed(2) : ""} readOnly />
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-label">Date de valeur</label>
-                  <input type="date" className="input w-full" value={datePaiement} onChange={(e) => setDatePaiement(e.target.value)} />
-                </div>
-                <div>
-                  <label className="text-label">N.Ticket SDM</label>
-                  <div className="relative">
-                    <input className="input w-full pr-9" value={paiementForm.naturePaiement} onChange={setP("naturePaiement")} placeholder="N° du ticket" />
-                    <button
-                      type="button"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
-                      onClick={ouvrirPopupTicket}
-                      title="Rechercher un ticket SDM"
-                    >
-                      <Search size={15} />
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-label">Référence de l'aval</label>
-                  <input className="input w-full" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
                 </div>
               </div>
             </div>
