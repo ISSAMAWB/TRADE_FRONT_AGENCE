@@ -385,12 +385,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           : "L'événement sera créé en statut En attente. L'encours et le dossier seront mis à jour après validation."}
       </div>
 
-      <div className="border border-[#e5e8ec] rounded-xl p-4 mb-4">
-        <div className="flex items-center gap-2 mb-3">
+      <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5 mb-4">
+        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
           <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
           <div className="text-sm font-semibold text-[#0f172a]">Informations générales</div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
         <div>
           <label className="text-label">Référence de la remise</label>
           <input className="input w-full bg-gray-50" value={dossier.reference} readOnly />
@@ -451,12 +451,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         <div className="space-y-6 mb-4">
 
           {/* Détails du paiement reçu */}
-          <div className="border border-[#e5e8ec] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
               <div className="w-1 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
               <div className="text-sm font-semibold text-[#0f172a]">Détails du paiement reçu</div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
               <div>
                 <label className="text-label">Partie à l'origine du paiement</label>
                 <select className="input w-full" value={paiementForm.partieOriginePaiement} onChange={setP("partieOriginePaiement")}>
@@ -477,7 +477,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div>
                 <label className="text-label">Paiement reçu de</label>
                 <div className="relative">
-                  <input type="text" className="input w-full pr-9" value={paiementForm.paiementRecuDe} onChange={setP("paiementRecuDe")} placeholder="Nom du payeur" />
+                  <input type="text" className="input w-full pr-9 bg-gray-50" value={paiementForm.paiementRecuDe} readOnly placeholder="Nom du payeur" />
                   <button
                     type="button"
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
@@ -489,22 +489,15 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 </div>
                 <textarea
                   className="input w-full mt-1.5 bg-gray-50"
-                  rows={3}
-                  value={paiementForm.adressePaiementRecuDe}
-                  onChange={setP("adressePaiementRecuDe")}
-                  placeholder="Adresse du payeur"
+                  rows={4}
+                  value={[paiementForm.adressePaiementRecuDe, paiementForm.villePaiementRecuDe, paiementForm.paysPaiementRecuDe].filter(Boolean).join("\n")}
+                  readOnly
+                  placeholder="Adresse · Ville · Pays"
+                  aria-label="Adresse, ville et pays du payeur"
                 />
-                <div className="mt-4">
-                  <label className="text-label" htmlFor="ville-paiement-recu-de">Ville</label>
-                  <input id="ville-paiement-recu-de" className="input w-full" value={paiementForm.villePaiementRecuDe} onChange={setP("villePaiementRecuDe")} />
-                </div>
-                <div className="mt-4">
-                  <label className="text-label" htmlFor="pays-paiement-recu-de">Pays</label>
-                  <input id="pays-paiement-recu-de" className="input w-full" value={paiementForm.paysPaiementRecuDe} onChange={setP("paysPaiementRecuDe")} />
-                </div>
               </div>
               <div className="md:col-span-2 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
                   <div>
                     <label className="text-label" htmlFor="compte-a-debiter-recu">Compte à débiter <span className="text-red-500">*</span></label>
                     <div className="relative">
@@ -522,33 +515,29 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     </label>
                   </div>
                 </div>
-                <div className="w-full overflow-x-auto rounded-lg border border-[#e5e8ec]">
-                  <table className="w-full min-w-[800px] table-fixed text-xs" aria-label="Informations du compte à débiter">
+                <div className="w-full rounded-lg border border-[#e5e8ec]">
+                  <table className="w-full table-fixed text-xs" aria-label="Informations du compte à débiter">
                     <thead className="bg-gray-50">
                       <tr className="border-b border-[#e5e8ec]">
-                        <th scope="col" className="w-[26%] px-3 py-2 text-left font-semibold text-[#64748b]">Intitulé compte</th>
-                        <th scope="col" className="w-[17%] px-3 py-2 text-left font-semibold text-[#64748b]">Solde</th>
-                        <th scope="col" className="w-[17%] px-3 py-2 text-left font-semibold text-[#64748b]">Disponible</th>
-                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Identité</th>
-                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Montant à bloquer</th>
+                        <th scope="col" className="w-[34%] px-3 py-2 text-left font-semibold text-[#64748b]">Intitulé compte</th>
+                        <th scope="col" className="w-[22%] px-3 py-2 text-left font-semibold text-[#64748b]">Solde</th>
+                        <th scope="col" className="w-[22%] px-3 py-2 text-left font-semibold text-[#64748b]">Disponible</th>
+                        <th scope="col" className="w-[22%] px-3 py-2 text-left font-semibold text-[#64748b]">Identité</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="align-top">
-                        <td className="px-3 py-3 text-[#0f172a] break-words">
+                      <tr className="align-top bg-gray-50/70">
+                        <td className="px-3 py-3 text-[#475569] break-words">
                           <div className="font-mono break-all">{paiementForm.compteDebite.trim() || "—"}</div>
                           {clientCompteDebite && <div className="mt-1">{clientCompteDebite.raisonSociale}</div>}
                         </td>
-                        <td className="px-3 py-3 font-mono tabular-nums text-[#0f172a]">
+                        <td className="px-3 py-3 font-mono tabular-nums text-[#475569]">
                           {montantsCompteFictifs ? `${montantsCompteFictifs.solde.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${montantsCompteFictifs.devise}` : "—"}
                         </td>
-                        <td className="px-3 py-3 font-mono tabular-nums text-[#2563eb]">
+                        <td className="px-3 py-3 font-mono tabular-nums text-[#475569]">
                           {montantsCompteFictifs ? `${montantsCompteFictifs.disponible.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${montantsCompteFictifs.devise}` : "—"}
                         </td>
-                        <td className="px-3 py-3 text-[#0f172a] break-words">{clientCompteDebite?.raisonSociale || "—"}</td>
-                        <td className={`px-3 py-3 font-mono tabular-nums ${peutBloquerProvision && montantABloquer != null ? (montantABloquer > (montantsCompteFictifs?.disponible ?? 0) ? "text-red-600" : "text-green-600") : "text-[#0f172a]"}`}>
-                          {peutBloquerProvision && montantABloquer != null ? `${montantABloquer.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${deviseMontantABloquer}` : "—"}
-                        </td>
+                        <td className="px-3 py-3 text-[#475569] break-words">{clientCompteDebite?.raisonSociale || "—"}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -558,8 +547,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           </div>
 
           {/* Liste des paiements */}
-          <div className="border border-[#e5e8ec] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
               <div className="w-1 h-5 bg-gradient-to-r from-violet-500 to-violet-600 rounded-full"></div>
               <div className="text-sm font-semibold text-[#0f172a]">Liste des paiements disponibles</div>
             </div>
@@ -640,12 +629,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           </div>
 
           {/* Détails du paiement */}
-          <div className="border border-[#e5e8ec] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
               <div className="w-1 h-5 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"></div>
               <div className="text-sm font-semibold text-[#0f172a]">Détails du paiement</div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
               <div className="space-y-4">
                 <div>
                   <label className="text-label">Montant des documents présentés</label>
@@ -698,12 +687,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           </div>
 
           {/* Bénéficiaire du paiement */}
-          <div className="border border-[#e5e8ec] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
               <div className="w-1 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
               <div className="text-sm font-semibold text-[#0f172a]">Bénéficiaire du paiement</div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5 items-start">
               <div className="flex flex-col gap-4 min-w-0">
                 <div>
                   <label className="text-label">Nature de la partie à payer</label>
@@ -736,19 +725,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </div>
                   <textarea
                     className="input w-full mt-2 bg-gray-50"
-                    rows={3}
-                    value={paiementForm.adressePartieAPayer}
-                    onChange={setP("adressePartieAPayer")}
-                    placeholder="Adresse de la partie à payer"
+                    rows={4}
+                    value={[paiementForm.adressePartieAPayer, paiementForm.villePartieAPayer, paiementForm.paysPartieAPayer].filter(Boolean).join("\n")}
+                    readOnly
+                    placeholder="Adresse · Ville · Pays"
+                    aria-label="Adresse, ville et pays de la partie à payer"
                   />
-                </div>
-                <div>
-                  <label className="text-label" htmlFor="ville-partie-a-payer">Ville</label>
-                  <input id="ville-partie-a-payer" className="input w-full" value={paiementForm.villePartieAPayer} onChange={setP("villePartieAPayer")} />
-                </div>
-                <div>
-                  <label className="text-label" htmlFor="pays-partie-a-payer">Pays</label>
-                  <input id="pays-partie-a-payer" className="input w-full" value={paiementForm.paysPartieAPayer} onChange={setP("paysPartieAPayer")} />
                 </div>
               </div>
               <div className="flex flex-col gap-4 min-w-0">
@@ -771,19 +753,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </div>
                   <textarea
                     className="input w-full mt-2 bg-gray-50"
-                    rows={3}
-                    value={paiementForm.adresseBanqueBeneficiaire}
-                    onChange={setP("adresseBanqueBeneficiaire")}
-                    placeholder="Adresse de la banque"
+                    rows={4}
+                    value={[paiementForm.adresseBanqueBeneficiaire, paiementForm.villeBanqueBeneficiaire, paiementForm.paysBanqueBeneficiaire].filter(Boolean).join("\n")}
+                    readOnly
+                    placeholder="Adresse · Ville · Pays"
+                    aria-label="Adresse, ville et pays de la banque du bénéficiaire"
                   />
-                </div>
-                <div>
-                  <label className="text-label" htmlFor="ville-banque-beneficiaire">Ville</label>
-                  <input id="ville-banque-beneficiaire" className="input w-full" value={paiementForm.villeBanqueBeneficiaire} onChange={setP("villeBanqueBeneficiaire")} />
-                </div>
-                <div>
-                  <label className="text-label" htmlFor="pays-banque-beneficiaire">Pays</label>
-                  <input id="pays-banque-beneficiaire" className="input w-full" value={paiementForm.paysBanqueBeneficiaire} onChange={setP("paysBanqueBeneficiaire")} />
                 </div>
               </div>
               <div className="flex flex-col gap-4 min-w-0">
@@ -804,7 +779,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           </div>
 
           {/* Titres d'importation */}
-          <div className="border border-[#e5e8ec] rounded-xl bg-white p-4">
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
             <div role="tablist" aria-label="Pièces du paiement" className="flex flex-wrap border-b border-gray-200 mb-5">
               {([
                 { id: "titres", label: "Titres d'importation" },
