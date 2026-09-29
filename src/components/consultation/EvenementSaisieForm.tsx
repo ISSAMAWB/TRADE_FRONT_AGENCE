@@ -261,13 +261,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     adresseBanqueBeneficiaire: p?.adresseBanqueBeneficiaire ?? "",
     villeBanqueBeneficiaire: p?.villeBanqueBeneficiaire ?? "",
     paysBanqueBeneficiaire: p?.paysBanqueBeneficiaire ?? "",
-    banqueSansCleRma: p?.banqueSansCleRma ?? false,
     signatureConforme: p?.signatureConforme ?? false,
-    banqueIntermediaire: p?.banqueIntermediaire ?? false,
     titreImportationNonRequis: p?.titreImportationNonRequis ?? false,
     compteBeneficiaire: p?.compteBeneficiaire ?? "",
-    remiseAExpirer: p?.remiseAExpirer ?? false,
-    paiementAvecRecours: p?.paiementAvecRecours ?? false,
+
     coursApplique: p?.coursApplique != null ? String(p.coursApplique) : "10.55",
     montantPaye: p?.montantPaye != null ? String(p.montantPaye) : "",
     naturePaiement: p?.naturePaiement ?? "",
@@ -355,13 +352,9 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           adresseBanqueBeneficiaire: paiementForm.adresseBanqueBeneficiaire || undefined,
           villeBanqueBeneficiaire: paiementForm.villeBanqueBeneficiaire || undefined,
           paysBanqueBeneficiaire: paiementForm.paysBanqueBeneficiaire || undefined,
-          banqueSansCleRma: paiementForm.banqueSansCleRma,
           signatureConforme: paiementForm.signatureConforme,
-          banqueIntermediaire: paiementForm.banqueIntermediaire,
           titreImportationNonRequis: paiementForm.titreImportationNonRequis,
           compteBeneficiaire: paiementForm.compteBeneficiaire || undefined,
-          remiseAExpirer: paiementForm.remiseAExpirer,
-          paiementAvecRecours: paiementForm.paiementAvecRecours,
           coursApplique: paiementForm.coursApplique ? Number(paiementForm.coursApplique) : undefined,
           montantPaye: montantAPayerTotal || undefined,
           contrevaleurDirhams,
@@ -457,11 +450,11 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       {nature === "Paiement" && (
         <div className="space-y-6 mb-4">
 
-          {/* Donneur d'ordre du paiement */}
+          {/* Détails du paiement reçu */}
           <div className="border border-[#e5e8ec] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-1 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
-              <div className="text-sm font-semibold text-[#0f172a]">Donneur d'ordre du paiement</div>
+              <div className="text-sm font-semibold text-[#0f172a]">Détails du paiement reçu</div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -636,6 +629,14 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 </tbody>
               </table>
             </div>
+            <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-[#e5e8ec] text-sm font-semibold text-[#0f172a]">
+              <span>Montant total à payer :</span>
+              <span className="font-mono tabular-nums text-[#e8632b]">
+                {Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "")
+                  ? `${montantAPayerTotal.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}`
+                  : `0,00 ${deviseDossier}`}
+              </span>
+            </div>
           </div>
 
           {/* Détails du paiement */}
@@ -647,7 +648,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-4">
                 <div>
-                  <label className="text-label">Montant des documents</label>
+                  <label className="text-label">Montant des documents présentés</label>
                   <input className="input w-full bg-gray-50" value={montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR")} ${montantRemiseOk.devise}` : "—"} readOnly />
                 </div>
                 <div>
@@ -797,24 +798,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <div>
                   <label className="text-label">Numéro de compte du bénéficiaire</label>
                   <input className="input w-full" value={paiementForm.compteBeneficiaire} onChange={setP("compteBeneficiaire")} />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.remiseAExpirer} onChange={setP("remiseAExpirer")} />
-                    <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Remise à expirer</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.paiementAvecRecours} onChange={setP("paiementAvecRecours")} />
-                    <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Paiement avec recours</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.banqueSansCleRma} onChange={setP("banqueSansCleRma")} />
-                    <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Banque sans clé RMA</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.banqueIntermediaire} onChange={setP("banqueIntermediaire")} />
-                    <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Banque intermédiaire</span>
-                  </label>
                 </div>
               </div>
             </div>

@@ -302,13 +302,9 @@ export interface EvenementTrade {
       adresseBanqueBeneficiaire?: string;
       villeBanqueBeneficiaire?: string;
       paysBanqueBeneficiaire?: string;
-      banqueSansCleRma?: boolean;
       signatureConforme?: boolean;
-      banqueIntermediaire?: boolean;
       titreImportationNonRequis?: boolean;
       compteBeneficiaire?: string;
-      remiseAExpirer?: boolean;
-      paiementAvecRecours?: boolean;
       // Détails du paiement
       coursApplique?: number;
       montantPaye?: number;
