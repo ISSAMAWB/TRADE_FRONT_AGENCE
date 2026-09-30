@@ -148,30 +148,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   );
   const fermerPopupTire = () => { setPopupTire(false); setRechTireNom(""); setRechTireCompte(""); };
 
-  const TICKETS_SDM = [
-    { numero: "SDM-2026-0112", libelle: "Ticket SDM - encaissement partiel", montant: 200000 },
-    { numero: "SDM-2026-0234", libelle: "Ticket SDM - règlement principal", montant: 450000 },
-    { numero: "SDM-2026-0298", libelle: "Ticket SDM - régularisation", montant: 100000 },
-    { numero: "SDM-2026-0301", libelle: "Ticket SDM - acompte", montant: 50000 },
-    { numero: "SDM-2026-0417", libelle: "Ticket SDM - solde", montant: 650000 },
-  ];
-
-  const [popupTicket, setPopupTicket] = useState(false);
-  const [rechTicket, setRechTicket] = useState("");
-  const [ticketsSel, setTicketsSel] = useState<string[]>([]);
-  const ticketsFiltres = TICKETS_SDM.filter(t => t.numero.toLowerCase().includes(rechTicket.toLowerCase()));
-  const ouvrirPopupTicket = () => {
-    setTicketsSel(paiementForm.naturePaiement ? paiementForm.naturePaiement.split(",").map(s => s.trim()).filter(Boolean) : []);
-    setPopupTicket(true);
-  };
-  const fermerPopupTicket = () => { setPopupTicket(false); setRechTicket(""); };
-  const toggleTicket = (numero: string) =>
-    setTicketsSel(sel => sel.includes(numero) ? sel.filter(n => n !== numero) : [...sel, numero]);
-  const validerTickets = () => {
-    setPaiementForm(f => ({ ...f, naturePaiement: ticketsSel.join(", ") }));
-    fermerPopupTicket();
-  };
-
   const [montantAVue, setMontantAVue] = useState("");
 
   const titresDossier = (dossier.donnees["referencesTitresImportation"] as string[] | undefined) ?? [];
@@ -267,7 +243,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
 
     coursApplique: p?.coursApplique != null ? String(p.coursApplique) : "10.55",
     montantPaye: p?.montantPaye != null ? String(p.montantPaye) : "",
-    naturePaiement: p?.naturePaiement ?? "",
+
     montantRestant: p?.montantRestant != null ? String(p.montantRestant) : "",
     dateValeur: p?.dateValeur ?? aujourdhui,
     compteDebite: p?.compteDebite ?? "",
@@ -358,7 +334,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           coursApplique: paiementForm.coursApplique ? Number(paiementForm.coursApplique) : undefined,
           montantPaye: montantAPayerTotal || undefined,
           contrevaleurDirhams,
-          naturePaiement: paiementForm.naturePaiement || undefined,
+
           montantRestant: paiementForm.montantRestant ? Number(paiementForm.montantRestant) : undefined,
           dateValeur: paiementForm.dateValeur || undefined,
           compteDebite: paiementForm.compteDebite || undefined,
@@ -664,20 +640,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <div>
                   <label className="text-label">Date de valeur</label>
                   <input type="date" className="input w-full" value={datePaiement} onChange={(e) => setDatePaiement(e.target.value)} />
-                </div>
-                <div>
-                  <label className="text-label">N.Ticket SDM</label>
-                  <div className="relative">
-                    <input className="input w-full pr-9" value={paiementForm.naturePaiement} onChange={setP("naturePaiement")} placeholder="N° du ticket" />
-                    <button
-                      type="button"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
-                      onClick={ouvrirPopupTicket}
-                      title="Rechercher un ticket SDM"
-                    >
-                      <Search size={15} />
-                    </button>
-                  </div>
                 </div>
                 <div>
                   <label className="text-label">Référence de l'aval</label>
@@ -1122,70 +1084,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </div>
                 </button>
               ))}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Popup recherche ticket SDM */}
-      {popupTicket && (
-        <>
-          <div className="fixed inset-0 bg-black/30 z-50" onClick={fermerPopupTicket} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-2xl shadow-2xl z-50 max-h-[80vh] flex flex-col">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e8ec]">
-              <div className="text-sm font-semibold text-[#0f172a]">Rechercher un ticket SDM</div>
-              <button
-                className="h-8 w-8 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center"
-                onClick={fermerPopupTicket}
-              >
-                <X size={16} />
-              </button>
-            </div>
-            <div className="px-5 py-3 border-b border-[#e5e8ec]">
-              <div className="grid grid-cols-1 gap-3">
-                <div>
-                  <label className="text-label">Numéro</label>
-                  <input className="input w-full font-mono" value={rechTicket} onChange={(e) => setRechTicket(e.target.value)} placeholder="Ex. SDM-2026-0112" autoFocus />
-                </div>
-              </div>
-            </div>
-            <div className="overflow-y-auto py-2">
-              {ticketsFiltres.length === 0 && (
-                <div className="px-5 py-6 text-sm text-[#64748b] text-center">Aucun ticket trouvé.</div>
-              )}
-              {ticketsFiltres.map((t) => {
-                const sel = ticketsSel.includes(t.numero);
-                return (
-                  <button
-                    key={t.numero}
-                    type="button"
-                    className={`w-full text-left px-5 py-3 transition flex items-start gap-3 ${sel ? "bg-orange-50" : "hover:bg-orange-50"}`}
-                    onClick={() => toggleTicket(t.numero)}
-                  >
-                    <input
-                      type="checkbox"
-                      className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 pointer-events-none"
-                      checked={sel}
-                      readOnly
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="text-sm font-medium text-[#0f172a] font-mono">{t.numero}</div>
-                        <div className="font-mono text-[11px] text-[#64748b]">{t.montant.toLocaleString("fr-FR")} {deviseDossier}</div>
-                      </div>
-                      <div className="text-xs text-[#64748b]">{t.libelle}</div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-            <div className="flex items-center justify-between gap-2 px-5 py-3 border-t border-[#e5e8ec]">
-              <div className="text-xs text-[#64748b]">
-                {ticketsSel.length} ticket{ticketsSel.length > 1 ? "s" : ""} sélectionné{ticketsSel.length > 1 ? "s" : ""}
-              </div>
-              <button type="button" className="btn-primary" onClick={validerTickets}>
-                Valider
-              </button>
             </div>
           </div>
         </>
