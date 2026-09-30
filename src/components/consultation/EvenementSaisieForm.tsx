@@ -73,6 +73,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     { nom: "BMCE Bank", pays: "Maroc", ville: "Casablanca", bic: "BMCEMAMC", adresse: "140 Av. Hassan II, 20070 Casablanca, Maroc" },
   ];
 
+  const PAYS = [
+    "Maroc", "France", "Espagne", "Italie", "Allemagne", "Belgique", "Suisse", "Pays-Bas", "Royaume-Uni",
+    "Tunisie", "Algérie", "Mauritanie", "Sénégal", "Côte d'Ivoire", "Turquie", "Émirats arabes unis",
+    "États-Unis", "Canada", "Chine", "Japon",
+  ];
+
   const CLIENTS: { nom: string; compte: string }[] = [];
   const vus = new Set<string>();
   for (const d of dossiersDetail as DossierTrade[]) {
@@ -190,6 +196,15 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     b.pays.toLowerCase().includes(rechPays.toLowerCase())
   );
   const fermerPopupBanque = () => { setPopupBanque(null); setRechNom(""); setRechBic(""); setRechPays(""); };
+
+  const [popupPays, setPopupPays] = useState(false);
+  const [rechPaysChoix, setRechPaysChoix] = useState("");
+  const paysFiltres = PAYS.filter(p => p.toLowerCase().includes(rechPaysChoix.toLowerCase()));
+  const fermerPopupPays = () => { setPopupPays(false); setRechPaysChoix(""); };
+  const choisirPays = (pays: string) => {
+    setPaiementForm(f => ({ ...f, paysBanqueBeneficiaire: pays }));
+    fermerPopupPays();
+  };
   const choisirBanque = (b: { nom: string; adresse: string; ville: string; pays: string }) => {
     if (popupBanque === "partie") {
       setPaiementForm(f => ({ ...f, partieAPayer: b.nom, adressePartieAPayer: b.adresse, villePartieAPayer: b.ville, paysPartieAPayer: b.pays }));
@@ -219,8 +234,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const [destinataire, setDestinataire] = useState(s?.destinataire ?? dossier.client ?? "");
 
   const [paiementForm, setPaiementForm] = useState({
-    referencePaiementRecu: p?.referencePaiementRecu ?? "",
-    partieOriginePaiement: p?.partieOriginePaiement ?? "Tiré",
+
+    partieOriginePaiement: p?.partieOriginePaiement ?? "Tiré/Client",
     paiementRecuDe: p?.paiementRecuDe ?? DEFAUT_PAIEMENT_RECU_DE,
     adressePaiementRecuDe: p?.adressePaiementRecuDe ?? DEFAUT_ADRESSE_PAIEMENT_RECU_DE,
     villePaiementRecuDe: p?.villePaiementRecuDe ?? "Casablanca",
@@ -231,7 +246,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     adressePartieAPayer: p?.adressePartieAPayer ?? BANQUES[0].adresse,
     villePartieAPayer: p?.villePartieAPayer ?? BANQUES[0].ville,
     paysPartieAPayer: p?.paysPartieAPayer ?? BANQUES[0].pays,
-    referenceBeneficiaire: p?.referenceBeneficiaire ?? "",
+
     modePaiement: p?.modePaiement ?? "Payer",
     banqueBeneficiaire: p?.banqueBeneficiaire ?? "",
     adresseBanqueBeneficiaire: p?.adresseBanqueBeneficiaire ?? "",
@@ -310,7 +325,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         motif: nature === "Retour des documents" ? motif : undefined,
         destinataire: nature === "Demande de remise des documents" ? destinataire : undefined,
         paiement: nature === "Paiement" ? {
-          referencePaiementRecu: paiementForm.referencePaiementRecu || undefined,
+
           partieOriginePaiement: paiementForm.partieOriginePaiement || undefined,
           paiementRecuDe: paiementForm.paiementRecuDe || undefined,
           adressePaiementRecuDe: paiementForm.adressePaiementRecuDe || undefined,
@@ -322,7 +337,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           adressePartieAPayer: paiementForm.adressePartieAPayer || undefined,
           villePartieAPayer: paiementForm.villePartieAPayer || undefined,
           paysPartieAPayer: paiementForm.paysPartieAPayer || undefined,
-          referenceBeneficiaire: paiementForm.referenceBeneficiaire || undefined,
+
           modePaiement: paiementForm.modePaiement || undefined,
           banqueBeneficiaire: paiementForm.banqueBeneficiaire || undefined,
           adresseBanqueBeneficiaire: paiementForm.adresseBanqueBeneficiaire || undefined,
@@ -372,7 +387,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           <input className="input w-full bg-gray-100" value={dossier.reference} readOnly />
         </div>
         <div>
-          <label className="text-label">Date de création</label>
+          <label className="text-label">Date de création de la remise</label>
           <input
             className="input w-full bg-gray-100"
             value={dossier.evenements[0]?.dateCreation ? new Date(dossier.evenements[0].dateCreation).toLocaleDateString("fr-FR") : "—"}
@@ -436,22 +451,27 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div>
                 <label className="text-label">Partie à l'origine du paiement</label>
                 <select className="input w-full bg-gray-100" value={paiementForm.partieOriginePaiement} onChange={setP("partieOriginePaiement")} disabled>
-                  <option>Tiré</option>
+                  <option>Tiré/Client</option>
                   <option>Tireur</option>
                   <option>Banque remettante</option>
                   <option>Autre</option>
                 </select>
               </div>
               <div>
-                <label className="text-label">Référence du paiement reçu</label>
-                <input className="input w-full" value={paiementForm.referencePaiementRecu} onChange={setP("referencePaiementRecu")} placeholder="Ex. LIC3344992" />
+                <label className="text-label" htmlFor="compte-a-debiter-recu">Compte à débiter <span className="text-red-500">*</span></label>
+                <div className="relative">
+                  <input id="compte-a-debiter-recu" className="input w-full pr-9" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
+                  <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition" onClick={() => setPopupCompte(true)} title="Rechercher un compte" aria-label="Rechercher un compte">
+                    <Search size={15} />
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="text-label">Date de réception</label>
                 <input type="date" className="input w-full" value={paiementForm.dateReception} onChange={setP("dateReception")} />
               </div>
               <div>
-                <label className="text-label">Paiement reçu de</label>
+                <span className="text-label invisible block" aria-hidden="true">Paiement reçu de</span>
                 <div className="relative">
                   <input type="text" className="input w-full pr-9 bg-gray-100" value={paiementForm.paiementRecuDe} readOnly placeholder="Nom du payeur" />
                   <button
@@ -474,24 +494,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 />
               </div>
               <div className="md:col-span-2 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
-                  <div>
-                    <label className="text-label" htmlFor="compte-a-debiter-recu">Compte à débiter <span className="text-red-500">*</span></label>
-                    <div className="relative">
-                      <input id="compte-a-debiter-recu" className="input w-full pr-9" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
-                      <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition" onClick={() => setPopupCompte(true)} title="Rechercher un compte" aria-label="Rechercher un compte">
-                        <Search size={15} />
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-label invisible block" aria-hidden="true">Signature conforme</span>
-                    <label className="flex items-center gap-2 cursor-pointer h-9">
-                      <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.signatureConforme} onChange={setP("signatureConforme")} />
-                      <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Signature conforme <span className="text-red-500">*</span></span>
-                    </label>
-                  </div>
-                </div>
                 <div className="w-full rounded-lg border border-[#e5e8ec]">
                   <table className="w-full table-fixed text-xs" aria-label="Informations du compte à débiter">
                     <thead className="bg-gray-50">
@@ -519,6 +521,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     </tbody>
                   </table>
                 </div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.signatureConforme} onChange={setP("signatureConforme")} />
+                  <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Signature conforme <span className="text-red-500">*</span></span>
+                </label>
               </div>
             </div>
           </div>
@@ -666,7 +672,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </select>
                 </div>
                 <div>
-                  <label className="text-label">Partie à payer</label>
+                  <span className="text-label invisible block" aria-hidden="true">Partie à payer</span>
                   <div className="relative">
                     <input
                       type="text"
@@ -700,10 +706,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               </div>
               <div className="flex flex-col gap-4 min-w-0">
                 <div>
-                  <label className="text-label">Référence</label>
-                  <input className="input w-full" value={paiementForm.referenceBeneficiaire} onChange={setP("referenceBeneficiaire")} />
-                </div>
-                <div>
                   <label className="text-label">Banque du bénéficiaire</label>
                   <div className="relative">
                     <input className="input w-full pr-9" value={paiementForm.banqueBeneficiaire} onChange={setP("banqueBeneficiaire")} />
@@ -719,11 +721,32 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <textarea
                     className="input w-full mt-2 bg-gray-100"
                     rows={4}
-                    value={[paiementForm.adresseBanqueBeneficiaire, paiementForm.villeBanqueBeneficiaire, paiementForm.paysBanqueBeneficiaire].filter(Boolean).join("\n")}
+                    value={[paiementForm.adresseBanqueBeneficiaire].filter(Boolean).join("\n")}
                     readOnly
-                    placeholder="Adresse · Ville · Pays"
-                    aria-label="Adresse, ville et pays de la banque du bénéficiaire"
+                    placeholder="Adresse"
+                    aria-label="Adresse de la banque du bénéficiaire"
                   />
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    <div>
+                      <label className="text-label">Ville</label>
+                      <input className="input w-full" value={paiementForm.villeBanqueBeneficiaire} onChange={setP("villeBanqueBeneficiaire")} />
+                    </div>
+                    <div>
+                      <label className="text-label">Pays</label>
+                      <div className="relative">
+                        <input className="input w-full pr-9" value={paiementForm.paysBanqueBeneficiaire} onChange={setP("paysBanqueBeneficiaire")} />
+                        <button
+                          type="button"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
+                          onClick={() => setPopupPays(true)}
+                          title="Rechercher un pays"
+                          aria-label="Rechercher un pays"
+                        >
+                          <Search size={15} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col gap-4 min-w-0">
@@ -993,6 +1016,45 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <div className="font-mono text-[11px] text-[#64748b]">{b.bic}</div>
                   </div>
                   <div className="text-xs text-[#64748b]">{b.adresse} · {b.pays}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Popup choix du pays */}
+      {popupPays && (
+        <>
+          <div className="fixed inset-0 bg-black/30 z-50" onClick={fermerPopupPays} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-2xl shadow-2xl z-50 max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e8ec]">
+              <div className="text-sm font-semibold text-[#0f172a]">Rechercher un pays</div>
+              <button
+                type="button"
+                className="h-8 w-8 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center"
+                onClick={fermerPopupPays}
+                aria-label="Fermer la recherche de pays"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="px-5 py-3 border-b border-[#e5e8ec]">
+              <label className="text-label">Pays</label>
+              <input className="input w-full" value={rechPaysChoix} onChange={(e) => setRechPaysChoix(e.target.value)} placeholder="Ex. France" autoFocus />
+            </div>
+            <div className="overflow-y-auto py-2">
+              {paysFiltres.length === 0 && (
+                <div className="px-5 py-6 text-sm text-[#64748b] text-center">Aucun pays trouvé.</div>
+              )}
+              {paysFiltres.map((pays) => (
+                <button
+                  key={pays}
+                  type="button"
+                  className="w-full text-left px-5 py-3 hover:bg-orange-50 transition"
+                  onClick={() => choisirPays(pays)}
+                >
+                  <div className="text-sm font-medium text-[#0f172a]">{pays}</div>
                 </button>
               ))}
             </div>
