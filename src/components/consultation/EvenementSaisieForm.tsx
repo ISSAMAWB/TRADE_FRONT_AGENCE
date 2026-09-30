@@ -251,10 +251,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     paysPaiementRecuDe: p?.paysPaiementRecuDe ?? "Maroc",
     dateReception: p?.dateReception ?? aujourdhui,
     naturePartieAPayer: p?.naturePartieAPayer ?? "Banque étrangère",
-    partieAPayer: p?.partieAPayer ?? "",
-    adressePartieAPayer: p?.adressePartieAPayer ?? "",
-    villePartieAPayer: p?.villePartieAPayer ?? "",
-    paysPartieAPayer: p?.paysPartieAPayer ?? "",
+    partieAPayer: p?.partieAPayer ?? BANQUES[0].nom,
+    adressePartieAPayer: p?.adressePartieAPayer ?? BANQUES[0].adresse,
+    villePartieAPayer: p?.villePartieAPayer ?? BANQUES[0].ville,
+    paysPartieAPayer: p?.paysPartieAPayer ?? BANQUES[0].pays,
     referenceBeneficiaire: p?.referenceBeneficiaire ?? "",
     modePaiement: p?.modePaiement ?? "Payer",
     banqueBeneficiaire: p?.banqueBeneficiaire ?? "",
@@ -393,19 +393,19 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
         <div>
           <label className="text-label">Référence de la remise</label>
-          <input className="input w-full bg-gray-50" value={dossier.reference} readOnly />
+          <input className="input w-full bg-gray-100" value={dossier.reference} readOnly />
         </div>
         <div>
           <label className="text-label">Date de création</label>
           <input
-            className="input w-full bg-gray-50"
+            className="input w-full bg-gray-100"
             value={dossier.evenements[0]?.dateCreation ? new Date(dossier.evenements[0].dateCreation).toLocaleDateString("fr-FR") : "—"}
             readOnly
           />
         </div>
         <div>
           <label className="text-label">Conditions de remise des documents</label>
-          <input className="input w-full bg-gray-50" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
+          <input className="input w-full bg-gray-100" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
         </div>
 
         {nature === "Acceptation & Aval de la traite" && (
@@ -459,7 +459,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
               <div>
                 <label className="text-label">Partie à l'origine du paiement</label>
-                <select className="input w-full" value={paiementForm.partieOriginePaiement} onChange={setP("partieOriginePaiement")}>
+                <select className="input w-full bg-gray-100" value={paiementForm.partieOriginePaiement} onChange={setP("partieOriginePaiement")} disabled>
                   <option>Tiré</option>
                   <option>Tireur</option>
                   <option>Banque remettante</option>
@@ -477,10 +477,11 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div>
                 <label className="text-label">Paiement reçu de</label>
                 <div className="relative">
-                  <input type="text" className="input w-full pr-9 bg-gray-50" value={paiementForm.paiementRecuDe} readOnly placeholder="Nom du payeur" />
+                  <input type="text" className="input w-full pr-9 bg-gray-100" value={paiementForm.paiementRecuDe} readOnly placeholder="Nom du payeur" />
                   <button
                     type="button"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
+                    disabled
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] transition disabled:opacity-40 disabled:cursor-not-allowed"
                     onClick={() => paiementForm.partieOriginePaiement === "Banque remettante" ? setPopupBanque("payeur") : setPopupTire(true)}
                     title={paiementForm.partieOriginePaiement === "Banque remettante" ? "Rechercher la banque remettante" : "Rechercher le tiré"}
                   >
@@ -488,7 +489,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </button>
                 </div>
                 <textarea
-                  className="input w-full mt-1.5 bg-gray-50"
+                  className="input w-full mt-1.5 bg-gray-100"
                   rows={4}
                   value={[paiementForm.adressePaiementRecuDe, paiementForm.villePaiementRecuDe, paiementForm.paysPaiementRecuDe].filter(Boolean).join("\n")}
                   readOnly
@@ -638,25 +639,25 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="space-y-4">
                 <div>
                   <label className="text-label">Montant des documents présentés</label>
-                  <input className="input w-full bg-gray-50" value={montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR")} ${montantRemiseOk.devise}` : "—"} readOnly />
+                  <input className="input w-full bg-gray-100" value={montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR")} ${montantRemiseOk.devise}` : "—"} readOnly />
                 </div>
                 <div>
                   <label className="text-label">Montant restant à régler</label>
-                  <input type="number" className="input w-full" value={paiementForm.montantRestant} onChange={setP("montantRestant")} />
+                  <input type="number" className="input w-full bg-gray-100" value={paiementForm.montantRestant} onChange={setP("montantRestant")} readOnly />
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
                   <label className="text-label">Montant à payer <span className="text-red-500">*</span></label>
-                  <input type="text" className="input w-full bg-gray-50" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
+                  <input type="text" className="input w-full bg-gray-100" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
                 </div>
                 <div>
                   <label className="text-label">Cours appliqué</label>
-                  <input type="number" step="0.0001" className="input w-full" value={paiementForm.coursApplique} onChange={setP("coursApplique")} placeholder="Ex. 10,85" />
+                  <input type="number" step="0.0001" className="input w-full bg-gray-100" value={paiementForm.coursApplique} onChange={setP("coursApplique")} placeholder="Ex. 10,85" readOnly />
                 </div>
                 <div>
                   <label className="text-label">Contrevaleur estimative en dirhams</label>
-                  <input type="number" step="0.01" className="input w-full bg-gray-50" value={contrevaleurDirhams != null ? contrevaleurDirhams.toFixed(2) : ""} readOnly />
+                  <input type="number" step="0.01" className="input w-full bg-gray-100" value={contrevaleurDirhams != null ? contrevaleurDirhams.toFixed(2) : ""} readOnly />
                 </div>
               </div>
               <div className="space-y-4">
@@ -696,26 +697,28 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="flex flex-col gap-4 min-w-0">
                 <div>
                   <label className="text-label">Nature de la partie à payer</label>
-                  <select className="input w-full" value={paiementForm.naturePartieAPayer} onChange={setP("naturePartieAPayer")}>
+                  <select className="input w-full bg-gray-100" value={paiementForm.naturePartieAPayer} onChange={setP("naturePartieAPayer")} disabled>
                     <option>Banque étrangère</option>
                     <option>Tireur</option>
                     <option>Autre</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-label">Partie à payer <span className="text-red-500">*</span></label>
+                  <label className="text-label">Partie à payer</label>
                   <div className="relative">
                     <input
                       type="text"
-                      className={`input w-full ${paiementForm.naturePartieAPayer === "Banque étrangère" ? "pr-9" : ""}`}
+                      className={`input w-full bg-gray-100 ${paiementForm.naturePartieAPayer === "Banque étrangère" ? "pr-9" : ""}`}
                       value={paiementForm.partieAPayer}
                       onChange={setP("partieAPayer")}
                       placeholder="Nom de la partie à payer"
+                      readOnly
                     />
                     {paiementForm.naturePartieAPayer === "Banque étrangère" && (
                       <button
                         type="button"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
+                        disabled
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] transition disabled:opacity-40 disabled:cursor-not-allowed"
                         onClick={() => setPopupBanque("partie")}
                         title="Rechercher une banque"
                       >
@@ -724,7 +727,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     )}
                   </div>
                   <textarea
-                    className="input w-full mt-2 bg-gray-50"
+                    className="input w-full mt-2 bg-gray-100"
                     rows={4}
                     value={[paiementForm.adressePartieAPayer, paiementForm.villePartieAPayer, paiementForm.paysPartieAPayer].filter(Boolean).join("\n")}
                     readOnly
@@ -752,7 +755,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     </button>
                   </div>
                   <textarea
-                    className="input w-full mt-2 bg-gray-50"
+                    className="input w-full mt-2 bg-gray-100"
                     rows={4}
                     value={[paiementForm.adresseBanqueBeneficiaire, paiementForm.villeBanqueBeneficiaire, paiementForm.paysBanqueBeneficiaire].filter(Boolean).join("\n")}
                     readOnly
