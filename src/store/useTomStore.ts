@@ -11,7 +11,7 @@ import type {
   RetourInfo, TypeRetour, MotifRetour, PaiementIrd,
 } from "@/domain/types";
 import { WORKFLOWS, getAllowedTransitions } from "@/domain/workflow";
-import type { EvenementTrade } from "@/domain/consultation-detail";
+import type { EvenementTrade, StatutEvenement } from "@/domain/consultation-detail";
 
 /* -------------- Mock OCR pool -------------- */
 const FAKE_CLIENTS = [
@@ -91,8 +91,8 @@ interface AppState {
 
   /* événements créés depuis la consultation (clé = dossier.reference) */
   evenementsCrees: Record<string, EvenementTrade[]>;
-  ajouterEvenementDossier: (dossierRef: string, ev: Omit<EvenementTrade, "reference" | "statut" | "dateCreation">) => EvenementTrade;
-  modifierEvenementDossier: (dossierRef: string, eventRef: string, patch: Partial<EvenementTrade>) => void;
+  ajouterEvenementDossier: (dossierRef: string, ev: Omit<EvenementTrade, "reference" | "statut" | "dateCreation">, statut?: StatutEvenement) => EvenementTrade;
+  modifierEvenementDossier: (dossierRef: string, eventRef: string, patch: Partial<EvenementTrade>, statut?: StatutEvenement) => void;
   supprimerEvenementDossier: (dossierRef: string, eventRef: string) => void;
 
   /* seed */
@@ -793,12 +793,12 @@ export const useTomStore = create<AppState>((set, get) => ({
 
   /* événements créés depuis l'écran de consultation d'un dossier Trade */
   evenementsCrees: {},
-  ajouterEvenementDossier: (dossierRef, ev) => {
+  ajouterEvenementDossier: (dossierRef, ev, statut = "EN_ATTENTE") => {
     const n = Object.values(get().evenementsCrees).reduce((s, l) => s + l.length, 0);
     const created: EvenementTrade = {
       ...ev,
       reference: `EVT-2026-${String(600 + n).padStart(4, "0")}`,
-      statut: "EN_ATTENTE",
+      statut,
       dateCreation: nowIso(),
     };
     set(s => ({
@@ -810,12 +810,12 @@ export const useTomStore = create<AppState>((set, get) => ({
     return created;
   },
 
-  modifierEvenementDossier: (dossierRef, eventRef, patch) => {
+  modifierEvenementDossier: (dossierRef, eventRef, patch, statut) => {
     set(s => ({
       evenementsCrees: {
         ...s.evenementsCrees,
         [dossierRef]: (s.evenementsCrees[dossierRef] ?? []).map(e =>
-          e.reference === eventRef ? { ...e, ...patch, reference: e.reference, statut: e.statut, dateCreation: e.dateCreation } : e
+          e.reference === eventRef ? { ...e, ...patch, reference: e.reference, statut: statut ?? e.statut, dateCreation: e.dateCreation } : e
         ),
       },
     }));

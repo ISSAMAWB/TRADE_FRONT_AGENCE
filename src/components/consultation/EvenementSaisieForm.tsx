@@ -28,6 +28,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const montantRemise = dossier.donnees["montantRemise"];
   const montantRemiseOk = isMontantAvecDevise(montantRemise) ? montantRemise : null;
   const deviseDossier = encoursOk?.devise ?? montantRemiseOk?.devise ?? "";
+  const conditionsRemiseAutre = String(dossier.donnees["conditionsRemiseDocuments"] ?? "").trim().toLowerCase() === "autre";
 
   const s = evenement?.saisieAgence;
   const p = s?.paiement;
@@ -259,7 +260,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     coursApplique: p?.coursApplique != null ? String(p.coursApplique) : "10.55",
     montantPaye: p?.montantPaye != null ? String(p.montantPaye) : "",
 
-    montantRestant: p?.montantRestant != null ? String(p.montantRestant) : "",
+
     dateValeur: p?.dateValeur ?? aujourdhui,
     compteDebite: p?.compteDebite ?? "",
     agenceDomiciliation: p?.agenceDomiciliation ?? "",
@@ -280,6 +281,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
 
   const montantRequis = nature === "Paiement" || nature === "Acceptation & Aval de la traite";
   const montantAPayerTotal = (Number(paiementForm.montantPaye) || 0) + (Number(montantAVue) || 0);
+  const montantRestantRegler = montantRemiseOk ? montantRemiseOk.valeur - montantAPayerTotal : null;
   const coursApplique = Number(paiementForm.coursApplique);
   const contrevaleurBrute = montantAPayerTotal * coursApplique;
   const contrevaleurDirhams = (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "")
@@ -305,12 +307,25 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   }, [compteDebiteNormalise, montantABloquer, deviseMontantABloquer, peutBloquerProvision]);
 
 
-  function enregistrer() {
-    if (nature === "Paiement" && documentsObligatoiresManquants.length > 0) {
-      setErreurDocumentsObligatoires(true);
-      setOngletPieces("documents");
-      return;
+  const [erreurSoumission, setErreurSoumission] = useState<string[]>([]);
+
+  function enregistrer(nouveauStatut: "ENREGISTRE" | "SOUMIS") {
+    if (nouveauStatut === "SOUMIS") {
+      const manquants: string[] = [];
+      if (nature === "Paiement") {
+        if (!paiementForm.compteDebite.trim()) manquants.push("Compte à débiter");
+        if (!(montantAPayerTotal > 0)) manquants.push("Montant à payer");
+        if (!paiementForm.signatureConforme) manquants.push("Signature conforme");
+        if (documentsObligatoiresManquants.length > 0) {
+          setErreurDocumentsObligatoires(true);
+          setOngletPieces("documents");
+          manquants.push(`Documents obligatoires : ${documentsObligatoiresManquants.join(", ")}`);
+        }
+      }
+      if (montantRequis && montant <= 0) manquants.push("Montant");
+      if (manquants.length > 0) { setErreurSoumission(manquants); return; }
     }
+    setErreurSoumission([]);
     const saisie = {
       nature,
       montant: montantRequis ? montant : null,
@@ -350,7 +365,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           montantPaye: montantAPayerTotal || undefined,
           contrevaleurDirhams,
 
-          montantRestant: paiementForm.montantRestant ? Number(paiementForm.montantRestant) : undefined,
+          montantRestant: montantRestantRegler ?? undefined,
           dateValeur: paiementForm.dateValeur || undefined,
           compteDebite: paiementForm.compteDebite || undefined,
           identiteCompteDebite: clientCompteDebite ? { numeroCompte: compteDebiteNormalise, raisonSociale: clientCompteDebite.raisonSociale } : undefined,
@@ -360,10 +375,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       },
     };
     if (evenement) {
-      modifierEvenementDossier(dossier.reference, evenement.reference, saisie);
+      modifierEvenementDossier(dossier.reference, evenement.reference, saisie, nouveauStatut);
       onSaved(evenement.reference);
     } else {
-      const ev = ajouterEvenementDossier(dossier.reference, saisie);
+      const ev = ajouterEvenementDossier(dossier.reference, saisie, nouveauStatut);
       onSaved(ev.reference);
     }
   }
@@ -372,8 +387,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     <div>
       <div className="bg-[#FAEEDA] text-[#854F0B] text-xs rounded-lg p-2 mb-4">
         {evenement
-          ? "L'événement reste en statut En attente. L'encours et le dossier seront mis à jour après validation."
-          : "L'événement sera créé en statut En attente. L'encours et le dossier seront mis à jour après validation."}
+          ? "L'événement reste dans l'onglet En cours. L'encours et le dossier seront mis à jour après validation."
+          : "L'événement sera créé dans l'onglet En cours : statut « Enregistré » via le bouton Enregistrer, « Soumis » via Soumettre."}
       </div>
 
       <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5 mb-4">
@@ -530,6 +545,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           </div>
 
           {/* Liste des paiements */}
+          {conditionsRemiseAutre && (
           <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
             <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
               <div className="w-1 h-5 bg-gradient-to-r from-violet-500 to-violet-600 rounded-full"></div>
@@ -610,6 +626,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               </span>
             </div>
           </div>
+          )}
 
           {/* Détails du paiement */}
           <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
@@ -625,13 +642,20 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 </div>
                 <div>
                   <label className="text-label">Montant restant à régler</label>
-                  <input type="number" className="input w-full bg-gray-100" value={paiementForm.montantRestant} onChange={setP("montantRestant")} readOnly />
+                  <input type="text" className="input w-full bg-gray-100" value={montantRestantRegler != null ? `${montantRestantRegler.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}` : ""} readOnly />
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-label">Montant à payer <span className="text-red-500">*</span></label>
-                  <input type="text" className="input w-full bg-gray-100" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
+                  <label className="text-label">Montant total à payer <span className="text-red-500">*</span></label>
+                  {conditionsRemiseAutre ? (
+                    <input type="text" className="input w-full bg-gray-100" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <input type="number" className="input w-full min-w-0 text-right font-mono tabular-nums" value={paiementForm.montantPaye} onChange={setP("montantPaye")} aria-label={`Montant total à payer ${deviseDossier}`} />
+                      <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="text-label">Cours appliqué</label>
@@ -960,12 +984,17 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         </div>
       )}
 
+      {erreurSoumission.length > 0 && (
+        <p role="alert" className="text-sm text-red-600 mb-3">
+          Champs obligatoires manquants : {erreurSoumission.join(" · ")}.
+        </p>
+      )}
       <div className="flex justify-end gap-2">
         <button className="btn-secondary" onClick={onCancel}>Annuler</button>
-        <button className="btn-primary" disabled={montantRequis && montant <= 0} onClick={enregistrer}>
+        <button className="btn-primary" onClick={() => enregistrer("ENREGISTRE")}>
           Enregistrer
         </button>
-        <button className="btn-primary" disabled={montantRequis && montant <= 0} onClick={enregistrer}>
+        <button className="btn-primary" onClick={() => enregistrer("SOUMIS")}>
           Soumettre
         </button>
       </div>
