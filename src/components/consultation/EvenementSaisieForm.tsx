@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Search, X, Trash2, Plus, Paperclip, FileText } from "lucide-react";
+import { Search, X, Trash2, Plus, Paperclip, FileText, FileCheck } from "lucide-react";
 import { useTomStore } from "@/store/useTomStore";
+import { genererAccuseReceptionPDF } from "@/lib/accuseReception";
 import dossiersDetail from "@/mocks/dossiersDetail.json";
 import type { DossierTrade, DocumentAttacheAgence, EvenementTrade, MontantAvecDevise, TypeDocumentAttacheAgence, BlocageProvisionAgence } from "@/domain/consultation-detail";
 
@@ -29,6 +30,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const montantRemiseOk = isMontantAvecDevise(montantRemise) ? montantRemise : null;
   const deviseDossier = encoursOk?.devise ?? montantRemiseOk?.devise ?? "";
   const conditionsRemiseAutre = String(dossier.donnees["conditionsRemiseDocuments"] ?? "").trim().toLowerCase() === "autre";
+  const lectureSeule = evenement?.statut === "SOUMIS";
 
   const s = evenement?.saisieAgence;
   const p = s?.paiement;
@@ -383,14 +385,69 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     }
   }
 
+  const [popupAccuse, setPopupAccuse] = useState(false);
+
+  const fmtDateDoc = (iso?: string) => (iso ? new Date(iso).toLocaleDateString("fr-FR") : "");
+  const fmtHeureDoc = (iso?: string) =>
+    iso ? new Date(iso).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "";
+
+  function editerAccuse() {
+    setPopupAccuse(false);
+    const maintenant = new Date();
+    const bicBeneficiaire = BANQUES.find(b => b.nom === paiementForm.banqueBeneficiaire)?.bic ?? "";
+    void genererAccuseReceptionPDF({
+      referenceBordereau: evenement ? `AR-${evenement.reference}` : "",
+      referenceRDI: dossier.reference,
+      dateRemise: fmtDateDoc(dossier.dateMiseAJour),
+      referenceCorrespondant: String(dossier.donnees["referenceCorrespondant"] ?? ""),
+      referenceOperation: String(dossier.donnees["referenceOperation"] ?? ""),
+      nomPayeur: clientCompteDebite?.raisonSociale ?? dossier.clientInfo?.raisonSociale ?? dossier.client ?? "",
+      numeroCompteDebit: paiementForm.compteDebite,
+      identifiantClient: dossier.clientInfo?.codeClient ?? "",
+      typeOrdre: "Ordre de paiement",
+      montantPaiement: montantAPayerTotal.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      devisePaiement: deviseDossier,
+      dateOrdre: fmtDateDoc(paiementForm.dateReception),
+      dateValeur: fmtDateDoc(paiementForm.dateValeur),
+      nomBeneficiaire: String(dossier.donnees["tireur"] ?? ""),
+      nomBanqueBeneficiaire: paiementForm.banqueBeneficiaire,
+      bicBeneficiaire,
+      referenceOrdrePaiement: evenement?.reference ?? "",
+      ordrePaiementRecu: documentsAttaches.some(d => d.categorie === "Ordre de paiement"),
+      titreImportationRecu: documentsAttaches.some(d => d.categorie === "Titre d'importation"),
+      autresDocuments: documentsAttaches.filter(d => d.categorie === "Autre").map(d => d.nom),
+      nombrePieces: documentsAttaches.length,
+      observations: "",
+      referenceEvenement: evenement?.reference ?? "",
+      nomPrepose: "",
+      matriculePrepose: "",
+      dateReception: fmtDateDoc(evenement?.dateCreation),
+      heureReception: fmtHeureDoc(evenement?.dateCreation),
+      dateGeneration: maintenant.toLocaleDateString("fr-FR"),
+      heureGeneration: maintenant.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+      nomBanque: "Attijariwafa Bank",
+      nomAgence: dossier.clientInfo?.agenceRattachement ?? "",
+      codeAgence: "",
+      adresseAgence: "",
+    });
+  }
+
   return (
     <div>
+      {evenement?.statut === "SOUMIS" && (
+        <div className="flex justify-end mb-3">
+          <button type="button" className="h-9 inline-flex items-center gap-2 px-4 rounded-md bg-orange-600 border border-orange-600 text-white text-sm hover:bg-orange-700" onClick={() => setPopupAccuse(true)}>
+            <FileCheck size={15} /> Accusé de réception
+          </button>
+        </div>
+      )}
       <div className="bg-[#FAEEDA] text-[#854F0B] text-xs rounded-lg p-2 mb-4">
         {evenement
           ? "L'événement reste dans l'onglet En cours. L'encours et le dossier seront mis à jour après validation."
           : "L'événement sera créé dans l'onglet En cours : statut « Enregistré » via le bouton Enregistrer, « Soumis » via Soumettre."}
       </div>
 
+      <fieldset disabled={lectureSeule} className="contents">
       <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5 mb-4">
         <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
           <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
@@ -456,11 +513,11 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       {nature === "Paiement" && (
         <div className="space-y-6 mb-4">
 
-          {/* Détails du paiement reçu */}
+          {/* Origine du paiement */}
           <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
             <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
               <div className="w-1 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
-              <div className="text-sm font-semibold text-[#0f172a]">Détails du paiement reçu</div>
+              <div className="text-sm font-semibold text-[#0f172a]">Origine du paiement</div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
               <div>
@@ -988,6 +1045,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           </div>
         </div>
       )}
+      </fieldset>
 
       {erreurSoumission.length > 0 && (
         <p role="alert" className="text-sm text-red-600 mb-3">
@@ -995,14 +1053,45 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         </p>
       )}
       <div className="flex justify-end gap-2">
-        <button className="btn-secondary" onClick={onCancel}>Annuler</button>
-        <button className="btn-primary" onClick={() => enregistrer("ENREGISTRE")}>
-          Enregistrer
-        </button>
-        <button className="btn-primary" onClick={() => enregistrer("SOUMIS")}>
-          Soumettre
-        </button>
+        <button className="btn-secondary" onClick={onCancel}>{lectureSeule ? "Fermer" : "Annuler"}</button>
+        {!lectureSeule && (
+          <>
+            <button className="btn-primary" onClick={() => enregistrer("ENREGISTRE")}>
+              Enregistrer
+            </button>
+            <button className="btn-primary" onClick={() => enregistrer("SOUMIS")}>
+              Soumettre
+            </button>
+          </>
+        )}
       </div>
+
+      {/* Popup accusé de réception */}
+      {popupAccuse && (
+        <>
+          <div className="fixed inset-0 bg-black/30 z-50" onClick={() => setPopupAccuse(false)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-2xl shadow-2xl z-50">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e8ec]">
+              <div className="text-sm font-semibold text-[#0f172a]">Accusé de réception</div>
+              <button
+                type="button"
+                className="h-8 w-8 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center"
+                onClick={() => setPopupAccuse(false)}
+                aria-label="Fermer l'accusé de réception"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="px-5 py-4 text-sm text-[#334155]">
+              <p>Souhaitez-vous imprimer l'accusé de réception de l'événement <span className="font-mono font-medium">{evenement?.reference}</span> ?</p>
+            </div>
+            <div className="flex justify-end gap-2 px-5 py-3 border-t border-[#e5e8ec]">
+              <button type="button" className="btn-secondary" onClick={() => setPopupAccuse(false)}>Fermer</button>
+              <button type="button" className="btn-primary" onClick={editerAccuse}>Editer</button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Popup recherche banque */}
       {popupBanque && (
