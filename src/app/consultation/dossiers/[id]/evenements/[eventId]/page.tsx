@@ -59,7 +59,6 @@ export default function EventDetailPage() {
   const [escompteDemande, setEscompteDemande] = useState("NON");
   const [financement, setFinancement] = useState("NON");
   const [ongletPaiement, setOngletPaiement] = useState<"frais" | "titres" | "attaches">("frais");
-  const [ongletAcceptation, setOngletAcceptation] = useState<"frais" | "attaches">("frais");
   const [ongletPaiementTop, setOngletPaiementTop] = useState<"detail" | "tracking">("detail");
   const [ongletAcceptationTop, setOngletAcceptationTop] = useState<"detail" | "tracking">("detail");
   const dossierId = params.id as string;
@@ -243,6 +242,14 @@ export default function EventDetailPage() {
               <div className="bg-gray-50 rounded-lg p-4">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type d'évènement</label>
                 <p className="font-semibold text-gray-900">{event.accuseReception?.typeEvenement} / {event.reference}</p>
+              </div>
+            )}
+            {(event.nature === "Réception de la remise" || event.nature === "Paiement" || event.nature === "Acceptation & Aval de la traite") && (
+              <div className="bg-gray-50 rounded-lg p-4 flex items-center">
+                <label className="flex items-center gap-3 cursor-not-allowed opacity-50">
+                  <input type="checkbox" disabled className="w-5 h-5 rounded border-gray-300 text-blue-600" />
+                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Paiement multiple</span>
+                </label>
               </div>
             )}
 
@@ -455,8 +462,8 @@ MAROC</p>
                 <p className="font-semibold text-gray-900">Tiré</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Notifié par</label>
-                <p className="font-semibold text-gray-900">Courrier</p>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Partie à notifier</label>
+                <p className="font-semibold text-gray-900">ERCO LUMIERES EURL</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Adresse</label>
@@ -474,23 +481,8 @@ FRANCE</p>
                 </div>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Montant total accepté</label>
-                <p className="font-semibold text-gray-900">180 382,36 EUR</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Référence</label>
                 <p className="font-semibold text-gray-900">INV N 25094269</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
-                <label className="flex items-center gap-3 cursor-not-allowed opacity-50">
-                  <input
-                    type="checkbox"
-                    checked={false}
-                    disabled
-                    className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
-                  />
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Remise à expirer</span>
-                </label>
               </div>
             </div>
           </div>
@@ -705,93 +697,20 @@ FRANCE</p>
         )}
 
 
-        {/* Répartition des frais et Documents attachés - 2 onglets pour Acceptation & Aval de la traite */}
+        {/* Documents attachés - pour Acceptation & Aval de la traite */}
         {event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-            <div className="flex flex-wrap border-b border-gray-200 mb-6">
-              {[
-                { id: "frais", label: "Répartition des frais" },
-                { id: "attaches", label: "Documents attachés" },
-              ].map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setOngletAcceptation(t.id as "frais" | "attaches")}
-                  className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
-                    ongletAcceptation === t.id
-                      ? "border-orange-600 text-orange-600"
-                      : "border-transparent text-gray-500 hover:text-gray-900"
-                  }`}
-                >
-                  {t.label}
-                </button>
-              ))}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
+              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
             </div>
 
-            {ongletAcceptation === "frais" && (
-              <div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions au Maroc</label>
-                    <p className="font-semibold text-gray-900">Tiré</p>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Frais et commissions à l'étranger</label>
-                    <p className="font-semibold text-gray-900">Tireur</p>
-                  </div>
-                </div>
-                <h3 className="text-md font-semibold text-gray-900 mb-4">Détails des charges</h3>
-                <div className="overflow-hidden rounded-lg border border-gray-200">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Frais</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Description</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Devise</th>
-                        <th className="text-right py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Montant</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Supportée par</th>
-                        <th className="text-center py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Statut</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date de règlement</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b border-gray-100 hover:bg-gray-50 transition">
-                        <td className="py-3 px-4 font-medium text-gray-900">Commission d'acceptation</td>
-                        <td className="py-3 px-4 text-gray-600">Commission sur acceptation de traite</td>
-                        <td className="py-3 px-4 text-gray-600">EUR</td>
-                        <td className="py-3 px-4 text-right font-semibold text-gray-900">1,500 EUR</td>
-                        <td className="py-3 px-4 text-gray-600">Tiré</td>
-                        <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
-                        <td className="py-3 px-4 text-gray-600">02/02/2026</td>
-                      </tr>
-                      <tr className="hover:bg-gray-50 transition">
-                        <td className="py-3 px-4 font-medium text-gray-900">Frais SWIFT</td>
-                        <td className="py-3 px-4 text-gray-600">Frais de transmission SWIFT</td>
-                        <td className="py-3 px-4 text-gray-600">EUR</td>
-                        <td className="py-3 px-4 text-right font-semibold text-gray-900">1,000 EUR</td>
-                        <td className="py-3 px-4 text-gray-600">Tireur</td>
-                        <td className="py-3 px-4 text-center"><span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Réglé</span></td>
-                        <td className="py-3 px-4 text-gray-600">02/02/2026</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div className="bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg p-6 mt-6">
-                  <label className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">Total des frais</label>
-                  <p className="font-bold text-2xl text-amber-900">2,500 EUR</p>
-                </div>
-              </div>
-            )}
-
-            {ongletAcceptation === "attaches" && (
+            {(
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
-                    { name: "Lettre d'acceptation", icon: <FileText size={16} /> },
-                    { name: "Traite acceptée", icon: <FileText size={16} /> },
-                    { name: "Aval de la traite", icon: <FileText size={16} /> },
-                    { name: "Confirmation SWIFT", icon: <FileText size={16} /> },
-                    { name: "Bordereau de frais", icon: <FileText size={16} /> },
-                    { name: "Reçu de paiement", icon: <FileText size={16} /> },
+                    { name: "Effet accepté", icon: <FileText size={16} /> },
+                    { name: "Autre", icon: <FileText size={16} /> },
                   ].map((doc, index) => (
                     <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
                       <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">

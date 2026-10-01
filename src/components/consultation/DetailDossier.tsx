@@ -627,8 +627,8 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
   const encoursOk = isMontantAvecDevise(encours) ? encours : null;
 
   const dossierCloture = dossier.statut === "VALIDE";
-  const isAcceptation = String(dossier.donnees["conditionsRemiseDocuments"] ?? "").toLowerCase().includes("acceptation");
-  const acceptationValidee = evenements.some((e) => e.nature === "Acceptation & Aval de la traite" && e.statut === "VALIDE");
+  const conditionsRemise = String(dossier.donnees["conditionsRemiseDocuments"] ?? "");
+  const acceptationEligible = ["Autre", "Document contre acceptation", "Pour aval"].includes(conditionsRemise);
   const retourDejaFait = evenements.some((e) => e.nature === "Retour des documents" || e.nature === "Clôture de la remise");
   const demandeDejaEnAttente = evenements.some((e) => e.nature === "Demande de remise des documents" && (e.statut === "EN_ATTENTE" || e.statut === "EN_COURS" || e.statut === "ENREGISTRE" || e.statut === "SOUMIS"));
 
@@ -640,8 +640,8 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
     },
     {
       nature: "Acceptation & Aval de la traite",
-      eligible: isAcceptation && !acceptationValidee,
-      raison: !isAcceptation ? "Remise contre paiement" : "Acceptation déjà enregistrée",
+      eligible: !dossierCloture && acceptationEligible,
+      raison: dossierCloture ? "Dossier clôturé" : "Condition de remise non éligible",
     },
     {
       nature: "Retour des documents",

@@ -64,7 +64,7 @@ function SaisieEvenementInner() {
           </div>
         </div>
 
-        <div className={nature === "Paiement" ? "flex flex-col xl:flex-row gap-4 items-start" : ""}>
+        <div className={nature === "Paiement" || nature === "Acceptation & Aval de la traite" ? "flex flex-col xl:flex-row gap-4 items-start" : ""}>
           <Card className="flex-1 min-w-0">
             <EvenementSaisieForm
               dossier={dossier}
@@ -75,6 +75,7 @@ function SaisieEvenementInner() {
             />
           </Card>
           {nature === "Paiement" && <AideContextuelle {...AIDE_PAIEMENT} />}
+          {nature === "Acceptation & Aval de la traite" && <AideContextuelle {...AIDE_ACCEPTATION} />}
         </div>
       </div>
     </Shell>
@@ -111,6 +112,38 @@ const AIDE_PAIEMENT = {
     "En cas d'acceptation & paiement, restituer l'effet au client au moment de la remise des documents.",
   ],
   procedure: "Procédure de paiement d'une IRD reçue en agence.",
+};
+
+/* Contenu de l'aide contextuelle de l'événement « Acceptation & Aval de la traite ». */
+const AIDE_ACCEPTATION = {
+  intro: (
+    <>
+      L'acceptation &amp; aval de la traite consiste à faire accepter par le tiré (client)
+      l'effet de commerce tiré sur lui, la banque pouvant apposer son aval. La traite
+      acceptée matérialise l'engagement de paiement à échéance.
+    </>
+  ),
+  pointsEntree: [
+    "Remise documentaire import sous conditions « contre acceptation ».",
+    "Le client se présente en agence pour accepter la traite.",
+  ],
+  actions: [
+    "Vérifier que la remise est bien en « contre acceptation ».",
+    "Faire accepter la traite par le tiré et recueillir la signature.",
+    <>Saisir dans DocuTrade+ l'événement « Acceptation &amp; Aval de la traite » en renseignant a minima les champs obligatoires <span className="text-red-500">(*)</span> et en joignant la traite acceptée.</>,
+    "Notifier la partie concernée et remettre les documents au client.",
+  ],
+  regles: [
+    "L'événement n'est possible qu'une seule fois par dossier.",
+    "La date d'échéance de la traite doit être contrôlée.",
+    "La traite acceptée doit être jointe à l'événement.",
+  ],
+  conseils: [
+    "Vérifier la cohérence entre le montant accepté et le montant de la remise.",
+    "Contrôler la signature du tiré sur la traite.",
+    "En cas d'aval, renseigner la référence de l'aval.",
+  ],
+  procedure: "Procédure d'acceptation & aval de la traite d'une IRD reçue en agence.",
 };
 
 export default function SaisieEvenementPage() {

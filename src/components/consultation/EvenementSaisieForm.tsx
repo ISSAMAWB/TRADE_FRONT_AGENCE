@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X, Trash2, Plus, Paperclip, FileText, FileCheck } from "lucide-react";
 import { useTomStore } from "@/store/useTomStore";
 import { genererAccuseReceptionPDF } from "@/lib/accuseReception";
@@ -37,11 +37,14 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const [identiteCompteSelectionne, setIdentiteCompteSelectionne] = useState<{ numeroCompte: string; raisonSociale: string } | null>(p?.identiteCompteDebite ?? null);
 
   const fichierInputRef = useRef<HTMLInputElement>(null);
-  const typesDocuments: TypeDocumentAttacheAgence[] = ["Ordre de paiement", "Titre d'importation", "Autre"];
+  const isAcceptation = nature === "Acceptation & Aval de la traite";
+  const typesDocuments: TypeDocumentAttacheAgence[] = isAcceptation
+    ? ["Effet accepté", "Autre"]
+    : ["Ordre de paiement", "Titre d'importation", "Autre"];
   const [typeDocument, setTypeDocument] = useState<TypeDocumentAttacheAgence | "">("");
   const [erreurDocumentsObligatoires, setErreurDocumentsObligatoires] = useState(false);
   const [documentsAttaches, setDocumentsAttaches] = useState<DocumentAttacheAgence[]>(s?.documentsAttaches ?? []);
-  const DOCUMENTS_OBLIGATOIRES: TypeDocumentAttacheAgence[] = ["Ordre de paiement", "Titre d'importation"];
+  const DOCUMENTS_OBLIGATOIRES: TypeDocumentAttacheAgence[] = isAcceptation ? ["Effet accepté"] : ["Ordre de paiement", "Titre d'importation"];
   const documentsObligatoiresManquants = DOCUMENTS_OBLIGATOIRES.filter(type =>
     !documentsAttaches.some(document => document.categorie === type && document.fichier?.size > 0)
   );
@@ -267,6 +270,63 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     compteDebite: p?.compteDebite ?? "",
     agenceDomiciliation: p?.agenceDomiciliation ?? "",
   });
+
+  const ac = s?.acceptation;
+  // Partie à notifier reprise de l'évènement « Réception de la remise » (partie remettante en priorité)
+  const intervenantNotifie = useMemo(() => {
+    const intervenants = dossier.evenements.find(e => e.nature === "Réception de la remise")?.receptionRemise?.intervenants ?? [];
+    return intervenants.find(i => i.role === "Partie remettante")
+      ?? intervenants.find(i => i.role.includes("Tireur"))
+      ?? intervenants.find(i => i.role.includes("Tiré"));
+  }, [dossier]);
+  // Acceptant (client/tiré) repris de l'évènement « Réception de la remise »
+  const intervenantAcceptant = useMemo(() => {
+    const intervenants = dossier.evenements.find(e => e.nature === "Réception de la remise")?.receptionRemise?.intervenants ?? [];
+    return intervenants.find(i => i.role.includes("Tiré") && !i.role.includes("Tireur"));
+  }, [dossier]);
+  const naturePartieNotifiee = intervenantNotifie?.role === "Partie remettante" ? "Banque remettante"
+    : intervenantNotifie?.role.includes("Tireur") ? "Tireur"
+    : intervenantNotifie ? "Tiré" : "";
+  const [acceptationForm, setAcceptationForm] = useState({
+    acceptant: ac?.acceptant ?? intervenantAcceptant?.nom ?? dossier.clientInfo?.raisonSociale ?? dossier.client ?? "",
+    adresseAcceptant: ac?.adresseAcceptant ?? [intervenantAcceptant?.adresse, intervenantAcceptant?.pays].filter(Boolean).join("\n"),
+    dateReception: ac?.dateReception ?? aujourdhui,
+    referenceAval: ac?.referenceAval ?? "",
+    naturePartieANotifier: ac?.naturePartieANotifier ?? naturePartieNotifiee ?? "Tiré",
+    partieANotifier: ac?.partieANotifier ?? intervenantNotifie?.nom ?? dossier.clientInfo?.raisonSociale ?? dossier.client ?? "",
+    adressePartieANotifier: ac?.adressePartieANotifier ?? [intervenantNotifie?.adresse, intervenantNotifie?.pays].filter(Boolean).join("\n"),
+    instructionEnvoi: ac?.instructionEnvoi ?? "",
+    referenceNotification: ac?.referenceNotification ?? "",
+  });
+  const setA = (k: keyof typeof acceptationForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    setAcceptationForm(f => ({ ...f, [k]: e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value }));
+  // Lignes reprises de l'évènement « Réception de la remise » (échéancier de la remise)
+  const evenementReception = useMemo(() => dossier.evenements.find(e => e.nature === "Réception de la remise"), [dossier]);
+  const paiementsReception = evenementReception?.receptionRemise?.paiements ?? [];
+  const dateReceptionRemise = evenementReception?.dateCreation ? String(evenementReception.dateCreation).slice(0, 10) : "";
+  const [paiementsAAccepter, setPaiementsAAccepter] = useState<{ montant: string; periode: string; dateBase: string; maturite: string; accepte: boolean; avalise: boolean }[]>(
+    ac?.paiementsAAccepter?.map(l => ({
+      montant: l.montant != null ? String(l.montant) : "",
+      periode: l.periode ?? "",
+      dateBase: l.dateBase ?? "",
+      maturite: l.maturite ?? "",
+      accepte: l.accepte ?? true,
+      avalise: l.avalise ?? false,
+    })) ?? (paiementsReception.length > 0
+      ? paiementsReception.map(p => ({
+          montant: String(p.montant),
+          periode: p.typeTraite ?? "",
+          dateBase: (p.typeTraite ?? "").toLowerCase().includes("vue") ? "" : dateReceptionRemise,
+          maturite: p.dateEcheance ? String(p.dateEcheance).slice(0, 10) : "",
+          accepte: false,
+          avalise: false,
+        }))
+      : [{ montant: montantRemiseOk ? String(montantRemiseOk.valeur) : "", periode: "", dateBase: "", maturite: s?.dateEcheance ?? (echDossier ? String(echDossier).slice(0, 10) : ""), accepte: true, avalise: false }])
+  );
+  const montantAccepteTotal = paiementsAAccepter.reduce((sum, l) => sum + (l.accepte ? Number(l.montant) || 0 : 0), 0);
+
+  const majPaiementAAccepter = (i: number, patch: Partial<(typeof paiementsAAccepter)[number]>) =>
+    setPaiementsAAccepter(l => l.map((x, j) => j === i ? { ...x, ...patch } : x));
   const compteDebiteNormalise = paiementForm.compteDebite.replace(/\s/g, "");
   const compteCorrespondantFictif = comptesDisponibles.find(compte => compte.compte.replace(/\s/g, "") === compteDebiteNormalise);
   const montantsCompteFictifs = compteDebiteNormalise && compteCorrespondantFictif
@@ -324,17 +384,26 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           manquants.push(`Documents obligatoires : ${documentsObligatoiresManquants.join(", ")}`);
         }
       }
-      if (montantRequis && montant <= 0) manquants.push("Montant");
+      if (isAcceptation) {
+        if (!acceptationForm.acceptant.trim()) manquants.push("Acceptant (Client/tiré)");
+        if (!acceptationForm.dateReception.trim()) manquants.push("Date de réception");
+        if (!(montantAccepteTotal > 0)) manquants.push("Montant accepté");
+        if (documentsObligatoiresManquants.length > 0) {
+          setErreurDocumentsObligatoires(true);
+          manquants.push(`Documents obligatoires : ${documentsObligatoiresManquants.join(", ")}`);
+        }
+      }
+      if (montantRequis && (isAcceptation ? montantAccepteTotal : montant) <= 0) manquants.push("Montant");
       if (manquants.length > 0) { setErreurSoumission(manquants); return; }
     }
     setErreurSoumission([]);
     const saisie = {
       nature,
-      montant: montantRequis ? montant : null,
+      montant: montantRequis ? (isAcceptation ? montantAccepteTotal : montant) : null,
       devise: deviseDossier,
       saisieAgence: {
         dateEvenement,
-        documentsAttaches: nature === "Paiement" ? documentsAttaches : s?.documentsAttaches,
+        documentsAttaches: nature === "Paiement" || isAcceptation ? documentsAttaches : s?.documentsAttaches,
 
         datePaiement: nature === "Paiement" ? datePaiement : undefined,
         effet: nature === "Acceptation & Aval de la traite" ? effet : undefined,
@@ -374,6 +443,26 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           blocageProvision: blocageActif ?? undefined,
           agenceDomiciliation: paiementForm.agenceDomiciliation || undefined,
         } : undefined,
+        acceptation: isAcceptation ? {
+          acceptant: acceptationForm.acceptant || undefined,
+          adresseAcceptant: acceptationForm.adresseAcceptant || undefined,
+          dateReception: acceptationForm.dateReception || undefined,
+          referenceAval: acceptationForm.referenceAval || undefined,
+          montantAccepte: montantAccepteTotal || undefined,
+          naturePartieANotifier: acceptationForm.naturePartieANotifier || undefined,
+          partieANotifier: acceptationForm.partieANotifier || undefined,
+          adressePartieANotifier: acceptationForm.adressePartieANotifier || undefined,
+          instructionEnvoi: acceptationForm.instructionEnvoi || undefined,
+          referenceNotification: acceptationForm.referenceNotification || undefined,
+          paiementsAAccepter: paiementsAAccepter.map(l => ({
+            montant: Number(l.montant) || undefined,
+            periode: l.periode || undefined,
+            dateBase: l.dateBase || undefined,
+            maturite: l.maturite || undefined,
+            accepte: l.accepte,
+            avalise: l.avalise,
+          })),
+        } : undefined,
       },
     };
     if (evenement) {
@@ -386,6 +475,89 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   }
 
   const [popupAccuse, setPopupAccuse] = useState(false);
+
+  const renderDocumentsAttaches = () => (
+    <>
+      <div className="flex items-start justify-between flex-wrap gap-3 mb-3">
+        <div className="rounded-lg border border-[#e5e8ec] px-4 py-3 w-full sm:w-auto sm:min-w-[260px]">
+          <div className="text-label mb-2">Documents à joindre</div>
+          <div className="flex flex-col gap-2">
+            {typesDocuments.map(type => {
+              const joint = documentsAttaches.some(document => document.categorie === type && document.fichier?.size > 0);
+              return (
+                <label key={type} className="flex items-center gap-2 text-sm text-[#0f172a] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 rounded border-gray-300 text-blue-600"
+                    checked={joint}
+                    onChange={() => {
+                      if (!joint) {
+                        setTypeDocument(type);
+                        setTimeout(() => fichierInputRef.current?.click(), 0);
+                      }
+                    }}
+                  />
+                  {type} {DOCUMENTS_OBLIGATOIRES.includes(type) && <span className="text-red-500">*</span>}
+                </label>
+              );
+            })}
+          </div>
+          <div className="text-xs text-[#94a3b8] mt-2"><span className="text-red-500">*</span> obligatoire</div>
+        </div>
+        <button type="button" className="btn-secondary flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled={!typeDocument} onClick={() => fichierInputRef.current?.click()}>
+          <Paperclip size={15} /> Joindre des documents
+        </button>
+        <input ref={fichierInputRef} type="file" multiple disabled={!typeDocument} className="hidden" aria-label="Joindre des documents" onChange={e => joindreDocuments(e.target.files)} />
+      </div>
+      <p className="text-xs text-[#64748b] mb-3">
+        {isAcceptation
+          ? "La traite acceptée est obligatoire pour enregistrer l'acceptation."
+          : "L'ordre de paiement et le titre d'importation sont obligatoires pour enregistrer le paiement."}
+      </p>
+      {erreurDocumentsObligatoires && documentsObligatoiresManquants.length > 0 && (
+        <p role="alert" className="text-sm text-red-600 mb-3">Veuillez joindre un fichier non vide pour chaque document obligatoire manquant : {documentsObligatoiresManquants.join(", ")}.</p>
+      )}
+      <p className="text-xs text-[#64748b] mb-3">Les fichiers sont conservés pendant la session uniquement, sans envoi au serveur.</p>
+      {documentsAttaches.length === 0 ? (
+        <div className="py-4 text-center text-sm text-[#94a3b8]">Aucun document attaché.</div>
+      ) : (
+        <ul className="divide-y divide-[#e5e8ec]">
+          {documentsAttaches.map(document => (
+            <li key={document.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <FileText size={16} className="text-[#64748b] shrink-0" />
+                <span className="text-sm text-[#0f172a] break-all">{document.nom}</span>
+                <span className="text-xs text-[#64748b] whitespace-nowrap">{(document.taille / 1024).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Ko</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <select className="input w-full sm:w-auto" aria-label={`Type du document ${document.nom}`} value={document.categorie ?? ""}
+                  onChange={event => {
+                    const categorie = (event.target.value || undefined) as TypeDocumentAttacheAgence | undefined;
+                    setDocumentsAttaches(current => current.map(item => item.id === document.id ? { ...item, categorie } : item));
+                  }}>
+                  <option value="">Sélectionner un type</option>
+                  {typesDocuments.map(type => <option key={type} value={type}>{type}</option>)}
+                </select>
+                <button type="button" className="text-[#94a3b8] hover:text-[#dc2626] transition shrink-0" title={`Retirer ${document.nom}`} aria-label={`Retirer ${document.nom}`} onClick={() => setDocumentsAttaches(current => current.filter(item => item.id !== document.id))}>
+                  <Trash2 size={14} />
+                </button>
+              </div>
+              {document.categorie === "Autre" && (
+                <input
+                  type="text"
+                  className="input w-full mt-1"
+                  aria-label={`Description du document ${document.nom}`}
+                  placeholder="Description du document"
+                  value={document.description ?? ""}
+                  onChange={event => setDocumentsAttaches(current => current.map(item => item.id === document.id ? { ...item, description: event.target.value } : item))}
+                />
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
 
   const fmtDateDoc = (iso?: string) => (iso ? new Date(iso).toLocaleDateString("fr-FR") : "");
   const fmtHeureDoc = (iso?: string) =>
@@ -453,7 +625,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
           <div className="text-sm font-semibold text-[#0f172a]">Informations générales</div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-x-5 gap-y-5">
         <div>
           <label className="text-label">Référence de la remise</label>
           <input className="input w-full bg-gray-100" value={dossier.reference} readOnly />
@@ -471,20 +643,14 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           <input className="input w-full bg-gray-100" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
         </div>
 
-        {nature === "Acceptation & Aval de la traite" && (
-          <>
-            <div>
-              <label className="text-label">Effet</label>
-              <select className="input w-full" value={effet} onChange={(e) => setEffet(e.target.value as "Avec aval" | "Sans aval")}>
-                <option value="Avec aval">Avec aval</option>
-                <option value="Sans aval">Sans aval</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-label">Date d'échéance</label>
-              <input type="date" className="input w-full" value={dateEcheanceEvt} onChange={(e) => setDateEcheanceEvt(e.target.value)} />
-            </div>
-          </>
+        {(nature === "Réception de la remise" || nature === "Paiement" || isAcceptation) && (
+          <div>
+            <span className="text-label invisible block" aria-hidden="true">Paiement multiple</span>
+            <label className="flex items-center gap-2 cursor-not-allowed opacity-60 h-10">
+              <input type="checkbox" disabled checked={evenementReception?.receptionRemise?.paiementMultiple ?? false} className="w-4 h-4 rounded border-gray-300 text-blue-600" />
+              <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Paiement multiple</span>
+            </label>
+          </div>
         )}
 
         {nature === "Retour des documents" && (
@@ -508,6 +674,185 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         )}
         </div>
       </div>
+
+      {/* ===== Blocs Acceptation & Aval de la traite — mêmes blocs que la page de consultation ===== */}
+      {isAcceptation && (
+        <div className="space-y-6 mb-4">
+
+          {/* Détails de l'acceptation et aval */}
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
+              <div className="w-1 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
+              <div className="text-sm font-semibold text-[#0f172a]">Détails de l'acceptation et aval</div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
+              <div>
+                <label className="text-label">Acceptant (Client/tiré)</label>
+                <input className="input w-full bg-gray-100" value={acceptationForm.acceptant} readOnly />
+                <textarea
+                  className="input w-full mt-1.5 bg-gray-100"
+                  rows={3}
+                  value={acceptationForm.adresseAcceptant}
+                  placeholder="Adresse · Ville · Pays"
+                  aria-label="Adresse de l'acceptant"
+                  readOnly
+                />
+              </div>
+              <div>
+                <label className="text-label">Date de réception <span className="text-red-500">*</span></label>
+                <input type="date" className="input w-full" value={acceptationForm.dateReception} onChange={setA("dateReception")} />
+              </div>
+              <div>
+                <label className="text-label">Référence de l'aval</label>
+                <input className="input w-full" value={acceptationForm.referenceAval} onChange={setA("referenceAval")} />
+              </div>
+            </div>
+          </div>
+
+          {/* Information de la partie à notifier */}
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
+              <div className="w-1 h-5 bg-gradient-to-r from-green-500 to-green-600 rounded-full"></div>
+              <div className="text-sm font-semibold text-[#0f172a]">Information de la partie à notifier</div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
+              <div>
+                <label className="text-label">Nature de la partie à notifier</label>
+                <select className="input w-full bg-gray-100" value={acceptationForm.naturePartieANotifier} disabled>
+                  <option>Tiré</option>
+                  <option>Tireur</option>
+                  <option>Banque remettante</option>
+                  <option>Autre</option>
+                </select>
+                <input
+                  type="text"
+                  className="input w-full mt-2 bg-gray-100"
+                  value={acceptationForm.partieANotifier}
+                  placeholder="Nom de la partie à notifier"
+                  aria-label="Partie à notifier"
+                  readOnly
+                />
+                <textarea
+                  className="input w-full mt-2 bg-gray-100"
+                  rows={3}
+                  value={acceptationForm.adressePartieANotifier}
+                  placeholder="Adresse · Ville · Pays"
+                  aria-label="Adresse de la partie à notifier"
+                  readOnly
+                />
+              </div>
+              <div>
+                <label className="text-label">Référence</label>
+                <input className="input w-full" value={acceptationForm.referenceNotification} onChange={setA("referenceNotification")} />
+              </div>
+              <div>
+                <label className="text-label">Instruction d'envoi</label>
+                <textarea className="input w-full" rows={3} value={acceptationForm.instructionEnvoi} onChange={setA("instructionEnvoi")} />
+              </div>
+            </div>
+          </div>
+
+          {/* Paiements à accepter */}
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
+              <div className="w-1 h-5 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full"></div>
+              <div className="text-sm font-semibold text-[#0f172a]">Paiements à accepter</div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-[13px]">
+                <thead>
+                  <tr className="border-b border-[#e5e8ec]">
+                    <th className="text-center py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider w-10">N°</th>
+                    <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant <span className="text-red-500">*</span></th>
+                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Période (Tenor)</th>
+                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Date de base</th>
+                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Maturité</th>
+                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Statut</th>
+                    <th className="text-center py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Accepté</th>
+                    <th className="text-center py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Avalisé</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paiementsAAccepter.map((ligne, i) => (
+                    <tr key={i} className="border-b border-[#e5e8ec]">
+                      <td className="py-2 px-3 text-center text-[#64748b] font-mono text-xs">{i + 1}</td>
+                      <td className="py-2 px-3 text-right">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            className="input w-full min-w-0 text-right font-mono tabular-nums bg-gray-100"
+                            value={ligne.montant}
+                            aria-label={`Montant du paiement à accepter ligne ${i + 1}`}
+                            readOnly
+                          />
+                          <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
+                        </div>
+                      </td>
+                      <td className="py-2 px-3">
+                        <input className="input w-full bg-gray-100" value={ligne.periode} aria-label={`Période ligne ${i + 1}`} readOnly />
+                      </td>
+                      <td className="py-2 px-3">
+                        <input
+                          className={`input w-full bg-gray-100 ${ligne.periode.toLowerCase().includes("vue") ? "text-center text-[#64748b]" : ""}`}
+                          value={ligne.periode.toLowerCase().includes("vue") ? "—" : (ligne.dateBase ? new Date(`${ligne.dateBase}T00:00:00`).toLocaleDateString("fr-FR") : "")}
+                          aria-label={`Date de base ligne ${i + 1}`}
+                          readOnly
+                        />
+                      </td>
+                      <td className="py-2 px-3">
+                        <input
+                          className={`input w-full bg-gray-100 ${ligne.periode.toLowerCase().includes("vue") ? "text-center text-[#64748b]" : ""}`}
+                          value={ligne.periode.toLowerCase().includes("vue") ? "—" : (ligne.maturite ? new Date(`${ligne.maturite}T00:00:00`).toLocaleDateString("fr-FR") : "")}
+                          aria-label={`Maturité ligne ${i + 1}`}
+                          readOnly
+                        />
+                      </td>
+                      <td className="py-2 px-3 text-[#64748b] text-xs">En attente de paiement</td>
+                      <td className="py-2 px-3 text-center">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 rounded border-gray-300 text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                          checked={ligne.accepte}
+                          disabled={ligne.periode.toLowerCase().includes("vue")}
+                          onChange={(e) => majPaiementAAccepter(i, e.target.checked ? { accepte: true } : { accepte: false, avalise: false })}
+                          aria-label={`Paiement accepté ligne ${i + 1}`}
+                          title={ligne.periode.toLowerCase().includes("vue") ? "Non acceptable : paiement à vue" : "Accepter le paiement"}
+                        />
+                      </td>
+                      <td className="py-2 px-3 text-center">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 rounded border-gray-300 text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                          checked={ligne.avalise}
+                          disabled={!ligne.periode.toLowerCase().includes("aval")}
+                          onChange={(e) => majPaiementAAccepter(i, e.target.checked ? { avalise: true, accepte: true } : { avalise: false })}
+                          aria-label={`Paiement avalisé ligne ${i + 1}`}
+                          title={ligne.periode.toLowerCase().includes("aval") ? "Avaliser le paiement" : "Non avalisable : réservé aux paiements pour aval"}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-[#e5e8ec] text-sm font-semibold text-[#0f172a]">
+              <span>Montant total accepté :</span>
+              <span className="font-mono tabular-nums text-[#e8632b]">
+                {montantAccepteTotal.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}
+              </span>
+            </div>
+          </div>
+
+          {/* Documents attachés */}
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
+              <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
+              <div className="text-sm font-semibold text-[#0f172a]">Documents attachés</div>
+            </div>
+            {renderDocumentsAttaches()}
+          </div>
+        </div>
+      )}
 
       {/* ===== Blocs Paiement — mêmes blocs que la page de consultation ===== */}
       {nature === "Paiement" && (
@@ -967,80 +1312,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             </div>
 
             <div role="tabpanel" id="panneau-pieces-documents" aria-labelledby="onglet-pieces-documents" hidden={ongletPieces !== "documents"}>
-              <div className="flex items-start justify-between flex-wrap gap-3 mb-3">
-                <div className="rounded-lg border border-[#e5e8ec] px-4 py-3 w-full sm:w-auto sm:min-w-[260px]">
-                  <div className="text-label mb-2">Documents à joindre</div>
-                  <div className="flex flex-col gap-2">
-                    {typesDocuments.map(type => {
-                      const joint = documentsAttaches.some(document => document.categorie === type && document.fichier?.size > 0);
-                      return (
-                        <label key={type} className="flex items-center gap-2 text-sm text-[#0f172a] cursor-pointer">
-                          <input
-                            type="checkbox"
-                            className="w-4 h-4 rounded border-gray-300 text-blue-600"
-                            checked={joint}
-                            onChange={() => {
-                              if (!joint) {
-                                setTypeDocument(type);
-                                setTimeout(() => fichierInputRef.current?.click(), 0);
-                              }
-                            }}
-                          />
-                          {type} {DOCUMENTS_OBLIGATOIRES.includes(type) && <span className="text-red-500">*</span>}
-                        </label>
-                      );
-                    })}
-                  </div>
-                  <div className="text-xs text-[#94a3b8] mt-2"><span className="text-red-500">*</span> obligatoire</div>
-                </div>
-                <button type="button" className="btn-secondary flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled={!typeDocument} onClick={() => fichierInputRef.current?.click()}>
-                  <Paperclip size={15} /> Joindre des documents
-                </button>
-                <input ref={fichierInputRef} type="file" multiple disabled={!typeDocument} className="hidden" aria-label="Joindre des documents" onChange={e => joindreDocuments(e.target.files)} />
-              </div>
-              <p className="text-xs text-[#64748b] mb-3">L'ordre de paiement et le titre d'importation sont obligatoires pour enregistrer le paiement.</p>
-              {erreurDocumentsObligatoires && documentsObligatoiresManquants.length > 0 && (
-                <p role="alert" className="text-sm text-red-600 mb-3">Veuillez joindre un fichier non vide pour chaque document obligatoire manquant : {documentsObligatoiresManquants.join(", ")}.</p>
-              )}
-              <p className="text-xs text-[#64748b] mb-3">Les fichiers sont conservés pendant la session uniquement, sans envoi au serveur.</p>
-              {documentsAttaches.length === 0 ? (
-                <div className="py-4 text-center text-sm text-[#94a3b8]">Aucun document attaché.</div>
-              ) : (
-                <ul className="divide-y divide-[#e5e8ec]">
-                  {documentsAttaches.map(document => (
-                    <li key={document.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <FileText size={16} className="text-[#64748b] shrink-0" />
-                        <span className="text-sm text-[#0f172a] break-all">{document.nom}</span>
-                        <span className="text-xs text-[#64748b] whitespace-nowrap">{(document.taille / 1024).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Ko</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <select className="input w-full sm:w-auto" aria-label={`Type du document ${document.nom}`} value={document.categorie ?? ""}
-                          onChange={event => {
-                            const categorie = (event.target.value || undefined) as TypeDocumentAttacheAgence | undefined;
-                            setDocumentsAttaches(current => current.map(item => item.id === document.id ? { ...item, categorie } : item));
-                          }}>
-                          <option value="">Sélectionner un type</option>
-                          {typesDocuments.map(type => <option key={type} value={type}>{type}</option>)}
-                        </select>
-                        <button type="button" className="text-[#94a3b8] hover:text-[#dc2626] transition shrink-0" title={`Retirer ${document.nom}`} aria-label={`Retirer ${document.nom}`} onClick={() => setDocumentsAttaches(current => current.filter(item => item.id !== document.id))}>
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                      {document.categorie === "Autre" && (
-                        <input
-                          type="text"
-                          className="input w-full mt-1"
-                          aria-label={`Description du document ${document.nom}`}
-                          placeholder="Description du document"
-                          value={document.description ?? ""}
-                          onChange={event => setDocumentsAttaches(current => current.map(item => item.id === document.id ? { ...item, description: event.target.value } : item))}
-                        />
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
+              {renderDocumentsAttaches()}
             </div>
           </div>
         </div>
