@@ -17,6 +17,7 @@ import {
   MOTIF_RETOUR_CENTRALISATION_LABEL, TYPE_RETOUR_LABEL,
 } from "@/domain/labels";
 import ClientReferentielSearchModal from "@/components/ui/ClientReferentielSearchModal";
+import AideContextuelle from "@/components/AideContextuelle";
 import Shell from "@/components/Shell";
 import type {
   TypeDocument, CourrierIrd,
@@ -110,7 +111,9 @@ export default function CentralisationRDIDetail() {
 
   return (
     <Shell>
-    <div className="space-y-4">
+    {/* En saisie (brouillon / retour / correction) : colonne formulaire + aide contextuelle à droite */}
+    <div className={isEditable ? "flex flex-col xl:flex-row gap-4 items-start" : "space-y-4"}>
+    <div className={isEditable ? "flex-1 min-w-0 space-y-4" : "space-y-4"}>
       <div className="flex items-center gap-2 text-xs text-ink-500">
         <Link href="/" className="hover:text-brand-600">Tableau de bord</Link>
         <span>/</span>
@@ -421,9 +424,44 @@ export default function CentralisationRDIDetail() {
         />
       )}
     </div>
+    {isEditable && <AideContextuelle {...AIDE_CENTRALISATION} />}
+    </div>
     </Shell>
   );
 }
+
+/* Contenu de l'aide contextuelle de la saisie « Centralisation ». */
+const AIDE_CENTRALISATION = {
+  intro: (
+    <>
+      La centralisation consiste à saisir et à transmettre au CTN Devises les documents numérisés
+      d'une remise documentaire import reçue en agence de la part du fournisseur (ou de sa banque).
+      C'est l'événement qui initialise le dossier dans DocuTrade+ : ne saisissez que les informations
+      strictement nécessaires — le tiré représente le client AWB.
+    </>
+  ),
+  pointsEntree: [
+    "Réception en agence des documents d'une remise documentaire import adressés par le fournisseur ou sa banque.",
+    "Premier événement du cycle de vie du dossier : l'ancien événement « Création » s'appelle désormais « Centralisation ».",
+  ],
+  actions: [
+    "Numériser l'ensemble des documents de la remise documentaire import.",
+    <>Saisir dans DocuTrade+ l'événement « Centralisation » en renseignant a minima les champs obligatoires <span className="text-red-500">(*)</span>.</>,
+    "Joindre les documents scannés relatifs à la remise documentaire import reçue.",
+    "Classer le dossier physique de la remise documentaire import.",
+  ],
+  regles: [
+    <>Tous les champs obligatoires <span className="text-red-500">(*)</span> doivent être renseignés pour pouvoir transmettre le dossier.</>,
+    "Au moins un document numérisé doit être joint avant transmission.",
+    "L'exhaustivité des documents reçus doit être numérisée : aucun document ne doit rester hors dossier.",
+  ],
+  conseils: [
+    "Contrôler la lisibilité, l'orientation et l'ordre des scans avant de transmettre.",
+    "Utiliser « Sauvegarder brouillon » tant que l'information n'est pas complète.",
+    "Une fois transmis, le dossier passe au statut « Soumis » et arrive au CTN Devises.",
+  ],
+  procedure: "Procédure de centralisation des documents d'une IRD reçus en agence (lien et référence à communiquer par la suite).",
+};
 
 /* ====== STEPPER DYNAMIQUE ======
    Construit les étapes depuis l'historique réel du dossier,
