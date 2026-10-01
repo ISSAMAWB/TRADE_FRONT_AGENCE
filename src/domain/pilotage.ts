@@ -107,6 +107,10 @@ export function estARelancer(c: CourrierIrd): boolean {
   return remiseARelancer(c) || acceptationARelancer(c);
 }
 
+export function estAValider(c: CourrierIrd): boolean {
+  return c.statut_workflow === "EN_ATTENTE_VALIDATION_AGENCE";
+}
+
 export function nbAlertes(courriers: CourrierIrd[]): number {
   return courriers.filter(c =>
     envoyeCtnNonRecu(c) || retourDocumentsAFaire(c) || etatEcheanceV5(c) === "ECHUE"
@@ -188,6 +192,11 @@ export const LISTES: Record<string, ListeDef> = {
     titre: "À traiter",
     regle: "Dossiers nécessitant une action du préposé agence : retours Agence et CTN à corriger, retours documents à effectuer (documents reçus depuis ≥ 30 jours, remise non effectuée).",
     filter: estATraiter,
+  },
+  "a-valider": {
+    titre: "Dossiers à valider",
+    regle: "Centralisations soumises par le préposé en attente de validation par le Responsable Agence.",
+    filter: estAValider,
   },
   "retours-agence": {
     titre: "Retours Agence à corriger",

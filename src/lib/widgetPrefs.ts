@@ -19,6 +19,8 @@ export interface WidgetDef {
    = alertes(4×1) + echeances(4×1) ; L3 = activite(8) + delais-traitement(4). */
 export const WIDGETS: WidgetDef[] = [
   { id: "atraiter",          titre: "À traiter",                        zone: "transverse", taille: { w: 8, h: 2 } },
+  /* Rendu uniquement pour le profil RESPONSABLE_AGENCE (cf. page.tsx). */
+  { id: "validations",       titre: "Dossiers à valider",               zone: "transverse", taille: { w: 4, h: 2 } },
   { id: "alertes",           titre: "Alertes opérationnelles",          zone: "transverse", taille: { w: 4, h: 1 } },
   { id: "echeances",         titre: "Échéances · 10 prochains jours",   zone: "transverse", taille: { w: 4, h: 1 } },
   { id: "activite",          titre: "Activité récente",                 zone: "transverse", taille: { w: 8, h: 1 } },

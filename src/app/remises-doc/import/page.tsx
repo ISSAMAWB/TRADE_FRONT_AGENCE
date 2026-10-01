@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useMemo, Suspense } from "react";
-import { FileSpreadsheet, Plus, Inbox, Search, History, Pencil, X } from "lucide-react";
+import { FileSpreadsheet, Plus, Inbox, Search, History, Pencil, X, ShieldCheck } from "lucide-react";
 import { useTomStore } from "@/store/useTomStore";
 import {
   COURRIER_WORKFLOW_LABEL, badgeForCourrierWorkflow,
@@ -41,6 +41,7 @@ function CentralisationRDIListInner() {
   const router = useRouter();
   const sp = useSearchParams();
   const courriers = useTomStore(s => s.courriersIrd);
+  const acteur = useTomStore(s => s.acteurCourant);
   const createCourrierIrd = useTomStore(s => s.createCourrierIrd);
   const applyAction = useTomStore(s => s.applyCourrierIrdAction);
 
@@ -519,6 +520,12 @@ function CentralisationRDIListInner() {
                         <button className="btn-primary text-xs h-8 px-3 inline-flex items-center gap-1" onClick={() => handleCorriger(c)}>
                           <Pencil size={12} /> Corriger
                         </button>
+                      ) : c.statut_workflow === "EN_ATTENTE_VALIDATION_AGENCE" && acteur === "RESPONSABLE_AGENCE" ? (
+                        <Link href={`/remises-doc/import/${c.id}`}>
+                          <button className="btn-primary text-xs h-8 px-3 inline-flex items-center gap-1">
+                            <ShieldCheck size={12} /> Valider
+                          </button>
+                        </Link>
                       ) : c.statut_workflow === "EN_PREPARATION" ? (
                         <Link href={`/remises-doc/import/${c.id}`}>
                           <button className="btn-outline text-xs h-8 px-3 inline-flex items-center gap-1">

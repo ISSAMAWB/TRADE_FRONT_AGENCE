@@ -86,7 +86,7 @@ interface AppState {
   addDocumentsCourrierIrd: (id: string, docs: { type_document: TypeDocument; filename: string }[]) => void;
   removeDocumentCourrierIrd: (id: string, docId: string) => void;
   lancerOcrCourrierIrd: (id: string) => void;
-  applyCourrierIrdAction: (id: string, action: CourrierIrdAction, payload?: { commentaire?: string }) => void;
+  applyCourrierIrdAction: (id: string, action: CourrierIrdAction, payload?: { commentaire?: string; motif?: MotifRetour; motifLibre?: string }) => void;
   initierPaiementIrd: (id: string, data: PaiementIrd) => void;
 
   /* événements créés depuis la consultation (clé = dossier.reference) */
@@ -714,9 +714,31 @@ export const useTomStore = create<AppState>((set, get) => ({
               type: "VALIDATION_AGENCE", message: "Validation agence — transmission au CTN Devise",
             }];
             break;
-          case "RETOURNER_CORRECTION":
-            // géré via mock retours, pas d'action directe du saisisseur
+          case "RETOURNER_CORRECTION": {
+            // Rejet par le Responsable Agence : renvoi au préposé pour correction
+            if (x.statut_workflow !== "EN_ATTENTE_VALIDATION_AGENCE") return x;
+            if (acteur !== "RESPONSABLE_AGENCE") return x;
+            const motif = payload?.motif ?? "CORRECTION_NECESSAIRE";
+            const retour: RetourInfo = {
+              id: nanoid(8),
+              type_retour: "RETOUR_AGENCE",
+              motif,
+              motif_libre: motif === "AUTRE" ? payload?.motifLibre?.trim() || undefined : undefined,
+              commentaire: payload?.commentaire?.trim() || undefined,
+              auteur: "Responsable agence Casablanca",
+              date: nowIso(),
+            };
+            next.statut_workflow = "RETOUR_AGENCE";
+            next.retours = [...(next.retours ?? []), retour];
+            next.dernier_retour = retour;
+            next.commentaire_retour_validation = retour.commentaire;
+            next.historique = [...next.historique, {
+              id: nanoid(8), date: nowIso(), acteur,
+              type: "RETOUR_AGENCE",
+              message: `Retour agence — ${motif === "AUTRE" ? (retour.motif_libre ?? "Autre") : motif}${retour.commentaire ? ` : ${retour.commentaire}` : ""}`,
+            }];
             break;
+          }
           case "CORRIGER":
             if (x.statut_workflow !== "RETOUR_AGENCE" && x.statut_workflow !== "RETOUR_CTN") return x;
             next.statut_workflow = "EN_CORRECTION";

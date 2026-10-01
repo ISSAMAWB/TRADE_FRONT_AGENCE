@@ -3,13 +3,13 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {
-  LayoutDashboard, ListChecks, CalendarClock, BellRing, AlertTriangle, Inbox,
+  LayoutDashboard, ListChecks, CalendarClock, BellRing, AlertTriangle, Inbox, ShieldCheck,
 } from "lucide-react";
 import clsx from "clsx";
 import { useTomStore } from "@/store/useTomStore";
-import { estATraiter, estARelancer, echeanceASuivre, nbAlertes } from "@/domain/pilotage";
+import { estATraiter, estARelancer, estAValider, echeanceASuivre, nbAlertes } from "@/domain/pilotage";
 
-export type PilotageTab = "pilotage" | "a-traiter" | "echeancier" | "relances" | "alertes" | "dossiers";
+export type PilotageTab = "pilotage" | "a-valider" | "a-traiter" | "echeancier" | "relances" | "alertes" | "dossiers";
 
 export default function PilotageHeader({ actif, fil, actions }: {
   actif: PilotageTab | null;
@@ -17,8 +17,11 @@ export default function PilotageHeader({ actif, fil, actions }: {
   actions?: ReactNode;
 }) {
   const courriers = useTomStore(s => s.courriersIrd);
+  const acteur = useTomStore(s => s.acteurCourant);
+  const isResponsable = acteur === "RESPONSABLE_AGENCE";
 
   const nbATraiter = courriers.filter(estATraiter).length;
+  const nbAValider = courriers.filter(estAValider).length;
   const nbEcheances = courriers.filter(echeanceASuivre).length;
   const nbARelancer = courriers.filter(estARelancer).length;
   const nbAlertesTotal = nbAlertes(courriers);
@@ -26,6 +29,9 @@ export default function PilotageHeader({ actif, fil, actions }: {
 
   const tabs: { key: PilotageTab; label: string; href: string; icon: typeof LayoutDashboard; count?: number }[] = [
     { key: "pilotage", label: "Pilotage", href: "/", icon: LayoutDashboard },
+    ...(isResponsable
+      ? [{ key: "a-valider" as PilotageTab, label: "À valider", href: "/listes/a-valider", icon: ShieldCheck, count: nbAValider }]
+      : []),
     { key: "a-traiter", label: "À traiter", href: "/listes/toutes", icon: ListChecks, count: nbATraiter },
     { key: "echeancier", label: "Échéancier", href: "/echeancier", icon: CalendarClock, count: nbEcheances },
     { key: "relances", label: "Relances", href: "/listes/relances", icon: BellRing, count: nbARelancer },

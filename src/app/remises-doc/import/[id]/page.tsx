@@ -6,7 +6,7 @@ import { useRef, useState, useMemo } from "react";
 import {
   ChevronLeft, Send, FileText, Plus, Trash2,
   CheckCircle2, AlertTriangle, Save, Check, Search,
-  Clock, History,
+  Clock, History, ShieldCheck, XCircle,
 } from "lucide-react";
 import clsx from "clsx";
 import { useTomStore } from "@/store/useTomStore";
@@ -20,7 +20,7 @@ import ClientReferentielSearchModal from "@/components/ui/ClientReferentielSearc
 import AideContextuelle from "@/components/AideContextuelle";
 import Shell from "@/components/Shell";
 import type {
-  TypeDocument, CourrierIrd,
+  TypeDocument, CourrierIrd, MotifRetour,
 } from "@/domain/types";
 
 export default function CentralisationRDIDetail() {
@@ -28,6 +28,7 @@ export default function CentralisationRDIDetail() {
   const id = params?.id as string;
 
   const courrier = useTomStore(s => s.courriersIrd.find(c => c.id === id));
+  const acteur = useTomStore(s => s.acteurCourant);
   const addDocs   = useTomStore(s => s.addDocumentsCourrierIrd);
   const removeDoc = useTomStore(s => s.removeDocumentCourrierIrd);
   const updateCi  = useTomStore(s => s.updateCourrierIrd);
@@ -36,12 +37,19 @@ export default function CentralisationRDIDetail() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [clientSearchOpen, setClientSearchOpen] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [modalValider, setModalValider] = useState(false);
+  const [modalRejet, setModalRejet] = useState(false);
+  const [motifRejet, setMotifRejet] = useState<MotifRetour>("INFORMATIONS_INCOMPLETES");
+  const [motifLibre, setMotifLibre] = useState("");
+  const [commentaireRejet, setCommentaireRejet] = useState("");
 
   /* ---- derived ---- */
   const isBrouillon    = courrier?.statut_workflow === "EN_PREPARATION";
   const isRetourne     = courrier?.statut_workflow === "RETOUR_AGENCE" || courrier?.statut_workflow === "RETOUR_CTN";
   const isCorrection   = courrier?.statut_workflow === "EN_CORRECTION";
   const isAttenteValidation = courrier?.statut_workflow === "EN_ATTENTE_VALIDATION_AGENCE";
+  // Profil Responsable agence : consultation + actions Valider / Rejeter
+  const isAValiderParMoi = isAttenteValidation && acteur === "RESPONSABLE_AGENCE";
   const isTransmisCTN  = courrier?.statut_workflow === "EN_ATTENTE_VALIDATION_CTN";
   const isValidee      = courrier?.statut_workflow === "VALIDEE_CTN" || courrier?.statut_workflow === "ENVOYE_CTN";
   // Saisie Agence : brouillon, retourné ou en correction → édition directe
@@ -109,6 +117,23 @@ export default function CentralisationRDIDetail() {
     apply(courrier!.id, "VALIDER_CREATION");
   }
 
+  function handleValiderDossier() {
+    apply(courrier!.id, "VALIDER_ET_ENVOYER");
+    setModalValider(false);
+  }
+
+  function handleRejeterDossier() {
+    if (motifRejet === "AUTRE" && !motifLibre.trim()) return;
+    apply(courrier!.id, "RETOURNER_CORRECTION", {
+      motif: motifRejet,
+      motifLibre,
+      commentaire: commentaireRejet,
+    });
+    setModalRejet(false);
+    setMotifLibre("");
+    setCommentaireRejet("");
+  }
+
   return (
     <Shell>
     {/* En saisie (brouillon / retour / correction) : colonne formulaire + aide contextuelle à droite */}
@@ -161,7 +186,13 @@ export default function CentralisationRDIDetail() {
                 Correction demandée — {TYPE_RETOUR_LABEL[dernierRetour.type_retour]}
               </div>
               <div className="mt-3 space-y-1 text-sm">
-                <div><span className="text-gray-500 font-medium">Motif :</span> <span className="font-semibold">{MOTIF_RETOUR_CENTRALISATION_LABEL[dernierRetour.motif]}</span></div>
+                <div>
+                  <span className="text-gray-500 font-medium">Motif :</span>{" "}
+                  <span className="font-semibold">
+                    {MOTIF_RETOUR_CENTRALISATION_LABEL[dernierRetour.motif]}
+                    {dernierRetour.motif === "AUTRE" && dernierRetour.motif_libre ? ` — ${dernierRetour.motif_libre}` : ""}
+                  </span>
+                </div>
                 {dernierRetour.commentaire && (
                   <div><span className="text-gray-500 font-medium">Commentaire :</span> <span>{dernierRetour.commentaire}</span></div>
                 )}
@@ -193,11 +224,13 @@ export default function CentralisationRDIDetail() {
 
       {/* ====== MESSAGES DE STATUT ====== */}
       {isAttenteValidation && !showConfirmation && (
-        <div className="card p-4 bg-amber-50/50 border-l-4 border-l-amber-400">
-          <div className="flex items-center gap-2 text-sm text-amber-900">
-            <Clock size={16} />
+        <div className={isAValiderParMoi ? "card p-4 bg-blue-50/50 border-l-4 border-l-blue-500" : "card p-4 bg-amber-50/50 border-l-4 border-l-amber-400"}>
+          <div className={isAValiderParMoi ? "flex items-center gap-2 text-sm text-blue-900" : "flex items-center gap-2 text-sm text-amber-900"}>
+            {isAValiderParMoi ? <ShieldCheck size={16} /> : <Clock size={16} />}
             <span className="font-medium">Centralisation en attente de validation Agence</span>
-            <span className="text-amber-700">— En attente de validation par le Responsable Agence.</span>
+            <span className={isAValiderParMoi ? "text-blue-700" : "text-amber-700"}>
+              {isAValiderParMoi ? "— À valider par vous : consultez le dossier puis validez ou rejetez." : "— En attente de validation par le Responsable Agence."}
+            </span>
           </div>
         </div>
       )}
@@ -374,6 +407,18 @@ export default function CentralisationRDIDetail() {
       <section className="card p-5">
         <div className="font-semibold text-sm mb-3">Actions</div>
         <div className="flex flex-wrap items-center gap-2">
+          {/* Validation Responsable agence — dossier soumis en attente */}
+          {isAValiderParMoi && (
+            <>
+              <button className="btn-primary" onClick={() => setModalValider(true)}>
+                <ShieldCheck size={14} /> Valider et transmettre au CTN
+              </button>
+              <button className="btn-outline !border-red-300 !text-red-600 hover:!bg-red-50" onClick={() => setModalRejet(true)}>
+                <XCircle size={14} /> Rejeter
+              </button>
+            </>
+          )}
+
           {/* Brouillon — saisie initiale */}
           {isBrouillon && (
             <>
@@ -399,7 +444,7 @@ export default function CentralisationRDIDetail() {
           )}
 
           {/* En attente validation agence */}
-          {isAttenteValidation && !showConfirmation && (
+          {isAttenteValidation && !showConfirmation && !isAValiderParMoi && (
             <span className="text-xs text-ink-500">En attente de validation par le Responsable Agence. Le dossier n'est plus modifiable.</span>
           )}
 
@@ -414,6 +459,72 @@ export default function CentralisationRDIDetail() {
           )}
         </div>
       </section>
+
+      {/* ============== Modales de validation (Responsable agence) ============== */}
+      {modalValider && (
+        <>
+          <div className="fixed inset-0 bg-black/30 z-50" onClick={() => setModalValider(false)} />
+          <div role="dialog" aria-modal="true" className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md bg-white rounded-2xl shadow-2xl z-50 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <ShieldCheck size={18} className="text-blue-600" />
+              <div className="text-sm font-semibold text-[#0f172a]">Valider la centralisation</div>
+            </div>
+            <p className="text-sm text-[#475569]">
+              Le dossier <span className="font-mono font-medium">{courrier.reference_courrier}</span> sera
+              transmis au CTN Devise pour validation. La saisie agence sera verrouillée.
+            </p>
+            <div className="flex justify-end gap-2 mt-5">
+              <button className="btn-secondary" onClick={() => setModalValider(false)}>Annuler</button>
+              <button className="btn-primary" onClick={handleValiderDossier}>Valider et transmettre</button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {modalRejet && (
+        <>
+          <div className="fixed inset-0 bg-black/30 z-50" onClick={() => setModalRejet(false)} />
+          <div role="dialog" aria-modal="true" className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md bg-white rounded-2xl shadow-2xl z-50 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <XCircle size={18} className="text-red-600" />
+              <div className="text-sm font-semibold text-[#0f172a]">Rejeter le dossier</div>
+            </div>
+            <p className="text-xs text-[#64748b] mb-4">
+              Le dossier <span className="font-mono">{courrier.reference_courrier}</span> sera retourné au préposé pour correction.
+            </p>
+            <div className="space-y-3">
+              <div>
+                <label className="text-label" htmlFor="motif-rejet">Motif du retour <span className="text-red-500">*</span></label>
+                <select id="motif-rejet" className="input w-full" value={motifRejet} onChange={e => setMotifRejet(e.target.value as MotifRetour)}>
+                  {Object.entries(MOTIF_RETOUR_CENTRALISATION_LABEL).map(([k, v]) => (
+                    <option key={k} value={k}>{v}</option>
+                  ))}
+                </select>
+              </div>
+              {motifRejet === "AUTRE" && (
+                <div>
+                  <label className="text-label" htmlFor="motif-libre">Motif personnalisé <span className="text-red-500">*</span></label>
+                  <input id="motif-libre" className="input w-full" value={motifLibre} onChange={e => setMotifLibre(e.target.value)} placeholder="Précisez le motif du retour" />
+                </div>
+              )}
+              <div>
+                <label className="text-label" htmlFor="commentaire-rejet">Commentaire</label>
+                <textarea id="commentaire-rejet" className="input w-full" rows={3} value={commentaireRejet} onChange={e => setCommentaireRejet(e.target.value)} placeholder="Précisions pour le préposé (optionnel)" />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-5">
+              <button className="btn-secondary" onClick={() => setModalRejet(false)}>Annuler</button>
+              <button
+                className="btn bg-red-600 text-white hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                disabled={motifRejet === "AUTRE" && !motifLibre.trim()}
+                onClick={handleRejeterDossier}
+              >
+                Rejeter le dossier
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* ============== Modal recherche client référentiel ============== */}
       {clientSearchOpen && (

@@ -140,6 +140,8 @@ export interface RetourInfo {
   id: string;
   type_retour: TypeRetour;
   motif: MotifRetour;
+  /** Motif saisi librement quand motif = AUTRE. */
+  motif_libre?: string;
   commentaire?: string;
   auteur: string;
   date: string; // ISO

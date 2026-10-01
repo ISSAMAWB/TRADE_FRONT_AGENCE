@@ -10,7 +10,7 @@ import {
   MODALITE_LABEL, STATUT_PAIEMENT_LABEL, PRODUIT_IRD_LABEL,
 } from "@/domain/labels";
 import {
-  estATraiter, estARelancer, echeanceASuivre, envoyeCtnNonRecu,
+  estATraiter, estARelancer, estAValider, echeanceASuivre, envoyeCtnNonRecu,
   retourDocumentsAFaire, etatEcheanceV5, contexteMetier,
   joursEcheance, bandeRemise,
 } from "@/domain/pilotage";
@@ -18,7 +18,7 @@ import {
   Mail, AlertTriangle, Pencil,
   CalendarClock, Inbox, Activity, ChevronRight, ChevronUp, ChevronDown,
   Undo2, Download, ListChecks, Filter, BellRing,
-  Maximize2, Clock, Zap, Plus, SlidersHorizontal, GripVertical,
+  Maximize2, Clock, Zap, Plus, SlidersHorizontal, GripVertical, ShieldCheck,
   Settings2, EyeOff, Columns3, Rows3,
 } from "lucide-react";
 import {
@@ -237,6 +237,9 @@ export default function Dashboard() {
   }
 
   /* ---------- Agrégats ---------- */
+  const acteur = useTomStore(s => s.acteurCourant);
+  const isResponsable = acteur === "RESPONSABLE_AGENCE";
+  const aValider = useMemo(() => courriers.filter(estAValider), [courriers]);
   const nbATraiter = courriers.filter(estATraiter).length;
   const nbEnCours = courriers.length;
   const nbARelancer = courriers.filter(estARelancer).length;
@@ -293,6 +296,82 @@ export default function Dashboard() {
             dragHandle={editMode ? dragHandleFor("alertes") : undefined}
             masquerBtn={editMode ? masquerBtnFor("alertes") : undefined}
           />
+        );
+      case "validations":
+        return (
+          <Card className="h-full flex flex-col">
+            <div className="p-5 flex-1 min-h-0 flex flex-col">
+              <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-gray-700 flex items-center gap-2">
+                  <ShieldCheck size={15} className="text-blue-500" /> Dossiers à valider
+                  <span className="bg-blue-50 text-blue-700 rounded-full px-2 text-xs font-bold">{aValider.length}</span>
+                </div>
+                <div className="relative z-20 flex items-center gap-1.5">
+                  {editMode && dragHandleFor("validations")}
+                  {editMode && masquerBtnFor("validations")}
+                  <Link href="/listes/a-valider" className="h-7 w-7 rounded-md border border-gray-200 text-gray-500 hover:text-blue-600 grid place-items-center" title="Ouvrir la liste complète">
+                    <Maximize2 size={13} />
+                  </Link>
+                  <ToggleBtn replie={!!prefs.replie.validations} onToggle={() => toggleReplie("validations")} />
+                </div>
+              </div>
+              {!prefs.replie.validations && (
+                <>
+                  <div className="flex-1 min-h-0 overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 pb-2 pr-3">Dossier</th>
+                          <th className="text-right text-[11px] font-semibold uppercase tracking-wider text-gray-500 pb-2 pr-3">Montant</th>
+                          <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 pb-2">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {aValider.map(c => {
+                          const soumission = [...c.historique].reverse().find(e => e.type === "SOUMISSION");
+                          return (
+                            <tr key={c.id} className="border-b border-gray-100">
+                              <td className="py-2.5 pr-3 align-top">
+                                <Link href={`/remises-doc/import/${c.id}`} className="font-medium text-orange-600 hover:underline">
+                                  {c.reference_courrier}
+                                </Link>
+                                <div className="text-xs text-gray-700">{c.client ?? "—"}</div>
+                                <div className="text-[11px] text-gray-400">
+                                  Soumis le {soumission ? new Date(soumission.date).toLocaleDateString("fr-FR") : new Date(c.updated_at).toLocaleDateString("fr-FR")}
+                                </div>
+                              </td>
+                              <td className="py-2.5 pr-3 align-top text-right whitespace-nowrap">
+                                {c.montant != null ? (
+                                  <>
+                                    <div className="font-semibold text-gray-900">{c.montant.toLocaleString("fr-FR")}</div>
+                                    <div className="text-[11px] text-gray-500">{c.devise}</div>
+                                  </>
+                                ) : <span className="text-gray-400">—</span>}
+                              </td>
+                              <td className="py-2.5 align-top whitespace-nowrap">
+                                <Link href={`/remises-doc/import/${c.id}`}>
+                                  <button className="btn-primary text-xs h-8 px-3 inline-flex items-center gap-1">
+                                    <ShieldCheck size={12} /> Valider
+                                  </button>
+                                </Link>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {aValider.length === 0 && (
+                          <tr><td colSpan={3} className="text-sm text-gray-400 text-center py-6">Aucun dossier en attente de validation.</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100 text-xs">
+                    <span className="text-gray-500">{aValider.length} dossier{aValider.length > 1 ? "s" : ""} en attente</span>
+                    <Link href="/listes/a-valider" className="text-orange-600 font-medium hover:underline">Voir tout →</Link>
+                  </div>
+                </>
+              )}
+            </div>
+          </Card>
         );
       case "atraiter":
         return (
@@ -565,7 +644,7 @@ export default function Dashboard() {
               >
                 <Settings2 size={15} /> Personnaliser
               </button>
-              <AffichageMenu masques={prefs.masques} onToggle={toggleMasque} onReset={resetVue} />
+              <AffichageMenu masques={prefs.masques} masquesExclus={isResponsable ? [] : ["validations"]} onToggle={toggleMasque} onReset={resetVue} />
               <button className="btn-outline h-10 inline-flex items-center gap-2" onClick={exporterCSV}>
                 <Download size={15} /> Exporter
               </button>
@@ -745,8 +824,11 @@ export default function Dashboard() {
         )}
 
         {/* ===== 3. KPI transverses ===== */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className={clsx("grid grid-cols-2 gap-4", isResponsable ? "lg:grid-cols-5" : "lg:grid-cols-4")}>
           {[
+            ...(isResponsable
+              ? [{ label: "Dossiers à valider", unit: "dossiers", value: aValider.length, href: "/listes/a-valider", icon: ShieldCheck, border: "border-b-blue-500", text: "text-blue-600" }]
+              : []),
             { label: "À traiter", unit: "actions", value: nbATraiter, href: "/listes/toutes", icon: ListChecks, border: "border-b-red-500", text: "text-red-600" },
             { label: "À relancer", unit: "dossiers", value: nbARelancer, href: "/listes/relances", icon: BellRing, border: "border-b-orange-500", text: "text-orange-600" },
             { label: "Échéances à suivre", unit: "échéances", value: nbEcheances, href: "/echeancier", icon: CalendarClock, border: "border-b-orange-500", text: "text-orange-600" },
@@ -786,6 +868,8 @@ export default function Dashboard() {
           {prefs.order.filter(id => !prefs.masques.includes(id)).map(id => {
             const w = WIDGETS.find(x => x.id === id);
             if (!w || w.zone !== "transverse") return null;
+            /* Le widget « À valider » n'est pertinent que pour le Responsable agence. */
+            if (id === "validations" && !isResponsable) return null;
             return (
               <WidgetShell
                 key={id}
@@ -799,13 +883,13 @@ export default function Dashboard() {
             );
           })}
           {/* Carte « + Ajouter un widget » : mode personnaliser + au moins un widget masqué */}
-          {editMode && prefs.masques.length > 0 && (
+          {editMode && prefs.masques.filter(id => isResponsable || id !== "validations").length > 0 && (
             <div className="lg:col-span-12 rounded-lg border-2 border-dashed border-gray-300 p-5 text-center">
               <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-500">
                 <Plus size={14} className="text-gray-400" /> Ajouter un widget
               </div>
               <div className="mt-3 space-y-2">
-                {prefs.masques.map(id => {
+                {prefs.masques.filter(id => isResponsable || id !== "validations").map(id => {
                   const w = WIDGETS.find(x => x.id === id);
                   if (!w) return null;
                   return (
@@ -1220,7 +1304,7 @@ const GROUPES_AFFICHAGE: { titre: string; zone: WidgetDef["zone"] }[] = [
   { titre: "Produit — REMDOC Import", zone: "produit" },
 ];
 
-function AffichageMenu({ masques, onToggle, onReset }: { masques: string[]; onToggle: (id: string) => void; onReset: () => void }) {
+function AffichageMenu({ masques, masquesExclus = [], onToggle, onReset }: { masques: string[]; masquesExclus?: string[]; onToggle: (id: string) => void; onReset: () => void }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -1239,7 +1323,7 @@ function AffichageMenu({ masques, onToggle, onReset }: { masques: string[]; onTo
           {GROUPES_AFFICHAGE.map(g => (
             <div key={g.zone}>
               <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">{g.titre}</div>
-              {WIDGETS.filter(w => w.zone === g.zone).map(w => (
+              {WIDGETS.filter(w => w.zone === g.zone && !masquesExclus.includes(w.id)).map(w => (
                 <label key={w.id} className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-orange-50 cursor-pointer">
                   <input
                     type="checkbox"

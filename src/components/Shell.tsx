@@ -5,8 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Mail, FileSpreadsheet, FolderOpen, Clock, Bell, Settings, Lock,
   FolderOpen as FolderOpenIcon, ArrowRight, ArrowLeft, DollarSign, BarChart3,
-  FileText, ChevronRight, ChevronDown
+  FileText, ChevronRight, ChevronDown, Check
 } from "lucide-react";
+import clsx from "clsx";
 import { useTomStore } from "@/store/useTomStore";
 import { nbAlertes } from "@/domain/pilotage";
 import type { EquipeActeur } from "@/domain/types";
@@ -106,7 +107,9 @@ export default function Shell({ children, showFilterButton = false, onFilterTogg
   const pathname = usePathname();
   const router = useRouter();
   const acteur = useTomStore(s => s.acteurCourant);
+  const setActeur = useTomStore(s => s.setActeur);
   const reset = useTomStore(s => s.resetSeed);
+  const [profilMenuOpen, setProfilMenuOpen] = useState(false);
   const courriersIrd = useTomStore(s => s.courriersIrd);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -163,14 +166,44 @@ export default function Shell({ children, showFilterButton = false, onFilterTogg
           <button className="btn-ghost text-white hover:bg-slate-700 h-10 w-10 rounded-lg">
             <Bell size={20} />
           </button>
-          <div className="flex items-center gap-3 pl-4 border-l border-slate-800">
-            <div className="h-8 w-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-semibold">
-              {ACTEURS.find(a => a.value === acteur)?.label?.charAt(0) || "A"}
-            </div>
-            <div className="text-sm leading-tight">
-              <div className="font-semibold text-white">{ACTEURS.find(a => a.value === acteur)?.label}</div>
-              <div className="text-xs text-slate-400">Agence Casablanca</div>
-            </div>
+          <div className="relative pl-4 border-l border-slate-800">
+            <button
+              type="button"
+              onClick={() => setProfilMenuOpen(o => !o)}
+              className="flex items-center gap-3 rounded-lg px-2 py-1 hover:bg-slate-800 transition"
+              title="Changer de profil"
+            >
+              <div className="h-8 w-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-semibold">
+                {ACTEURS.find(a => a.value === acteur)?.label?.charAt(0) || "A"}
+              </div>
+              <div className="text-sm leading-tight text-left">
+                <div className="font-semibold text-white">{ACTEURS.find(a => a.value === acteur)?.label}</div>
+                <div className="text-xs text-slate-400">Agence Casablanca</div>
+              </div>
+              <ChevronDown size={14} className="text-slate-400" />
+            </button>
+            {profilMenuOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setProfilMenuOpen(false)} />
+                <div className="absolute right-0 top-full mt-1 z-50 w-56 rounded-lg border border-slate-700 bg-slate-800 shadow-xl py-1">
+                  <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Profil</div>
+                  {ACTEURS.map(a => (
+                    <button
+                      key={a.value}
+                      type="button"
+                      onClick={() => { setActeur(a.value); setProfilMenuOpen(false); }}
+                      className={clsx(
+                        "w-full text-left px-3 py-2 text-sm flex items-center justify-between gap-2 transition",
+                        a.value === acteur ? "text-orange-400 bg-slate-700/60" : "text-slate-200 hover:bg-slate-700"
+                      )}
+                    >
+                      {a.label}
+                      {a.value === acteur && <Check size={14} />}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </header>
 

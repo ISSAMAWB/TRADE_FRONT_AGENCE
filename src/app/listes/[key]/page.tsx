@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useMemo } from "react";
-import { ChevronLeft, ListChecks, History, Pencil, Eye, Undo2, BellRing, Download, Mail, Filter } from "lucide-react";
+import { ChevronLeft, ListChecks, History, Pencil, Eye, Undo2, BellRing, Download, Mail, Filter, ShieldCheck } from "lucide-react";
 import { useTomStore } from "@/store/useTomStore";
 import {
   COURRIER_WORKFLOW_LABEL, badgeForCourrierWorkflow, PRODUIT_IRD_LABEL,
@@ -52,6 +52,7 @@ function chipValue(key: string, v: string): string {
 }
 
 function activeTabFor(key: string): PilotageTab | null {
+  if (key === "a-valider") return "a-valider";
   if (key === "toutes") return "a-traiter";
   if (key === "relances" || key === "relance-remise" || key === "relance-acceptation") return "relances";
   if (key === "alertes" || key === "ctn-non-recus" || key === "retour-docs") return "alertes";
@@ -66,6 +67,7 @@ function ListePilotageInner() {
   const router = useRouter();
   const courriers = useTomStore(s => s.courriersIrd);
   const applyAction = useTomStore(s => s.applyCourrierIrdAction);
+  const acteur = useTomStore(s => s.acteurCourant);
   const createCourrierIrd = useTomStore(s => s.createCourrierIrd);
   const nouveauCourrier = () => {
     const c = createCourrierIrd();
@@ -103,6 +105,15 @@ function ListePilotageInner() {
   }
 
   function actionFor(c: CourrierIrd) {
+    if (c.statut_workflow === "EN_ATTENTE_VALIDATION_AGENCE" && acteur === "RESPONSABLE_AGENCE") {
+      return (
+        <Link href={`/remises-doc/import/${c.id}`}>
+          <button className="btn-primary text-xs h-8 px-3 inline-flex items-center gap-1">
+            <ShieldCheck size={12} /> Valider
+          </button>
+        </Link>
+      );
+    }
     if (c.statut_workflow === "RETOUR_AGENCE" || c.statut_workflow === "RETOUR_CTN" || c.statut_workflow === "EN_CORRECTION") {
       return (
         <button className="btn-primary text-xs h-8 px-3 inline-flex items-center gap-1" onClick={() => handleCorriger(c)}>
