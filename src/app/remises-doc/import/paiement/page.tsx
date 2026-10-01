@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { DollarSign, Inbox, X, CheckCircle2 } from "lucide-react";
+import { DollarSign, Inbox, X, CheckCircle2, Search } from "lucide-react";
 import clsx from "clsx";
 import { useTomStore } from "@/store/useTomStore";
 import {
@@ -17,10 +17,12 @@ import {
   badgeForEtatEcheance,
 } from "@/domain/labels";
 import type {
-  CourrierIrd, StatutPaiement, PartieOriginePaiement, PaiementIrd,
+  CourrierIrd, StatutPaiement, PartieOriginePaiement, PaiementIrd, TypeEvenementCentralisation,
 } from "@/domain/types";
 import Card from "@/components/ui/Card";
 import Shell from "@/components/Shell";
+import CollapsibleFilterPanel from "@/components/ui/CollapsibleFilterPanel";
+import ClientSearchModal from "@/components/ui/ClientSearchModal";
 
 type CorbeilleKey = "TOUS" | StatutPaiement;
 
@@ -39,12 +41,35 @@ const PARTIE_ORIGINE_OPTIONS: { value: PartieOriginePaiement; label: string }[] 
   { value: "AUTRE",              label: "Autre" },
 ];
 
+const DEVISES = ["EUR", "USD", "GBP", "MAD", "JPY", "CHF", "CNY", "TND"];
+const STATUTS_PAIEMENT: StatutPaiement[] = ["A_EFFECTUER", "EN_RETARD", "PARTIEL", "EFFECTUE"];
+const EVENEMENT_LABEL: Record<TypeEvenementCentralisation, string> = {
+  CREATION: "Création",
+  MODIFICATION: "Modification",
+  CHANGEMENT_DOMICILIATION: "Changement de domiciliation",
+};
+const EVENEMENTS: TypeEvenementCentralisation[] = ["CREATION", "MODIFICATION", "CHANGEMENT_DOMICILIATION"];
+
 export default function PaiementImportPage() {
   const courriers = useTomStore(s => s.courriersIrd);
   const initierPaiement = useTomStore(s => s.initierPaiementIrd);
 
   const [corbeille, setCorbeille] = useState<CorbeilleKey>("TOUS");
   const [courrierCible, setCourrierCible] = useState<CourrierIrd | null>(null);
+
+  /* ---- critères de recherche ---- */
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
+  const [refOperation, setRefOperation] = useState("");
+  const [refCorrespondant, setRefCorrespondant] = useState("");
+  const [clientQuery, setClientQuery] = useState("");
+  const [devise, setDevise] = useState("");
+  const [statutPaiement, setStatutPaiement] = useState<StatutPaiement | "">("");
+  const [evenement, setEvenement] = useState<TypeEvenementCentralisation | "">("");
+  const [montantMin, setMontantMin] = useState("");
+  const [montantMax, setMontantMax] = useState("");
+  const [dateDebut, setDateDebut] = useState("");
+  const [dateFin, setDateFin] = useState("");
 
   /* ---- formulaire d'initiation ---- */
   const [refPaiement, setRefPaiement] = useState("");
@@ -71,8 +96,32 @@ export default function PaiementImportPage() {
 
   const filtered = useMemo(() => {
     const def = CORBEILLE_DEFS.find(d => d.key === corbeille);
-    return def?.filter ? eligibles.filter(def.filter) : eligibles;
-  }, [eligibles, corbeille]);
+    let items = def?.filter ? eligibles.filter(def.filter) : eligibles;
+    if (refOperation.trim()) items = items.filter(c => c.reference_courrier.toLowerCase().includes(refOperation.trim().toLowerCase()));
+    if (refCorrespondant.trim()) items = items.filter(c => (c.reference_externe ?? "").toLowerCase().includes(refCorrespondant.trim().toLowerCase()));
+    if (clientQuery.trim()) {
+      const needle = clientQuery.trim().toLowerCase();
+      items = items.filter(c =>
+        (c.client ?? "").toLowerCase().includes(needle) ||
+        (c.reference_interne ?? "").toLowerCase().includes(needle)
+      );
+    }
+    if (devise) items = items.filter(c => c.devise === devise);
+    if (statutPaiement) items = items.filter(c => c.statut_paiement === statutPaiement);
+    if (evenement) items = items.filter(c => c.type_evenement === evenement);
+    if (montantMin) items = items.filter(c => (c.montant ?? 0) >= parseFloat(montantMin));
+    if (montantMax) items = items.filter(c => (c.montant ?? 0) <= parseFloat(montantMax));
+    if (dateDebut) items = items.filter(c => c.date_echeance && new Date(c.date_echeance) >= new Date(dateDebut));
+    if (dateFin) items = items.filter(c => c.date_echeance && new Date(c.date_echeance) <= new Date(dateFin + "T23:59:59"));
+    return items;
+  }, [eligibles, corbeille, refOperation, refCorrespondant, clientQuery, devise, statutPaiement,
+      evenement, montantMin, montantMax, dateDebut, dateFin]);
+
+  function resetFilters() {
+    setRefOperation(""); setRefCorrespondant(""); setClientQuery("");
+    setDevise(""); setStatutPaiement(""); setEvenement("");
+    setMontantMin(""); setMontantMax(""); setDateDebut(""); setDateFin("");
+  }
 
   function ouvrirInitiation(c: CourrierIrd) {
     setCourrierCible(c);
@@ -99,13 +148,158 @@ export default function PaiementImportPage() {
   }
 
   return (
-    <Shell>
+    <Shell
+      showFilterButton={true}
+      onFilterToggle={() => setIsFilterOpen(!isFilterOpen)}
+      isFilterOpen={isFilterOpen}
+    >
       <div className="space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <h1 className="text-display flex items-center gap-2">
             <DollarSign className="text-orange-500" size={24} /> Paiement — REMDOC Import
           </h1>
         </div>
+
+        {/* Filtres rétractables */}
+        <CollapsibleFilterPanel
+          isOpen={isFilterOpen}
+          onSearch={() => {}}
+          onReset={resetFilters}
+        >
+          <div className="space-y-4">
+            {/* Ligne 1: Référence opération, Référence correspondant, Client / Compte */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-label">REF DE L'OPERATION</label>
+                <input
+                  value={refOperation}
+                  onChange={(e) => setRefOperation(e.target.value)}
+                  placeholder="Ex. IRD%  (commence par IRD)"
+                  className="input w-full"
+                />
+              </div>
+
+              <div>
+                <label className="text-label">REF CORRESPONDANT</label>
+                <input
+                  value={refCorrespondant}
+                  onChange={(e) => setRefCorrespondant(e.target.value)}
+                  placeholder="Ex. CORR%  (commence par CORR)"
+                  className="input w-full"
+                />
+              </div>
+
+              <div>
+                <label className="text-label">CLIENT / COMPTE</label>
+                <div className="flex gap-2">
+                  <input
+                    value={clientQuery}
+                    onChange={(e) => setClientQuery(e.target.value)}
+                    placeholder="Rechercher par nom, n° compte"
+                    className="input flex-1"
+                  />
+                  <button
+                    onClick={() => setIsClientModalOpen(true)}
+                    className="h-10 w-10 rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 flex items-center justify-center"
+                    title="Rechercher un client"
+                  >
+                    <Search size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Ligne 2: Devise, Statut paiement, Événement */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-label">DEVISE</label>
+                <select
+                  className="input w-full"
+                  value={devise}
+                  onChange={(e) => setDevise(e.target.value)}
+                >
+                  <option value="">Toutes les devises</option>
+                  {DEVISES.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-label">STATUT</label>
+                <select
+                  className="input w-full"
+                  value={statutPaiement}
+                  onChange={(e) => setStatutPaiement(e.target.value as StatutPaiement | "")}
+                >
+                  <option value="">Tous les statuts</option>
+                  {STATUTS_PAIEMENT.map((s) => (
+                    <option key={s} value={s}>{STATUT_PAIEMENT_LABEL[s]}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-label">ÉVÉNEMENT</label>
+                <select
+                  className="input w-full"
+                  value={evenement}
+                  onChange={(e) => setEvenement(e.target.value as TypeEvenementCentralisation | "")}
+                >
+                  <option value="">Tous les événements</option>
+                  {EVENEMENTS.map((e) => (
+                    <option key={e} value={e}>{EVENEMENT_LABEL[e]}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Ligne 3: Montant min, Montant max, Date début, Date fin */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label className="text-label">MONTANT MIN</label>
+                <input
+                  type="number"
+                  value={montantMin}
+                  onChange={(e) => setMontantMin(e.target.value)}
+                  placeholder="Min"
+                  className="input w-full"
+                />
+              </div>
+
+              <div>
+                <label className="text-label">MONTANT MAX</label>
+                <input
+                  type="number"
+                  value={montantMax}
+                  onChange={(e) => setMontantMax(e.target.value)}
+                  placeholder="Max"
+                  className="input w-full"
+                />
+              </div>
+
+              <div>
+                <label className="text-label">DATE DÉBUT</label>
+                <input
+                  type="date"
+                  value={dateDebut}
+                  onChange={(e) => setDateDebut(e.target.value)}
+                  className="input w-full"
+                />
+              </div>
+
+              <div>
+                <label className="text-label">DATE FIN</label>
+                <input
+                  type="date"
+                  value={dateFin}
+                  onChange={(e) => setDateFin(e.target.value)}
+                  className="input w-full"
+                />
+              </div>
+            </div>
+          </div>
+        </CollapsibleFilterPanel>
 
         {/* Corbeilles */}
         <Card>
@@ -295,6 +489,16 @@ export default function PaiementImportPage() {
           </div>
         </div>
       )}
+
+      {/* Modal recherche client */}
+      <ClientSearchModal
+        isOpen={isClientModalOpen}
+        onClose={() => setIsClientModalOpen(false)}
+        onClientSelect={(client) => {
+          setClientQuery(client.nom);
+          setIsClientModalOpen(false);
+        }}
+      />
     </Shell>
   );
 }

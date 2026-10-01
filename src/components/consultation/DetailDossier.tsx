@@ -674,7 +674,9 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
   ];
 
   function ouvrirDetail(e: EvenementTrade) {
-    if (!e.saisieAgence && NATURES_AVEC_DETAIL.includes(e.nature)) {
+    if (e.saisieAgence && e.statut === "SOUMIS") {
+      ouvrirEditionEvenement(e);
+    } else if (!e.saisieAgence && NATURES_AVEC_DETAIL.includes(e.nature)) {
       router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`);
     } else {
       setSelectedEvent(e);
