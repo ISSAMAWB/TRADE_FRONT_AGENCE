@@ -1,6 +1,6 @@
 export type ProduitCode = "ILC" | "IRD" | "ELC" | "ERD" | "FIN";
 export type StatutDossier = "VALIDE" | "EN_COURS" | "EN_ATTENTE" | "REJETE";
-export type StatutEvenement = "VALIDE" | "EN_COURS" | "EN_ATTENTE" | "REJETE" | "EXPIRE";
+export type StatutEvenement = "VALIDE" | "EN_COURS" | "EN_ATTENTE" | "ENREGISTRE" | "SOUMIS" | "REJETE" | "EXPIRE";
 
 export type FormatChamp =
   | "montant"

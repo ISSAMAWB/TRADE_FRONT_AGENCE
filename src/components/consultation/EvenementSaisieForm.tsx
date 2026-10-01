@@ -28,6 +28,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const montantRemise = dossier.donnees["montantRemise"];
   const montantRemiseOk = isMontantAvecDevise(montantRemise) ? montantRemise : null;
   const deviseDossier = encoursOk?.devise ?? montantRemiseOk?.devise ?? "";
+  const conditionsRemiseAutre = String(dossier.donnees["conditionsRemiseDocuments"] ?? "").trim().toLowerCase() === "autre";
 
   const s = evenement?.saisieAgence;
   const p = s?.paiement;
@@ -71,6 +72,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     { nom: "Attijariwafa Bank", pays: "Maroc", ville: "Casablanca", bic: "BCMAMAMC", adresse: "2 Bd Moulay Youssef, 20100 Casablanca, Maroc" },
     { nom: "Banque Populaire", pays: "Maroc", ville: "Casablanca", bic: "BCPOMAMC", adresse: "101 Bd Mohamed Zerktouni, 20100 Casablanca, Maroc" },
     { nom: "BMCE Bank", pays: "Maroc", ville: "Casablanca", bic: "BMCEMAMC", adresse: "140 Av. Hassan II, 20070 Casablanca, Maroc" },
+  ];
+
+  const PAYS = [
+    "Maroc", "France", "Espagne", "Italie", "Allemagne", "Belgique", "Suisse", "Pays-Bas", "Royaume-Uni",
+    "Tunisie", "Algérie", "Mauritanie", "Sénégal", "Côte d'Ivoire", "Turquie", "Émirats arabes unis",
+    "États-Unis", "Canada", "Chine", "Japon",
   ];
 
   const CLIENTS: { nom: string; compte: string }[] = [];
@@ -148,30 +155,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   );
   const fermerPopupTire = () => { setPopupTire(false); setRechTireNom(""); setRechTireCompte(""); };
 
-  const TICKETS_SDM = [
-    { numero: "SDM-2026-0112", libelle: "Ticket SDM - encaissement partiel", montant: 200000 },
-    { numero: "SDM-2026-0234", libelle: "Ticket SDM - règlement principal", montant: 450000 },
-    { numero: "SDM-2026-0298", libelle: "Ticket SDM - régularisation", montant: 100000 },
-    { numero: "SDM-2026-0301", libelle: "Ticket SDM - acompte", montant: 50000 },
-    { numero: "SDM-2026-0417", libelle: "Ticket SDM - solde", montant: 650000 },
-  ];
-
-  const [popupTicket, setPopupTicket] = useState(false);
-  const [rechTicket, setRechTicket] = useState("");
-  const [ticketsSel, setTicketsSel] = useState<string[]>([]);
-  const ticketsFiltres = TICKETS_SDM.filter(t => t.numero.toLowerCase().includes(rechTicket.toLowerCase()));
-  const ouvrirPopupTicket = () => {
-    setTicketsSel(paiementForm.naturePaiement ? paiementForm.naturePaiement.split(",").map(s => s.trim()).filter(Boolean) : []);
-    setPopupTicket(true);
-  };
-  const fermerPopupTicket = () => { setPopupTicket(false); setRechTicket(""); };
-  const toggleTicket = (numero: string) =>
-    setTicketsSel(sel => sel.includes(numero) ? sel.filter(n => n !== numero) : [...sel, numero]);
-  const validerTickets = () => {
-    setPaiementForm(f => ({ ...f, naturePaiement: ticketsSel.join(", ") }));
-    fermerPopupTicket();
-  };
-
   const [montantAVue, setMontantAVue] = useState("");
 
   const titresDossier = (dossier.donnees["referencesTitresImportation"] as string[] | undefined) ?? [];
@@ -214,6 +197,15 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     b.pays.toLowerCase().includes(rechPays.toLowerCase())
   );
   const fermerPopupBanque = () => { setPopupBanque(null); setRechNom(""); setRechBic(""); setRechPays(""); };
+
+  const [popupPays, setPopupPays] = useState(false);
+  const [rechPaysChoix, setRechPaysChoix] = useState("");
+  const paysFiltres = PAYS.filter(p => p.toLowerCase().includes(rechPaysChoix.toLowerCase()));
+  const fermerPopupPays = () => { setPopupPays(false); setRechPaysChoix(""); };
+  const choisirPays = (pays: string) => {
+    setPaiementForm(f => ({ ...f, paysBanqueBeneficiaire: pays }));
+    fermerPopupPays();
+  };
   const choisirBanque = (b: { nom: string; adresse: string; ville: string; pays: string }) => {
     if (popupBanque === "partie") {
       setPaiementForm(f => ({ ...f, partieAPayer: b.nom, adressePartieAPayer: b.adresse, villePartieAPayer: b.ville, paysPartieAPayer: b.pays }));
@@ -243,19 +235,19 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const [destinataire, setDestinataire] = useState(s?.destinataire ?? dossier.client ?? "");
 
   const [paiementForm, setPaiementForm] = useState({
-    referencePaiementRecu: p?.referencePaiementRecu ?? "",
-    partieOriginePaiement: p?.partieOriginePaiement ?? "Tiré",
+
+    partieOriginePaiement: p?.partieOriginePaiement ?? "Tiré/Client",
     paiementRecuDe: p?.paiementRecuDe ?? DEFAUT_PAIEMENT_RECU_DE,
     adressePaiementRecuDe: p?.adressePaiementRecuDe ?? DEFAUT_ADRESSE_PAIEMENT_RECU_DE,
     villePaiementRecuDe: p?.villePaiementRecuDe ?? "Casablanca",
     paysPaiementRecuDe: p?.paysPaiementRecuDe ?? "Maroc",
     dateReception: p?.dateReception ?? aujourdhui,
     naturePartieAPayer: p?.naturePartieAPayer ?? "Banque étrangère",
-    partieAPayer: p?.partieAPayer ?? "",
-    adressePartieAPayer: p?.adressePartieAPayer ?? "",
-    villePartieAPayer: p?.villePartieAPayer ?? "",
-    paysPartieAPayer: p?.paysPartieAPayer ?? "",
-    referenceBeneficiaire: p?.referenceBeneficiaire ?? "",
+    partieAPayer: p?.partieAPayer ?? BANQUES[0].nom,
+    adressePartieAPayer: p?.adressePartieAPayer ?? BANQUES[0].adresse,
+    villePartieAPayer: p?.villePartieAPayer ?? BANQUES[0].ville,
+    paysPartieAPayer: p?.paysPartieAPayer ?? BANQUES[0].pays,
+
     modePaiement: p?.modePaiement ?? "Payer",
     banqueBeneficiaire: p?.banqueBeneficiaire ?? "",
     adresseBanqueBeneficiaire: p?.adresseBanqueBeneficiaire ?? "",
@@ -267,8 +259,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
 
     coursApplique: p?.coursApplique != null ? String(p.coursApplique) : "10.55",
     montantPaye: p?.montantPaye != null ? String(p.montantPaye) : "",
-    naturePaiement: p?.naturePaiement ?? "",
-    montantRestant: p?.montantRestant != null ? String(p.montantRestant) : "",
+
+
     dateValeur: p?.dateValeur ?? aujourdhui,
     compteDebite: p?.compteDebite ?? "",
     agenceDomiciliation: p?.agenceDomiciliation ?? "",
@@ -289,6 +281,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
 
   const montantRequis = nature === "Paiement" || nature === "Acceptation & Aval de la traite";
   const montantAPayerTotal = (Number(paiementForm.montantPaye) || 0) + (Number(montantAVue) || 0);
+  const montantRestantRegler = montantRemiseOk ? montantRemiseOk.valeur - montantAPayerTotal : null;
   const coursApplique = Number(paiementForm.coursApplique);
   const contrevaleurBrute = montantAPayerTotal * coursApplique;
   const contrevaleurDirhams = (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "")
@@ -314,12 +307,25 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   }, [compteDebiteNormalise, montantABloquer, deviseMontantABloquer, peutBloquerProvision]);
 
 
-  function enregistrer() {
-    if (nature === "Paiement" && documentsObligatoiresManquants.length > 0) {
-      setErreurDocumentsObligatoires(true);
-      setOngletPieces("documents");
-      return;
+  const [erreurSoumission, setErreurSoumission] = useState<string[]>([]);
+
+  function enregistrer(nouveauStatut: "ENREGISTRE" | "SOUMIS") {
+    if (nouveauStatut === "SOUMIS") {
+      const manquants: string[] = [];
+      if (nature === "Paiement") {
+        if (!paiementForm.compteDebite.trim()) manquants.push("Compte à débiter");
+        if (!(montantAPayerTotal > 0)) manquants.push("Montant à payer");
+        if (!paiementForm.signatureConforme) manquants.push("Signature conforme");
+        if (documentsObligatoiresManquants.length > 0) {
+          setErreurDocumentsObligatoires(true);
+          setOngletPieces("documents");
+          manquants.push(`Documents obligatoires : ${documentsObligatoiresManquants.join(", ")}`);
+        }
+      }
+      if (montantRequis && montant <= 0) manquants.push("Montant");
+      if (manquants.length > 0) { setErreurSoumission(manquants); return; }
     }
+    setErreurSoumission([]);
     const saisie = {
       nature,
       montant: montantRequis ? montant : null,
@@ -334,7 +340,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         motif: nature === "Retour des documents" ? motif : undefined,
         destinataire: nature === "Demande de remise des documents" ? destinataire : undefined,
         paiement: nature === "Paiement" ? {
-          referencePaiementRecu: paiementForm.referencePaiementRecu || undefined,
+
           partieOriginePaiement: paiementForm.partieOriginePaiement || undefined,
           paiementRecuDe: paiementForm.paiementRecuDe || undefined,
           adressePaiementRecuDe: paiementForm.adressePaiementRecuDe || undefined,
@@ -346,7 +352,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           adressePartieAPayer: paiementForm.adressePartieAPayer || undefined,
           villePartieAPayer: paiementForm.villePartieAPayer || undefined,
           paysPartieAPayer: paiementForm.paysPartieAPayer || undefined,
-          referenceBeneficiaire: paiementForm.referenceBeneficiaire || undefined,
+
           modePaiement: paiementForm.modePaiement || undefined,
           banqueBeneficiaire: paiementForm.banqueBeneficiaire || undefined,
           adresseBanqueBeneficiaire: paiementForm.adresseBanqueBeneficiaire || undefined,
@@ -358,8 +364,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           coursApplique: paiementForm.coursApplique ? Number(paiementForm.coursApplique) : undefined,
           montantPaye: montantAPayerTotal || undefined,
           contrevaleurDirhams,
-          naturePaiement: paiementForm.naturePaiement || undefined,
-          montantRestant: paiementForm.montantRestant ? Number(paiementForm.montantRestant) : undefined,
+
+          montantRestant: montantRestantRegler ?? undefined,
           dateValeur: paiementForm.dateValeur || undefined,
           compteDebite: paiementForm.compteDebite || undefined,
           identiteCompteDebite: clientCompteDebite ? { numeroCompte: compteDebiteNormalise, raisonSociale: clientCompteDebite.raisonSociale } : undefined,
@@ -369,10 +375,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       },
     };
     if (evenement) {
-      modifierEvenementDossier(dossier.reference, evenement.reference, saisie);
+      modifierEvenementDossier(dossier.reference, evenement.reference, saisie, nouveauStatut);
       onSaved(evenement.reference);
     } else {
-      const ev = ajouterEvenementDossier(dossier.reference, saisie);
+      const ev = ajouterEvenementDossier(dossier.reference, saisie, nouveauStatut);
       onSaved(ev.reference);
     }
   }
@@ -381,8 +387,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     <div>
       <div className="bg-[#FAEEDA] text-[#854F0B] text-xs rounded-lg p-2 mb-4">
         {evenement
-          ? "L'événement reste en statut En attente. L'encours et le dossier seront mis à jour après validation."
-          : "L'événement sera créé en statut En attente. L'encours et le dossier seront mis à jour après validation."}
+          ? "L'événement reste dans l'onglet En cours. L'encours et le dossier seront mis à jour après validation."
+          : "L'événement sera créé dans l'onglet En cours : statut « Enregistré » via le bouton Enregistrer, « Soumis » via Soumettre."}
       </div>
 
       <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5 mb-4">
@@ -393,19 +399,19 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
         <div>
           <label className="text-label">Référence de la remise</label>
-          <input className="input w-full bg-gray-50" value={dossier.reference} readOnly />
+          <input className="input w-full bg-gray-100" value={dossier.reference} readOnly />
         </div>
         <div>
-          <label className="text-label">Date de création</label>
+          <label className="text-label">Date de création de la remise</label>
           <input
-            className="input w-full bg-gray-50"
+            className="input w-full bg-gray-100"
             value={dossier.evenements[0]?.dateCreation ? new Date(dossier.evenements[0].dateCreation).toLocaleDateString("fr-FR") : "—"}
             readOnly
           />
         </div>
         <div>
           <label className="text-label">Conditions de remise des documents</label>
-          <input className="input w-full bg-gray-50" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
+          <input className="input w-full bg-gray-100" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
         </div>
 
         {nature === "Acceptation & Aval de la traite" && (
@@ -459,28 +465,34 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
               <div>
                 <label className="text-label">Partie à l'origine du paiement</label>
-                <select className="input w-full" value={paiementForm.partieOriginePaiement} onChange={setP("partieOriginePaiement")}>
-                  <option>Tiré</option>
+                <select className="input w-full bg-gray-100" value={paiementForm.partieOriginePaiement} onChange={setP("partieOriginePaiement")} disabled>
+                  <option>Tiré/Client</option>
                   <option>Tireur</option>
                   <option>Banque remettante</option>
                   <option>Autre</option>
                 </select>
               </div>
               <div>
-                <label className="text-label">Référence du paiement reçu</label>
-                <input className="input w-full" value={paiementForm.referencePaiementRecu} onChange={setP("referencePaiementRecu")} placeholder="Ex. LIC3344992" />
+                <label className="text-label" htmlFor="compte-a-debiter-recu">Compte à débiter <span className="text-red-500">*</span></label>
+                <div className="relative">
+                  <input id="compte-a-debiter-recu" className="input w-full pr-9" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
+                  <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition" onClick={() => setPopupCompte(true)} title="Rechercher un compte" aria-label="Rechercher un compte">
+                    <Search size={15} />
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="text-label">Date de réception</label>
                 <input type="date" className="input w-full" value={paiementForm.dateReception} onChange={setP("dateReception")} />
               </div>
               <div>
-                <label className="text-label">Paiement reçu de</label>
+                <span className="text-label invisible block" aria-hidden="true">Paiement reçu de</span>
                 <div className="relative">
-                  <input type="text" className="input w-full pr-9 bg-gray-50" value={paiementForm.paiementRecuDe} readOnly placeholder="Nom du payeur" />
+                  <input type="text" className="input w-full pr-9 bg-gray-100" value={paiementForm.paiementRecuDe} readOnly placeholder="Nom du payeur" />
                   <button
                     type="button"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
+                    disabled
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] transition disabled:opacity-40 disabled:cursor-not-allowed"
                     onClick={() => paiementForm.partieOriginePaiement === "Banque remettante" ? setPopupBanque("payeur") : setPopupTire(true)}
                     title={paiementForm.partieOriginePaiement === "Banque remettante" ? "Rechercher la banque remettante" : "Rechercher le tiré"}
                   >
@@ -488,7 +500,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </button>
                 </div>
                 <textarea
-                  className="input w-full mt-1.5 bg-gray-50"
+                  className="input w-full mt-1.5 bg-gray-100"
                   rows={4}
                   value={[paiementForm.adressePaiementRecuDe, paiementForm.villePaiementRecuDe, paiementForm.paysPaiementRecuDe].filter(Boolean).join("\n")}
                   readOnly
@@ -497,24 +509,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 />
               </div>
               <div className="md:col-span-2 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
-                  <div>
-                    <label className="text-label" htmlFor="compte-a-debiter-recu">Compte à débiter <span className="text-red-500">*</span></label>
-                    <div className="relative">
-                      <input id="compte-a-debiter-recu" className="input w-full pr-9" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
-                      <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition" onClick={() => setPopupCompte(true)} title="Rechercher un compte" aria-label="Rechercher un compte">
-                        <Search size={15} />
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-label invisible block" aria-hidden="true">Signature conforme</span>
-                    <label className="flex items-center gap-2 cursor-pointer h-9">
-                      <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.signatureConforme} onChange={setP("signatureConforme")} />
-                      <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Signature conforme <span className="text-red-500">*</span></span>
-                    </label>
-                  </div>
-                </div>
                 <div className="w-full rounded-lg border border-[#e5e8ec]">
                   <table className="w-full table-fixed text-xs" aria-label="Informations du compte à débiter">
                     <thead className="bg-gray-50">
@@ -542,11 +536,16 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     </tbody>
                   </table>
                 </div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.signatureConforme} onChange={setP("signatureConforme")} />
+                  <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Signature conforme <span className="text-red-500">*</span></span>
+                </label>
               </div>
             </div>
           </div>
 
           {/* Liste des paiements */}
+          {conditionsRemiseAutre && (
           <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
             <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
               <div className="w-1 h-5 bg-gradient-to-r from-violet-500 to-violet-600 rounded-full"></div>
@@ -627,6 +626,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               </span>
             </div>
           </div>
+          )}
 
           {/* Détails du paiement */}
           <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
@@ -638,45 +638,38 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="space-y-4">
                 <div>
                   <label className="text-label">Montant des documents présentés</label>
-                  <input className="input w-full bg-gray-50" value={montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR")} ${montantRemiseOk.devise}` : "—"} readOnly />
+                  <input className="input w-full bg-gray-100" value={montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR")} ${montantRemiseOk.devise}` : "—"} readOnly />
                 </div>
                 <div>
                   <label className="text-label">Montant restant à régler</label>
-                  <input type="number" className="input w-full" value={paiementForm.montantRestant} onChange={setP("montantRestant")} />
+                  <input type="text" className="input w-full bg-gray-100" value={montantRestantRegler != null ? `${montantRestantRegler.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}` : ""} readOnly />
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-label">Montant à payer <span className="text-red-500">*</span></label>
-                  <input type="text" className="input w-full bg-gray-50" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
+                  <label className="text-label">Montant total à payer <span className="text-red-500">*</span></label>
+                  {conditionsRemiseAutre ? (
+                    <input type="text" className="input w-full bg-gray-100" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <input type="number" className="input w-full min-w-0 text-right font-mono tabular-nums" value={paiementForm.montantPaye} onChange={setP("montantPaye")} aria-label={`Montant total à payer ${deviseDossier}`} />
+                      <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="text-label">Cours appliqué</label>
-                  <input type="number" step="0.0001" className="input w-full" value={paiementForm.coursApplique} onChange={setP("coursApplique")} placeholder="Ex. 10,85" />
+                  <input type="number" step="0.0001" className="input w-full bg-gray-100" value={paiementForm.coursApplique} onChange={setP("coursApplique")} placeholder="Ex. 10,85" readOnly />
                 </div>
                 <div>
                   <label className="text-label">Contrevaleur estimative en dirhams</label>
-                  <input type="number" step="0.01" className="input w-full bg-gray-50" value={contrevaleurDirhams != null ? contrevaleurDirhams.toFixed(2) : ""} readOnly />
+                  <input type="number" step="0.01" className="input w-full bg-gray-100" value={contrevaleurDirhams != null ? contrevaleurDirhams.toFixed(2) : ""} readOnly />
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
                   <label className="text-label">Date de valeur</label>
                   <input type="date" className="input w-full" value={datePaiement} onChange={(e) => setDatePaiement(e.target.value)} />
-                </div>
-                <div>
-                  <label className="text-label">N.Ticket SDM</label>
-                  <div className="relative">
-                    <input className="input w-full pr-9" value={paiementForm.naturePaiement} onChange={setP("naturePaiement")} placeholder="N° du ticket" />
-                    <button
-                      type="button"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
-                      onClick={ouvrirPopupTicket}
-                      title="Rechercher un ticket SDM"
-                    >
-                      <Search size={15} />
-                    </button>
-                  </div>
                 </div>
                 <div>
                   <label className="text-label">Référence de l'aval</label>
@@ -696,26 +689,28 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="flex flex-col gap-4 min-w-0">
                 <div>
                   <label className="text-label">Nature de la partie à payer</label>
-                  <select className="input w-full" value={paiementForm.naturePartieAPayer} onChange={setP("naturePartieAPayer")}>
+                  <select className="input w-full bg-gray-100" value={paiementForm.naturePartieAPayer} onChange={setP("naturePartieAPayer")} disabled>
                     <option>Banque étrangère</option>
                     <option>Tireur</option>
                     <option>Autre</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-label">Partie à payer <span className="text-red-500">*</span></label>
+                  <span className="text-label invisible block" aria-hidden="true">Partie à payer</span>
                   <div className="relative">
                     <input
                       type="text"
-                      className={`input w-full ${paiementForm.naturePartieAPayer === "Banque étrangère" ? "pr-9" : ""}`}
+                      className={`input w-full bg-gray-100 ${paiementForm.naturePartieAPayer === "Banque étrangère" ? "pr-9" : ""}`}
                       value={paiementForm.partieAPayer}
                       onChange={setP("partieAPayer")}
                       placeholder="Nom de la partie à payer"
+                      readOnly
                     />
                     {paiementForm.naturePartieAPayer === "Banque étrangère" && (
                       <button
                         type="button"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
+                        disabled
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] transition disabled:opacity-40 disabled:cursor-not-allowed"
                         onClick={() => setPopupBanque("partie")}
                         title="Rechercher une banque"
                       >
@@ -724,7 +719,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     )}
                   </div>
                   <textarea
-                    className="input w-full mt-2 bg-gray-50"
+                    className="input w-full mt-2 bg-gray-100"
                     rows={4}
                     value={[paiementForm.adressePartieAPayer, paiementForm.villePartieAPayer, paiementForm.paysPartieAPayer].filter(Boolean).join("\n")}
                     readOnly
@@ -734,10 +729,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 </div>
               </div>
               <div className="flex flex-col gap-4 min-w-0">
-                <div>
-                  <label className="text-label">Référence</label>
-                  <input className="input w-full" value={paiementForm.referenceBeneficiaire} onChange={setP("referenceBeneficiaire")} />
-                </div>
                 <div>
                   <label className="text-label">Banque du bénéficiaire</label>
                   <div className="relative">
@@ -752,13 +743,34 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     </button>
                   </div>
                   <textarea
-                    className="input w-full mt-2 bg-gray-50"
+                    className="input w-full mt-2 bg-gray-100"
                     rows={4}
-                    value={[paiementForm.adresseBanqueBeneficiaire, paiementForm.villeBanqueBeneficiaire, paiementForm.paysBanqueBeneficiaire].filter(Boolean).join("\n")}
+                    value={[paiementForm.adresseBanqueBeneficiaire].filter(Boolean).join("\n")}
                     readOnly
-                    placeholder="Adresse · Ville · Pays"
-                    aria-label="Adresse, ville et pays de la banque du bénéficiaire"
+                    placeholder="Adresse"
+                    aria-label="Adresse de la banque du bénéficiaire"
                   />
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    <div>
+                      <label className="text-label">Ville</label>
+                      <input className="input w-full" value={paiementForm.villeBanqueBeneficiaire} onChange={setP("villeBanqueBeneficiaire")} />
+                    </div>
+                    <div>
+                      <label className="text-label">Pays</label>
+                      <div className="relative">
+                        <input className="input w-full pr-9" value={paiementForm.paysBanqueBeneficiaire} onChange={setP("paysBanqueBeneficiaire")} />
+                        <button
+                          type="button"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
+                          onClick={() => setPopupPays(true)}
+                          title="Rechercher un pays"
+                          aria-label="Rechercher un pays"
+                        >
+                          <Search size={15} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col gap-4 min-w-0">
@@ -972,12 +984,17 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         </div>
       )}
 
+      {erreurSoumission.length > 0 && (
+        <p role="alert" className="text-sm text-red-600 mb-3">
+          Champs obligatoires manquants : {erreurSoumission.join(" · ")}.
+        </p>
+      )}
       <div className="flex justify-end gap-2">
         <button className="btn-secondary" onClick={onCancel}>Annuler</button>
-        <button className="btn-primary" disabled={montantRequis && montant <= 0} onClick={enregistrer}>
+        <button className="btn-primary" onClick={() => enregistrer("ENREGISTRE")}>
           Enregistrer
         </button>
-        <button className="btn-primary" disabled={montantRequis && montant <= 0} onClick={enregistrer}>
+        <button className="btn-primary" onClick={() => enregistrer("SOUMIS")}>
           Soumettre
         </button>
       </div>
@@ -1028,6 +1045,45 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <div className="font-mono text-[11px] text-[#64748b]">{b.bic}</div>
                   </div>
                   <div className="text-xs text-[#64748b]">{b.adresse} · {b.pays}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Popup choix du pays */}
+      {popupPays && (
+        <>
+          <div className="fixed inset-0 bg-black/30 z-50" onClick={fermerPopupPays} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-2xl shadow-2xl z-50 max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e8ec]">
+              <div className="text-sm font-semibold text-[#0f172a]">Rechercher un pays</div>
+              <button
+                type="button"
+                className="h-8 w-8 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center"
+                onClick={fermerPopupPays}
+                aria-label="Fermer la recherche de pays"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="px-5 py-3 border-b border-[#e5e8ec]">
+              <label className="text-label">Pays</label>
+              <input className="input w-full" value={rechPaysChoix} onChange={(e) => setRechPaysChoix(e.target.value)} placeholder="Ex. France" autoFocus />
+            </div>
+            <div className="overflow-y-auto py-2">
+              {paysFiltres.length === 0 && (
+                <div className="px-5 py-6 text-sm text-[#64748b] text-center">Aucun pays trouvé.</div>
+              )}
+              {paysFiltres.map((pays) => (
+                <button
+                  key={pays}
+                  type="button"
+                  className="w-full text-left px-5 py-3 hover:bg-orange-50 transition"
+                  onClick={() => choisirPays(pays)}
+                >
+                  <div className="text-sm font-medium text-[#0f172a]">{pays}</div>
                 </button>
               ))}
             </div>
@@ -1119,70 +1175,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </div>
                 </button>
               ))}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Popup recherche ticket SDM */}
-      {popupTicket && (
-        <>
-          <div className="fixed inset-0 bg-black/30 z-50" onClick={fermerPopupTicket} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-2xl shadow-2xl z-50 max-h-[80vh] flex flex-col">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e8ec]">
-              <div className="text-sm font-semibold text-[#0f172a]">Rechercher un ticket SDM</div>
-              <button
-                className="h-8 w-8 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center"
-                onClick={fermerPopupTicket}
-              >
-                <X size={16} />
-              </button>
-            </div>
-            <div className="px-5 py-3 border-b border-[#e5e8ec]">
-              <div className="grid grid-cols-1 gap-3">
-                <div>
-                  <label className="text-label">Numéro</label>
-                  <input className="input w-full font-mono" value={rechTicket} onChange={(e) => setRechTicket(e.target.value)} placeholder="Ex. SDM-2026-0112" autoFocus />
-                </div>
-              </div>
-            </div>
-            <div className="overflow-y-auto py-2">
-              {ticketsFiltres.length === 0 && (
-                <div className="px-5 py-6 text-sm text-[#64748b] text-center">Aucun ticket trouvé.</div>
-              )}
-              {ticketsFiltres.map((t) => {
-                const sel = ticketsSel.includes(t.numero);
-                return (
-                  <button
-                    key={t.numero}
-                    type="button"
-                    className={`w-full text-left px-5 py-3 transition flex items-start gap-3 ${sel ? "bg-orange-50" : "hover:bg-orange-50"}`}
-                    onClick={() => toggleTicket(t.numero)}
-                  >
-                    <input
-                      type="checkbox"
-                      className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 pointer-events-none"
-                      checked={sel}
-                      readOnly
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="text-sm font-medium text-[#0f172a] font-mono">{t.numero}</div>
-                        <div className="font-mono text-[11px] text-[#64748b]">{t.montant.toLocaleString("fr-FR")} {deviseDossier}</div>
-                      </div>
-                      <div className="text-xs text-[#64748b]">{t.libelle}</div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-            <div className="flex items-center justify-between gap-2 px-5 py-3 border-t border-[#e5e8ec]">
-              <div className="text-xs text-[#64748b]">
-                {ticketsSel.length} ticket{ticketsSel.length > 1 ? "s" : ""} sélectionné{ticketsSel.length > 1 ? "s" : ""}
-              </div>
-              <button type="button" className="btn-primary" onClick={validerTickets}>
-                Valider
-              </button>
             </div>
           </div>
         </>

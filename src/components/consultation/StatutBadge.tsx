@@ -4,6 +4,8 @@ const STATUS_STYLES: Record<string, { label: string; bg: string; color: string }
   VALIDE: { label: "Validé", bg: "#E1F5EE", color: "#0F6E56" },
   EN_COURS: { label: "En cours", bg: "#E6F1FB", color: "#0C447C" },
   EN_ATTENTE: { label: "En attente", bg: "#FAEEDA", color: "#854F0B" },
+  ENREGISTRE: { label: "Enregistré", bg: "#E0E7FF", color: "#3730A3" },
+  SOUMIS: { label: "Soumis", bg: "#D1FAE5", color: "#065F46" },
   REJETE: { label: "Rejeté", bg: "#FCEBEB", color: "#A32D2D" },
   EXPIRE: { label: "Expiré", bg: "#F1EFE8", color: "#5F5E5A" },
 };

@@ -27,6 +27,12 @@ export default function ListePilotagePage() {
   );
 }
 
+const EVENEMENT_LABEL: Record<string, string> = {
+  CREATION: "Création",
+  MODIFICATION: "Modification",
+  CHANGEMENT_DOMICILIATION: "Changement de domiciliation",
+};
+
 const PARAM_LABELS: Record<string, string> = {
   q: "Recherche", ref: "Référence", ref_interne: "Réf. interne", ref_externe: "Réf. externe",
   client: "Client", statut: "Statut", devise: "Devise", montant_min: "Montant ≥",
@@ -190,6 +196,7 @@ function ListePilotageInner() {
                   <tr>
                     <th>Référence</th>
                     <th>Produit</th>
+                    <th>Événement</th>
                     <th>Client / Tiré</th>
                     <th className="text-right">Montant</th>
                     <th>Contexte métier</th>
@@ -207,6 +214,10 @@ function ListePilotageInner() {
                         {c.reference_interne && <div className="text-[11px] text-gray-500">Int. {c.reference_interne}</div>}
                       </td>
                       <td className="whitespace-nowrap"><span className="badge-produit">{PRODUIT_IRD_LABEL[c.produit ?? "REMISE_DOCUMENTAIRE_IMPORT"]}</span></td>
+                      <td className="whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{EVENEMENT_LABEL[c.type_evenement ?? "CREATION"] ?? c.type_evenement}</div>
+                        {c.code_evenement && <div className="text-[11px] text-gray-500 font-mono">{c.code_evenement}</div>}
+                      </td>
                       <td>{c.client ?? <span className="text-gray-400">—</span>}</td>
                       <td className="text-right whitespace-nowrap">
                         {c.montant ? (
@@ -250,7 +261,7 @@ function ListePilotageInner() {
                   ))}
                   {items.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="text-center text-gray-400 py-8">
+                      <td colSpan={8} className="text-center text-gray-400 py-8">
                         Aucun dossier ne correspond à ces critères.
                       </td>
                     </tr>

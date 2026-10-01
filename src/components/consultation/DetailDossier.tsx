@@ -630,7 +630,7 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
   const isAcceptation = String(dossier.donnees["conditionsRemiseDocuments"] ?? "").toLowerCase().includes("acceptation");
   const acceptationValidee = evenements.some((e) => e.nature === "Acceptation & Aval de la traite" && e.statut === "VALIDE");
   const retourDejaFait = evenements.some((e) => e.nature === "Retour des documents" || e.nature === "Clôture de la remise");
-  const demandeDejaEnAttente = evenements.some((e) => e.nature === "Demande de remise des documents" && (e.statut === "EN_ATTENTE" || e.statut === "EN_COURS"));
+  const demandeDejaEnAttente = evenements.some((e) => e.nature === "Demande de remise des documents" && (e.statut === "EN_ATTENTE" || e.statut === "EN_COURS" || e.statut === "ENREGISTRE" || e.statut === "SOUMIS"));
 
   const naturesCreation: { nature: string; eligible: boolean; raison: string }[] = [
     {
@@ -655,11 +655,11 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
     },
   ];
 
-  const nbEnCours = evenements.filter((e) => e.statut === "EN_ATTENTE" || e.statut === "EN_COURS").length;
+  const nbEnCours = evenements.filter((e) => e.statut === "EN_ATTENTE" || e.statut === "EN_COURS" || e.statut === "ENREGISTRE" || e.statut === "SOUMIS").length;
   const nbValides = evenements.filter((e) => e.statut === "VALIDE" || e.statut === "EXPIRE").length;
   const evenementsFiltres = evenements.filter((e) =>
     segment === "EN_COURS"
-      ? e.statut === "EN_ATTENTE" || e.statut === "EN_COURS"
+      ? e.statut === "EN_ATTENTE" || e.statut === "EN_COURS" || e.statut === "ENREGISTRE" || e.statut === "SOUMIS"
       : segment === "TRAITES"
         ? e.statut === "VALIDE" || e.statut === "EXPIRE"
         : true
@@ -806,7 +806,7 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
                     >
                       <Eye size={15} />
                     </button>
-                    {e.saisieAgence && (e.statut === "EN_ATTENTE" || e.statut === "EN_COURS") && (
+                    {e.saisieAgence && (e.statut === "EN_ATTENTE" || e.statut === "EN_COURS" || e.statut === "ENREGISTRE") && (
                       <button
                         className="text-[#94a3b8] hover:text-[#e8632b] transition"
                         onClick={(ev) => { ev.stopPropagation(); ouvrirEditionEvenement(e); }}
@@ -815,7 +815,7 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
                         <Pencil size={14} />
                       </button>
                     )}
-                    {e.saisieAgence && e.statut === "EN_ATTENTE" && (
+                    {e.saisieAgence && (e.statut === "EN_ATTENTE" || e.statut === "ENREGISTRE") && (
                       <button
                         className="text-[#94a3b8] hover:text-[#dc2626] transition"
                         onClick={(ev) => { ev.stopPropagation(); supprimerEvenementDossier(dossierId, e.reference); }}
@@ -880,6 +880,8 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
                   <div className="text-sm font-medium text-[#0f172a]">
                     {selectedEvent.statut === "VALIDE" ? "Validé" :
                      selectedEvent.statut === "EN_COURS" ? "En cours" :
+                     selectedEvent.statut === "ENREGISTRE" ? "Enregistré" :
+                     selectedEvent.statut === "SOUMIS" ? "Soumis" :
                      selectedEvent.statut === "EN_ATTENTE" ? "En attente" : selectedEvent.statut}
                   </div>
                 </div>
