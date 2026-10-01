@@ -236,7 +236,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
 
   const [paiementForm, setPaiementForm] = useState({
 
-    partieOriginePaiement: p?.partieOriginePaiement ?? "Tiré/Client",
+    partieOriginePaiement: p?.partieOriginePaiement ?? "Client/Tiré",
     paiementRecuDe: p?.paiementRecuDe ?? DEFAUT_PAIEMENT_RECU_DE,
     adressePaiementRecuDe: p?.adressePaiementRecuDe ?? DEFAUT_ADRESSE_PAIEMENT_RECU_DE,
     villePaiementRecuDe: p?.villePaiementRecuDe ?? "Casablanca",
@@ -466,7 +466,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div>
                 <label className="text-label">Partie à l'origine du paiement</label>
                 <select className="input w-full bg-gray-100" value={paiementForm.partieOriginePaiement} onChange={setP("partieOriginePaiement")} disabled>
-                  <option>Tiré/Client</option>
+                  <option>Client/Tiré</option>
                   <option>Tireur</option>
                   <option>Banque remettante</option>
                   <option>Autre</option>
@@ -644,6 +644,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <label className="text-label">Montant restant à régler</label>
                   <input type="text" className="input w-full bg-gray-100" value={montantRestantRegler != null ? `${montantRestantRegler.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}` : ""} readOnly />
                 </div>
+                <div>
+                  <label className="text-label">Date de valeur</label>
+                  <input type="date" className="input w-full" value={datePaiement} onChange={(e) => setDatePaiement(e.target.value)} />
+                </div>
               </div>
               <div className="space-y-4">
                 <div>
@@ -667,10 +671,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 </div>
               </div>
               <div className="space-y-4">
-                <div>
-                  <label className="text-label">Date de valeur</label>
-                  <input type="date" className="input w-full" value={datePaiement} onChange={(e) => setDatePaiement(e.target.value)} />
-                </div>
                 <div>
                   <label className="text-label">Référence de l'aval</label>
                   <input className="input w-full" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
@@ -732,7 +732,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <div>
                   <label className="text-label">Banque du bénéficiaire</label>
                   <div className="relative">
-                    <input className="input w-full pr-9" value={paiementForm.banqueBeneficiaire} onChange={setP("banqueBeneficiaire")} />
+                    <input className="input w-full pr-9" value={paiementForm.banqueBeneficiaire} onChange={(e) => {
+                      const v = e.target.value;
+                      setPaiementForm(f => v.trim() === ""
+                        ? { ...f, banqueBeneficiaire: "", adresseBanqueBeneficiaire: "", villeBanqueBeneficiaire: "", paysBanqueBeneficiaire: "" }
+                        : { ...f, banqueBeneficiaire: v });
+                    }} />
                     <button
                       type="button"
                       className="absolute right-2 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#e8632b] transition"
