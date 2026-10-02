@@ -336,6 +336,8 @@ export interface EvenementTrade {
       // Détails de l'acceptation et aval
       acceptant?: string;
       adresseAcceptant?: string;
+      villeAcceptant?: string;
+      paysAcceptant?: string;
       dateReception?: string;
       instructionsRecues?: string;
       reference?: string;
@@ -349,9 +351,12 @@ export interface EvenementTrade {
       partieANotifier?: string;
       notifiePar?: string;
       adressePartieANotifier?: string;
+      villePartieANotifier?: string;
+      paysPartieANotifier?: string;
       instructionEnvoi?: string;
       referenceNotification?: string;
       remiseAExpirer?: boolean;
+      titreImportationNonRequis?: boolean;
       // Paiements à accepter
       paiementsAAccepter?: PaiementAAccepterAgence[];
     };

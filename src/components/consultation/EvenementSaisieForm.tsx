@@ -44,7 +44,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const [typeDocument, setTypeDocument] = useState<TypeDocumentAttacheAgence | "">("");
   const [erreurDocumentsObligatoires, setErreurDocumentsObligatoires] = useState(false);
   const [documentsAttaches, setDocumentsAttaches] = useState<DocumentAttacheAgence[]>(s?.documentsAttaches ?? []);
-  const DOCUMENTS_OBLIGATOIRES: TypeDocumentAttacheAgence[] = isAcceptation ? ["Effet accepté"] : ["Ordre de paiement", "Titre d'importation"];
+  const DOCUMENTS_OBLIGATOIRES: TypeDocumentAttacheAgence[] = isAcceptation ? ["Effet accepté"] : ["Ordre de paiement"];
   const documentsObligatoiresManquants = DOCUMENTS_OBLIGATOIRES.filter(type =>
     !documentsAttaches.some(document => document.categorie === type && document.fichier?.size > 0)
   );
@@ -163,9 +163,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const [montantAVue, setMontantAVue] = useState("");
 
   const titresDossier = (dossier.donnees["referencesTitresImportation"] as string[] | undefined) ?? [];
-  const [titresImputation, setTitresImputation] = useState<{ ref: string; montant: string }[]>(
-    titresDossier.map(ref => ({ ref, montant: "" }))
-  );
+  // Titres d'importation : page vide par défaut, alimentée uniquement par ajout utilisateur
+  const [titresImputation, setTitresImputation] = useState<{ ref: string; montant: string }[]>([]);
   const [ongletPieces, setOngletPieces] = useState<"titres" | "documents">("titres");
   const [pageTitres, setPageTitres] = useState(1);
   const titresParPage = 10;
@@ -180,14 +179,16 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const TITRES_DISPONIBLES = Array.from(new Set([
     ...titresDossier,
     "TI-2025-09703", "TI-2025-09704", "TI-2025-09812", "TI-2025-09940", "TI-2026-00107",
-  ])).map(ref => ({ ref, montantDisponible: 325000 }));
+  ])).map(ref => ({ ref, montantDisponible: 325000, devise: ref === "TI-2026-00107" ? "USD" : deviseDossier }));
   const [popupTitre, setPopupTitre] = useState(false);
   const [rechTitre, setRechTitre] = useState("");
+  const [rechTitreDevise, setRechTitreDevise] = useState("");
   const titresFiltres = TITRES_DISPONIBLES.filter(t =>
     t.ref.toLowerCase().includes(rechTitre.toLowerCase()) &&
+    t.devise.toLowerCase().includes(rechTitreDevise.toLowerCase()) &&
     !titresImputation.some(x => x.ref === t.ref)
   );
-  const fermerPopupTitre = () => { setPopupTitre(false); setRechTitre(""); };
+  const fermerPopupTitre = () => { setPopupTitre(false); setRechTitre(""); setRechTitreDevise(""); };
   const ajouterTitre = (ref: string) => {
     setTitresImputation(t => [...t, { ref, montant: "" }]);
     setPageTitres(Math.ceil((titresImputation.length + 1) / titresParPage));
@@ -272,32 +273,44 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   });
 
   const ac = s?.acceptation;
-  // Partie à notifier reprise de l'évènement « Réception de la remise » (partie remettante en priorité)
+  // Intervenants repris du dernier évènement de remise les portant (Réception, Modification, Ajustement…)
+  const intervenantsRemise = useMemo(() => {
+    const evenements = [...(dossier.evenements ?? [])].filter(e => e.receptionRemise?.intervenants?.length);
+    const dernier = evenements.find(e => e.nature === "Réception de la remise") ?? evenements[evenements.length - 1];
+    return dernier?.receptionRemise?.intervenants ?? [];
+  }, [dossier]);
+  // Partie à notifier reprise de la remise (partie remettante en priorité)
   const intervenantNotifie = useMemo(() => {
-    const intervenants = dossier.evenements.find(e => e.nature === "Réception de la remise")?.receptionRemise?.intervenants ?? [];
-    return intervenants.find(i => i.role === "Partie remettante")
-      ?? intervenants.find(i => i.role.includes("Tireur"))
-      ?? intervenants.find(i => i.role.includes("Tiré"));
-  }, [dossier]);
-  // Acceptant (client/tiré) repris de l'évènement « Réception de la remise »
+    return intervenantsRemise.find(i => i.role === "Partie remettante")
+      ?? intervenantsRemise.find(i => i.role.includes("Tireur"))
+      ?? intervenantsRemise.find(i => i.role.includes("Tiré"));
+  }, [intervenantsRemise]);
+  // Acceptant (client/tiré) repris de la remise
   const intervenantAcceptant = useMemo(() => {
-    const intervenants = dossier.evenements.find(e => e.nature === "Réception de la remise")?.receptionRemise?.intervenants ?? [];
-    return intervenants.find(i => i.role.includes("Tiré") && !i.role.includes("Tireur"));
-  }, [dossier]);
+    return intervenantsRemise.find(i => i.role.includes("Tiré") && !i.role.includes("Tireur"));
+  }, [intervenantsRemise]);
   const naturePartieNotifiee = intervenantNotifie?.role === "Partie remettante" ? "Banque remettante"
     : intervenantNotifie?.role.includes("Tireur") ? "Tireur"
     : intervenantNotifie ? "Tiré" : "";
+  const villeDe = (adresse?: string) => adresse?.split(",").pop()?.trim() || "";
+  const villeFallback = dossier.clientInfo?.agenceRattachement?.replace(/^Agence\s+/i, "") || "";
   const [acceptationForm, setAcceptationForm] = useState({
     acceptant: ac?.acceptant ?? intervenantAcceptant?.nom ?? dossier.clientInfo?.raisonSociale ?? dossier.client ?? "",
-    adresseAcceptant: ac?.adresseAcceptant ?? [intervenantAcceptant?.adresse, intervenantAcceptant?.pays].filter(Boolean).join("\n"),
+    adresseAcceptant: ac?.adresseAcceptant ?? intervenantAcceptant?.adresse ?? dossier.clientInfo?.agenceRattachement ?? "",
+    villeAcceptant: ac?.villeAcceptant ?? (villeDe(intervenantAcceptant?.adresse) || villeFallback),
+    paysAcceptant: ac?.paysAcceptant ?? intervenantAcceptant?.pays ?? "Maroc",
     dateReception: ac?.dateReception ?? aujourdhui,
     referenceAval: ac?.referenceAval ?? "",
     naturePartieANotifier: ac?.naturePartieANotifier ?? naturePartieNotifiee ?? "Tiré",
     partieANotifier: ac?.partieANotifier ?? intervenantNotifie?.nom ?? dossier.clientInfo?.raisonSociale ?? dossier.client ?? "",
-    adressePartieANotifier: ac?.adressePartieANotifier ?? [intervenantNotifie?.adresse, intervenantNotifie?.pays].filter(Boolean).join("\n"),
+    adressePartieANotifier: ac?.adressePartieANotifier ?? intervenantNotifie?.adresse ?? dossier.clientInfo?.agenceRattachement ?? "",
+    villePartieANotifier: ac?.villePartieANotifier ?? (villeDe(intervenantNotifie?.adresse) || villeFallback),
+    paysPartieANotifier: ac?.paysPartieANotifier ?? intervenantNotifie?.pays ?? "Maroc",
     instructionEnvoi: ac?.instructionEnvoi ?? "",
     referenceNotification: ac?.referenceNotification ?? "",
+    titreImportationNonRequis: ac?.titreImportationNonRequis ?? false,
   });
+  const [ongletAcceptation, setOngletAcceptation] = useState<"titres" | "attaches">("titres");
   const setA = (k: keyof typeof acceptationForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setAcceptationForm(f => ({ ...f, [k]: e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value }));
   // Lignes reprises de l'évènement « Réception de la remise » (échéancier de la remise)
@@ -446,12 +459,17 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         acceptation: isAcceptation ? {
           acceptant: acceptationForm.acceptant || undefined,
           adresseAcceptant: acceptationForm.adresseAcceptant || undefined,
+          villeAcceptant: acceptationForm.villeAcceptant || undefined,
+          paysAcceptant: acceptationForm.paysAcceptant || undefined,
           dateReception: acceptationForm.dateReception || undefined,
           referenceAval: acceptationForm.referenceAval || undefined,
           montantAccepte: montantAccepteTotal || undefined,
           naturePartieANotifier: acceptationForm.naturePartieANotifier || undefined,
           partieANotifier: acceptationForm.partieANotifier || undefined,
           adressePartieANotifier: acceptationForm.adressePartieANotifier || undefined,
+          villePartieANotifier: acceptationForm.villePartieANotifier || undefined,
+          paysPartieANotifier: acceptationForm.paysPartieANotifier || undefined,
+          titreImportationNonRequis: acceptationForm.titreImportationNonRequis,
           instructionEnvoi: acceptationForm.instructionEnvoi || undefined,
           referenceNotification: acceptationForm.referenceNotification || undefined,
           paiementsAAccepter: paiementsAAccepter.map(l => ({
@@ -693,10 +711,20 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   className="input w-full mt-1.5 bg-gray-100"
                   rows={3}
                   value={acceptationForm.adresseAcceptant}
-                  placeholder="Adresse · Ville · Pays"
+                  placeholder="Adresse"
                   aria-label="Adresse de l'acceptant"
                   readOnly
                 />
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <div>
+                    <label className="text-label">Ville</label>
+                    <input className="input w-full bg-gray-100" value={acceptationForm.villeAcceptant} readOnly />
+                  </div>
+                  <div>
+                    <label className="text-label">Pays</label>
+                    <input className="input w-full bg-gray-100" value={acceptationForm.paysAcceptant} readOnly />
+                  </div>
+                </div>
               </div>
               <div>
                 <label className="text-label">Date de réception <span className="text-red-500">*</span></label>
@@ -736,10 +764,20 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   className="input w-full mt-2 bg-gray-100"
                   rows={3}
                   value={acceptationForm.adressePartieANotifier}
-                  placeholder="Adresse · Ville · Pays"
+                  placeholder="Adresse"
                   aria-label="Adresse de la partie à notifier"
                   readOnly
                 />
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <div>
+                    <label className="text-label">Ville</label>
+                    <input className="input w-full bg-gray-100" value={acceptationForm.villePartieANotifier} readOnly />
+                  </div>
+                  <div>
+                    <label className="text-label">Pays</label>
+                    <input className="input w-full bg-gray-100" value={acceptationForm.paysPartieANotifier} readOnly />
+                  </div>
+                </div>
               </div>
               <div>
                 <label className="text-label">Référence</label>
@@ -843,13 +881,116 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             </div>
           </div>
 
-          {/* Documents attachés */}
+          {/* Titres d'importation / Documents attachés */}
           <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
-            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
-              <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
-              <div className="text-sm font-semibold text-[#0f172a]">Documents attachés</div>
+            <div role="tablist" aria-label="Pièces de l'acceptation" className="flex flex-wrap border-b border-gray-200 mb-5">
+              {([
+                { id: "titres", label: "Titres d'importation" },
+                { id: "attaches", label: "Documents attachés" },
+              ] as const).map(tab => (
+                <button key={tab.id} type="button" role="tab" id={`onglet-acceptation-${tab.id}`} aria-selected={ongletAcceptation === tab.id}
+                  onClick={() => setOngletAcceptation(tab.id)}
+                  className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${ongletAcceptation === tab.id ? "border-orange-600 text-orange-600" : "border-transparent text-gray-500 hover:text-gray-900"}`}>
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            {renderDocumentsAttaches()}
+
+            <div role="tabpanel" id="panneau-acceptation-titres" aria-labelledby="onglet-acceptation-titres" hidden={ongletAcceptation !== "titres"}>
+              <div className="flex items-center justify-between mb-3">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={acceptationForm.titreImportationNonRequis}
+                    onChange={event => {
+                      const checked = event.target.checked;
+                      setAcceptationForm(f => ({ ...f, titreImportationNonRequis: checked }));
+                      if (checked) setTitresImputation([]);
+                    }} />
+                  <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">Titre d'importation non requis</span>
+                </label>
+                <button
+                  type="button"
+                  className="h-7 w-7 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-[#64748b] disabled:hover:border-[#e5e8ec]"
+                  disabled={acceptationForm.titreImportationNonRequis}
+                  onClick={() => setPopupTitre(true)}
+                  title={acceptationForm.titreImportationNonRequis ? "Titre d'importation non requis" : "Ajouter un titre d'importation"}
+                  aria-label="Ajouter un titre d'importation"
+                >
+                  <Plus size={15} />
+                </button>
+              </div>
+              <div className="overflow-x-auto rounded-lg border border-[#e5e8ec]">
+                <table className="w-full text-[13px]">
+                  <thead className="bg-gray-50">
+                    <tr className="border-b border-[#e5e8ec]">
+                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant à imputer</th>
+                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">N° Enregistrement</th>
+                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant disponible</th>
+                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Date de validité</th>
+                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {titresImputation.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="py-4 px-3 text-center text-sm text-[#94a3b8]">Aucun titre d'importation.</td>
+                      </tr>
+                    )}
+                    {titresPage.map(t => (
+                      <tr key={t.ref} className="border-b border-[#e5e8ec]">
+                        <td className="py-2 px-3 text-left">
+                          <input
+                            type="number"
+                            className="input w-full text-left font-mono tabular-nums"
+                            value={t.montant}
+                            onChange={(e) => setTitresImputation(ts => ts.map(x => x.ref === t.ref ? { ...x, montant: e.target.value } : x))}
+                          />
+                        </td>
+                        <td className="py-2 px-3 text-left font-mono text-[11px] text-[#64748b]">{t.ref}</td>
+                        <td className="py-2 px-3 text-left font-mono tabular-nums text-[#0f172a]">
+                          {montantRemiseOk
+                            ? `${(montantRemiseOk.valeur / Math.max(1, titresImputation.length)).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${montantRemiseOk.devise}`
+                            : "—"}
+                        </td>
+                        <td className="py-2 px-3 text-left text-[#64748b]">—</td>
+                        <td className="py-2 px-3 text-left">
+                          <button
+                            type="button"
+                            className="text-[#94a3b8] hover:text-[#dc2626] transition"
+                            onClick={() => supprimerTitre(t.ref)}
+                            title={`Supprimer ${t.ref}`}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 text-xs font-semibold text-[#0f172a]">
+                <span>Nombre Total : {titresImputation.length}</span>
+                <span>
+                  Montant total imputé : {titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}
+                </span>
+                <span>
+                  Montant restant à imputer : <span className={montantAccepteTotal - titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0) > 0 ? "text-red-600" : undefined}>{(montantAccepteTotal - titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0)).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}</span>
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
+                <p className="text-xs text-[#64748b]">{titresImputation.length} titre(s) - Page {pageTitresCourante} sur {nombrePagesTitres}</p>
+                <nav aria-label="Pagination des titres d'importation" className="flex flex-wrap items-center gap-1">
+                  <button type="button" disabled={pageTitresCourante === 1} onClick={() => setPageTitres(pageTitresCourante - 1)} className="px-3 py-1 text-xs text-gray-600 border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed">Précédent</button>
+                  {Array.from({ length: nombrePagesTitres }, (_, index) => index + 1).map(page => (
+                    <button key={page} type="button" aria-label={`Page ${page}`} aria-current={page === pageTitresCourante ? "page" : undefined} onClick={() => setPageTitres(page)} className={`px-3 py-1 text-xs border rounded ${page === pageTitresCourante ? "bg-orange-600 border-orange-600 text-white" : "border-gray-300 text-gray-600 hover:bg-gray-50"}`}>{page}</button>
+                  ))}
+                  <button type="button" disabled={pageTitresCourante === nombrePagesTitres} onClick={() => setPageTitres(pageTitresCourante + 1)} className="px-3 py-1 text-xs text-gray-600 border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed">Suivant</button>
+                </nav>
+              </div>
+            </div>
+
+            <div role="tabpanel" id="panneau-acceptation-attaches" aria-labelledby="onglet-acceptation-attaches" hidden={ongletAcceptation !== "attaches"}>
+              {renderDocumentsAttaches()}
+            </div>
           </div>
         </div>
       )}
@@ -904,11 +1045,21 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <textarea
                   className="input w-full mt-1.5 bg-gray-100"
                   rows={4}
-                  value={[paiementForm.adressePaiementRecuDe, paiementForm.villePaiementRecuDe, paiementForm.paysPaiementRecuDe].filter(Boolean).join("\n")}
+                  value={paiementForm.adressePaiementRecuDe}
                   readOnly
-                  placeholder="Adresse · Ville · Pays"
-                  aria-label="Adresse, ville et pays du payeur"
+                  placeholder="Adresse"
+                  aria-label="Adresse du payeur"
                 />
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <div>
+                    <label className="text-label">Ville</label>
+                    <input className="input w-full bg-gray-100" value={paiementForm.villePaiementRecuDe} readOnly />
+                  </div>
+                  <div>
+                    <label className="text-label">Pays</label>
+                    <input className="input w-full bg-gray-100" value={paiementForm.paysPaiementRecuDe} readOnly />
+                  </div>
+                </div>
               </div>
               <div className="md:col-span-2 space-y-4">
                 <div className="w-full rounded-lg border border-[#e5e8ec]">
@@ -968,7 +1119,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <tbody>
                   <tr className="border-b border-[#e5e8ec]">
                     <td className="py-2 px-3 text-[#0f172a]">1</td>
-                    <td className="py-2 px-3 text-[#64748b]">{String(dossier.donnees["conditionsRemiseDocuments"] ?? "").toLowerCase().includes("acceptation") ? "Contre acceptation" : "Contre paiement"}</td>
+                    <td className="py-2 px-3 text-[#64748b]">Contre acceptation</td>
                     <td className="py-2 px-3 text-[#64748b]">{datePaiement ? new Date(datePaiement).toLocaleDateString("fr-FR") : "—"}</td>
                     <td className="py-2 px-3 text-right font-mono tabular-nums text-[#0f172a]">
                       {montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${montantRemiseOk.devise}` : "—"}
@@ -1043,8 +1194,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <input className="input w-full bg-gray-100" value={montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR")} ${montantRemiseOk.devise}` : "—"} readOnly />
                 </div>
                 <div>
-                  <label className="text-label">Montant restant à régler</label>
-                  <input type="text" className="input w-full bg-gray-100" value={montantRestantRegler != null ? `${montantRestantRegler.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}` : ""} readOnly />
+                  <label className="text-label">Cours appliqué</label>
+                  <input type="number" step="0.0001" className="input w-full bg-gray-100" value={paiementForm.coursApplique} onChange={setP("coursApplique")} placeholder="Ex. 10,85" readOnly />
                 </div>
                 <div>
                   <label className="text-label">Date de valeur</label>
@@ -1064,15 +1215,15 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   )}
                 </div>
                 <div>
-                  <label className="text-label">Cours appliqué</label>
-                  <input type="number" step="0.0001" className="input w-full bg-gray-100" value={paiementForm.coursApplique} onChange={setP("coursApplique")} placeholder="Ex. 10,85" readOnly />
-                </div>
-                <div>
                   <label className="text-label">Contrevaleur estimative en dirhams</label>
                   <input type="number" step="0.01" className="input w-full bg-gray-100" value={contrevaleurDirhams != null ? contrevaleurDirhams.toFixed(2) : ""} readOnly />
                 </div>
               </div>
               <div className="space-y-4">
+                <div>
+                  <label className="text-label">Montant restant à régler</label>
+                  <input type="text" className="input w-full bg-gray-100" value={montantRestantRegler != null ? `${montantRestantRegler.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}` : ""} readOnly />
+                </div>
                 <div>
                   <label className="text-label">Référence de l'aval</label>
                   <input className="input w-full" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
@@ -1098,7 +1249,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </select>
                 </div>
                 <div>
-                  <span className="text-label invisible block" aria-hidden="true">Partie à payer</span>
                   <div className="relative">
                     <input
                       type="text"
@@ -1106,6 +1256,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                       value={paiementForm.partieAPayer}
                       onChange={setP("partieAPayer")}
                       placeholder="Nom de la partie à payer"
+                      aria-label="Partie à payer"
                       readOnly
                     />
                     {paiementForm.naturePartieAPayer === "Banque étrangère" && (
@@ -1123,14 +1274,28 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <textarea
                     className="input w-full mt-2 bg-gray-100"
                     rows={4}
-                    value={[paiementForm.adressePartieAPayer, paiementForm.villePartieAPayer, paiementForm.paysPartieAPayer].filter(Boolean).join("\n")}
+                    value={paiementForm.adressePartieAPayer}
                     readOnly
-                    placeholder="Adresse · Ville · Pays"
-                    aria-label="Adresse, ville et pays de la partie à payer"
+                    placeholder="Adresse"
+                    aria-label="Adresse de la partie à payer"
                   />
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    <div>
+                      <label className="text-label">Ville</label>
+                      <input className="input w-full bg-gray-100" value={paiementForm.villePartieAPayer} readOnly />
+                    </div>
+                    <div>
+                      <label className="text-label">Pays</label>
+                      <input className="input w-full bg-gray-100" value={paiementForm.paysPartieAPayer} readOnly />
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col gap-4 min-w-0">
+                <div>
+                  <label className="text-label">Numéro de compte du bénéficiaire</label>
+                  <input className="input w-full" value={paiementForm.compteBeneficiaire} onChange={setP("compteBeneficiaire")} />
+                </div>
                 <div>
                   <label className="text-label">Banque du bénéficiaire</label>
                   <div className="relative">
@@ -1188,10 +1353,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <option>Paiement avec financement</option>
                     <option>Offre de financement</option>
                   </select>
-                </div>
-                <div>
-                  <label className="text-label">Numéro de compte du bénéficiaire</label>
-                  <input className="input w-full" value={paiementForm.compteBeneficiaire} onChange={setP("compteBeneficiaire")} />
                 </div>
               </div>
             </div>
@@ -1561,10 +1722,14 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               </button>
             </div>
             <div className="px-5 py-3 border-b border-[#e5e8ec]">
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-label">N° Enregistrement</label>
                   <input className="input w-full font-mono" value={rechTitre} onChange={(e) => setRechTitre(e.target.value)} placeholder="Ex. TI-2025-09703" autoFocus />
+                </div>
+                <div>
+                  <label className="text-label">Devise</label>
+                  <input className="input w-full font-mono" value={rechTitreDevise} onChange={(e) => setRechTitreDevise(e.target.value)} placeholder="Ex. EUR" />
                 </div>
               </div>
             </div>
@@ -1581,7 +1746,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="text-sm font-medium text-[#0f172a] font-mono">{t.ref}</div>
-                    <div className="font-mono text-[11px] text-[#64748b]">{t.montantDisponible.toLocaleString("fr-FR")} {deviseDossier}</div>
+                    <div className="font-mono text-[11px] text-[#64748b]">{t.montantDisponible.toLocaleString("fr-FR")} {t.devise}</div>
                   </div>
                 </button>
               ))}
