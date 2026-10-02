@@ -36,7 +36,7 @@ export default function PilotageHeader({ actif, fil, actions }: {
     { key: "echeancier", label: "Échéancier", href: "/echeancier", icon: CalendarClock, count: nbEcheances },
     { key: "relances", label: "Relances", href: "/listes/relances", icon: BellRing, count: nbARelancer },
     { key: "alertes", label: "Alertes", href: "/listes/alertes", icon: AlertTriangle, count: nbAlertesTotal },
-    { key: "dossiers", label: "Dossiers", href: "/listes/en-cours", icon: Inbox, count: nbDossiers },
+    { key: "dossiers", label: "Mes dossiers", href: "/listes/en-cours", icon: Inbox, count: nbDossiers },
   ];
 
   return (

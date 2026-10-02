@@ -113,7 +113,8 @@ export function estAValider(c: CourrierIrd): boolean {
 
 export function nbAlertes(courriers: CourrierIrd[]): number {
   return courriers.filter(c =>
-    envoyeCtnNonRecu(c) || retourDocumentsAFaire(c) || etatEcheanceV5(c) === "ECHUE"
+    envoyeCtnNonRecu(c) || retourDocumentsAFaire(c) ||
+    etatEcheanceV5(c) === "ECHUE" || etatEcheanceV5(c) === "HORS_INDICATEUR"
   ).length;
 }
 
@@ -248,6 +249,11 @@ export const LISTES: Record<string, ListeDef> = {
     regle: "Échéance dépassée depuis moins de 45 jours.",
     filter: c => etatEcheanceV5(c) === "ECHUE",
   },
+  "ird-echues": {
+    titre: "IRD échues > 45 jours",
+    regle: "IRD dont l'échéance est dépassée depuis plus de 45 jours — remontés en alerte.",
+    filter: c => etatEcheanceV5(c) === "HORS_INDICATEUR",
+  },
   "ech-toutes": {
     titre: "Échéancier complet",
     regle: "Échéances à venir ≤ 10 jours + échéances échues < 45 jours.",
@@ -255,12 +261,14 @@ export const LISTES: Record<string, ListeDef> = {
   },
   "alertes": {
     titre: "Alertes opérationnelles",
-    regle: "Envoyés CTN non reçus en agence + remises en souffrance ≥ 30 j + échéances échues < 45 jours.",
-    filter: c => envoyeCtnNonRecu(c) || retourDocumentsAFaire(c) || etatEcheanceV5(c) === "ECHUE",
+    regle: "Envoyés CTN non reçus en agence + remises en souffrance ≥ 30 j + IRD échues (> 45 j).",
+    filter: c =>
+      envoyeCtnNonRecu(c) || retourDocumentsAFaire(c) ||
+      etatEcheanceV5(c) === "ECHUE" || etatEcheanceV5(c) === "HORS_INDICATEUR",
   },
   "en-cours": {
-    titre: "Dossiers en cours",
-    regle: "Tous les dossiers de l'agence.",
+    titre: "Mes dossiers en cours",
+    regle: "Tous les dossiers de l'agence connectée.",
     filter: () => true,
   },
 };

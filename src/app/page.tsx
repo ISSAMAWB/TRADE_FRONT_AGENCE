@@ -832,7 +832,7 @@ export default function Dashboard() {
             { label: "À traiter", unit: "actions", value: nbATraiter, href: "/listes/toutes", icon: ListChecks, border: "border-b-red-500", text: "text-red-600" },
             { label: "À relancer", unit: "dossiers", value: nbARelancer, href: "/listes/relances", icon: BellRing, border: "border-b-orange-500", text: "text-orange-600" },
             { label: "Échéances à suivre", unit: "échéances", value: nbEcheances, href: "/echeancier", icon: CalendarClock, border: "border-b-orange-500", text: "text-orange-600" },
-            { label: "Dossiers en cours", unit: "dossiers", value: nbEnCours, href: "/listes/en-cours", icon: Inbox, border: "border-b-slate-900", text: "text-slate-900" },
+            { label: "Mes dossiers en cours", unit: "dossiers", value: nbEnCours, href: "/listes/en-cours", icon: Inbox, border: "border-b-slate-900", text: "text-slate-900" },
           ].map(k => {
             const Icon = k.icon;
             return (
@@ -1096,10 +1096,10 @@ function AlertesBlock({ nbCtnNonRecus, dernierEnvoiCtn, nbSouffrance, nbEchues, 
       border: "border-l-orange-500", text: "text-orange-600",
     },
     {
-      n: nbEchues,
-      titre: "Échéances échues < 45 j",
-      sub: `${nbSortis} dossier${nbSortis > 1 ? "s" : ""} sorti${nbSortis > 1 ? "s" : ""} de l'indicateur (≥ J+45)`,
-      href: "/listes/ech-echues",
+      n: nbSortis,
+      titre: "IRD échues > 45 j",
+      sub: `${nbEchues} échéance${nbEchues > 1 ? "s" : ""} échue${nbEchues > 1 ? "s" : ""} < 45 j à suivre`,
+      href: "/listes/ird-echues",
       border: "border-l-red-500", text: "text-red-600",
     },
   ];
@@ -1180,21 +1180,34 @@ function EcheancesCard({ items, replie, onToggle, dragHandle, masquerBtn }: { it
               <Link href="/listes/ech-echues" className="badge-red">{nbEchues} échue{nbEchues > 1 ? "s" : ""} &lt; 45 j</Link>
             </div>
             <div className="flex items-end gap-1.5 h-24">
-              {buckets.map((n, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1 h-full">
-                  <span className="text-[10px] text-gray-500">{n > 0 ? n : ""}</span>
-                  <div
-                    className={clsx(
-                      "w-full rounded",
-                      n === 0 ? "h-1 bg-gray-100" : i <= 2 ? "bg-red-500" : i <= 6 ? "bg-amber-500" : "bg-blue-500"
-                    )}
-                    style={n > 0 ? { height: `${Math.max(4, (n / maxBucket) * 90)}px` } : undefined}
-                  />
-                  <span className="text-[9px] text-gray-400">{i === 0 ? "J0" : `J-${i}`}</span>
-                </div>
-              ))}
+              {buckets.map((n, i) => {
+                // Clic sur une barre → liste des échéances de ce jour
+                // (filtres echeance_du/au déjà supportés par /listes).
+                const jour = new Date();
+                jour.setDate(jour.getDate() + i);
+                const jourIso = jour.toISOString().slice(0, 10);
+                const href = `/listes/ech-toutes?echeance_du=${jourIso}&echeance_au=${jourIso}`;
+                return (
+                  <Link
+                    key={i}
+                    href={href}
+                    title={`${new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short" }).format(jour)} — ${n} échéance${n > 1 ? "s" : ""}`}
+                    className="flex-1 flex flex-col items-center justify-end gap-1 h-full rounded hover:bg-gray-50 transition group"
+                  >
+                    <span className={clsx("text-[10px]", n > 0 ? "text-gray-700 font-semibold" : "text-gray-300")}>{n > 0 ? n : ""}</span>
+                    <div
+                      className={clsx(
+                        "w-full rounded transition group-hover:opacity-80",
+                        n === 0 ? "h-1 bg-gray-100" : i <= 2 ? "bg-red-500" : i <= 6 ? "bg-amber-500" : "bg-blue-500"
+                      )}
+                      style={n > 0 ? { height: `${Math.max(4, (n / maxBucket) * 90)}px` } : undefined}
+                    />
+                    <span className="text-[9px] text-gray-400 group-hover:text-gray-600">{i === 0 ? "J0" : `J-${i}`}</span>
+                  </Link>
+                );
+              })}
             </div>
-            <div className="text-[10px] text-gray-400 mt-2">Rouge J0 à J-2 · ambre J-3 à J-6 · bleu J-7 à J-10</div>
+            <div className="text-[10px] text-gray-400 mt-2">Rouge J0 à J-2 · ambre J-3 à J-6 · bleu J-7 à J-10 · cliquer pour filtrer</div>
           </>
         )}
       </div>
@@ -1463,7 +1476,7 @@ function AccesRapidesFab({ onNouveau, nbEcheances, nbARelancer, nbEnCours }: {
     { icon: Plus, label: "Nouvelle centralisation", count: null, onClick: onNouveau },
     { icon: CalendarClock, label: "Échéancier", count: nbEcheances, href: "/echeancier" },
     { icon: BellRing, label: "Relances du jour", count: nbARelancer, href: "/listes/relances" },
-    { icon: Inbox, label: "Tous les dossiers", count: nbEnCours, href: "/listes/en-cours" },
+    { icon: Inbox, label: "Mes dossiers en cours", count: nbEnCours, href: "/listes/en-cours" },
   ];
   return (
     <div ref={ref}>

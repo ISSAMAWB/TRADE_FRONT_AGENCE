@@ -47,7 +47,7 @@ function chipValue(key: string, v: string): string {
   if (key === "type_retour") return v === "RETOUR_CTN" ? "Retour CTN" : "Retour Agence";
   if (key === "modalite") return MODALITE_LABEL[v as keyof typeof MODALITE_LABEL] ?? v;
   if (key === "statut_paiement") return STATUT_PAIEMENT_LABEL[v as keyof typeof STATUT_PAIEMENT_LABEL] ?? v;
-  if (key === "etat_echeance") return v === "ECHUE" ? "Échue" : v === "A_VENIR" ? "À venir" : v;
+  if (key === "etat_echeance") return v === "ECHUE" ? "Échue" : v === "A_VENIR" ? "À venir" : v === "HORS_INDICATEUR" ? "IRD échue > 45 j" : v;
   return v;
 }
 
@@ -55,7 +55,7 @@ function activeTabFor(key: string): PilotageTab | null {
   if (key === "a-valider") return "a-valider";
   if (key === "toutes") return "a-traiter";
   if (key === "relances" || key === "relance-remise" || key === "relance-acceptation") return "relances";
-  if (key === "alertes" || key === "ctn-non-recus" || key === "retour-docs") return "alertes";
+  if (key === "alertes" || key === "ctn-non-recus" || key === "retour-docs" || key === "ird-echues") return "alertes";
   if (key === "en-cours") return "dossiers";
   if (key.startsWith("ech-")) return "echeancier";
   return null;

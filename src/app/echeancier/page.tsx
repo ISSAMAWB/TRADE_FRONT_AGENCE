@@ -85,7 +85,7 @@ export default function EcheancierPage() {
         />
         <div>
           <p className="text-subtitle">
-            Échéances visibles : à venir ≤ 10 jours et échues &lt; 45 jours. Les échéances dépassées depuis ≥ 45 jours sortent de l'indicateur.
+            Échéances visibles : à venir ≤ 10 jours et échues &lt; 45 jours. Les IRD échues depuis plus de 45 jours sont remontées en alerte.
           </p>
         </div>
 
@@ -136,16 +136,24 @@ export default function EcheancierPage() {
           </table>
         </div>
 
-        {/* Sortis de l'indicateur */}
+        {/* IRD échues > 45 j — remontées en alerte */}
         {sortis.length > 0 && (
-          <div className="card p-4 bg-gray-50 border-gray-200">
-            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-              Sortis de l'indicateur (≥ J+45) — à confirmer métier
+          <div className="card p-4 bg-red-50 border-red-200">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-xs font-semibold text-red-700 uppercase tracking-wider">
+                IRD échues &gt; 45 j — remontées en alerte
+              </div>
+              <Link href="/listes/ird-echues" className="text-xs text-red-600 font-medium hover:underline">
+                Voir la liste
+              </Link>
             </div>
             <div className="space-y-1">
               {sortis.map(c => (
-                <div key={c.id} className="text-xs text-gray-500">
-                  {c.reference_courrier} échu depuis {joursEcheance(c)} jours : sorti de l'indicateur (≥ J+45).
+                <div key={c.id} className="text-xs text-red-700">
+                  <Link href={`/remises-doc/import/${c.id}`} className="font-medium hover:underline">
+                    {c.reference_courrier}
+                  </Link>
+                  {" "}— IRD échue depuis {joursEcheance(c)} jours.
                 </div>
               ))}
             </div>
