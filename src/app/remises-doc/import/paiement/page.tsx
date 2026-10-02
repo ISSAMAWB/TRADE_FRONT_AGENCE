@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { DollarSign, Inbox, X, CheckCircle2, Search } from "lucide-react";
 import clsx from "clsx";
@@ -20,6 +21,8 @@ import type {
   CourrierIrd, StatutPaiement, PartieOriginePaiement, PaiementIrd, TypeEvenementCentralisation,
 } from "@/domain/types";
 import Card from "@/components/ui/Card";
+import dossiersDetail from "@/mocks/dossiersDetail.json";
+import type { DossierTrade } from "@/domain/consultation-detail";
 import Shell from "@/components/Shell";
 import CollapsibleFilterPanel from "@/components/ui/CollapsibleFilterPanel";
 import ClientSearchModal from "@/components/ui/ClientSearchModal";
@@ -51,8 +54,10 @@ const EVENEMENT_LABEL: Record<TypeEvenementCentralisation, string> = {
 const EVENEMENTS: TypeEvenementCentralisation[] = ["CREATION", "MODIFICATION", "CHANGEMENT_DOMICILIATION"];
 
 export default function PaiementImportPage() {
+  const router = useRouter();
   const courriers = useTomStore(s => s.courriersIrd);
   const initierPaiement = useTomStore(s => s.initierPaiementIrd);
+  const dossiers = dossiersDetail as DossierTrade[];
 
   const [corbeille, setCorbeille] = useState<CorbeilleKey>("TOUS");
   const [courrierCible, setCourrierCible] = useState<CourrierIrd | null>(null);
@@ -124,6 +129,14 @@ export default function PaiementImportPage() {
   }
 
   function ouvrirInitiation(c: CourrierIrd) {
+    // Routage vers l'écran d'initiation du paiement (Nouvel évènement → Paiement) du dossier correspondant
+    const dossier = dossiers.find(d => d.reference === c.reference_courrier)
+      ?? dossiers.find(d => (d.clientInfo?.raisonSociale ?? d.client) === c.client && d.reference.startsWith("IRD"))
+      ?? dossiers.find(d => d.reference.startsWith("IRD"));
+    if (dossier) {
+      router.push(`/consultation/dossiers/${dossier.reference}/evenements/nouveau?nature=Paiement`);
+      return;
+    }
     setCourrierCible(c);
     setRefPaiement(c.paiement?.reference_paiement ?? "");
     setPartieOrigine(c.paiement?.partie_origine_paiement ?? "TIRE");

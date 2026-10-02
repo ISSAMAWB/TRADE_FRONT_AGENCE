@@ -238,7 +238,19 @@ export interface BlocageProvisionAgence {
   devise: string;
 }
 
-export type TypeDocumentAttacheAgence = "Ordre de paiement" | "Titre d'importation" | "Autre";
+export type TypeDocumentAttacheAgence =
+  | "Ordre de paiement" | "Titre d'importation"
+  | "Effet accepté"
+  | "Autre";
+
+export interface PaiementAAccepterAgence {
+  montant?: number;
+  periode?: string;
+  dateBase?: string;
+  maturite?: string;
+  accepte?: boolean;
+  avalise?: boolean;
+}
 
 export interface DocumentAttacheAgence {
   id: string;
@@ -318,6 +330,35 @@ export interface EvenementTrade {
       identiteCompteDebite?: { numeroCompte: string; raisonSociale: string };
       blocageProvision?: BlocageProvisionAgence;
       agenceDomiciliation?: string;
+    };
+    /** Champs saisis à l'initiation d'un événement « Acceptation & Aval de la traite » — mêmes blocs que la consultation. */
+    acceptation?: {
+      // Détails de l'acceptation et aval
+      acceptant?: string;
+      adresseAcceptant?: string;
+      villeAcceptant?: string;
+      paysAcceptant?: string;
+      dateReception?: string;
+      instructionsRecues?: string;
+      reference?: string;
+      referenceAval?: string;
+      montantAccepte?: number;
+      periodeMaturite?: string;
+      duApres?: string;
+      debutMaturite?: string;
+      // Information de la partie à notifier
+      naturePartieANotifier?: string;
+      partieANotifier?: string;
+      notifiePar?: string;
+      adressePartieANotifier?: string;
+      villePartieANotifier?: string;
+      paysPartieANotifier?: string;
+      instructionEnvoi?: string;
+      referenceNotification?: string;
+      remiseAExpirer?: boolean;
+      titreImportationNonRequis?: boolean;
+      // Paiements à accepter
+      paiementsAAccepter?: PaiementAAccepterAgence[];
     };
   };
 }
