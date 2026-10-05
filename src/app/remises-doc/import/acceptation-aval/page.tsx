@@ -2,23 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { FileCheck, Inbox, Search } from "lucide-react";
+import { FileCheck, Search } from "lucide-react";
 import Shell from "@/components/Shell";
-import Card from "@/components/ui/Card";
 import CollapsibleFilterPanel from "@/components/ui/CollapsibleFilterPanel";
 import ClientSearchModal from "@/components/ui/ClientSearchModal";
 import dossiersDetail from "@/mocks/dossiersDetail.json";
 import type { DossierTrade, MontantAvecDevise } from "@/domain/consultation-detail";
-
-type CorbeilleKey = "TOUS" | "EN_COURS" | "EXPIRE" | "VALIDE" | "ANNULE";
-
-const CORBEILLE_DEFS: { key: CorbeilleKey; label: string; filter: ((d: DossierTrade) => boolean) | null }[] = [
-  { key: "TOUS",     label: "Tous",     filter: null },
-  { key: "EN_COURS", label: "En cours", filter: d => String(d.statut) === "EN_COURS" },
-  { key: "EXPIRE",   label: "Expiré",   filter: d => String(d.statut) === "EXPIRE" },
-  { key: "VALIDE",   label: "Validé",   filter: d => String(d.statut) === "VALIDE" },
-  { key: "ANNULE",   label: "Annulé",   filter: d => String(d.statut) === "ANNULE" },
-];
 
 const STATUT_LABEL: Record<string, string> = {
   EN_COURS: "En cours",
@@ -50,7 +39,6 @@ export default function AcceptationAvalImportPage() {
   const router = useRouter();
   const dossiers = dossiersDetail as DossierTrade[];
 
-  const [corbeille, setCorbeille] = useState<CorbeilleKey>("TOUS");
 
   /* ---- critères de recherche ---- */
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -77,19 +65,8 @@ export default function AcceptationAvalImportPage() {
     [eligibles]
   );
 
-  const counts = useMemo(() => {
-    const c: Record<CorbeilleKey, number> = { TOUS: eligibles.length, EN_COURS: 0, EXPIRE: 0, VALIDE: 0, ANNULE: 0 };
-    for (const d of eligibles) {
-      for (const def of CORBEILLE_DEFS) {
-        if (def.filter && def.filter(d)) c[def.key]++;
-      }
-    }
-    return c;
-  }, [eligibles]);
-
   const filtered = useMemo(() => {
-    const def = CORBEILLE_DEFS.find(x => x.key === corbeille);
-    let items = def?.filter ? eligibles.filter(def.filter) : eligibles;
+    let items = eligibles;
     if (refOperation.trim()) items = items.filter(d => d.reference.toLowerCase().includes(refOperation.trim().toLowerCase()));
     if (refCorrespondant.trim()) items = items.filter(d => String(d.donnees["referenceCorrespondant"] ?? "").toLowerCase().includes(refCorrespondant.trim().toLowerCase()));
     if (clientQuery.trim()) {
@@ -107,7 +84,7 @@ export default function AcceptationAvalImportPage() {
     if (dateDebut) items = items.filter(d => d.donnees["dateEcheance"] && new Date(String(d.donnees["dateEcheance"])) >= new Date(dateDebut));
     if (dateFin) items = items.filter(d => d.donnees["dateEcheance"] && new Date(String(d.donnees["dateEcheance"])) <= new Date(dateFin + "T23:59:59"));
     return items;
-  }, [eligibles, corbeille, refOperation, refCorrespondant, clientQuery, devise, statut,
+  }, [eligibles, refOperation, refCorrespondant, clientQuery, devise, statut,
       modalite, montantMin, montantMax, dateDebut, dateFin]);
 
   function resetFilters() {
@@ -274,32 +251,6 @@ export default function AcceptationAvalImportPage() {
           </div>
         </CollapsibleFilterPanel>
 
-        {/* Corbeilles */}
-        <Card>
-          <div className="card-header flex items-center gap-2">
-            <Inbox size={16} className="text-orange-500" />
-            <div className="text-title">Corbeilles</div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-px bg-gray-200">
-            {CORBEILLE_DEFS.map(d => {
-              const active = corbeille === d.key;
-              return (
-                <button
-                  key={d.key}
-                  onClick={() => setCorbeille(d.key)}
-                  className={
-                    "px-4 py-3 text-left bg-white hover:bg-orange-50 transition " +
-                    (active ? "ring-2 ring-inset ring-orange-500" : "")
-                  }
-                >
-                  <div className="text-caption">{d.label}</div>
-                  <div className="text-lg font-semibold mt-1 text-gray-900">{counts[d.key]}</div>
-                </button>
-              );
-            })}
-          </div>
-        </Card>
-
         {/* Compteur */}
         <div className="text-sm text-gray-600">
           <span className="font-semibold text-gray-900">{filtered.length}</span> remise(s) trouvée(s)
@@ -354,7 +305,7 @@ export default function AcceptationAvalImportPage() {
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={9} className="text-center text-gray-400 py-8">
-                    <div className="text-sm">Aucune remise ne correspond à cette corbeille.</div>
+                    <div className="text-sm">Aucune remise ne correspond aux critères.</div>
                   </td>
                 </tr>
               )}

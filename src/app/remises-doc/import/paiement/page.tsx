@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { DollarSign, Inbox, X, CheckCircle2, Search } from "lucide-react";
+import { DollarSign, X, CheckCircle2, Search } from "lucide-react";
 import clsx from "clsx";
 import { useTomStore } from "@/store/useTomStore";
 import {
@@ -20,22 +20,11 @@ import {
 import type {
   CourrierIrd, StatutPaiement, PartieOriginePaiement, PaiementIrd, TypeEvenementCentralisation,
 } from "@/domain/types";
-import Card from "@/components/ui/Card";
 import dossiersDetail from "@/mocks/dossiersDetail.json";
 import type { DossierTrade } from "@/domain/consultation-detail";
 import Shell from "@/components/Shell";
 import CollapsibleFilterPanel from "@/components/ui/CollapsibleFilterPanel";
 import ClientSearchModal from "@/components/ui/ClientSearchModal";
-
-type CorbeilleKey = "TOUS" | StatutPaiement;
-
-const CORBEILLE_DEFS: { key: CorbeilleKey; label: string; filter: ((c: CourrierIrd) => boolean) | null }[] = [
-  { key: "TOUS",        label: "Tous",        filter: null },
-  { key: "A_EFFECTUER", label: "À effectuer", filter: c => c.statut_paiement === "A_EFFECTUER" },
-  { key: "EN_RETARD",   label: "En retard",   filter: c => c.statut_paiement === "EN_RETARD" },
-  { key: "PARTIEL",     label: "Partiel",     filter: c => c.statut_paiement === "PARTIEL" },
-  { key: "EFFECTUE",    label: "Effectué",    filter: c => c.statut_paiement === "EFFECTUE" },
-];
 
 const PARTIE_ORIGINE_OPTIONS: { value: PartieOriginePaiement; label: string }[] = [
   { value: "TIRE",               label: "Tiré" },
@@ -59,7 +48,6 @@ export default function PaiementImportPage() {
   const initierPaiement = useTomStore(s => s.initierPaiementIrd);
   const dossiers = dossiersDetail as DossierTrade[];
 
-  const [corbeille, setCorbeille] = useState<CorbeilleKey>("TOUS");
   const [courrierCible, setCourrierCible] = useState<CourrierIrd | null>(null);
 
   /* ---- critères de recherche ---- */
@@ -89,19 +77,8 @@ export default function PaiementImportPage() {
     [courriers]
   );
 
-  const counts = useMemo(() => {
-    const c: Record<CorbeilleKey, number> = { TOUS: eligibles.length, A_EFFECTUER: 0, EN_RETARD: 0, PARTIEL: 0, EFFECTUE: 0 };
-    for (const cr of eligibles) {
-      for (const def of CORBEILLE_DEFS) {
-        if (def.filter && def.filter(cr)) c[def.key]++;
-      }
-    }
-    return c;
-  }, [eligibles]);
-
   const filtered = useMemo(() => {
-    const def = CORBEILLE_DEFS.find(d => d.key === corbeille);
-    let items = def?.filter ? eligibles.filter(def.filter) : eligibles;
+    let items = eligibles;
     if (refOperation.trim()) items = items.filter(c => c.reference_courrier.toLowerCase().includes(refOperation.trim().toLowerCase()));
     if (refCorrespondant.trim()) items = items.filter(c => (c.reference_externe ?? "").toLowerCase().includes(refCorrespondant.trim().toLowerCase()));
     if (clientQuery.trim()) {
@@ -119,7 +96,7 @@ export default function PaiementImportPage() {
     if (dateDebut) items = items.filter(c => c.date_echeance && new Date(c.date_echeance) >= new Date(dateDebut));
     if (dateFin) items = items.filter(c => c.date_echeance && new Date(c.date_echeance) <= new Date(dateFin + "T23:59:59"));
     return items;
-  }, [eligibles, corbeille, refOperation, refCorrespondant, clientQuery, devise, statutPaiement,
+  }, [eligibles, refOperation, refCorrespondant, clientQuery, devise, statutPaiement,
       evenement, montantMin, montantMax, dateDebut, dateFin]);
 
   function resetFilters() {
@@ -314,32 +291,6 @@ export default function PaiementImportPage() {
           </div>
         </CollapsibleFilterPanel>
 
-        {/* Corbeilles */}
-        <Card>
-          <div className="card-header flex items-center gap-2">
-            <Inbox size={16} className="text-orange-500" />
-            <div className="text-title">Corbeilles</div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-px bg-gray-200">
-            {CORBEILLE_DEFS.map(d => {
-              const active = corbeille === d.key;
-              return (
-                <button
-                  key={d.key}
-                  onClick={() => setCorbeille(d.key)}
-                  className={
-                    "px-4 py-3 text-left bg-white hover:bg-orange-50 transition " +
-                    (active ? "ring-2 ring-inset ring-orange-500" : "")
-                  }
-                >
-                  <div className="text-caption">{d.label}</div>
-                  <div className="text-lg font-semibold mt-1 text-gray-900">{counts[d.key]}</div>
-                </button>
-              );
-            })}
-          </div>
-        </Card>
-
         {/* Compteur */}
         <div className="text-sm text-gray-600">
           <span className="font-semibold text-gray-900">{filtered.length}</span> remise(s) trouvée(s)
@@ -406,7 +357,7 @@ export default function PaiementImportPage() {
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={9} className="text-center text-gray-400 py-8">
-                    <div className="text-sm">Aucune remise ne correspond à cette corbeille.</div>
+                    <div className="text-sm">Aucune remise ne correspond aux critères.</div>
                   </td>
                 </tr>
               )}

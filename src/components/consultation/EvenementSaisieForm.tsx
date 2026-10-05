@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, X, Trash2, Plus, Paperclip, FileText, FileCheck } from "lucide-react";
+import { Search, X, Trash2, Plus, Paperclip, FileText, FileCheck, Eye } from "lucide-react";
 import { useTomStore } from "@/store/useTomStore";
 import { genererAccuseReceptionPDF } from "@/lib/accuseReception";
 import dossiersDetail from "@/mocks/dossiersDetail.json";
@@ -162,6 +162,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
 
   const [montantAVue, setMontantAVue] = useState("");
 
+  // Choix de la ligne de paiement dont le montant à payer est saisissable
+  const [lignesPaiementChoisies, setLignesPaiementChoisies] = useState({
+    contreAcceptation: p != null && String(p.montantPaye ?? "") !== "",
+    aVue: false,
+  });
+
   const titresDossier = (dossier.donnees["referencesTitresImportation"] as string[] | undefined) ?? [];
   // Titres d'importation : page vide par défaut, alimentée uniquement par ajout utilisateur
   const [titresImputation, setTitresImputation] = useState<{ ref: string; montant: string }[]>([]);
@@ -189,6 +195,20 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     !titresImputation.some(x => x.ref === t.ref)
   );
   const fermerPopupTitre = () => { setPopupTitre(false); setRechTitre(""); setRechTitreDevise(""); };
+  // Contrepartie du montant à réserver exprimée en devise du dossier (conversion via le cours appliqué si la devise du titre diffère)
+  const contrepartieTitreValeur = (t: { ref: string; montant: string }) => {
+    const titre = TITRES_DISPONIBLES.find(x => x.ref === t.ref);
+    const cours = Number(paiementForm.coursApplique) || 0;
+    const montant = Number(t.montant) || 0;
+    return titre && titre.devise !== deviseDossier && cours > 0 ? montant * cours : montant;
+  };
+  const contrepartieTitre = (t: { ref: string; montant: string }) => {
+    if (!t.montant.trim()) return "—";
+    return `${contrepartieTitreValeur(t).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}`;
+  };
+  // Consultation du détail d'un titre d'importation ajouté (œil dans le tableau)
+  const [titreConsulte, setTitreConsulte] = useState<{ ref: string; montant: string } | null>(null);
+  const detailTitreConsulte = titreConsulte ? TITRES_DISPONIBLES.find(t => t.ref === titreConsulte.ref) ?? null : null;
   const ajouterTitre = (ref: string) => {
     setTitresImputation(t => [...t, { ref, montant: "" }]);
     setPageTitres(Math.ceil((titresImputation.length + 1) / titresParPage));
@@ -356,6 +376,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
 
   const montantRequis = nature === "Paiement" || nature === "Acceptation & Aval de la traite";
   const montantAPayerTotal = (Number(paiementForm.montantPaye) || 0) + (Number(montantAVue) || 0);
+  const totalContrepartieTitres = titresImputation.reduce((s, t) => s + contrepartieTitreValeur(t), 0);
   const montantRestantRegler = montantRemiseOk ? montantRemiseOk.valeur - montantAPayerTotal : null;
   const coursApplique = Number(paiementForm.coursApplique);
   const contrevaleurBrute = montantAPayerTotal * coursApplique;
@@ -922,7 +943,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <table className="w-full text-[13px]">
                   <thead className="bg-gray-50">
                     <tr className="border-b border-[#e5e8ec]">
-                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant à imputer</th>
+                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant à réserver</th>
+                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Contrepartie en devise du dossier</th>
                       <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">N° Enregistrement</th>
                       <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant disponible</th>
                       <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Date de validité</th>
@@ -932,19 +954,23 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <tbody>
                     {titresImputation.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="py-4 px-3 text-center text-sm text-[#94a3b8]">Aucun titre d'importation.</td>
+                        <td colSpan={6} className="py-4 px-3 text-center text-sm text-[#94a3b8]">Aucun titre d'importation.</td>
                       </tr>
                     )}
                     {titresPage.map(t => (
                       <tr key={t.ref} className="border-b border-[#e5e8ec]">
                         <td className="py-2 px-3 text-left">
-                          <input
-                            type="number"
-                            className="input w-full text-left font-mono tabular-nums"
-                            value={t.montant}
-                            onChange={(e) => setTitresImputation(ts => ts.map(x => x.ref === t.ref ? { ...x, montant: e.target.value } : x))}
-                          />
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              className="input w-full min-w-0 text-left font-mono tabular-nums"
+                              value={t.montant}
+                              onChange={(e) => setTitresImputation(ts => ts.map(x => x.ref === t.ref ? { ...x, montant: e.target.value } : x))}
+                            />
+                            <span className="shrink-0 text-xs font-mono text-[#64748b]">{TITRES_DISPONIBLES.find(x => x.ref === t.ref)?.devise ?? deviseDossier}</span>
+                          </div>
                         </td>
+                        <td className="py-2 px-3 text-left font-mono tabular-nums text-[#0f172a]">{contrepartieTitre(t)}</td>
                         <td className="py-2 px-3 text-left font-mono text-[11px] text-[#64748b]">{t.ref}</td>
                         <td className="py-2 px-3 text-left font-mono tabular-nums text-[#0f172a]">
                           {montantRemiseOk
@@ -953,14 +979,24 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                         </td>
                         <td className="py-2 px-3 text-left text-[#64748b]">—</td>
                         <td className="py-2 px-3 text-left">
-                          <button
-                            type="button"
-                            className="text-[#94a3b8] hover:text-[#dc2626] transition"
-                            onClick={() => supprimerTitre(t.ref)}
-                            title={`Supprimer ${t.ref}`}
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                              onClick={() => setTitreConsulte(t)}
+                              title={`Consulter ${t.ref}`}
+                            >
+                              <Eye size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              className="text-[#94a3b8] hover:text-[#dc2626] transition"
+                              onClick={() => supprimerTitre(t.ref)}
+                              title={`Supprimer ${t.ref}`}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -970,10 +1006,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 text-xs font-semibold text-[#0f172a]">
                 <span>Nombre Total : {titresImputation.length}</span>
                 <span>
-                  Montant total imputé : {titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}
+                  Montant total réservé : {totalContrepartieTitres.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}
                 </span>
                 <span>
-                  Montant restant à imputer : <span className={montantAccepteTotal - titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0) > 0 ? "text-red-600" : undefined}>{(montantAccepteTotal - titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0)).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}</span>
+                  Montant restant à réserver : <span className={montantAccepteTotal - totalContrepartieTitres > 0 ? "text-red-600" : undefined}>{(montantAccepteTotal - totalContrepartieTitres).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}</span>
                 </span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
@@ -1114,6 +1150,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant réclamé</th>
                     <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Encours</th>
                     <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant à payer <span className="text-red-500">*</span></th>
+                    <th className="text-center py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider w-10">Choix</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1133,13 +1170,27 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                       <div className="flex items-center gap-2">
                         <input
                           type="number"
-                          className="input w-full min-w-0 text-right font-mono tabular-nums"
+                          className={"input w-full min-w-0 text-right font-mono tabular-nums" + (lignesPaiementChoisies.contreAcceptation ? "" : " bg-gray-100")}
                           aria-label={`Montant à payer ligne 1 ${deviseDossier}`}
                           value={paiementForm.montantPaye}
                           onChange={setP("montantPaye")}
+                          disabled={!lignesPaiementChoisies.contreAcceptation}
                         />
                         <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
                       </div>
+                    </td>
+                    <td className="py-2 px-3 text-center">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 accent-[#e8632b]"
+                        checked={lignesPaiementChoisies.contreAcceptation}
+                        onChange={(e) => {
+                          const coche = e.target.checked;
+                          setLignesPaiementChoisies(l => ({ ...l, contreAcceptation: coche }));
+                          if (!coche) setPaiementForm(f => ({ ...f, montantPaye: "" }));
+                        }}
+                        title="Choisir cette ligne pour saisir le montant à payer"
+                      />
                     </td>
                   </tr>
                   <tr className="border-b border-[#e5e8ec]">
@@ -1158,13 +1209,27 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                       <div className="flex items-center gap-2">
                         <input
                           type="number"
-                          className="input w-full min-w-0 text-right font-mono tabular-nums"
+                          className={"input w-full min-w-0 text-right font-mono tabular-nums" + (lignesPaiementChoisies.aVue ? "" : " bg-gray-100")}
                           aria-label={`Montant à payer ligne 2 ${deviseDossier}`}
                           value={montantAVue}
                           onChange={(e) => setMontantAVue(e.target.value)}
+                          disabled={!lignesPaiementChoisies.aVue}
                         />
                         <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
                       </div>
+                    </td>
+                    <td className="py-2 px-3 text-center">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 accent-[#e8632b]"
+                        checked={lignesPaiementChoisies.aVue}
+                        onChange={(e) => {
+                          const coche = e.target.checked;
+                          setLignesPaiementChoisies(l => ({ ...l, aVue: coche }));
+                          if (!coche) setMontantAVue("");
+                        }}
+                        title="Choisir cette ligne pour saisir le montant à payer"
+                      />
                     </td>
                   </tr>
                 </tbody>
@@ -1196,10 +1261,6 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <div>
                   <label className="text-label">Cours appliqué</label>
                   <input type="number" step="0.0001" className="input w-full bg-gray-100" value={paiementForm.coursApplique} onChange={setP("coursApplique")} placeholder="Ex. 10,85" readOnly />
-                </div>
-                <div>
-                  <label className="text-label">Date de valeur</label>
-                  <input type="date" className="input w-full" value={datePaiement} onChange={(e) => setDatePaiement(e.target.value)} />
                 </div>
               </div>
               <div className="space-y-4">
@@ -1406,7 +1467,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <table className="w-full text-[13px]">
                   <thead className="bg-gray-50">
                     <tr className="border-b border-[#e5e8ec]">
-                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant à imputer</th>
+                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant à réserver</th>
+                      <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Contrepartie en devise du dossier</th>
                       <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">N° Enregistrement</th>
                       <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant disponible</th>
                       <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Date de validité</th>
@@ -1416,19 +1478,23 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <tbody>
                     {titresImputation.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="py-4 px-3 text-center text-sm text-[#94a3b8]">Aucun titre d'importation.</td>
+                        <td colSpan={6} className="py-4 px-3 text-center text-sm text-[#94a3b8]">Aucun titre d'importation.</td>
                       </tr>
                     )}
                     {titresPage.map(t => (
                       <tr key={t.ref} className="border-b border-[#e5e8ec]">
                         <td className="py-2 px-3 text-left">
-                          <input
-                            type="number"
-                            className="input w-full text-left font-mono tabular-nums"
-                            value={t.montant}
-                            onChange={(e) => setTitresImputation(ts => ts.map(x => x.ref === t.ref ? { ...x, montant: e.target.value } : x))}
-                          />
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              className="input w-full min-w-0 text-left font-mono tabular-nums"
+                              value={t.montant}
+                              onChange={(e) => setTitresImputation(ts => ts.map(x => x.ref === t.ref ? { ...x, montant: e.target.value } : x))}
+                            />
+                            <span className="shrink-0 text-xs font-mono text-[#64748b]">{TITRES_DISPONIBLES.find(x => x.ref === t.ref)?.devise ?? deviseDossier}</span>
+                          </div>
                         </td>
+                        <td className="py-2 px-3 text-left font-mono tabular-nums text-[#0f172a]">{contrepartieTitre(t)}</td>
                         <td className="py-2 px-3 text-left font-mono text-[11px] text-[#64748b]">{t.ref}</td>
                         <td className="py-2 px-3 text-left font-mono tabular-nums text-[#0f172a]">
                           {montantRemiseOk
@@ -1437,14 +1503,24 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                         </td>
                         <td className="py-2 px-3 text-left text-[#64748b]">—</td>
                         <td className="py-2 px-3 text-left">
-                          <button
-                            type="button"
-                            className="text-[#94a3b8] hover:text-[#dc2626] transition"
-                            onClick={() => supprimerTitre(t.ref)}
-                            title={`Supprimer ${t.ref}`}
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                              onClick={() => setTitreConsulte(t)}
+                              title={`Consulter ${t.ref}`}
+                            >
+                              <Eye size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              className="text-[#94a3b8] hover:text-[#dc2626] transition"
+                              onClick={() => supprimerTitre(t.ref)}
+                              title={`Supprimer ${t.ref}`}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -1454,10 +1530,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 text-xs font-semibold text-[#0f172a]">
                 <span>Nombre Total : {titresImputation.length}</span>
                 <span>
-                  Montant total imputé : {titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}
+                  Montant total réservé : {totalContrepartieTitres.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}
                 </span>
                 <span>
-                  Montant restant à imputer : <span className={montantAPayerTotal - titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0) > 0 ? "text-red-600" : undefined}>{(montantAPayerTotal - titresImputation.reduce((s, t) => s + (Number(t.montant) || 0), 0)).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}</span>
+                  Montant restant à réserver : <span className={montantAPayerTotal - totalContrepartieTitres > 0 ? "text-red-600" : undefined}>{(montantAPayerTotal - totalContrepartieTitres).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} {deviseDossier}</span>
                 </span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
@@ -1750,6 +1826,49 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </div>
                 </button>
               ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Consultation d'un titre d'importation ajouté */}
+      {titreConsulte && (
+        <>
+          <div className="fixed inset-0 bg-black/30 z-50" onClick={() => setTitreConsulte(null)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-2xl shadow-2xl z-50 flex flex-col">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e8ec]">
+              <div className="text-sm font-semibold text-[#0f172a]">Détail du titre d'importation</div>
+              <button
+                className="h-8 w-8 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center"
+                onClick={() => setTitreConsulte(null)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="px-5 py-4 space-y-3">
+              <div>
+                <div className="text-label">N° Enregistrement</div>
+                <div className="text-sm font-mono text-[#0f172a]">{titreConsulte.ref}</div>
+              </div>
+              <div>
+                <div className="text-label">Devise</div>
+                <div className="text-sm font-mono text-[#0f172a]">{detailTitreConsulte?.devise ?? deviseDossier}</div>
+              </div>
+              <div>
+                <div className="text-label">Montant disponible</div>
+                <div className="text-sm font-mono tabular-nums text-[#0f172a]">
+                  {detailTitreConsulte ? `${detailTitreConsulte.montantDisponible.toLocaleString("fr-FR")} ${detailTitreConsulte.devise}` : "—"}
+                </div>
+              </div>
+              <div>
+                <div className="text-label">Montant à réserver</div>
+                <div className="text-sm font-mono tabular-nums text-[#0f172a]">
+                  {titreConsulte.montant ? `${Number(titreConsulte.montant).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}` : "—"}
+                </div>
+              </div>
+            </div>
+            <div className="px-5 py-4 border-t border-[#e5e8ec] flex justify-end">
+              <button type="button" className="btn-secondary" onClick={() => setTitreConsulte(null)}>Fermer</button>
             </div>
           </div>
         </>
