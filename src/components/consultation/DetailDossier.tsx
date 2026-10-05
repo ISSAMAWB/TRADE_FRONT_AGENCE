@@ -607,10 +607,11 @@ function BandeauEcheanceV2({
   );
 }
 
-function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["evenements"]; dossier: DossierTrade }) {
+function EvenementsTableV2({ evenements, dossier, statutFiltre }: { evenements: DossierTrade["evenements"]; dossier: DossierTrade; statutFiltre?: string }) {
   const dossierId = dossier.reference;
   const [selectedEvent, setSelectedEvent] = useState<EvenementTrade | null>(null);
   const [segment, setSegment] = useState<"TOUS" | "EN_COURS" | "TRAITES">("TRAITES");
+  const [statutRecherche, setStatutRecherche] = useState("");
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [derniereRefCreee, setDerniereRefCreee] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -657,12 +658,15 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
 
   const nbEnCours = evenements.filter((e) => e.statut === "EN_ATTENTE" || e.statut === "EN_COURS" || e.statut === "ENREGISTRE" || e.statut === "SOUMIS").length;
   const nbValides = evenements.filter((e) => e.statut === "VALIDE" || e.statut === "EXPIRE").length;
+  // Le filtre Statut ne s'applique que sur les onglets « En cours » et « Tous »
+  const statutActif = segment !== "TRAITES" ? (statutRecherche || statutFiltre || "") : "";
   const evenementsFiltres = evenements.filter((e) =>
-    segment === "EN_COURS"
+    (segment === "EN_COURS"
       ? e.statut === "EN_ATTENTE" || e.statut === "EN_COURS" || e.statut === "ENREGISTRE" || e.statut === "SOUMIS"
       : segment === "TRAITES"
         ? e.statut === "VALIDE" || e.statut === "EXPIRE"
-        : true
+        : true) &&
+    (!statutActif || e.statut === statutActif)
   );
 
   const NATURES_AVEC_DETAIL = [
@@ -730,6 +734,20 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
               </button>
             ))}
           </div>
+          {(segment === "EN_COURS" || segment === "TOUS") && (
+            <select
+              className="input h-6 px-2 text-[11px] w-44"
+              value={statutRecherche}
+              onChange={(e) => setStatutRecherche(e.target.value)}
+              aria-label="Filtrer par statut"
+            >
+              <option value="">Tous les statuts</option>
+              <option value="ENREGISTRE">Enregistré</option>
+              <option value="SOUMIS">Soumis</option>
+              <option value="REJETE">Rejeté par agence</option>
+              <option value="RETOURNE_CTN">Retourné par CTN-Devises</option>
+            </select>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {dossier.produit === "IRD" && (
@@ -967,7 +985,7 @@ function EvenementsTableV2({ evenements, dossier }: { evenements: DossierTrade["
   );
 }
 
-function DetailFIN({ dossier }: { dossier: DossierTrade }) {
+function DetailFIN({ dossier, statutEvenement }: { dossier: DossierTrade; statutEvenement?: string }) {
   const clientInfo = dossier.clientInfo;
   const montantFinancement = dossier.donnees["montantFinancement"];
   const montantFinancementOk = isMontantAvecDevise(montantFinancement) ? montantFinancement : null;
@@ -1117,12 +1135,12 @@ function DetailFIN({ dossier }: { dossier: DossierTrade }) {
         </Card>
       </div>
 
-      <EvenementsTableV2 evenements={dossier.evenements} dossier={dossier} />
+      <EvenementsTableV2 evenements={dossier.evenements} dossier={dossier} statutFiltre={statutEvenement} />
     </div>
   );
 }
 
-function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
+function DetailILCIRD({ dossier, statutEvenement }: { dossier: DossierTrade; statutEvenement?: string }) {
   const isILC = dossier.produit === "ILC";
   const isELC = dossier.produit === "ELC";
   const isIRD = dossier.produit === "IRD";
@@ -1384,12 +1402,12 @@ function DetailILCIRD({ dossier }: { dossier: DossierTrade }) {
         </Card>
       </div>
 
-      <EvenementsTableV2 evenements={dossier.evenements} dossier={dossier} />
+      <EvenementsTableV2 evenements={dossier.evenements} dossier={dossier} statutFiltre={statutEvenement} />
     </div>
   );
 }
 
-function DetailERD({ dossier }: { dossier: DossierTrade }) {
+function DetailERD({ dossier, statutEvenement }: { dossier: DossierTrade; statutEvenement?: string }) {
   const client = dossier.clientInfo;
   const montantRemise = dossier.donnees["montantRemise"];
   const montantRemiseOk = isMontantAvecDevise(montantRemise) ? montantRemise : null;
@@ -1562,7 +1580,7 @@ function DetailERD({ dossier }: { dossier: DossierTrade }) {
         </Card>
       )}
 
-      <EvenementsTableV2 evenements={dossier.evenements} dossier={dossier} />
+      <EvenementsTableV2 evenements={dossier.evenements} dossier={dossier} statutFiltre={statutEvenement} />
     </div>
   );
 }
@@ -1613,7 +1631,7 @@ function EvenementsTable({ evenements }: { evenements: DossierTrade["evenements"
   );
 }
 
-export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
+export default function DetailDossier({ dossier, statutEvenement }: { dossier: DossierTrade; statutEvenement?: string }) {
   const schema = getProduitSchema(dossier.produit);
 
   return (
@@ -1629,11 +1647,11 @@ export default function DetailDossier({ dossier }: { dossier: DossierTrade }) {
 
         {schema ? (
           dossier.produit === "ILC" || dossier.produit === "ELC" || dossier.produit === "IRD" ? (
-            <DetailILCIRD dossier={dossier} />
+            <DetailILCIRD dossier={dossier} statutEvenement={statutEvenement} />
           ) : dossier.produit === "FIN" ? (
-            <DetailFIN dossier={dossier} />
+            <DetailFIN dossier={dossier} statutEvenement={statutEvenement} />
           ) : dossier.produit === "ERD" ? (
-            <DetailERD dossier={dossier} />
+            <DetailERD dossier={dossier} statutEvenement={statutEvenement} />
           ) : (
             <DetailsDossierBloc blocs={schema.blocs} dossier={dossier} />
           )

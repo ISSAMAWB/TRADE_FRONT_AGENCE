@@ -25,6 +25,14 @@ export default function ConsultationDossierDetailPage() {
   const [montantMax, setMontantMax] = useState("");
   const [dateDebut, setDateDebut] = useState("");
   const [dateFin, setDateFin] = useState("");
+  const [statut, setStatut] = useState("");
+
+  const STATUTS_EVENEMENT = [
+    { value: "ENREGISTRE", label: "Enregistré" },
+    { value: "SOUMIS", label: "Soumis" },
+    { value: "REJETE", label: "Rejeté par agence" },
+    { value: "RETOURNE_CTN", label: "Retourné par CTN-Devises" },
+  ];
 
   const EVENEMENTS =
     dossier && dossier.produit in eventsByProduct
@@ -37,6 +45,7 @@ export default function ConsultationDossierDetailPage() {
     setMontantMax("");
     setDateDebut("");
     setDateFin("");
+    setStatut("");
   }
 
   if (!dossier) {
@@ -60,7 +69,7 @@ export default function ConsultationDossierDetailPage() {
         onSearch={() => {}}
         onReset={resetFilters}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           <div>
             <label className="text-label">ÉVÉNEMENT</label>
             <select
@@ -116,9 +125,23 @@ export default function ConsultationDossierDetailPage() {
               className="input w-full"
             />
           </div>
+
+          <div>
+            <label className="text-label">STATUT</label>
+            <select
+              className="input w-full"
+              value={statut}
+              onChange={(e) => setStatut(e.target.value)}
+            >
+              <option value="">Tous les statuts</option>
+              {STATUTS_EVENEMENT.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </CollapsibleFilterPanel>
-      <DetailDossier dossier={{ ...dossier, evenements: [...evenementsCrees, ...dossier.evenements] }} />
+      <DetailDossier dossier={{ ...dossier, evenements: [...evenementsCrees, ...dossier.evenements] }} statutEvenement={statut} />
     </Shell>
   );
 }
