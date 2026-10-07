@@ -338,13 +338,18 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const setA = (k: keyof typeof acceptationForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setAcceptationForm(f => ({ ...f, [k]: e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value }));
   // Lignes reprises de l'évènement « Réception de la remise » (échéancier de la remise)
-  const evenementReception = useMemo(() => dossier.evenements.find(e => e.nature === "Réception de la remise"), [dossier]);
+  // Évènement de remise source : « Réception de la remise » en priorité, sinon tout évènement portant des paiements (Modification, Ajustement…)
+  const evenementReception = useMemo(() => {
+    const evenements = dossier.evenements ?? [];
+    return evenements.find(e => e.nature === "Réception de la remise" && (e.receptionRemise?.paiements?.length || e.receptionRemise?.intervenants?.length))
+      ?? [...evenements].reverse().find(e => e.receptionRemise?.paiements?.length || e.receptionRemise?.intervenants?.length);
+  }, [dossier]);
   const paiementsReception = evenementReception?.receptionRemise?.paiements ?? [];
   const dateReceptionRemise = evenementReception?.dateCreation ? String(evenementReception.dateCreation).slice(0, 10) : "";
   const [paiementsAAccepter, setPaiementsAAccepter] = useState<{ montant: string; periode: string; dateBase: string; maturite: string; accepte: boolean; avalise: boolean }[]>(
-    ac?.paiementsAAccepter?.map(l => ({
+    ac?.paiementsAAccepter?.map((l, i) => ({
       montant: l.montant != null ? String(l.montant) : "",
-      periode: l.periode ?? "",
+      periode: l.periode || paiementsReception[i]?.typeTraite || "",
       dateBase: l.dateBase ?? "",
       maturite: l.maturite ?? "",
       accepte: l.accepte ?? true,
@@ -829,7 +834,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <tr className="border-b border-[#e5e8ec]">
                     <th className="text-center py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider w-10">N°</th>
                     <th className="text-right py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Montant <span className="text-red-500">*</span></th>
-                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Période (Tenor)</th>
+                    <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Condition de remise des documents</th>
                     <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Date de base</th>
                     <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Maturité</th>
                     <th className="text-left py-2 px-3 font-semibold text-[#64748b] text-[11px] uppercase tracking-wider">Statut</th>
@@ -854,7 +859,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                         </div>
                       </td>
                       <td className="py-2 px-3">
-                        <input className="input w-full bg-gray-100 text-gray-500" value={ligne.periode} aria-label={`Période ligne ${i + 1}`} readOnly />
+                        <input className="input w-full bg-gray-100 text-gray-500" value={ligne.periode.toLowerCase().includes("acceptation") ? "Document contre acceptation" : ligne.periode} aria-label={`Condition de remise ligne ${i + 1}`} readOnly />
                       </td>
                       <td className="py-2 px-3">
                         <input
