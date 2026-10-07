@@ -19,6 +19,9 @@ interface EvenementSaisieFormProps {
   onSaved: (reference: string) => void;
 }
 
+// Bloc « Information de la partie à notifier » masqué sur demande — repasser à true pour le réafficher
+const AFFICHER_PARTIE_A_NOTIFIER = false;
+
 export default function EvenementSaisieForm({ dossier, nature, evenement, onCancel, onSaved }: EvenementSaisieFormProps) {
   const ajouterEvenementDossier = useTomStore((s) => s.ajouterEvenementDossier);
   const modifierEvenementDossier = useTomStore((s) => s.modifierEvenementDossier);
@@ -285,6 +288,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
 
     coursApplique: p?.coursApplique != null ? String(p.coursApplique) : "10.55",
     montantPaye: p?.montantPaye != null ? String(p.montantPaye) : "",
+    montantTotalPayer: p?.montantPaye != null ? String(p.montantPaye) : String(montantRemiseOk?.valeur ?? ""),
 
 
     dateValeur: p?.dateValeur ?? aujourdhui,
@@ -375,12 +379,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     setPaiementForm(f => ({ ...f, [k]: e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value }));
 
   const montantRequis = nature === "Paiement" || nature === "Acceptation & Aval de la traite";
-  const montantAPayerTotal = (Number(paiementForm.montantPaye) || 0) + (Number(montantAVue) || 0);
+  const montantAPayerTotal = (Number(paiementForm.montantTotalPayer) || 0) + (Number(montantAVue) || 0);
   const totalContrepartieTitres = titresImputation.reduce((s, t) => s + contrepartieTitreValeur(t), 0);
   const montantRestantRegler = montantRemiseOk ? montantRemiseOk.valeur - montantAPayerTotal : null;
   const coursApplique = Number(paiementForm.coursApplique);
   const contrevaleurBrute = montantAPayerTotal * coursApplique;
-  const contrevaleurDirhams = (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "")
+  const contrevaleurDirhams = (paiementForm.montantTotalPayer.trim() !== "" || montantAVue.trim() !== "")
     && paiementForm.coursApplique.trim() !== ""
     && Number.isFinite(montantAPayerTotal) && montantAPayerTotal >= 0
     && Number.isFinite(coursApplique) && coursApplique > 0
@@ -658,7 +662,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           : "L'événement sera créé dans l'onglet En cours : statut « Enregistré » via le bouton Enregistrer, « Soumis » via Soumettre."}
       </div>
 
-      <fieldset disabled={lectureSeule} className="contents">
+      <fieldset disabled={lectureSeule} className="contents champs-saisie">
       <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5 mb-4">
         <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
           <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
@@ -667,19 +671,19 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         <div className="grid grid-cols-1 md:grid-cols-4 gap-x-5 gap-y-5">
         <div>
           <label className="text-label">Référence de la remise</label>
-          <input className="input w-full bg-gray-100" value={dossier.reference} readOnly />
+          <input className="input w-full bg-gray-100 text-gray-500" value={dossier.reference} readOnly />
         </div>
         <div>
           <label className="text-label">Date de création de la remise</label>
           <input
-            className="input w-full bg-gray-100"
+            className="input w-full bg-gray-100 text-gray-500"
             value={dossier.evenements[0]?.dateCreation ? new Date(dossier.evenements[0].dateCreation).toLocaleDateString("fr-FR") : "—"}
             readOnly
           />
         </div>
         <div>
           <label className="text-label">Conditions de remise des documents</label>
-          <input className="input w-full bg-gray-100" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
+          <input className="input w-full bg-gray-100 text-gray-500" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
         </div>
 
         {(nature === "Réception de la remise" || nature === "Paiement" || isAcceptation) && (
@@ -727,9 +731,9 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
               <div>
                 <label className="text-label">Acceptant (Client/tiré)</label>
-                <input className="input w-full bg-gray-100" value={acceptationForm.acceptant} readOnly />
+                <input className="input w-full bg-gray-100 text-gray-500" value={acceptationForm.acceptant} readOnly />
                 <textarea
-                  className="input w-full mt-1.5 bg-gray-100"
+                  className="input w-full mt-1.5 bg-gray-100 text-gray-500"
                   rows={3}
                   value={acceptationForm.adresseAcceptant}
                   placeholder="Adresse"
@@ -739,11 +743,11 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <div className="grid grid-cols-2 gap-3 mt-2">
                   <div>
                     <label className="text-label">Ville</label>
-                    <input className="input w-full bg-gray-100" value={acceptationForm.villeAcceptant} readOnly />
+                    <input className="input w-full bg-gray-100 text-gray-500" value={acceptationForm.villeAcceptant} readOnly />
                   </div>
                   <div>
                     <label className="text-label">Pays</label>
-                    <input className="input w-full bg-gray-100" value={acceptationForm.paysAcceptant} readOnly />
+                    <input className="input w-full bg-gray-100 text-gray-500" value={acceptationForm.paysAcceptant} readOnly />
                   </div>
                 </div>
               </div>
@@ -758,7 +762,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             </div>
           </div>
 
-          {/* Information de la partie à notifier */}
+          {/* Information de la partie à notifier — masqué : remettre AFFICHER_PARTIE_A_NOTIFIER à true pour réafficher */}
+          {AFFICHER_PARTIE_A_NOTIFIER && (
           <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
             <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
               <div className="w-1 h-5 bg-gradient-to-r from-green-500 to-green-600 rounded-full"></div>
@@ -767,7 +772,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
               <div>
                 <label className="text-label">Nature de la partie à notifier</label>
-                <select className="input w-full bg-gray-100" value={acceptationForm.naturePartieANotifier} disabled>
+                <select className="input w-full bg-gray-100 text-gray-500" value={acceptationForm.naturePartieANotifier} disabled>
                   <option>Tiré</option>
                   <option>Tireur</option>
                   <option>Banque remettante</option>
@@ -775,14 +780,14 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 </select>
                 <input
                   type="text"
-                  className="input w-full mt-2 bg-gray-100"
+                  className="input w-full mt-2 bg-gray-100 text-gray-500"
                   value={acceptationForm.partieANotifier}
                   placeholder="Nom de la partie à notifier"
                   aria-label="Partie à notifier"
                   readOnly
                 />
                 <textarea
-                  className="input w-full mt-2 bg-gray-100"
+                  className="input w-full mt-2 bg-gray-100 text-gray-500"
                   rows={3}
                   value={acceptationForm.adressePartieANotifier}
                   placeholder="Adresse"
@@ -792,11 +797,11 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <div className="grid grid-cols-2 gap-3 mt-2">
                   <div>
                     <label className="text-label">Ville</label>
-                    <input className="input w-full bg-gray-100" value={acceptationForm.villePartieANotifier} readOnly />
+                    <input className="input w-full bg-gray-100 text-gray-500" value={acceptationForm.villePartieANotifier} readOnly />
                   </div>
                   <div>
                     <label className="text-label">Pays</label>
-                    <input className="input w-full bg-gray-100" value={acceptationForm.paysPartieANotifier} readOnly />
+                    <input className="input w-full bg-gray-100 text-gray-500" value={acceptationForm.paysPartieANotifier} readOnly />
                   </div>
                 </div>
               </div>
@@ -810,6 +815,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               </div>
             </div>
           </div>
+          )}
 
           {/* Paiements à accepter */}
           <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
@@ -839,7 +845,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
-                            className="input w-full min-w-0 text-right font-mono tabular-nums bg-gray-100"
+                            className="input w-full min-w-0 text-right font-mono tabular-nums bg-gray-100 text-gray-500"
                             value={ligne.montant}
                             aria-label={`Montant du paiement à accepter ligne ${i + 1}`}
                             readOnly
@@ -848,11 +854,11 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                         </div>
                       </td>
                       <td className="py-2 px-3">
-                        <input className="input w-full bg-gray-100" value={ligne.periode} aria-label={`Période ligne ${i + 1}`} readOnly />
+                        <input className="input w-full bg-gray-100 text-gray-500" value={ligne.periode} aria-label={`Période ligne ${i + 1}`} readOnly />
                       </td>
                       <td className="py-2 px-3">
                         <input
-                          className={`input w-full bg-gray-100 ${ligne.periode.toLowerCase().includes("vue") ? "text-center text-[#64748b]" : ""}`}
+                          className={`input w-full bg-gray-100 text-gray-500 ${ligne.periode.toLowerCase().includes("vue") ? "text-center text-[#64748b]" : ""}`}
                           value={ligne.periode.toLowerCase().includes("vue") ? "—" : (ligne.dateBase ? new Date(`${ligne.dateBase}T00:00:00`).toLocaleDateString("fr-FR") : "")}
                           aria-label={`Date de base ligne ${i + 1}`}
                           readOnly
@@ -860,7 +866,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                       </td>
                       <td className="py-2 px-3">
                         <input
-                          className={`input w-full bg-gray-100 ${ligne.periode.toLowerCase().includes("vue") ? "text-center text-[#64748b]" : ""}`}
+                          className={`input w-full bg-gray-100 text-gray-500 ${ligne.periode.toLowerCase().includes("vue") ? "text-center text-[#64748b]" : ""}`}
                           value={ligne.periode.toLowerCase().includes("vue") ? "—" : (ligne.maturite ? new Date(`${ligne.maturite}T00:00:00`).toLocaleDateString("fr-FR") : "")}
                           aria-label={`Maturité ligne ${i + 1}`}
                           readOnly
@@ -920,7 +926,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <div role="tabpanel" id="panneau-acceptation-titres" aria-labelledby="onglet-acceptation-titres" hidden={ongletAcceptation !== "titres"}>
               <div className="flex items-center justify-between mb-3">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={acceptationForm.titreImportationNonRequis}
+                  <input type="checkbox" disabled className="w-4 h-4 rounded border-gray-300 text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed" checked={acceptationForm.titreImportationNonRequis}
                     onChange={event => {
                       const checked = event.target.checked;
                       setAcceptationForm(f => ({ ...f, titreImportationNonRequis: checked }));
@@ -1044,7 +1050,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-5">
               <div>
                 <label className="text-label">Partie à l'origine du paiement</label>
-                <select className="input w-full bg-gray-100" value={paiementForm.partieOriginePaiement} onChange={setP("partieOriginePaiement")} disabled>
+                <select className="input w-full bg-gray-100 text-gray-500" value={paiementForm.partieOriginePaiement} onChange={setP("partieOriginePaiement")} disabled>
                   <option>Client/Tiré</option>
                   <option>Tireur</option>
                   <option>Banque remettante</option>
@@ -1067,7 +1073,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div>
                 <span className="text-label invisible block" aria-hidden="true">Paiement reçu de</span>
                 <div className="relative">
-                  <input type="text" className="input w-full pr-9 bg-gray-100" value={paiementForm.paiementRecuDe} readOnly placeholder="Nom du payeur" />
+                  <input type="text" className="input w-full pr-9 bg-gray-100 text-gray-500" value={paiementForm.paiementRecuDe} readOnly placeholder="Nom du payeur" />
                   <button
                     type="button"
                     disabled
@@ -1079,7 +1085,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   </button>
                 </div>
                 <textarea
-                  className="input w-full mt-1.5 bg-gray-100"
+                  className="input w-full mt-1.5 bg-gray-100 text-gray-500"
                   rows={4}
                   value={paiementForm.adressePaiementRecuDe}
                   readOnly
@@ -1089,11 +1095,11 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                 <div className="grid grid-cols-2 gap-3 mt-2">
                   <div>
                     <label className="text-label">Ville</label>
-                    <input className="input w-full bg-gray-100" value={paiementForm.villePaiementRecuDe} readOnly />
+                    <input className="input w-full bg-gray-100 text-gray-500" value={paiementForm.villePaiementRecuDe} readOnly />
                   </div>
                   <div>
                     <label className="text-label">Pays</label>
-                    <input className="input w-full bg-gray-100" value={paiementForm.paysPaiementRecuDe} readOnly />
+                    <input className="input w-full bg-gray-100 text-gray-500" value={paiementForm.paysPaiementRecuDe} readOnly />
                   </div>
                 </div>
               </div>
@@ -1170,7 +1176,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                       <div className="flex items-center gap-2">
                         <input
                           type="number"
-                          className={"input w-full min-w-0 text-right font-mono tabular-nums" + (lignesPaiementChoisies.contreAcceptation ? "" : " bg-gray-100")}
+                          className={"input w-full min-w-0 text-right font-mono tabular-nums" + (lignesPaiementChoisies.contreAcceptation ? "" : " bg-gray-100 text-gray-500")}
                           aria-label={`Montant à payer ligne 1 ${deviseDossier}`}
                           value={paiementForm.montantPaye}
                           onChange={setP("montantPaye")}
@@ -1182,12 +1188,13 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <td className="py-2 px-3 text-center">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 accent-[#e8632b]"
+                        className="h-4 w-4 accent-[#e8632b] disabled:opacity-40 disabled:cursor-not-allowed"
                         checked={lignesPaiementChoisies.contreAcceptation}
+                        disabled={lignesPaiementChoisies.aVue}
                         onChange={(e) => {
                           const coche = e.target.checked;
                           setLignesPaiementChoisies(l => ({ ...l, contreAcceptation: coche }));
-                          if (!coche) setPaiementForm(f => ({ ...f, montantPaye: "" }));
+                          setPaiementForm(f => ({ ...f, montantPaye: coche ? String(montantRemiseOk?.valeur ?? "") : "" }));
                         }}
                         title="Choisir cette ligne pour saisir le montant à payer"
                       />
@@ -1209,7 +1216,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                       <div className="flex items-center gap-2">
                         <input
                           type="number"
-                          className={"input w-full min-w-0 text-right font-mono tabular-nums" + (lignesPaiementChoisies.aVue ? "" : " bg-gray-100")}
+                          className={"input w-full min-w-0 text-right font-mono tabular-nums" + (lignesPaiementChoisies.aVue ? "" : " bg-gray-100 text-gray-500")}
                           aria-label={`Montant à payer ligne 2 ${deviseDossier}`}
                           value={montantAVue}
                           onChange={(e) => setMontantAVue(e.target.value)}
@@ -1221,12 +1228,13 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <td className="py-2 px-3 text-center">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 accent-[#e8632b]"
+                        className="h-4 w-4 accent-[#e8632b] disabled:opacity-40 disabled:cursor-not-allowed"
                         checked={lignesPaiementChoisies.aVue}
+                        disabled={lignesPaiementChoisies.contreAcceptation}
                         onChange={(e) => {
                           const coche = e.target.checked;
                           setLignesPaiementChoisies(l => ({ ...l, aVue: coche }));
-                          if (!coche) setMontantAVue("");
+                          setMontantAVue(coche ? String(montantRemiseOk?.valeur ?? "") : "");
                         }}
                         title="Choisir cette ligne pour saisir le montant à payer"
                       />
@@ -1238,7 +1246,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-[#e5e8ec] text-sm font-semibold text-[#0f172a]">
               <span>Montant total à payer :</span>
               <span className="font-mono tabular-nums text-[#e8632b]">
-                {Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "")
+                {Number.isFinite(montantAPayerTotal) && (paiementForm.montantTotalPayer.trim() !== "" || montantAVue.trim() !== "")
                   ? `${montantAPayerTotal.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}`
                   : `0,00 ${deviseDossier}`}
               </span>
@@ -1256,38 +1264,34 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="space-y-4">
                 <div>
                   <label className="text-label">Montant des documents présentés</label>
-                  <input className="input w-full bg-gray-100" value={montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR")} ${montantRemiseOk.devise}` : "—"} readOnly />
+                  <input className="input w-full bg-gray-100 text-gray-500" value={montantRemiseOk ? `${montantRemiseOk.valeur.toLocaleString("fr-FR")} ${montantRemiseOk.devise}` : "—"} readOnly />
                 </div>
                 <div>
-                  <label className="text-label">Cours appliqué</label>
-                  <input type="number" step="0.0001" className="input w-full bg-gray-100" value={paiementForm.coursApplique} onChange={setP("coursApplique")} placeholder="Ex. 10,85" readOnly />
+                  <label className="text-label">Montant restant à régler</label>
+                  <input type="text" className="input w-full bg-gray-100 text-gray-500" value={montantRestantRegler != null ? `${montantRestantRegler.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}` : ""} readOnly />
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-label">Montant total à payer <span className="text-red-500">*</span></label>
+                  <label className="text-label">Montant total à payer</label>
                   {conditionsRemiseAutre ? (
-                    <input type="text" className="input w-full bg-gray-100" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantPaye.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
+                    <input type="text" className="input w-full bg-gray-100 text-gray-500" value={Number.isFinite(montantAPayerTotal) && (paiementForm.montantTotalPayer.trim() !== "" || montantAVue.trim() !== "") ? `${montantAPayerTotal.toLocaleString("fr-FR")} ${deviseDossier}`.trim() : ""} readOnly />
                   ) : (
                     <div className="flex items-center gap-2">
-                      <input type="number" className="input w-full min-w-0 text-right font-mono tabular-nums" value={paiementForm.montantPaye} onChange={setP("montantPaye")} aria-label={`Montant total à payer ${deviseDossier}`} />
+                      <input type="number" className="input w-full min-w-0 text-right font-mono tabular-nums" value={paiementForm.montantTotalPayer} onChange={setP("montantTotalPayer")} aria-label={`Montant total à payer ${deviseDossier}`} />
                       <span className="shrink-0 text-xs font-mono text-[#64748b]">{deviseDossier}</span>
                     </div>
                   )}
                 </div>
                 <div>
                   <label className="text-label">Contrevaleur estimative en dirhams</label>
-                  <input type="number" step="0.01" className="input w-full bg-gray-100" value={contrevaleurDirhams != null ? contrevaleurDirhams.toFixed(2) : ""} readOnly />
+                  <input type="number" step="0.01" className="input w-full bg-gray-100 text-gray-500" value={contrevaleurDirhams != null ? contrevaleurDirhams.toFixed(2) : ""} readOnly />
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-label">Montant restant à régler</label>
-                  <input type="text" className="input w-full bg-gray-100" value={montantRestantRegler != null ? `${montantRestantRegler.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} ${deviseDossier}` : ""} readOnly />
-                </div>
-                <div>
                   <label className="text-label">Référence de l'aval</label>
-                  <input className="input w-full" value={paiementForm.compteDebite} onChange={setP("compteDebite")} />
+                  <input className="input w-full bg-gray-100 text-gray-500" value={paiementForm.compteDebite} readOnly />
                 </div>
               </div>
             </div>
@@ -1303,7 +1307,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
               <div className="flex flex-col gap-4 min-w-0">
                 <div>
                   <label className="text-label">Nature de la partie à payer</label>
-                  <select className="input w-full bg-gray-100" value={paiementForm.naturePartieAPayer} onChange={setP("naturePartieAPayer")} disabled>
+                  <select className="input w-full bg-gray-100 text-gray-500" value={paiementForm.naturePartieAPayer} onChange={setP("naturePartieAPayer")} disabled>
                     <option>Banque étrangère</option>
                     <option>Tireur</option>
                     <option>Autre</option>
@@ -1313,7 +1317,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <div className="relative">
                     <input
                       type="text"
-                      className={`input w-full bg-gray-100 ${paiementForm.naturePartieAPayer === "Banque étrangère" ? "pr-9" : ""}`}
+                      className={`input w-full bg-gray-100 text-gray-500 ${paiementForm.naturePartieAPayer === "Banque étrangère" ? "pr-9" : ""}`}
                       value={paiementForm.partieAPayer}
                       onChange={setP("partieAPayer")}
                       placeholder="Nom de la partie à payer"
@@ -1333,7 +1337,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     )}
                   </div>
                   <textarea
-                    className="input w-full mt-2 bg-gray-100"
+                    className="input w-full mt-2 bg-gray-100 text-gray-500"
                     rows={4}
                     value={paiementForm.adressePartieAPayer}
                     readOnly
@@ -1343,11 +1347,11 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <div className="grid grid-cols-2 gap-3 mt-2">
                     <div>
                       <label className="text-label">Ville</label>
-                      <input className="input w-full bg-gray-100" value={paiementForm.villePartieAPayer} readOnly />
+                      <input className="input w-full bg-gray-100 text-gray-500" value={paiementForm.villePartieAPayer} readOnly />
                     </div>
                     <div>
                       <label className="text-label">Pays</label>
-                      <input className="input w-full bg-gray-100" value={paiementForm.paysPartieAPayer} readOnly />
+                      <input className="input w-full bg-gray-100 text-gray-500" value={paiementForm.paysPartieAPayer} readOnly />
                     </div>
                   </div>
                 </div>
@@ -1376,10 +1380,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     </button>
                   </div>
                   <textarea
-                    className="input w-full mt-2 bg-gray-100"
+                    className="input w-full mt-2"
                     rows={4}
-                    value={[paiementForm.adresseBanqueBeneficiaire].filter(Boolean).join("\n")}
-                    readOnly
+                    value={paiementForm.adresseBanqueBeneficiaire}
+                    onChange={setP("adresseBanqueBeneficiaire")}
                     placeholder="Adresse"
                     aria-label="Adresse de la banque du bénéficiaire"
                   />
@@ -1444,7 +1448,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             <div role="tabpanel" id="panneau-pieces-titres" aria-labelledby="onglet-pieces-titres" hidden={ongletPieces !== "titres"}>
               <div className="flex items-center justify-between mb-3">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" checked={paiementForm.titreImportationNonRequis}
+                  <input type="checkbox" disabled className="w-4 h-4 rounded border-gray-300 text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed" checked={paiementForm.titreImportationNonRequis}
                     onChange={event => {
                       const checked = event.target.checked;
                       setPaiementForm(f => ({ ...f, titreImportationNonRequis: checked }));

@@ -20,6 +20,11 @@ body {
 .input-lg {
   @apply input h-10 text-base;
 }
+
+/* Champs saisissables des écrans Paiement / Acceptation : bien blancs et détachés des champs grisés */
+.champs-saisie .input:not([readonly]):not(:disabled) {
+  @apply bg-white border-gray-400 shadow-sm text-gray-900;
+}
 .btn { @apply inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition; }
 .btn-primary { @apply btn bg-orange-500 text-white hover:bg-orange-600 shadow-sm; }
 .btn-outline { @apply btn bg-white border border-gray-300 hover:bg-gray-100; }
