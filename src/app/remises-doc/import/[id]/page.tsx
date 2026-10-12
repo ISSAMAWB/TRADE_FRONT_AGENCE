@@ -266,8 +266,9 @@ export default function CentralisationRDIDetail() {
           </div>
         </div>
         <div className="space-y-3 mt-4">
-          {/* Ligne 1 : Client/Tiré, Montant, Devise */}
+          {/* 3 colonnes : Client+Type | Montant+Réf interne | Devise+Réf externe */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="space-y-3">
             <Field label="Client/Tiré" warning={champsACorriger.includes("client")}>
               <div className="flex gap-1">
                 <input
@@ -299,26 +300,6 @@ export default function CentralisationRDIDetail() {
               )}
             </Field>
 
-            <EditField label="Montant" type="number" value={courrier.montant?.toString() ?? ""}
-              onChange={v => updateField({ montant: v === "" ? undefined : parseFloat(v) })} disabled={!isEditable}
-              placeholder="0.00" warning={champsACorriger.includes("montant")} />
-            <EditField label="Devise" value={courrier.devise ?? ""}
-              onChange={v => updateField({ devise: v || undefined })} disabled={!isEditable}
-              placeholder="EUR / USD / MAD" warning={champsACorriger.includes("devise")} />
-          </div>
-
-          {/* Ligne 2 : Référence interne + Référence externe */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <EditField label="Référence interne" value={courrier.reference_interne ?? ""}
-              onChange={v => updateField({ reference_interne: v || undefined })} disabled={!isEditable}
-              warning={champsACorriger.includes("reference_interne")} />
-            <EditField label="Référence externe" value={courrier.reference_externe ?? ""}
-              onChange={v => updateField({ reference_externe: v || undefined })} disabled={!isEditable}
-              warning={champsACorriger.includes("reference_externe")} />
-          </div>
-
-          {/* Ligne 3 : Type d'évènement + Code d'évènement */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Field label="Type d'évènement">
               <select
                 className={clsx("input w-full", !isEditable && "bg-ink-50")}
@@ -335,7 +316,25 @@ export default function CentralisationRDIDetail() {
                 <option value="CHANGEMENT_DOMICILIATION">Changement de domiciliation</option>
               </select>
             </Field>
-            <EditField label="Code d'évènement" value={courrier.code_evenement ?? "—"} onChange={() => {}} disabled={true} />
+            </div>
+
+            <div className="space-y-3">
+            <EditField label="Montant" type="number" value={courrier.montant?.toString() ?? ""}
+              onChange={v => updateField({ montant: v === "" ? undefined : parseFloat(v) })} disabled={!isEditable}
+              placeholder="0.00" warning={champsACorriger.includes("montant")} />
+            <EditField label="Référence interne" value={courrier.reference_interne ?? ""}
+              onChange={v => updateField({ reference_interne: v || undefined })} disabled={!isEditable}
+              warning={champsACorriger.includes("reference_interne")} />
+            </div>
+
+            <div className="space-y-3">
+            <EditField label="Devise" value={courrier.devise ?? ""}
+              onChange={v => updateField({ devise: v || undefined })} disabled={!isEditable}
+              placeholder="EUR / USD / MAD" warning={champsACorriger.includes("devise")} />
+            <EditField label="Référence externe" value={courrier.reference_externe ?? ""}
+              onChange={v => updateField({ reference_externe: v || undefined })} disabled={!isEditable}
+              warning={champsACorriger.includes("reference_externe")} />
+            </div>
           </div>
         </div>
       </section>

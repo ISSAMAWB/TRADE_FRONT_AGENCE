@@ -29,6 +29,12 @@ const CORBEILLE_DEFS: { key: CorbeilleKey; label: string; filter: ((c: CourrierI
 
 const DEVISES = ["EUR", "USD", "MAD", "GBP", "JPY", "CHF"];
 
+const TYPE_EVENEMENT_LABEL: Record<string, string> = {
+  CREATION: "Création",
+  MODIFICATION: "Modification",
+  CHANGEMENT_DOMICILIATION: "Changement de domiciliation",
+};
+
 export default function CentralisationRDIListPage() {
   return (
     <Suspense fallback={<Shell><div className="text-sm text-gray-400 p-6">Chargement…</div></Shell>}>
@@ -484,7 +490,9 @@ function CentralisationRDIListInner() {
             <thead>
               <tr>
                 <th>Référence centralisation</th>
+                <th>Référence interne</th>
                 <th>Produit</th>
+                <th>Type d'évènement</th>
                 <th>Client / Tiré</th>
                 <th className="text-right">Montant</th>
                 <th>Devise</th>
@@ -501,7 +509,9 @@ function CentralisationRDIListInner() {
                       {c.reference_courrier}
                     </Link>
                   </td>
+                  <td className="whitespace-nowrap text-xs font-mono">{c.reference_interne ?? <span className="text-gray-400">—</span>}</td>
                   <td className="whitespace-nowrap"><span className="badge-produit">{PRODUIT_IRD_LABEL[c.produit ?? "REMISE_DOCUMENTAIRE_IMPORT"]}</span></td>
+                  <td className="whitespace-nowrap">{TYPE_EVENEMENT_LABEL[c.type_evenement ?? "CREATION"] ?? <span className="text-gray-400">—</span>}</td>
                   <td>{c.client ?? <span className="text-gray-400">—</span>}</td>
                   <td className="text-right whitespace-nowrap">{c.montant ? c.montant.toLocaleString("fr-FR") : <span className="text-gray-400">—</span>}</td>
                   <td className="whitespace-nowrap">{c.devise ?? <span className="text-gray-400">—</span>}</td>
@@ -551,7 +561,7 @@ function CentralisationRDIListInner() {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="text-center text-gray-400 py-8">
+                  <td colSpan={10} className="text-center text-gray-400 py-8">
                     <div className="text-sm">Aucune centralisation ne correspond à vos critères.</div>
                     <button onClick={resetFilters} className="text-orange-500 text-xs hover:underline mt-1">Réinitialiser les filtres</button>
                   </td>
