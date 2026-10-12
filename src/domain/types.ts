@@ -225,6 +225,7 @@ export interface CourrierIrd {
   devise?: string;
   reference_interne?: string;
   reference_externe?: string;
+  mnemonique?: string;
   type_evenement?: TypeEvenementCentralisation;
   code_evenement?: string;
   controle_doc: LigneControleDoc[];

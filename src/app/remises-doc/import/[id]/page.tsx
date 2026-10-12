@@ -300,6 +300,9 @@ export default function CentralisationRDIDetail() {
               )}
             </Field>
 
+            <EditField label="Mnémonique" value={courrier.mnemonique ?? ""}
+              onChange={v => updateField({ mnemonique: v || undefined })} disabled={true} />
+
             <Field label="Type d'évènement">
               <select
                 className={clsx("input w-full", !isEditable && "bg-ink-50")}
