@@ -21,18 +21,19 @@ const FAKE_CLIENTS = [
 const FAKE_DEVISES = ["EUR", "USD", "MAD"];
 
 export const REFERENTIEL_CLIENTS: ClientReferentiel[] = [
-  { id: "C001", nom: "ATLAS TEXTILE SARL", identifiant: "ATL-2024-001", agence_rattachement: "Agence Casablanca" },
-  { id: "C002", nom: "ATLAS TEXTILE EXPORT", identifiant: "ATL-2024-002", agence_rattachement: "Agence Casablanca" },
-  { id: "C003", nom: "MAGHREB STEEL SA", identifiant: "MGS-2024-001", agence_rattachement: "Agence Casablanca" },
-  { id: "C004", nom: "MAGHREB STEEL INTERNATIONAL", identifiant: "MGS-2024-002", agence_rattachement: "Agence Rabat" },
-  { id: "C005", nom: "DELICES DU SUD SARL", identifiant: "DDS-2024-001", agence_rattachement: "Agence Marrakech" },
-  { id: "C006", nom: "MEDITERRANEA TRADING CO", identifiant: "MTC-2024-001", agence_rattachement: "Agence Tanger" },
-  { id: "C007", nom: "OCEANIC SHIPPING LTD", identifiant: "OSL-2024-001", agence_rattachement: "Agence Casablanca" },
-  { id: "C008", nom: "ROYAL CERAMICS SA", identifiant: "RCS-2024-001", agence_rattachement: "Agence Fès" },
-  { id: "C009", nom: "STE ABC IMPORT EXPORT", identifiant: "ABC-2024-001", agence_rattachement: "Agence Casablanca" },
-  { id: "C010", nom: "GLOBAL TRADE MAROC", identifiant: "GTM-2024-001", agence_rattachement: "Agence Rabat" },
-  { id: "C011", nom: "SAHARA LOGISTICS", identifiant: "SHL-2024-001", agence_rattachement: "Agence Agadir" },
-  { id: "C012", nom: "TANGER MED FREIGHT", identifiant: "TMF-2024-001", agence_rattachement: "Agence Tanger" },
+  { id: "C001", nom: "ATLAS TEXTILE SARL", identifiant: "ATL-2024-001", mnemonique: "ATLTXT", agence_rattachement: "Agence Casablanca" },
+  { id: "C002", nom: "ATLAS TEXTILE EXPORT", identifiant: "ATL-2024-002", mnemonique: "ATLEXP", agence_rattachement: "Agence Casablanca" },
+  { id: "C003", nom: "MAGHREB STEEL SA", identifiant: "MGS-2024-001", mnemonique: "MGSSTL", agence_rattachement: "Agence Casablanca" },
+  { id: "C004", nom: "MAGHREB STEEL INTERNATIONAL", identifiant: "MGS-2024-002", mnemonique: "MGSINT", agence_rattachement: "Agence Rabat" },
+  { id: "C005", nom: "DELICES DU SUD SARL", identifiant: "DDS-2024-001", mnemonique: "DLSUD", agence_rattachement: "Agence Marrakech" },
+  { id: "C006", nom: "MEDITERRANEA TRADING CO", identifiant: "MTC-2024-001", mnemonique: "MEDTRD", agence_rattachement: "Agence Tanger" },
+  { id: "C007", nom: "OCEANIC SHIPPING LTD", identifiant: "OSL-2024-001", mnemonique: "OCSHIP", agence_rattachement: "Agence Casablanca" },
+  { id: "C008", nom: "ROYAL CERAMICS SA", identifiant: "RCS-2024-001", mnemonique: "RYLCRM", agence_rattachement: "Agence Fès" },
+  { id: "C009", nom: "STE ABC IMPORT EXPORT", identifiant: "ABC-2024-001", mnemonique: "ABCIMP", agence_rattachement: "Agence Casablanca" },
+  { id: "C010", nom: "GLOBAL TRADE MAROC", identifiant: "GTM-2024-001", mnemonique: "GLBTRD", agence_rattachement: "Agence Rabat" },
+  { id: "C011", nom: "SAHARA LOGISTICS", identifiant: "SHL-2024-001", mnemonique: "SHLLOG", agence_rattachement: "Agence Agadir" },
+  { id: "C012", nom: "TANGER MED FREIGHT", identifiant: "TMF-2024-001", mnemonique: "TMFRGT", agence_rattachement: "Agence Tanger" },
+  { id: "C013", nom: "ORANGE LOGISTIQUE SARL", identifiant: "ORG-2024-001", agence_rattachement: "Agence Casablanca" },
 ];
 function rand<T>(a: T[]): T { return a[Math.floor(Math.random() * a.length)]; }
 

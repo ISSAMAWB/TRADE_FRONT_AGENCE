@@ -344,6 +344,8 @@ export interface ClientReferentiel {
   id: string;
   nom: string;
   identifiant: string;
+  /** Code mnémonique TI+ — saisi en centralisation pour remonter le client. */
+  mnemonique?: string;
   agence_rattachement: string;
 }
 

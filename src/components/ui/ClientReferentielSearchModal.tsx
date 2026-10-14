@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import { REFERENTIEL_CLIENTS } from "@/store/useTomStore";
+import type { ClientReferentiel } from "@/domain/types";
 
 export default function ClientReferentielSearchModal({
   initialQuery,
@@ -10,7 +11,7 @@ export default function ClientReferentielSearchModal({
   onClose,
 }: {
   initialQuery: string;
-  onSelect: (c: { id: string; nom: string; agence_rattachement: string }) => void;
+  onSelect: (c: ClientReferentiel) => void;
   onClose: () => void;
 }) {
   const [query, setQuery] = useState(initialQuery);
@@ -21,6 +22,7 @@ export default function ClientReferentielSearchModal({
     return REFERENTIEL_CLIENTS.filter(c =>
       c.nom.toLowerCase().includes(q) ||
       c.identifiant.toLowerCase().includes(q) ||
+      (c.mnemonique ?? "").toLowerCase().includes(q) ||
       c.agence_rattachement.toLowerCase().includes(q)
     ).slice(0, 10);
   }, [query]);
@@ -36,7 +38,7 @@ export default function ClientReferentielSearchModal({
             className="input pl-8 h-9 w-full"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="Rechercher par nom, identifiant ou agence…"
+            placeholder="Rechercher par nom, mnémonique, identifiant ou agence…"
             autoFocus
           />
         </div>
@@ -45,6 +47,7 @@ export default function ClientReferentielSearchModal({
             <thead>
               <tr>
                 <th>Nom client</th>
+                <th>Mnémonique</th>
                 <th>Identifiant</th>
                 <th>Agence</th>
                 <th className="w-20"></th>
@@ -54,6 +57,7 @@ export default function ClientReferentielSearchModal({
               {results.map(c => (
                 <tr key={c.id} className="hover:bg-brand-50/50 cursor-pointer" onClick={() => onSelect(c)}>
                   <td className="font-medium text-sm">{c.nom}</td>
+                  <td className="text-xs font-mono text-ink-600">{c.mnemonique ?? "—"}</td>
                   <td className="text-xs text-ink-500">{c.identifiant}</td>
                   <td className="text-xs">{c.agence_rattachement}</td>
                   <td>
@@ -64,7 +68,7 @@ export default function ClientReferentielSearchModal({
                 </tr>
               ))}
               {results.length === 0 && (
-                <tr><td colSpan={4} className="text-center text-ink-500 text-xs py-6">Aucun client trouvé.</td></tr>
+                <tr><td colSpan={5} className="text-center text-ink-500 text-xs py-6">Aucun client trouvé.</td></tr>
               )}
             </tbody>
           </table>

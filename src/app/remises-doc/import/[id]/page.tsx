@@ -9,7 +9,7 @@ import {
   Clock, History, ShieldCheck, XCircle,
 } from "lucide-react";
 import clsx from "clsx";
-import { useTomStore } from "@/store/useTomStore";
+import { useTomStore, REFERENTIEL_CLIENTS } from "@/store/useTomStore";
 import {
   COURRIER_WORKFLOW_LABEL, DOC_LABEL,
   badgeForCourrierWorkflow,
@@ -20,7 +20,7 @@ import ClientReferentielSearchModal from "@/components/ui/ClientReferentielSearc
 import AideContextuelle from "@/components/AideContextuelle";
 import Shell from "@/components/Shell";
 import type {
-  TypeDocument, CourrierIrd, MotifRetour,
+  TypeDocument, CourrierIrd, MotifRetour, ClientReferentiel,
 } from "@/domain/types";
 
 export default function CentralisationRDIDetail() {
@@ -42,6 +42,7 @@ export default function CentralisationRDIDetail() {
   const [motifRejet, setMotifRejet] = useState<MotifRetour>("INFORMATIONS_INCOMPLETES");
   const [motifLibre, setMotifLibre] = useState("");
   const [commentaireRejet, setCommentaireRejet] = useState("");
+  const [mnemoErreur, setMnemoErreur] = useState(false);
 
   /* ---- derived ---- */
   const isBrouillon    = courrier?.statut_workflow === "EN_PREPARATION";
@@ -94,14 +95,52 @@ export default function CentralisationRDIDetail() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  function handleSelectClient(c: { id: string; nom: string; agence_rattachement: string }) {
-    updateCi(courrier!.id, {
-      client: c.nom,
-      client_referentiel_id: c.id,
-      client_referentiel_nom: c.nom,
-      client_referentiel_agence: c.agence_rattachement,
-    });
+  function handleSelectClient(c: ClientReferentiel) {
+    if (!c.mnemonique) {
+      // Client présent dans Borj mais sans mnémonique TI+ → non remonté :
+      // le client reste renseigné, le mnémonique reste vide (champ grisé) + message
+      updateCi(courrier!.id, {
+        client: c.nom,
+        client_referentiel_id: c.id,
+        client_referentiel_nom: c.nom,
+        client_referentiel_agence: c.agence_rattachement,
+        mnemonique: undefined,
+      });
+      setMnemoErreur(true);
+    } else {
+      updateCi(courrier!.id, {
+        client: c.nom,
+        client_referentiel_id: c.id,
+        client_referentiel_nom: c.nom,
+        client_referentiel_agence: c.agence_rattachement,
+        mnemonique: c.mnemonique,
+      });
+      setMnemoErreur(false);
+    }
     setClientSearchOpen(false);
+  }
+
+  /* Recherche du client par mnémonique TI+ : trouvé → client remonté et rempli ;
+     inconnu → blocage (client vidé, saisie manuelle impossible) + message Borj Référentiel. */
+  function verifierMnemonique() {
+    const code = (courrier?.mnemonique ?? "").trim().toUpperCase();
+    if (!code) { setMnemoErreur(false); return; }
+    const c = REFERENTIEL_CLIENTS.find(x =>
+      x.mnemonique?.toUpperCase() === code || x.identifiant.toUpperCase() === code
+    );
+    if (c) {
+      updateCi(courrier!.id, {
+        mnemonique: c.mnemonique,
+        client: c.nom,
+        client_referentiel_id: c.id,
+        client_referentiel_nom: c.nom,
+        client_referentiel_agence: c.agence_rattachement,
+      });
+      setMnemoErreur(!c.mnemonique);
+    } else {
+      // Code inconnu : client conservé, message affiché
+      setMnemoErreur(true);
+    }
   }
 
   function handleSoumettreNouveau() {
@@ -274,7 +313,7 @@ export default function CentralisationRDIDetail() {
                 <input
                   className={clsx("input flex-1", !isEditable && "bg-ink-50", champsACorriger.includes("client") && "border-red-400 ring-1 ring-red-200")}
                   value={courrier.client ?? ""}
-                  onChange={e => updateField({ client: e.target.value || undefined, client_referentiel_id: undefined, client_referentiel_nom: undefined, client_referentiel_agence: undefined })}
+                  onChange={e => { updateField({ client: e.target.value || undefined, client_referentiel_id: undefined, client_referentiel_nom: undefined, client_referentiel_agence: undefined }); setMnemoErreur(false); }}
                   disabled={!isEditable}
                   placeholder="Saisie manuelle"
                 />
@@ -288,11 +327,6 @@ export default function CentralisationRDIDetail() {
                   </button>
                 )}
               </div>
-              {courrier.client_referentiel_id && (
-                <div className="text-[10px] text-green-700 mt-1 flex items-center gap-1">
-                  <CheckCircle2 size={10} /> Client validé référentiel · {courrier.client_referentiel_agence}
-                </div>
-              )}
               {champsACorriger.includes("client") && (
                 <div className="text-[10px] text-red-600 mt-1 flex items-center gap-1">
                   <AlertTriangle size={10} /> Information à corriger
@@ -300,8 +334,23 @@ export default function CentralisationRDIDetail() {
               )}
             </Field>
 
-            <EditField label="Mnémonique" value={courrier.mnemonique ?? ""}
-              onChange={v => updateField({ mnemonique: v || undefined })} disabled={true} />
+            <Field label="Mnémonique">
+              <input
+                className={clsx("input", (!isEditable || (mnemoErreur && !!courrier.client_referentiel_id)) && "bg-ink-50", mnemoErreur && "border-red-400 ring-1 ring-red-200")}
+                value={courrier.mnemonique ?? ""}
+                onChange={e => { updateField({ mnemonique: e.target.value.toUpperCase() || undefined }); setMnemoErreur(false); }}
+                onBlur={verifierMnemonique}
+                onKeyDown={e => { if (e.key === "Enter") verifierMnemonique(); }}
+                disabled={!isEditable || (mnemoErreur && !!courrier.client_referentiel_id)}
+                placeholder="Code client TI+"
+              />
+              {mnemoErreur && (
+                <div className="text-[10px] text-red-600 mt-1 flex items-start gap-1">
+                  <AlertTriangle size={10} className="mt-0.5 shrink-0" />
+                  <span>Le client sélectionné n'est pas remonté dans TI+. Veuillez procéder à la remontée du client dans TI+ avant de soumettre l'évènement pour validation.</span>
+                </div>
+              )}
+            </Field>
 
             <Field label="Type d'évènement">
               <select
