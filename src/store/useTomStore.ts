@@ -1490,6 +1490,27 @@ function seedDemo() {
     modalite: "CONTRE_ACCEPTATION", statut_paiement: "A_EFFECTUER",
     date_echeance: "2026-09-20T00:00:00.000Z", effet: "SANS_AVAL",
   });
+
+  // Cas 13 — Docs reçus ~27 j → relance client (bande J+20)
+  seedPilotage({
+    ref: "IRD260000123", client: "ATLAS TEXTILE EXPORT", montant: 158_000, devise: "EUR",
+    statut: "ENVOYE_CTN", date_reception: "2026-09-18T09:00:00.000Z",
+    modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER",
+  });
+
+  // Cas 14 — Docs reçus ~24 j → relance client (bande J+20)
+  seedPilotage({
+    ref: "IRD260000124", client: "OCEANIC SHIPPING LTD", montant: 96_000, devise: "USD",
+    statut: "ENVOYE_CTN", date_reception: "2026-09-21T09:00:00.000Z",
+    modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER",
+  });
+
+  // Cas 15 — Docs reçus ~21 j → relance client (bande J+20)
+  seedPilotage({
+    ref: "IRD260000125", client: "TANGER MED FREIGHT", montant: 64_000, devise: "EUR",
+    statut: "ENVOYE_CTN", date_reception: "2026-09-24T09:00:00.000Z",
+    modalite: "CONTRE_PAIEMENT", statut_paiement: "A_EFFECTUER",
+  });
 }
 
 if (typeof window !== "undefined" && useTomStore.getState().dossiers.length === 0) {
