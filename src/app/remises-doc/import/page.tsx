@@ -8,9 +8,8 @@ import { useTomStore } from "@/store/useTomStore";
 import {
   COURRIER_WORKFLOW_LABEL, badgeForCourrierWorkflow,
   PRODUIT_IRD_LABEL, MOTIF_RETOUR_CENTRALISATION_LABEL,
-  MODALITE_LABEL, STATUT_PAIEMENT_LABEL, ETAT_ECHEANCE_LABEL, etatEcheance,
 } from "@/domain/labels";
-import type { StatutCourrierWorkflow, CourrierIrd } from "@/domain/types";
+import type { CourrierIrd } from "@/domain/types";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Shell from "@/components/Shell";
@@ -26,8 +25,6 @@ const CORBEILLE_DEFS: { key: CorbeilleKey; label: string; filter: ((c: CourrierI
   { key: "A_CORRIGER",       label: "À corriger",        filter: c => c.statut_workflow === "RETOUR_AGENCE" || c.statut_workflow === "RETOUR_CTN" || c.statut_workflow === "EN_CORRECTION" },
   { key: "ENVOYES",          label: "Envoyés",           filter: c => ["EN_ATTENTE_VALIDATION_CTN", "VALIDEE_CTN", "ENVOYE_CTN"].includes(c.statut_workflow) },
 ];
-
-const DEVISES = ["EUR", "USD", "MAD", "GBP", "JPY", "CHF"];
 
 const TYPE_EVENEMENT_LABEL: Record<string, string> = {
   CREATION: "Création",
@@ -71,30 +68,20 @@ function CentralisationRDIListInner() {
   const [clientSearchOpen, setClientSearchOpen] = useState(false);
 
   /* ---- critères de recherche (initialisés depuis l'URL) ---- */
-  const [q, setQ] = useState(sp.get("q") ?? "");
   const [reference, setReference] = useState(sp.get("ref") ?? "");
   const [refInterne, setRefInterne] = useState(sp.get("ref_interne") ?? "");
   const [refExterne, setRefExterne] = useState(sp.get("ref_externe") ?? "");
+  const [produit, setProduit] = useState(sp.get("produit") ?? "");
+  const [typeEvenement, setTypeEvenement] = useState(sp.get("type_evenement") ?? "");
   const [clientQuery, setClientQuery] = useState(sp.get("client") ?? "");
-  const [statuts, setStatuts] = useState<StatutCourrierWorkflow[]>(
-    (sp.get("statut")?.split(",").filter(Boolean) ?? []) as StatutCourrierWorkflow[]
-  );
+  const [montant, setMontant] = useState(sp.get("montant") ?? "");
   const [devise, setDevise] = useState(sp.get("devise") ?? "");
-  const [montantMin, setMontantMin] = useState(sp.get("montant_min") ?? "");
-  const [montantMax, setMontantMax] = useState(sp.get("montant_max") ?? "");
+  const [statut, setStatut] = useState(sp.get("statut") ?? "");
   const [dateDebut, setDateDebut] = useState(sp.get("date_debut") ?? "");
   const [dateFin, setDateFin] = useState(sp.get("date_fin") ?? "");
-  const [agence, setAgence] = useState(sp.get("agence") ?? "");
-  const [typeRetour, setTypeRetour] = useState(sp.get("type_retour") ?? "");
-  const [modalite, setModalite] = useState(sp.get("modalite") ?? "");
-  const [statutPaiement, setStatutPaiement] = useState(sp.get("statut_paiement") ?? "");
-  const [etatEch, setEtatEch] = useState(sp.get("etat_echeance") ?? "");
-  const [echeanceDebut, setEcheanceDebut] = useState(sp.get("echeance_du") ?? "");
-  const [echeanceFin, setEcheanceFin] = useState(sp.get("echeance_au") ?? "");
-  const [derniereAction, setDerniereAction] = useState(sp.get("derniere_action") ?? "");
 
-  const agences = useMemo(
-    () => Array.from(new Set(courriers.map(c => c.agence_reception).filter(Boolean))).sort(),
+  const devises = useMemo(
+    () => Array.from(new Set(courriers.map(c => c.devise).filter((d): d is string => !!d))).sort(),
     [courriers]
   );
 
@@ -113,15 +100,6 @@ function CentralisationRDIListInner() {
     let items = courriers;
     if (def?.filter) items = items.filter(def.filter);
 
-    if (q.trim()) {
-      const needle = q.trim().toLowerCase();
-      items = items.filter(c =>
-        c.reference_courrier.toLowerCase().includes(needle) ||
-        (c.reference_interne ?? "").toLowerCase().includes(needle) ||
-        (c.reference_externe ?? "").toLowerCase().includes(needle) ||
-        (c.client ?? "").toLowerCase().includes(needle)
-      );
-    }
     if (reference.trim()) {
       items = items.filter(c => c.reference_courrier.toLowerCase().includes(reference.trim().toLowerCase()));
     }
@@ -131,62 +109,41 @@ function CentralisationRDIListInner() {
     if (refExterne.trim()) {
       items = items.filter(c => (c.reference_externe ?? "").toLowerCase().includes(refExterne.trim().toLowerCase()));
     }
+    if (produit) items = items.filter(c => (c.produit ?? "REMISE_DOCUMENTAIRE_IMPORT") === produit);
+    if (typeEvenement) items = items.filter(c => (c.type_evenement ?? "CREATION") === typeEvenement);
     if (clientQuery.trim()) {
       items = items.filter(c => (c.client ?? "").toLowerCase().includes(clientQuery.trim().toLowerCase()));
     }
-    if (statuts.length > 0) items = items.filter(c => statuts.includes(c.statut_workflow));
+    if (montant) items = items.filter(c => c.montant != null && c.montant === parseFloat(montant));
     if (devise) items = items.filter(c => c.devise === devise);
-    if (montantMin) items = items.filter(c => (c.montant ?? 0) >= parseFloat(montantMin));
-    if (montantMax) items = items.filter(c => (c.montant ?? 0) <= parseFloat(montantMax));
+    if (statut) items = items.filter(c => c.statut_workflow === statut);
     if (dateDebut) items = items.filter(c => new Date(c.date_reception) >= new Date(dateDebut));
     if (dateFin) items = items.filter(c => new Date(c.date_reception) <= new Date(dateFin + "T23:59:59"));
-    if (agence) items = items.filter(c => c.agence_reception === agence);
-    if (typeRetour) items = items.filter(c => c.retours.some(r => r.type_retour === typeRetour));
-    if (modalite) items = items.filter(c => c.modalite === modalite);
-    if (statutPaiement) items = items.filter(c => c.statut_paiement === statutPaiement);
-    if (etatEch) items = items.filter(c => etatEcheance(c.date_echeance) === etatEch);
-    if (echeanceDebut) items = items.filter(c => c.date_echeance && new Date(c.date_echeance) >= new Date(echeanceDebut));
-    if (echeanceFin) items = items.filter(c => c.date_echeance && new Date(c.date_echeance) <= new Date(echeanceFin + "T23:59:59"));
-    if (derniereAction) items = items.filter(c => new Date(c.updated_at) >= new Date(derniereAction));
 
     return items;
-  }, [courriers, corbeille, q, reference, refInterne, refExterne, clientQuery, statuts, devise,
-      montantMin, montantMax, dateDebut, dateFin, agence, typeRetour, modalite, statutPaiement,
-      etatEch, echeanceDebut, echeanceFin, derniereAction]);
+  }, [courriers, corbeille, reference, refInterne, refExterne, produit, typeEvenement,
+      clientQuery, montant, devise, statut, dateDebut, dateFin]);
 
   function resetFilters() {
-    setQ(""); setReference(""); setRefInterne(""); setRefExterne(""); setClientQuery("");
-    setStatuts([]); setDevise(""); setMontantMin(""); setMontantMax("");
-    setDateDebut(""); setDateFin(""); setAgence(""); setTypeRetour("");
-    setModalite(""); setStatutPaiement(""); setEtatEch("");
-    setEcheanceDebut(""); setEcheanceFin(""); setDerniereAction("");
+    setReference(""); setRefInterne(""); setRefExterne(""); setProduit("");
+    setTypeEvenement(""); setClientQuery(""); setMontant(""); setDevise("");
+    setStatut(""); setDateDebut(""); setDateFin("");
   }
 
   const isCorrigeable = (c: CourrierIrd) => c.statut_workflow === "RETOUR_AGENCE" || c.statut_workflow === "RETOUR_CTN" || c.statut_workflow === "EN_CORRECTION";
 
   /* ---- chips filtres actifs ---- */
   const chips: { label: string; clear: () => void }[] = [];
-  if (q.trim()) chips.push({ label: `Recherche : ${q}`, clear: () => setQ("") });
   if (reference.trim()) chips.push({ label: `Réf. : ${reference}`, clear: () => setReference("") });
   if (refInterne.trim()) chips.push({ label: `Réf. interne : ${refInterne}`, clear: () => setRefInterne("") });
   if (refExterne.trim()) chips.push({ label: `Réf. externe : ${refExterne}`, clear: () => setRefExterne("") });
+  if (produit) chips.push({ label: `Produit : ${PRODUIT_IRD_LABEL[produit as keyof typeof PRODUIT_IRD_LABEL] ?? produit}`, clear: () => setProduit("") });
+  if (typeEvenement) chips.push({ label: `Évènement : ${TYPE_EVENEMENT_LABEL[typeEvenement] ?? typeEvenement}`, clear: () => setTypeEvenement("") });
   if (clientQuery.trim()) chips.push({ label: `Client : ${clientQuery}`, clear: () => setClientQuery("") });
-  for (const st of statuts) chips.push({ label: `Statut : ${COURRIER_WORKFLOW_LABEL[st]}`, clear: () => setStatuts(s => s.filter(x => x !== st)) });
+  if (montant) chips.push({ label: `Montant : ${montant}`, clear: () => setMontant("") });
   if (devise) chips.push({ label: `Devise : ${devise}`, clear: () => setDevise("") });
-  if (montantMin) chips.push({ label: `Montant ≥ ${montantMin}`, clear: () => setMontantMin("") });
-  if (montantMax) chips.push({ label: `Montant ≤ ${montantMax}`, clear: () => setMontantMax("") });
+  if (statut) chips.push({ label: `Statut : ${COURRIER_WORKFLOW_LABEL[statut as keyof typeof COURRIER_WORKFLOW_LABEL]}`, clear: () => setStatut("") });
   if (dateDebut || dateFin) chips.push({ label: `Réception : ${dateDebut || "…"} → ${dateFin || "…"}`, clear: () => { setDateDebut(""); setDateFin(""); } });
-  if (agence) chips.push({ label: `Agence : ${agence}`, clear: () => setAgence("") });
-  if (typeRetour) chips.push({ label: typeRetour === "RETOUR_CTN" ? "Retour CTN" : "Retour Agence", clear: () => setTypeRetour("") });
-  if (modalite) chips.push({ label: `Modalité : ${MODALITE_LABEL[modalite as keyof typeof MODALITE_LABEL]}`, clear: () => setModalite("") });
-  if (statutPaiement) chips.push({ label: `Paiement : ${STATUT_PAIEMENT_LABEL[statutPaiement as keyof typeof STATUT_PAIEMENT_LABEL]}`, clear: () => setStatutPaiement("") });
-  if (etatEch) chips.push({ label: `Échéance : ${ETAT_ECHEANCE_LABEL[etatEch as keyof typeof ETAT_ECHEANCE_LABEL]}`, clear: () => setEtatEch("") });
-  if (echeanceDebut || echeanceFin) chips.push({ label: `Échéance : ${echeanceDebut || "…"} → ${echeanceFin || "…"}`, clear: () => { setEcheanceDebut(""); setEcheanceFin(""); } });
-  if (derniereAction) chips.push({ label: `Dernière action ≥ ${derniereAction}`, clear: () => setDerniereAction("") });
-
-  function toggleStatut(s: StatutCourrierWorkflow) {
-    setStatuts(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
-  }
 
   return (
     <Shell
@@ -237,18 +194,8 @@ function CentralisationRDIListInner() {
           onReset={resetFilters}
         >
           <div className="space-y-4">
-            {/* Ligne 1 : recherche globale, référence centralisation, client */}
+            {/* Ligne 1 : références */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="text-label">RECHERCHE GLOBALE</label>
-                <input
-                  value={q}
-                  onChange={(e) => setQ(e.target.value)}
-                  placeholder="Dossier, client, référence…"
-                  className="input w-full"
-                />
-              </div>
-
               <div>
                 <label className="text-label">RÉFÉRENCE CENTRALISATION</label>
                 <input
@@ -258,7 +205,42 @@ function CentralisationRDIListInner() {
                   className="input w-full"
                 />
               </div>
+              <div>
+                <label className="text-label">RÉFÉRENCE INTERNE</label>
+                <input
+                  value={refInterne}
+                  onChange={(e) => setRefInterne(e.target.value)}
+                  placeholder="Ex. INT/…"
+                  className="input w-full"
+                />
+              </div>
+              <div>
+                <label className="text-label">RÉFÉRENCE EXTERNE</label>
+                <input
+                  value={refExterne}
+                  onChange={(e) => setRefExterne(e.target.value)}
+                  placeholder="Ex. EXT/…"
+                  className="input w-full"
+                />
+              </div>
+            </div>
 
+            {/* Ligne 2 : produit, type évènement, client */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-label">PRODUIT</label>
+                <select className="input w-full" value={produit} onChange={(e) => setProduit(e.target.value)}>
+                  <option value="">Tous</option>
+                  {Object.entries(PRODUIT_IRD_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-label">TYPE D'ÉVÈNEMENT</label>
+                <select className="input w-full" value={typeEvenement} onChange={(e) => setTypeEvenement(e.target.value)}>
+                  <option value="">Tous</option>
+                  {Object.entries(TYPE_EVENEMENT_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
               <div>
                 <label className="text-label">CLIENT / TIRÉ</label>
                 <div className="flex gap-2">
@@ -279,126 +261,35 @@ function CentralisationRDIListInner() {
               </div>
             </div>
 
-            {/* Ligne 2 : réf interne, réf externe, agence */}
+            {/* Ligne 3 : montant, devise, statut */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-label">RÉFÉRENCE INTERNE</label>
+                <label className="text-label">MONTANT</label>
                 <input
-                  value={refInterne}
-                  onChange={(e) => setRefInterne(e.target.value)}
-                  placeholder="Ex. INT/…"
+                  type="number"
+                  value={montant}
+                  onChange={(e) => setMontant(e.target.value)}
+                  placeholder="Montant exact"
                   className="input w-full"
                 />
               </div>
-              <div>
-                <label className="text-label">RÉFÉRENCE EXTERNE</label>
-                <input
-                  value={refExterne}
-                  onChange={(e) => setRefExterne(e.target.value)}
-                  placeholder="Ex. EXT/…"
-                  className="input w-full"
-                />
-              </div>
-              <div>
-                <label className="text-label">AGENCE</label>
-                <select className="input w-full" value={agence} onChange={(e) => setAgence(e.target.value)}>
-                  <option value="">Toutes les agences</option>
-                  {agences.map(a => <option key={a} value={a}>{a}</option>)}
-                </select>
-              </div>
-            </div>
-
-            {/* Ligne 3 : statuts (multi-sélection) */}
-            <div>
-              <label className="text-label">STATUT</label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {Object.entries(COURRIER_WORKFLOW_LABEL).map(([k, v]) => {
-                  const active = statuts.includes(k as StatutCourrierWorkflow);
-                  return (
-                    <button
-                      key={k}
-                      type="button"
-                      onClick={() => toggleStatut(k as StatutCourrierWorkflow)}
-                      className={
-                        "px-3 py-1.5 rounded-full text-xs font-medium border transition " +
-                        (active
-                          ? "bg-orange-500 text-white border-orange-500"
-                          : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50")
-                      }
-                    >
-                      {v}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Ligne 4 : devise, montants */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="text-label">DEVISE</label>
-                <select
-                  className="input w-full"
-                  value={devise}
-                  onChange={(e) => setDevise(e.target.value)}
-                >
-                  <option value="">Toutes les devises</option>
-                  {DEVISES.map(d => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="text-label">MONTANT MIN</label>
-                <input
-                  type="number"
-                  value={montantMin}
-                  onChange={(e) => setMontantMin(e.target.value)}
-                  placeholder="Min"
-                  className="input w-full"
-                />
-              </div>
-
-              <div>
-                <label className="text-label">MONTANT MAX</label>
-                <input
-                  type="number"
-                  value={montantMax}
-                  onChange={(e) => setMontantMax(e.target.value)}
-                  placeholder="Max"
-                  className="input w-full"
-                />
-              </div>
-            </div>
-
-            {/* Ligne 5 : type retour, modalité, statut paiement */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="text-label">TYPE DE RETOUR</label>
-                <select className="input w-full" value={typeRetour} onChange={(e) => setTypeRetour(e.target.value)}>
-                  <option value="">Tous</option>
-                  <option value="RETOUR_AGENCE">Retour Agence</option>
-                  <option value="RETOUR_CTN">Retour CTN</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-label">MODALITÉ</label>
-                <select className="input w-full" value={modalite} onChange={(e) => setModalite(e.target.value)}>
+                <select className="input w-full" value={devise} onChange={(e) => setDevise(e.target.value)}>
                   <option value="">Toutes</option>
-                  {Object.entries(MODALITE_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                  {devises.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-label">STATUT PAIEMENT</label>
-                <select className="input w-full" value={statutPaiement} onChange={(e) => setStatutPaiement(e.target.value)}>
+                <label className="text-label">STATUT</label>
+                <select className="input w-full" value={statut} onChange={(e) => setStatut(e.target.value)}>
                   <option value="">Tous</option>
-                  {Object.entries(STATUT_PAIEMENT_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                  {Object.entries(COURRIER_WORKFLOW_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                 </select>
               </div>
             </div>
 
-            {/* Ligne 6 : date réception, dernière action */}
+            {/* Ligne 4 : dates de réception */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="text-label">DATE RÉCEPTION — DU</label>
@@ -417,44 +308,6 @@ function CentralisationRDIListInner() {
                   onChange={(e) => setDateFin(e.target.value)}
                   className="input w-full"
                 />
-              </div>
-              <div>
-                <label className="text-label">DERNIÈRE ACTION À PARTIR DU</label>
-                <input
-                  type="date"
-                  value={derniereAction}
-                  onChange={(e) => setDerniereAction(e.target.value)}
-                  className="input w-full"
-                />
-              </div>
-            </div>
-
-            {/* Ligne 7 : échéances */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="text-label">DATE D'ÉCHÉANCE — DU</label>
-                <input
-                  type="date"
-                  value={echeanceDebut}
-                  onChange={(e) => setEcheanceDebut(e.target.value)}
-                  className="input w-full"
-                />
-              </div>
-              <div>
-                <label className="text-label">DATE D'ÉCHÉANCE — AU</label>
-                <input
-                  type="date"
-                  value={echeanceFin}
-                  onChange={(e) => setEcheanceFin(e.target.value)}
-                  className="input w-full"
-                />
-              </div>
-              <div>
-                <label className="text-label">ÉTAT DE L'ÉCHÉANCE</label>
-                <select className="input w-full" value={etatEch} onChange={(e) => setEtatEch(e.target.value)}>
-                  <option value="">Tous</option>
-                  {Object.entries(ETAT_ECHEANCE_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-                </select>
               </div>
             </div>
           </div>
