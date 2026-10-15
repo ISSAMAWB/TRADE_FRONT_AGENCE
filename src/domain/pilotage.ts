@@ -104,7 +104,8 @@ export function estATraiter(c: CourrierIrd): boolean {
 }
 
 export function estARelancer(c: CourrierIrd): boolean {
-  return remiseARelancer(c) || acceptationARelancer(c);
+  // Les acceptations à échéance ≤ 10 j sont pilotées via l'échéancier, pas ici.
+  return remiseARelancer(c);
 }
 
 export function estAValider(c: CourrierIrd): boolean {
@@ -226,7 +227,7 @@ export const LISTES: Record<string, ListeDef> = {
   },
   "relances": {
     titre: "Relances à effectuer",
-    regle: "Remises non effectuées depuis 20 à 29 jours + acceptations à relancer (échéance ≤ 10 j, acceptation non enregistrée).",
+    regle: "Remises non effectuées depuis 20 à 29 jours — relancer le client. (Les acceptations à échéance ≤ 10 j se suivent dans l'échéancier.)",
     filter: estARelancer,
   },
   "ctn-non-recus": {
