@@ -61,6 +61,7 @@ export default function EventDetailPage() {
   const [ongletPaiement, setOngletPaiement] = useState<"frais" | "titres" | "attaches">("frais");
   const [ongletPaiementTop, setOngletPaiementTop] = useState<"detail" | "tracking">("detail");
   const [ongletAcceptationTop, setOngletAcceptationTop] = useState<"detail" | "tracking">("detail");
+  const [ongletRetourTop, setOngletRetourTop] = useState<"detail" | "tracking">("detail");
   const dossierId = params.id as string;
   const eventId = params.eventId as string;
 
@@ -69,9 +70,10 @@ export default function EventDetailPage() {
 
   const showInfosGenerales = !event
     ? false
-    : (event.nature !== "Paiement" && event.nature !== "Acceptation & Aval de la traite") ||
+    : (event.nature !== "Paiement" && event.nature !== "Acceptation & Aval de la traite" && event.nature !== "Retour des documents") ||
       (event.nature === "Paiement" && ongletPaiementTop === "detail") ||
-      (event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail");
+      (event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail") ||
+      (event.nature === "Retour des documents" && ongletRetourTop === "detail");
 
   if (!dossier || !event) {
     return (
@@ -147,6 +149,28 @@ export default function EventDetailPage() {
                 onClick={() => setOngletAcceptationTop(t.id as "detail" | "tracking")}
                 className={`px-5 py-3 text-sm font-semibold transition border-b-2 ${
                   ongletAcceptationTop === t.id
+                    ? "border-orange-600 text-orange-600"
+                    : "border-transparent text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {/* Onglets top - Retour des documents */}
+        {event.nature === "Retour des documents" ? (
+          <div className="flex flex-wrap border-b border-gray-200 mb-6">
+            {[
+              { id: "detail", label: "Détail de l'événement" },
+              { id: "tracking", label: "Tracking de l'envoi des documents" },
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setOngletRetourTop(t.id as "detail" | "tracking")}
+                className={`px-5 py-3 text-sm font-semibold transition border-b-2 ${
+                  ongletRetourTop === t.id
                     ? "border-orange-600 text-orange-600"
                     : "border-transparent text-gray-500 hover:text-gray-900"
                 }`}
@@ -262,6 +286,9 @@ export default function EventDetailPage() {
 
         {/* Tracking de l'envoi des documents - Acceptation & Aval de la traite */}
         {event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "tracking" && <TrackingDocuments suivi={event.suivi} />}
+
+        {/* Tracking de l'envoi des documents - Retour des documents */}
+        {event.nature === "Retour des documents" && ongletRetourTop === "tracking" && <TrackingDocuments suivi={event.suivi} />}
 
         {/* Message reçu - uniquement pour Correspondance */}
         {event.nature === "Correspondance" && (
@@ -1504,7 +1531,7 @@ FRANCE</p>
         )}
 
         {/* Détails du retour des documents - uniquement pour Retour des documents */}
-        {event.nature === "Retour des documents" && event.retourDocument?.demande && (
+        {event.nature === "Retour des documents" && ongletRetourTop === "detail" && event.retourDocument?.demande && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
@@ -1534,7 +1561,10 @@ FRANCE</p>
         )}
 
         {/* Détail de la réponse - uniquement pour Retour des documents et Demande de remise des documents */}
-        {(event.nature === "Retour des documents" || event.nature === "Demande de remise des documents") && event.retourDocument?.reponse && (
+        {(
+          (event.nature === "Retour des documents" && ongletRetourTop === "detail") ||
+          event.nature === "Demande de remise des documents"
+        ) && event.retourDocument?.reponse && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full"></div>
@@ -1702,7 +1732,12 @@ FRANCE</p>
         )}
 
         {/* Documents attachés - pour Accusé de réception des documents, Centralisation des documents, Retour des documents et Demande de remise des documents */}
-        {(event.nature === "Accusé de réception des documents" || event.nature === "Centralisation des documents" || event.nature === "Retour des documents" || event.nature === "Demande de remise des documents") && (
+        {(
+          event.nature === "Accusé de réception des documents" ||
+          event.nature === "Centralisation des documents" ||
+          event.nature === "Demande de remise des documents" ||
+          (event.nature === "Retour des documents" && ongletRetourTop === "detail")
+        ) && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>

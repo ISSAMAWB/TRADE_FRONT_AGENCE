@@ -263,6 +263,28 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const [motif, setMotif] = useState(s?.motif ?? "Refus de paiement");
   const [destinataire, setDestinataire] = useState(s?.destinataire ?? dossier.client ?? "");
 
+  // États pour Retour des documents
+  const [typeDemande, setTypeDemande] = useState(s?.typeDemande ?? "Demande");
+  const [initiateur, setInitiateur] = useState(s?.initiateur ?? "Agence C200");
+  const [dateCreationRetour, setDateCreationRetour] = useState(s?.dateCreationRetour ?? aujourdhui);
+  const [commentaireRetour, setCommentaireRetour] = useState(s?.commentaireRetour ?? "");
+  const [retourEffectuePar, setRetourEffectuePar] = useState(s?.retourEffectuePar ?? "Préposé A");
+  const [dateHeureEnvoi, setDateHeureEnvoi] = useState(s?.dateHeureEnvoi ?? "15/05/2026 09:15:00");
+  const [numeroCourrierRetour, setNumeroCourrierRetour] = useState(s?.numeroCourrierRetour ?? "");
+  const [documentsEnvoyes, setDocumentsEnvoyes] = useState(s?.documentsEnvoyes ?? false);
+  const [ongletRetour, setOngletRetour] = useState<"detail" | "tracking">("detail");
+  const [ongletPaiementTop, setOngletPaiementTop] = useState<"detail" | "tracking">("detail");
+  const [ongletAcceptationTop, setOngletAcceptationTop] = useState<"detail" | "tracking">("detail");
+  const [remiseEffectueePar, setRemiseEffectueePar] = useState(s?.remiseEffectueePar ?? "Préposé A");
+  const [dateHeureRemise, setDateHeureRemise] = useState(s?.dateHeureRemise ?? "15/05/2026 09:15:00");
+  const [numeroCourrierEnvoi, setNumeroCourrierEnvoi] = useState(s?.numeroCourrierEnvoi ?? "");
+  const [documentsRemis, setDocumentsRemis] = useState(s?.documentsRemis ?? false);
+
+  // États pour Demande de remise des documents
+  const [nomPrenomPersonne, setNomPrenomPersonne] = useState(s?.nomPrenomPersonne ?? "");
+  const [cinPersonne, setCinPersonne] = useState(s?.cinPersonne ?? "");
+  const [instructionClient, setInstructionClient] = useState(s?.instructionClient ?? "");
+
   const [paiementForm, setPaiementForm] = useState({
 
     partieOriginePaiement: p?.partieOriginePaiement ?? "Client/Tiré",
@@ -278,6 +300,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
     paysPartieAPayer: p?.paysPartieAPayer ?? BANQUES[0].pays,
 
     modePaiement: p?.modePaiement ?? "Payer",
+    referenceFinancement: p?.referenceFinancement ?? "",
     banqueBeneficiaire: p?.banqueBeneficiaire ?? "",
     adresseBanqueBeneficiaire: p?.adresseBanqueBeneficiaire ?? "",
     villeBanqueBeneficiaire: p?.villeBanqueBeneficiaire ?? "",
@@ -437,6 +460,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
         }
       }
       if (montantRequis && (isAcceptation ? montantAccepteTotal : montant) <= 0) manquants.push("Montant");
+      if (nature === "Retour des documents" && !motif) manquants.push("Motif");
       if (manquants.length > 0) { setErreurSoumission(manquants); return; }
     }
     setErreurSoumission([]);
@@ -446,13 +470,28 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       devise: deviseDossier,
       saisieAgence: {
         dateEvenement,
-        documentsAttaches: nature === "Paiement" || isAcceptation ? documentsAttaches : s?.documentsAttaches,
+        documentsAttaches: nature === "Paiement" || isAcceptation || nature === "Retour des documents" || nature === "Demande de remise des documents" ? documentsAttaches : s?.documentsAttaches,
 
         datePaiement: nature === "Paiement" ? datePaiement : undefined,
         effet: nature === "Acceptation & Aval de la traite" ? effet : undefined,
         dateEcheance: nature === "Acceptation & Aval de la traite" && dateEcheanceEvt ? dateEcheanceEvt : undefined,
         motif: nature === "Retour des documents" ? motif : undefined,
         destinataire: nature === "Demande de remise des documents" ? destinataire : undefined,
+        typeDemande: nature === "Retour des documents" ? typeDemande : undefined,
+        nomPrenomPersonne: nature === "Demande de remise des documents" ? nomPrenomPersonne : undefined,
+        cinPersonne: nature === "Demande de remise des documents" ? cinPersonne : undefined,
+        instructionClient: nature === "Demande de remise des documents" ? instructionClient : undefined,
+        initiateur: nature === "Retour des documents" ? initiateur : undefined,
+        dateCreationRetour: nature === "Retour des documents" ? dateCreationRetour : undefined,
+        commentaireRetour: nature === "Retour des documents" ? commentaireRetour : undefined,
+        retourEffectuePar: nature === "Retour des documents" ? retourEffectuePar : undefined,
+        dateHeureEnvoi: nature === "Retour des documents" ? dateHeureEnvoi : undefined,
+        numeroCourrierRetour: nature === "Retour des documents" ? numeroCourrierRetour : undefined,
+        documentsEnvoyes: nature === "Retour des documents" ? documentsEnvoyes : undefined,
+        remiseEffectueePar: nature === "Paiement" || isAcceptation ? remiseEffectueePar : undefined,
+        dateHeureRemise: nature === "Paiement" || isAcceptation ? dateHeureRemise : undefined,
+        numeroCourrierEnvoi: nature === "Paiement" || isAcceptation ? numeroCourrierEnvoi : undefined,
+        documentsRemis: nature === "Paiement" || isAcceptation ? documentsRemis : undefined,
         paiement: nature === "Paiement" ? {
 
           partieOriginePaiement: paiementForm.partieOriginePaiement || undefined,
@@ -468,6 +507,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           paysPartieAPayer: paiementForm.paysPartieAPayer || undefined,
 
           modePaiement: paiementForm.modePaiement || undefined,
+          referenceFinancement: paiementForm.referenceFinancement || undefined,
           banqueBeneficiaire: paiementForm.banqueBeneficiaire || undefined,
           adresseBanqueBeneficiaire: paiementForm.adresseBanqueBeneficiaire || undefined,
           villeBanqueBeneficiaire: paiementForm.villeBanqueBeneficiaire || undefined,
@@ -523,6 +563,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   }
 
   const [popupAccuse, setPopupAccuse] = useState(false);
+  const [popupSignature, setPopupSignature] = useState(false);
 
   const renderDocumentsAttaches = () => (
     <>
@@ -667,7 +708,73 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           : "L'événement sera créé dans l'onglet En cours : statut « Enregistré » via le bouton Enregistrer, « Soumis » via Soumettre."}
       </div>
 
+      {/* Onglets pour Paiement et Retour des documents */}
+      {nature === "Paiement" && (
+        <div className="flex flex-wrap border-b border-gray-200 mb-4">
+          {[
+            { id: "detail", label: "Détail de l'événement" },
+            { id: "tracking", label: "Tracking de l'envoi des documents" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setOngletPaiementTop(t.id as "detail" | "tracking")}
+              className={`px-5 py-3 text-sm font-semibold transition border-b-2 ${
+                ongletPaiementTop === t.id
+                  ? "border-orange-600 text-orange-600"
+                  : "border-transparent text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
+      {isAcceptation && (
+        <div className="flex flex-wrap border-b border-gray-200 mb-4">
+          {[
+            { id: "detail", label: "Détail de l'événement" },
+            { id: "tracking", label: "Tracking de l'envoi des documents" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setOngletAcceptationTop(t.id as "detail" | "tracking")}
+              className={`px-5 py-3 text-sm font-semibold transition border-b-2 ${
+                ongletAcceptationTop === t.id
+                  ? "border-orange-600 text-orange-600"
+                  : "border-transparent text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
+      {nature === "Retour des documents" && (
+        <div className="flex flex-wrap border-b border-gray-200 mb-4">
+          {[
+            { id: "detail", label: "Détail de l'événement" },
+            { id: "tracking", label: "Tracking de l'envoi des documents" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setOngletRetour(t.id as "detail" | "tracking")}
+              className={`px-5 py-3 text-sm font-semibold transition border-b-2 ${
+                ongletRetour === t.id
+                  ? "border-orange-600 text-orange-600"
+                  : "border-transparent text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       <fieldset disabled={lectureSeule} className="contents champs-saisie">
+      {!(nature === "Paiement" && ongletPaiementTop === "tracking") && !(nature === "Retour des documents" && ongletRetour === "tracking") && !(isAcceptation && ongletAcceptationTop === "tracking") && (
       <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5 mb-4">
         <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
           <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
@@ -686,10 +793,18 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             readOnly
           />
         </div>
-        <div>
-          <label className="text-label">Conditions de remise des documents</label>
-          <input className="input w-full bg-gray-100 text-gray-500" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
-        </div>
+        {nature !== "Retour des documents" && (
+          <div>
+            <label className="text-label">Conditions de remise des documents</label>
+            <input className="input w-full bg-gray-100 text-gray-500" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
+          </div>
+        )}
+        {nature === "Retour des documents" && (
+          <div>
+            <label className="text-label">Type de la demande</label>
+            <input className="input w-full bg-gray-100 text-gray-500" value={typeDemande} readOnly />
+          </div>
+        )}
 
         {(nature === "Réception de la remise" || nature === "Paiement" || isAcceptation) && (
           <div>
@@ -701,30 +816,327 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           </div>
         )}
 
-        {nature === "Retour des documents" && (
-          <div>
-            <label className="text-label">Motif</label>
-            <select className="input w-full" value={motif} onChange={(e) => setMotif(e.target.value)}>
-              <option>Refus de paiement</option>
-              <option>Refus d'acceptation</option>
-              <option>Documents non conformes</option>
-              <option>Demande du remettant</option>
-              <option>Autre</option>
-            </select>
-          </div>
-        )}
-
-        {nature === "Demande de remise des documents" && (
-          <div>
-            <label className="text-label">Destinataire</label>
-            <input className="input w-full" value={destinataire} onChange={(e) => setDestinataire(e.target.value)} />
-          </div>
-        )}
         </div>
       </div>
+      )}
+
+      {/* ===== Blocs Retour des documents ===== */}
+      {nature === "Retour des documents" && ongletRetour === "detail" && (
+        <div className="space-y-6 mb-4">
+          {/* Bloc 2: Détail du retour des documents */}
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
+              <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
+              <div className="text-sm font-semibold text-[#0f172a]">Détail du retour des documents</div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-5">
+              <div>
+                <label className="text-label">Initiateur</label>
+                <input className="input w-full bg-gray-100 text-gray-500" value={initiateur} readOnly />
+              </div>
+              <div>
+                <label className="text-label">Date de création</label>
+                <input className="input w-full bg-gray-100 text-gray-500" value={dateCreationRetour} readOnly />
+              </div>
+              <div>
+                <label className="text-label">Motif <span className="text-red-500">*</span></label>
+                <select className="input w-full" value={motif} onChange={(e) => setMotif(e.target.value)} disabled={lectureSeule}>
+                  <option>Client non présenté</option>
+                  <option>Documents en souffrance</option>
+                  <option>Erreur d'affectation</option>
+                  <option>Remise non payée</option>
+                  <option>Autre</option>
+                </select>
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-label">Commentaire</label>
+                <textarea className="input w-full" rows={3} value={commentaireRetour} onChange={(e) => setCommentaireRetour(e.target.value)} placeholder="Commentaire..." disabled={lectureSeule} />
+              </div>
+            </div>
+          </div>
+
+          {/* Bloc 3: Documents attachés */}
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
+              <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
+              <div className="text-sm font-semibold text-[#0f172a]">Documents attachés</div>
+            </div>
+            {!lectureSeule && (
+              <div
+                className="mt-4 border-2 border-dashed border-[#e5e8ec] rounded-md p-6 text-center hover:border-orange-400 hover:bg-orange-50/40 transition cursor-pointer"
+                onClick={() => document.getElementById("file-upload-retour")?.click()}
+              >
+                <input
+                  id="file-upload-retour"
+                  type="file"
+                  multiple
+                  className="hidden"
+                  accept=".pdf,image/*"
+                  onChange={e => {
+                    const files = Array.from(e.target.files ?? []);
+                    files.forEach(file => {
+                      setDocumentsAttaches(current => [
+                        ...current,
+                        {
+                          id: crypto.randomUUID(),
+                          nom: file.name,
+                          taille: file.size,
+                          type: file.type,
+                          fichier: file,
+                          categorie: undefined,
+                          description: undefined,
+                        },
+                      ]);
+                    });
+                    e.target.value = "";
+                  }}
+                />
+                <Plus className="mx-auto text-[#94a3b8] mb-2" size={22} />
+                <div className="text-sm text-[#64748b]">Cliquez pour ajouter des documents</div>
+                <div className="text-xs text-[#94a3b8] mt-1">PDF, images (JPG, PNG…)</div>
+              </div>
+            )}
+            {documentsAttaches.length === 0 ? (
+              <div className="py-4 text-center text-sm text-[#94a3b8]">Aucun document attaché.</div>
+            ) : (
+              <ul className="divide-y divide-[#e5e8ec] mt-4">
+                {documentsAttaches.map(document => (
+                  <li key={document.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <FileText size={16} className="text-[#64748b] shrink-0" />
+                      <span className="text-sm text-[#0f172a] break-all">{document.nom}</span>
+                      <span className="text-xs text-[#64748b] whitespace-nowrap">{(document.taille / 1024).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Ko</span>
+                    </div>
+                    {!lectureSeule && (
+                      <button type="button" className="text-[#94a3b8] hover:text-[#dc2626] transition shrink-0" title={`Retirer ${document.nom}`} aria-label={`Retirer ${document.nom}`} onClick={() => setDocumentsAttaches(current => current.filter(item => item.id !== document.id))}>
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ===== Blocs Demande de remise des documents ===== */}
+      {nature === "Demande de remise des documents" && (
+        <div className="space-y-6 mb-4">
+          {/* Détails de la personne autorisée à récupérer les documents */}
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
+              <div className="w-1 h-5 bg-gradient-to-r from-violet-500 to-violet-600 rounded-full"></div>
+              <div className="text-sm font-semibold text-[#0f172a]">Détails de la personne autorisée à récupérer les documents</div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-5">
+              <div>
+                <label className="text-label">Nom &amp; Prénom</label>
+                <input className="input w-full" value={nomPrenomPersonne} onChange={(e) => setNomPrenomPersonne(e.target.value)} disabled={lectureSeule} placeholder="Nom et prénom de la personne autorisée" />
+              </div>
+              <div>
+                <label className="text-label">N° CIN</label>
+                <input className="input w-full" value={cinPersonne} onChange={(e) => setCinPersonne(e.target.value)} disabled={lectureSeule} placeholder="Numéro de CIN" />
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-label">Instruction du client</label>
+                <textarea className="input w-full" rows={4} value={instructionClient} onChange={(e) => setInstructionClient(e.target.value)} disabled={lectureSeule} placeholder="Instruction du client..." />
+              </div>
+            </div>
+          </div>
+
+          {/* Documents attachés */}
+          <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
+              <div className="w-1 h-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
+              <div className="text-sm font-semibold text-[#0f172a]">Documents attachés</div>
+            </div>
+            {!lectureSeule && (
+              <div
+                className="mt-4 border-2 border-dashed border-[#e5e8ec] rounded-md p-6 text-center hover:border-orange-400 hover:bg-orange-50/40 transition cursor-pointer"
+                onClick={() => document.getElementById("file-upload-demande")?.click()}
+              >
+                <input
+                  id="file-upload-demande"
+                  type="file"
+                  multiple
+                  className="hidden"
+                  accept=".pdf,image/*"
+                  onChange={e => {
+                    const files = Array.from(e.target.files ?? []);
+                    files.forEach(file => {
+                      setDocumentsAttaches(current => [
+                        ...current,
+                        {
+                          id: crypto.randomUUID(),
+                          nom: file.name,
+                          taille: file.size,
+                          type: file.type,
+                          fichier: file,
+                          categorie: undefined,
+                          description: undefined,
+                        },
+                      ]);
+                    });
+                    e.target.value = "";
+                  }}
+                />
+                <Plus className="mx-auto text-[#94a3b8] mb-2" size={22} />
+                <div className="text-sm text-[#64748b]">Cliquez pour ajouter des documents</div>
+                <div className="text-xs text-[#94a3b8] mt-1">PDF, images (JPG, PNG…)</div>
+              </div>
+            )}
+            {documentsAttaches.length === 0 ? (
+              <div className="py-4 text-center text-sm text-[#94a3b8]">Aucun document attaché.</div>
+            ) : (
+              <ul className="divide-y divide-[#e5e8ec] mt-4">
+                {documentsAttaches.map(document => (
+                  <li key={document.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <FileText size={16} className="text-[#64748b] shrink-0" />
+                      <span className="text-sm text-[#0f172a] break-all">{document.nom}</span>
+                      <span className="text-xs text-[#64748b] whitespace-nowrap">{(document.taille / 1024).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Ko</span>
+                    </div>
+                    {!lectureSeule && (
+                      <button type="button" className="text-[#94a3b8] hover:text-[#dc2626] transition shrink-0" title={`Retirer ${document.nom}`} aria-label={`Retirer ${document.nom}`} onClick={() => setDocumentsAttaches(current => current.filter(item => item.id !== document.id))}>
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ===== Tracking de l'envoi des documents — Retour des documents ===== */}
+      {nature === "Retour des documents" && ongletRetour === "tracking" && (
+        <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
+            <div className="w-1 h-5 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
+            <div className="text-sm font-semibold text-[#0f172a]">Tracking de l'envoi des documents</div>
+          </div>
+          <div className="relative pl-4">
+            {/* Point 1 - Documents reçus (grisé) */}
+            <div className="relative pb-8">
+              <div className="absolute left-[9px] top-6 w-0.5 h-full bg-gray-200"></div>
+              <div className="flex items-start gap-4">
+                <div className="relative z-10 w-5 h-5 rounded-full bg-teal-600 ring-4 ring-teal-50"></div>
+                <div className="flex-1 -mt-1">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <h3 className="text-sm font-bold text-gray-900">Documents reçus</h3>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Terminé</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Reçu au niveau</p>
+                      <p className="text-sm font-semibold text-gray-900">CTN-DEVISES</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Date de création</p>
+                      <p className="text-sm font-semibold text-gray-900">05/05/2026</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Point 2 - Documents transmis à l'agence (grisé) */}
+            <div className="relative pb-8">
+              <div className="absolute left-[9px] top-6 w-0.5 h-full bg-gray-200"></div>
+              <div className="flex items-start gap-4">
+                <div className="relative z-10 w-5 h-5 rounded-full bg-teal-600 ring-4 ring-teal-50"></div>
+                <div className="flex-1 -mt-1">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <h3 className="text-sm font-bold text-gray-900">Documents transmis à l'agence</h3>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Terminé</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Emetteur</p>
+                      <p className="text-sm font-semibold text-gray-900">Bureau d'ordre - CTN-Devises</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Date et heure d'envoi</p>
+                      <p className="text-sm font-semibold text-gray-900">06/05/2026 09:15:00</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Numéro du courrier</p>
+                      <p className="text-sm font-semibold text-gray-900">COUR-2026-0405</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Point 3 - Accusé de réception des documents (grisé) */}
+            <div className="relative pb-8">
+              <div className="absolute left-[9px] top-6 w-0.5 h-full bg-gray-200"></div>
+              <div className="flex items-start gap-4">
+                <div className="relative z-10 w-5 h-5 rounded-full bg-teal-600 ring-4 ring-teal-50"></div>
+                <div className="flex-1 -mt-1">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <h3 className="text-sm font-bold text-gray-900">Accusé de réception des documents</h3>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Reçu</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Réception effectuée par</p>
+                      <p className="text-sm font-semibold text-gray-900">Préposé A</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Statut</p>
+                      <p className="text-sm font-semibold text-gray-900">Reçu</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Date et heure de réception</p>
+                      <p className="text-sm font-semibold text-gray-900">07/05/2026 14:30:00</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Observation</p>
+                      <p className="text-sm font-semibold text-gray-900">Documents reçus en agence</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Point 4 - Retour des documents (éditable) */}
+            <div className="relative">
+              <div className="flex items-start gap-4">
+                <div className="relative z-10 w-5 h-5 rounded-full bg-teal-600 ring-4 ring-teal-50"></div>
+                <div className="flex-1 -mt-1">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <h3 className="text-sm font-bold text-gray-900">Retour des documents</h3>
+                    {(evenement?.statut === "SOUMIS" || evenement?.statut === "VALIDE") && (
+                      <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Terminé</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-label">Retour effectué par</label>
+                      <input className="input w-full bg-gray-100 text-gray-500" value={retourEffectuePar} readOnly />
+                    </div>
+                    <div>
+                      <label className="text-label">Date et heure d'envoi</label>
+                      <input className="input w-full bg-gray-100 text-gray-500" value={dateHeureEnvoi} readOnly />
+                    </div>
+                    <div>
+                      <label className="text-label">Numéro du courrier</label>
+                      <input className="input w-full" value={numeroCourrierRetour} onChange={(e) => setNumeroCourrierRetour(e.target.value)} disabled={lectureSeule} placeholder="COUR-YYYY-XXXX" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" id="documents-envoyes" checked={documentsEnvoyes} onChange={(e) => setDocumentsEnvoyes(e.target.checked)} disabled={lectureSeule} className="w-4 h-4 rounded border-gray-300 text-teal-600" />
+                      <label htmlFor="documents-envoyes" className="text-sm text-gray-700 cursor-pointer">Documents envoyés</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ===== Blocs Acceptation & Aval de la traite — mêmes blocs que la page de consultation ===== */}
-      {isAcceptation && (
+      {isAcceptation && ongletAcceptationTop === "detail" && (
         <div className="space-y-6 mb-4">
 
           {/* Détails de l'acceptation et aval */}
@@ -1043,7 +1455,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       )}
 
       {/* ===== Blocs Paiement — mêmes blocs que la page de consultation ===== */}
-      {nature === "Paiement" && (
+      {nature === "Paiement" && ongletPaiementTop === "detail" && (
         <div className="space-y-6 mb-4">
 
           {/* Origine du paiement */}
@@ -1113,10 +1525,11 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                   <table className="w-full table-fixed text-xs" aria-label="Informations du compte à débiter">
                     <thead className="bg-gray-50">
                       <tr className="border-b border-[#e5e8ec]">
-                        <th scope="col" className="w-[34%] px-3 py-2 text-left font-semibold text-[#64748b]">Intitulé compte</th>
-                        <th scope="col" className="w-[22%] px-3 py-2 text-left font-semibold text-[#64748b]">Solde</th>
-                        <th scope="col" className="w-[22%] px-3 py-2 text-left font-semibold text-[#64748b]">Disponible</th>
-                        <th scope="col" className="w-[22%] px-3 py-2 text-left font-semibold text-[#64748b]">Identité</th>
+                        <th scope="col" className="w-[30%] px-3 py-2 text-left font-semibold text-[#64748b]">Intitulé compte</th>
+                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Solde</th>
+                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Disponible</th>
+                        <th scope="col" className="w-[20%] px-3 py-2 text-left font-semibold text-[#64748b]">Identité</th>
+                        <th scope="col" className="w-[10%] px-3 py-2 text-center font-semibold text-[#64748b]">Signature</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1132,6 +1545,18 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                           {montantsCompteFictifs ? `${montantsCompteFictifs.disponible.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${montantsCompteFictifs.devise}` : "—"}
                         </td>
                         <td className="px-3 py-3 text-[#475569] break-words">{clientCompteDebite?.raisonSociale || "—"}</td>
+                        <td className="px-3 py-3 text-center">
+                          <button
+                            type="button"
+                            className="text-[#94a3b8] hover:text-[#e8632b] transition disabled:opacity-40 disabled:cursor-not-allowed"
+                            onClick={() => setPopupSignature(true)}
+                            title="Consulter la signature du client"
+                            aria-label="Consulter la signature du client"
+                            disabled={!clientCompteDebite}
+                          >
+                            <Eye size={15} />
+                          </button>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -1424,6 +1849,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
                     <option>Offre de financement</option>
                   </select>
                 </div>
+                {paiementForm.modePaiement === "Paiement avec financement" && (
+                  <div>
+                    <label className="text-label">Référence du financement</label>
+                    <input className="input w-full" value={paiementForm.referenceFinancement} onChange={setP("referenceFinancement")} placeholder="Référence de financement" disabled={lectureSeule} />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1563,6 +1994,131 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           </div>
         </div>
       )}
+
+      {/* ===== Tracking de l'envoi des documents — Paiement / Acceptation ===== */}
+      {((nature === "Paiement" && ongletPaiementTop === "tracking") || (isAcceptation && ongletAcceptationTop === "tracking")) && (
+        <div className="border border-[#e5e8ec] rounded-xl bg-[#fafbfc] p-5">
+          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#eef1f4]">
+            <div className="w-1 h-5 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
+            <div className="text-sm font-semibold text-[#0f172a]">Tracking de l'envoi des documents</div>
+          </div>
+          <div className="relative pl-4">
+            {/* Point 1 - Documents reçus (grisé) */}
+            <div className="relative pb-8">
+              <div className="absolute left-[9px] top-6 w-0.5 h-full bg-gray-200"></div>
+              <div className="flex items-start gap-4">
+                <div className="relative z-10 w-5 h-5 rounded-full bg-teal-600 ring-4 ring-teal-50"></div>
+                <div className="flex-1 -mt-1">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <h3 className="text-sm font-bold text-gray-900">Documents reçus</h3>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Terminé</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Reçu au niveau</p>
+                      <p className="text-sm font-semibold text-gray-900">CTN-DEVISES</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Date de création</p>
+                      <p className="text-sm font-semibold text-gray-900">05/05/2026</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Point 2 - Documents transmis à l'agence (grisé) */}
+            <div className="relative pb-8">
+              <div className="absolute left-[9px] top-6 w-0.5 h-full bg-gray-200"></div>
+              <div className="flex items-start gap-4">
+                <div className="relative z-10 w-5 h-5 rounded-full bg-teal-600 ring-4 ring-teal-50"></div>
+                <div className="flex-1 -mt-1">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <h3 className="text-sm font-bold text-gray-900">Documents transmis à l'agence</h3>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Terminé</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Emetteur</p>
+                      <p className="text-sm font-semibold text-gray-900">Bureau d'ordre - CTN-Devises</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Date et heure d'envoi</p>
+                      <p className="text-sm font-semibold text-gray-900">06/05/2026 09:15:00</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Numéro du courrier</p>
+                      <p className="text-sm font-semibold text-gray-900">COUR-2026-0405</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Point 3 - Accusé de réception des documents (grisé) */}
+            <div className="relative pb-8">
+              <div className="absolute left-[9px] top-6 w-0.5 h-full bg-gray-200"></div>
+              <div className="flex items-start gap-4">
+                <div className="relative z-10 w-5 h-5 rounded-full bg-teal-600 ring-4 ring-teal-50"></div>
+                <div className="flex-1 -mt-1">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <h3 className="text-sm font-bold text-gray-900">Accusé de réception des documents</h3>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Reçu</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Réception effectuée par</p>
+                      <p className="text-sm font-semibold text-gray-900">Préposé A</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Statut</p>
+                      <p className="text-sm font-semibold text-gray-900">Reçu</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Date et heure de réception</p>
+                      <p className="text-sm font-semibold text-gray-900">07/05/2026 14:30:00</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Observation</p>
+                      <p className="text-sm font-semibold text-gray-900">Documents reçus en agence</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Point 4 - Remise des documents au client (éditable) */}
+            <div className="relative">
+              <div className="flex items-start gap-4">
+                <div className="relative z-10 w-5 h-5 rounded-full bg-teal-600 ring-4 ring-teal-50"></div>
+                <div className="flex-1 -mt-1">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <h3 className="text-sm font-bold text-gray-900">Remise des documents au client</h3>
+                    {(evenement?.statut === "SOUMIS" || evenement?.statut === "VALIDE") && (
+                      <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Remis</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-label">Remise effectuée par</label>
+                      <input className="input w-full bg-gray-100 text-gray-500" value={remiseEffectueePar} readOnly />
+                    </div>
+                    <div>
+                      <label className="text-label">Date et heure de la remise</label>
+                      <input className="input w-full bg-gray-100 text-gray-500" value={dateHeureRemise} readOnly />
+                    </div>
+                    <div>
+                      <label className="text-label">Numéro du courrier</label>
+                      <input className="input w-full" value={numeroCourrierEnvoi} onChange={(e) => setNumeroCourrierEnvoi(e.target.value)} disabled={lectureSeule} placeholder="COUR-YYYY-XXXX" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" id="documents-remis" checked={documentsRemis} onChange={(e) => setDocumentsRemis(e.target.checked)} disabled={lectureSeule} className="w-4 h-4 rounded border-gray-300 text-teal-600" />
+                      <label htmlFor="documents-remis" className="text-sm text-gray-700 cursor-pointer">Documents remis</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       </fieldset>
 
       {erreurSoumission.length > 0 && (
@@ -1583,6 +2139,41 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
           </>
         )}
       </div>
+
+      {/* Popup signature du client */}
+      {popupSignature && (
+        <>
+          <div className="fixed inset-0 bg-black/30 z-50" onClick={() => setPopupSignature(false)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-2xl shadow-2xl z-50">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e8ec]">
+              <div className="text-sm font-semibold text-[#0f172a]">Signature du client</div>
+              <button
+                type="button"
+                className="h-8 w-8 rounded-lg border border-[#e5e8ec] text-[#64748b] hover:text-[#e8632b] hover:border-[#e8632b] transition flex items-center justify-center"
+                onClick={() => setPopupSignature(false)}
+                aria-label="Fermer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="px-5 py-5 space-y-4">
+              <div>
+                <div className="text-label">Signataire</div>
+                <div className="text-sm font-semibold text-[#0f172a]">{clientCompteDebite?.raisonSociale ?? dossier.client}</div>
+              </div>
+              <div>
+                <div className="text-label">Signature</div>
+                <div className="mt-2 rounded-lg border border-[#e5e8ec] bg-[#fafbfc] h-28 flex items-center justify-center">
+                  <span className="text-3xl italic font-semibold text-[#334155]" style={{ fontFamily: "cursive" }}>{clientCompteDebite?.raisonSociale ?? dossier.client}</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 px-5 py-4 border-t border-[#e5e8ec]">
+              <button type="button" className="btn-secondary" onClick={() => setPopupSignature(false)}>Fermer</button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Popup accusé de réception */}
       {popupAccuse && (

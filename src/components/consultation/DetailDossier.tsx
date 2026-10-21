@@ -646,8 +646,8 @@ function EvenementsTableV2({ evenements, dossier, statutFiltre }: { evenements: 
     },
     {
       nature: "Retour des documents",
-      eligible: !dossierCloture && !retourDejaFait,
-      raison: dossierCloture ? "Dossier clôturé" : "Documents déjà retournés",
+      eligible: !dossierCloture,
+      raison: dossierCloture ? "Dossier clôturé" : "",
     },
     {
       nature: "Demande de remise des documents",

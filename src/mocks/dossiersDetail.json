@@ -4193,6 +4193,48 @@
         "devise": "EUR",
         "dateCreation": "2026-08-13T10:00:00",
         "statut": "VALIDE",
+        "suivi": [
+          {
+            "id": "etape-1",
+            "titre": "Documents reçus",
+            "statut": "Terminé",
+            "champs": [
+              { "label": "Reçu au niveau", "valeur": "CTN-DEVISES" },
+              { "label": "Date de création", "valeur": "05/05/2026" }
+            ]
+          },
+          {
+            "id": "etape-2",
+            "titre": "Documents transmis à l'agence",
+            "statut": "Terminé",
+            "champs": [
+              { "label": "Emetteur", "valeur": "Bureau d'ordre - CTN-Devises" },
+              { "label": "Date et heure d'envoi", "valeur": "06/05/2026 09:15:00" },
+              { "label": "Numéro du courrier", "valeur": "COUR-2026-0405" }
+            ]
+          },
+          {
+            "id": "etape-3",
+            "titre": "Accusé de réception des documents",
+            "statut": "Reçu",
+            "champs": [
+              { "label": "Réception effectuée par", "valeur": "Préposé A" },
+              { "label": "Statut", "valeur": "Reçu" },
+              { "label": "Date et heure de réception", "valeur": "07/05/2026 14:30:00" },
+              { "label": "Observation", "valeur": "Documents reçus en agence" }
+            ]
+          },
+          {
+            "id": "etape-4",
+            "titre": "Retour des documents",
+            "statut": "Terminé",
+            "champs": [
+              { "label": "Retour effectué par", "valeur": "Préposé A" },
+              { "label": "Date et heure d'envoi", "valeur": "15/05/2026 09:15:00" },
+              { "label": "Numéro du courrier", "valeur": "COUR-2026-0202" }
+            ]
+          }
+        ],
         "retourDocument": {
           "typeDemande": "Demande",
           "demande": {
