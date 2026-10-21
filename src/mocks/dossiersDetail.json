@@ -4268,6 +4268,68 @@
         ]
       },
       {
+        "reference": "EVT-2026-0495",
+        "nature": "Retour des documents",
+        "montant": 0,
+        "devise": "EUR",
+        "dateCreation": "2026-08-16T09:00:00",
+        "statut": "VALIDE",
+        "expiration": {
+          "libelleEvenement": "Retour des documents"
+        },
+        "saisieAgence": {
+          "initiateur": "Agence A",
+          "dateCreationRetour": "2026-08-16",
+          "motif": "Remise non payée",
+          "commentaireRetour": "Retour des documents effectué par la centrale suite à la demande de retour.",
+          "retourEffectuePar": "Préposé A",
+          "dateHeureEnvoi": "16/08/2026 10:30:00",
+          "numeroCourrierRetour": "COUR-2026-0210",
+          "documentsEnvoyes": true
+        },
+        "suivi": [
+          {
+            "id": "etape-1",
+            "titre": "Documents reçus",
+            "statut": "Terminé",
+            "champs": [
+              { "label": "Reçu au niveau", "valeur": "CTN-DEVISES" },
+              { "label": "Date de création", "valeur": "16/08/2026" }
+            ]
+          },
+          {
+            "id": "etape-2",
+            "titre": "Documents transmis à l'agence",
+            "statut": "Terminé",
+            "champs": [
+              { "label": "Emetteur", "valeur": "Bureau d'ordre - CTN-Devises" },
+              { "label": "Date et heure d'envoi", "valeur": "16/08/2026 10:30:00" },
+              { "label": "Numéro du courrier", "valeur": "COUR-2026-0210" }
+            ]
+          },
+          {
+            "id": "etape-3",
+            "titre": "Accusé de réception des documents",
+            "statut": "Reçu",
+            "champs": [
+              { "label": "Réception effectuée par", "valeur": "Préposé A" },
+              { "label": "Statut", "valeur": "Reçu" },
+              { "label": "Date et heure de réception", "valeur": "16/08/2026 11:00:00" },
+              { "label": "Observation", "valeur": "Documents reçus en agence" }
+            ]
+          }
+        ],
+        "swifts": [
+          {
+            "reference": "SWIFT-2026-0495-01",
+            "type": "MT799",
+            "dateEmission": "2026-08-16T09:00:00",
+            "contenu": "Retour des documents pour la remise documentaire import IRD260000002.",
+            "fichier": "MT799_IRD260000002_20260816.pdf"
+          }
+        ]
+      },
+      {
         "reference": "EVT-2026-0500",
         "nature": "Demande de remise des documents",
         "montant": 0,

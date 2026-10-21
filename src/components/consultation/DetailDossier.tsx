@@ -678,7 +678,7 @@ function EvenementsTableV2({ evenements, dossier, statutFiltre }: { evenements: 
   ];
 
   function ouvrirDetail(e: EvenementTrade) {
-    if (e.saisieAgence && e.statut === "SOUMIS") {
+    if (e.saisieAgence && (e.statut === "SOUMIS" || e.statut === "VALIDE")) {
       ouvrirEditionEvenement(e);
     } else if (!e.saisieAgence && NATURES_AVEC_DETAIL.includes(e.nature)) {
       router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}`);
@@ -805,7 +805,7 @@ function EvenementsTableV2({ evenements, dossier, statutFiltre }: { evenements: 
               >
                 <td className="py-[7px] px-3 font-mono text-[11px] text-[#64748b]">{e.reference}</td>
                 <td className="py-[7px] px-3 font-semibold text-[#0f172a]">
-                  {e.expiration?.libelleEvenement || e.nature}
+                  {e.expiration?.libelleEvenement || (e.nature === "Retour des documents" ? "Demande de retour des documents" : e.nature)}
                   {e.reference === derniereRefCreee && (
                     <span className="ml-1.5 bg-orange-100 text-orange-700 text-[10px] rounded-full px-1.5 py-0.5 font-medium">Nouveau</span>
                   )}
@@ -1611,7 +1611,7 @@ function EvenementsTable({ evenements }: { evenements: DossierTrade["evenements"
             {evenements.map((e) => (
               <tr key={e.reference} className="border-b border-ink-100 transition">
                 <td className="px-3 py-2 font-mono text-xs">{e.reference}</td>
-                <td className="px-3 py-2 font-medium text-ink-800">{e.expiration?.libelleEvenement || e.nature}</td>
+                <td className="px-3 py-2 font-medium text-ink-800">{e.expiration?.libelleEvenement || (e.nature === "Retour des documents" ? "Demande de retour des documents" : e.nature)}</td>
                 <td className="px-3 py-2 text-right text-ink-700">
                   {e.montant !== null ? formatMontant(e.montant, e.devise) : <span className="text-ink-300">—</span>}
                 </td>

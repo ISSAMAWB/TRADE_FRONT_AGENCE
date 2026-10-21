@@ -141,7 +141,7 @@ export default function ConsultationDossierDetailPage() {
           </div>
         </div>
       </CollapsibleFilterPanel>
-      <DetailDossier dossier={{ ...dossier, evenements: [...evenementsCrees, ...dossier.evenements] }} statutEvenement={statut} />
+      <DetailDossier dossier={{ ...dossier, evenements: [...evenementsCrees, ...dossier.evenements.filter(e => !evenementsCrees.some(c => c.reference === e.reference))] }} statutEvenement={statut} />
     </Shell>
   );
 }

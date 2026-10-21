@@ -23,7 +23,9 @@ function SaisieEvenementInner() {
 
   const editRef = searchParams.get("edit");
   const natureParam = searchParams.get("nature");
-  const evenement = editRef ? evenementsCrees.find((e) => e.reference === editRef) : undefined;
+  const evenement = editRef
+    ? (evenementsCrees.find((e) => e.reference === editRef) ?? dossier?.evenements.find((e) => e.reference === editRef))
+    : undefined;
   const nature = evenement?.nature ?? natureParam ?? "";
 
   if (!dossier) {

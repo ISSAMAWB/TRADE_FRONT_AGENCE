@@ -94,6 +94,7 @@ interface AppState {
   evenementsCrees: Record<string, EvenementTrade[]>;
   ajouterEvenementDossier: (dossierRef: string, ev: Omit<EvenementTrade, "reference" | "statut" | "dateCreation">, statut?: StatutEvenement) => EvenementTrade;
   modifierEvenementDossier: (dossierRef: string, eventRef: string, patch: Partial<EvenementTrade>, statut?: StatutEvenement) => void;
+  upsertEvenementDossier: (dossierRef: string, ev: EvenementTrade) => void;
   supprimerEvenementDossier: (dossierRef: string, eventRef: string) => void;
 
   /* seed */
@@ -842,6 +843,20 @@ export const useTomStore = create<AppState>((set, get) => ({
         ),
       },
     }));
+  },
+
+  /* Adopte un événement existant (mock compris) dans le store : remplace ou ajoute par référence */
+  upsertEvenementDossier: (dossierRef, ev) => {
+    set(s => {
+      const liste = s.evenementsCrees[dossierRef] ?? [];
+      const existe = liste.some(e => e.reference === ev.reference);
+      return {
+        evenementsCrees: {
+          ...s.evenementsCrees,
+          [dossierRef]: existe ? liste.map(e => (e.reference === ev.reference ? ev : e)) : [ev, ...liste],
+        },
+      };
+    });
   },
 
   supprimerEvenementDossier: (dossierRef, eventRef) => {

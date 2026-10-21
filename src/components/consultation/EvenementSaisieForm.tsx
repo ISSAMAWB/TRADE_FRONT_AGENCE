@@ -24,7 +24,7 @@ const AFFICHER_PARTIE_A_NOTIFIER = false;
 
 export default function EvenementSaisieForm({ dossier, nature, evenement, onCancel, onSaved }: EvenementSaisieFormProps) {
   const ajouterEvenementDossier = useTomStore((s) => s.ajouterEvenementDossier);
-  const modifierEvenementDossier = useTomStore((s) => s.modifierEvenementDossier);
+  const upsertEvenementDossier = useTomStore((s) => s.upsertEvenementDossier);
 
   const aujourdhui = new Date().toISOString().slice(0, 10);
   const encours = dossier.donnees["encours"];
@@ -33,7 +33,8 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const montantRemiseOk = isMontantAvecDevise(montantRemise) ? montantRemise : null;
   const deviseDossier = encoursOk?.devise ?? montantRemiseOk?.devise ?? "";
   const conditionsRemiseAutre = String(dossier.donnees["conditionsRemiseDocuments"] ?? "").trim().toLowerCase() === "autre";
-  const lectureSeule = evenement?.statut === "SOUMIS";
+  // Lecture seule : événement soumis, ou retour des documents généré côté système (libellé porté par expiration)
+  const lectureSeule = evenement?.statut === "SOUMIS" || (nature === "Retour des documents" && !!evenement?.expiration?.libelleEvenement);
 
   const s = evenement?.saisieAgence;
   const p = s?.paiement;
@@ -554,7 +555,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       },
     };
     if (evenement) {
-      modifierEvenementDossier(dossier.reference, evenement.reference, saisie, nouveauStatut);
+      upsertEvenementDossier(dossier.reference, { ...evenement, ...saisie, reference: evenement.reference, statut: nouveauStatut, dateCreation: evenement.dateCreation });
       onSaved(evenement.reference);
     } else {
       const ev = ajouterEvenementDossier(dossier.reference, saisie, nouveauStatut);
@@ -793,18 +794,10 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
             readOnly
           />
         </div>
-        {nature !== "Retour des documents" && (
-          <div>
-            <label className="text-label">Conditions de remise des documents</label>
-            <input className="input w-full bg-gray-100 text-gray-500" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
-          </div>
-        )}
-        {nature === "Retour des documents" && (
-          <div>
-            <label className="text-label">Type de la demande</label>
-            <input className="input w-full bg-gray-100 text-gray-500" value={typeDemande} readOnly />
-          </div>
-        )}
+        <div>
+          <label className="text-label">Conditions de remise des documents</label>
+          <input className="input w-full bg-gray-100 text-gray-500" value={String(dossier.donnees["conditionsRemiseDocuments"] ?? "—")} readOnly />
+        </div>
 
         {(nature === "Réception de la remise" || nature === "Paiement" || isAcceptation) && (
           <div>

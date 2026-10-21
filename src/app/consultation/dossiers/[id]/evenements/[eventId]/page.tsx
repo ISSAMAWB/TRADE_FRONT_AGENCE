@@ -258,8 +258,8 @@ export default function EventDetailPage() {
             )}
             {(event.nature === "Retour des documents" || event.nature === "Demande de remise des documents") && (
               <div className="bg-gray-50 rounded-lg p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type de la demande</label>
-                <p className="font-semibold text-gray-900">{event.retourDocument?.typeDemande || "Demande"}</p>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Conditions de remise des documents</label>
+                <p className="font-semibold text-gray-900">{dossier.donnees.conditionsRemiseDocuments}</p>
               </div>
             )}
             {event.nature === "Accusé de réception des documents" && (
