@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye, Clock, Check, Circle, Diamond, AlertCircle, X, Download, Plus, ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { Building2, Banknote, FileText, Calendar, Info, TrendingUp, History, Eye, Clock, Check, Circle, Diamond, AlertCircle, X, Download, Plus, ChevronDown, Pencil, Trash2, CornerUpRight } from "lucide-react";
 import { useTomStore } from "@/store/useTomStore";
 import StatutBadge from "./StatutBadge";
 import { getProduitSchema } from "@/lib/produits";
@@ -819,6 +819,26 @@ function EvenementsTableV2({ evenements, dossier, statutFiltre }: { evenements: 
                 )}
                 <td className="py-[7px] px-3 text-center">
                   <div className="flex items-center justify-center gap-2">
+                    {segment === "TRAITES" && ["Réception de la remise", "Modification de la remise", "Demande de retour des documents"].includes(
+                      e.expiration?.libelleEvenement || (e.nature === "Retour des documents" ? "Demande de retour des documents" : e.nature)
+                    ) && (
+                      <button
+                        className="text-[#94a3b8] hover:text-[#e8632b] transition"
+                        onClick={(ev) => {
+                          ev.stopPropagation();
+                          const libelle = e.expiration?.libelleEvenement || (e.nature === "Retour des documents" ? "Demande de retour des documents" : e.nature);
+                          if (libelle === "Demande de retour des documents" && !e.saisieAgence) {
+                            router.push(`/consultation/dossiers/${dossierId}/evenements/${e.reference}?reponse=1`);
+                          } else {
+                            ouvrirDetail(e);
+                          }
+                        }}
+                        title="Répondre"
+                        aria-label="Répondre"
+                      >
+                        <CornerUpRight size={16} />
+                      </button>
+                    )}
                     <button
                       className="text-[#94a3b8] hover:text-[#e8632b] transition"
                       onClick={(ev) => { ev.stopPropagation(); ouvrirDetail(e); }}

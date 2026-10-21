@@ -1,9 +1,10 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Download, FileText, Eye, X } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import dossiersDetail from "@/mocks/dossiersDetail.json";
+import { useTomStore } from "@/store/useTomStore";
 import Button from "@/components/ui/Button";
 import Shell from "@/components/Shell";
 import ReceptionRemiseDetail from "@/components/consultation/ReceptionRemiseDetail";
@@ -52,8 +53,17 @@ function TrackingDocuments({ suivi }: { suivi: any[] }) {
 }
 
 export default function EventDetailPage() {
+  return (
+    <Suspense>
+      <EventDetailInner />
+    </Suspense>
+  );
+}
+
+function EventDetailInner() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [changementDomiciliation, setChangementDomiciliation] = useState("NON");
   const [retourRemise, setRetourRemise] = useState("NON");
   const [escompteDemande, setEscompteDemande] = useState("NON");
@@ -66,7 +76,28 @@ export default function EventDetailPage() {
   const eventId = params.eventId as string;
 
   const dossier = dossiersDetail.find((d) => d.reference === dossierId) as any;
-  const event = dossier?.evenements.find((e) => e.reference === eventId) as any;
+  const evenementsCrees = useTomStore((s) => s.evenementsCrees[dossierId]) ?? [];
+  const upsertEvenementDossier = useTomStore((s) => s.upsertEvenementDossier);
+  const event = ([...evenementsCrees, ...(dossier?.evenements ?? [])] as any[]).find((e) => e.reference === eventId);
+
+  const modeReponse = searchParams.get("reponse") === "1" && event?.nature === "Retour des documents";
+  const reponseInit = event?.retourDocument?.reponse;
+  const [raisonReponse, setRaisonReponse] = useState(reponseInit?.raison ?? "");
+  const [descriptionReponse, setDescriptionReponse] = useState(reponseInit?.description ?? "");
+  const [reponseValidee, setReponseValidee] = useState(false);
+  const [documentsReponse, setDocumentsReponse] = useState<{ id: string; nom: string; taille: number; type?: string }[]>(event?.saisieAgence?.documentsAttaches ?? []);
+
+  function sauvegarderReponse(statut?: "SOUMIS") {
+    upsertEvenementDossier(dossierId, {
+      ...event,
+      statut: statut ?? event.statut,
+      saisieAgence: { ...event.saisieAgence, documentsAttaches: documentsReponse },
+      retourDocument: {
+        ...event.retourDocument,
+        reponse: { ...event.retourDocument.reponse, raison: raisonReponse, description: descriptionReponse },
+      },
+    });
+  }
 
   const showInfosGenerales = !event
     ? false
@@ -1581,13 +1612,26 @@ FRANCE</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Raison</label>
-                <p className="font-semibold text-gray-900">{event.retourDocument.reponse.raison}</p>
+                {modeReponse ? (
+                  <select className="input w-full mt-1" value={raisonReponse} onChange={(e) => setRaisonReponse(e.target.value)}>
+                    <option value="">Sélectionner une raison</option>
+                    <option>Document remis au client</option>
+                    <option>Documents retournés</option>
+                    <option>Autre</option>
+                  </select>
+                ) : (
+                  <p className="font-semibold text-gray-900">{event.retourDocument.reponse.raison}</p>
+                )}
               </div>
               <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Description de la réponse</label>
-                <div className="bg-white border border-gray-200 rounded-lg p-4 mt-2">
-                  <p className="text-sm text-gray-900 whitespace-pre-line">{event.retourDocument.reponse.description}</p>
-                </div>
+                {modeReponse ? (
+                  <textarea className="input w-full mt-1" rows={3} value={descriptionReponse} onChange={(e) => setDescriptionReponse(e.target.value)} placeholder="Description de la réponse..." />
+                ) : (
+                  <div className="bg-white border border-gray-200 rounded-lg p-4 mt-2">
+                    <p className="text-sm text-gray-900 whitespace-pre-line">{event.retourDocument.reponse.description}</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1760,9 +1804,73 @@ FRANCE</p>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
+              !modeReponse && <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
+            )}
+            {modeReponse && (
+              <>
+                <div
+                  className="mt-4 border-2 border-dashed border-gray-200 rounded-md p-6 text-center hover:border-rose-300 hover:bg-rose-50/40 transition cursor-pointer"
+                  onClick={() => document.getElementById("file-upload-reponse")?.click()}
+                >
+                  <input
+                    id="file-upload-reponse"
+                    type="file"
+                    multiple
+                    className="hidden"
+                    accept=".pdf,image/*"
+                    onChange={e => {
+                      const files = Array.from(e.target.files ?? []);
+                      setDocumentsReponse(current => [
+                        ...current,
+                        ...files.map(f => ({ id: crypto.randomUUID(), nom: f.name, taille: f.size, type: f.type })),
+                      ]);
+                      e.target.value = "";
+                    }}
+                  />
+                  <div className="text-sm text-gray-500">Cliquez pour ajouter des documents</div>
+                  <div className="text-xs text-gray-400 mt-1">PDF, images (JPG, PNG…)</div>
+                </div>
+                {documentsReponse.length > 0 && (
+                  <ul className="divide-y divide-gray-200 mt-4">
+                    {documentsReponse.map(document => (
+                      <li key={document.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <FileText size={16} className="text-gray-500 shrink-0" />
+                          <span className="text-sm text-gray-900 break-all">{document.nom}</span>
+                          <span className="text-xs text-gray-500 whitespace-nowrap">{(document.taille / 1024).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Ko</span>
+                        </div>
+                        {!reponseValidee && (
+                          <button type="button" className="text-gray-400 hover:text-red-600 transition shrink-0" title={`Retirer ${document.nom}`} aria-label={`Retirer ${document.nom}`} onClick={() => setDocumentsReponse(current => current.filter(item => item.id !== document.id))}>
+                            <X size={14} />
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
             )}
           </div>
+        )}
+
+        {/* Boutons d'action - mode réponse */}
+        {modeReponse && !reponseValidee && (
+          <div className="flex justify-end gap-2 mb-6">
+            <button className="btn-secondary" onClick={() => router.push(`/consultation/dossiers/${dossierId}`)}>
+              Annuler
+            </button>
+            <button className="btn-primary" onClick={() => { sauvegarderReponse(); setReponseValidee(true); }}>
+              Enregistrer
+            </button>
+            <button className="btn-primary" onClick={() => { sauvegarderReponse("SOUMIS"); router.push(`/consultation/dossiers/${dossierId}`); }}>
+              Soumettre
+            </button>
+          </div>
+        )}
+        {modeReponse && reponseValidee && (
+          <p className="mb-6 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-2">
+            Réponse enregistrée.
+          </p>
         )}
 
         {/* Informations financières, Détails des charges et Documents attachés - uniquement pour Expiration */}
