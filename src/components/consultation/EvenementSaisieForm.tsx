@@ -43,12 +43,12 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
   const fichierInputRef = useRef<HTMLInputElement>(null);
   const isAcceptation = nature === "Acceptation & Aval de la traite";
   const typesDocuments: TypeDocumentAttacheAgence[] = isAcceptation
-    ? ["Effet accepté", "Autre"]
+    ? ["Effet accepté", "Titre d'importation", "Autre"]
     : ["Ordre de paiement", "Titre d'importation", "Autre"];
   const [typeDocument, setTypeDocument] = useState<TypeDocumentAttacheAgence | "">("");
   const [erreurDocumentsObligatoires, setErreurDocumentsObligatoires] = useState(false);
   const [documentsAttaches, setDocumentsAttaches] = useState<DocumentAttacheAgence[]>(s?.documentsAttaches ?? []);
-  const DOCUMENTS_OBLIGATOIRES: TypeDocumentAttacheAgence[] = isAcceptation ? ["Effet accepté"] : ["Ordre de paiement"];
+  const DOCUMENTS_OBLIGATOIRES: TypeDocumentAttacheAgence[] = isAcceptation ? ["Effet accepté", "Titre d'importation"] : ["Ordre de paiement"];
   const documentsObligatoiresManquants = DOCUMENTS_OBLIGATOIRES.filter(type =>
     !documentsAttaches.some(document => document.categorie === type && document.fichier?.size > 0)
   );
@@ -601,7 +601,7 @@ export default function EvenementSaisieForm({ dossier, nature, evenement, onCanc
       </div>
       <p className="text-xs text-[#64748b] mb-3">
         {isAcceptation
-          ? "La traite acceptée est obligatoire pour enregistrer l'acceptation."
+          ? "L'effet accepté et le titre d'importation sont obligatoires pour enregistrer l'acceptation."
           : "L'ordre de paiement et le titre d'importation sont obligatoires pour enregistrer le paiement."}
       </p>
       {erreurDocumentsObligatoires && documentsObligatoiresManquants.length > 0 && (
