@@ -52,6 +52,45 @@ function TrackingDocuments({ suivi }: { suivi: any[] }) {
   );
 }
 
+function DocumentsGeneres({ event }: { event: any }) {
+  const docs = [
+    { nom: "Bordereau d'instruction", reference: `BORD-${event.reference}` },
+    {
+      nom: "SWIFT",
+      reference: event.swifts?.[0]
+        ? `${event.swifts[0].type} - ${event.swifts[0].reference}`
+        : `SWIFT-${event.reference}`,
+    },
+  ];
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-1 h-6 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
+        <h2 className="text-lg font-semibold text-gray-900">Documents générés</h2>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {docs.map((doc, index) => (
+          <div
+            key={index}
+            className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group"
+          >
+            <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition shrink-0">
+              <FileText size={16} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{doc.nom}</p>
+              <p className="text-xs text-gray-500 truncate">{doc.reference}</p>
+            </div>
+            <button className="ml-auto text-gray-400 hover:text-rose-600 transition shrink-0" title={`Télécharger ${doc.nom}`} aria-label={`Télécharger ${doc.nom}`}>
+              <Download size={18} />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function EventDetailPage() {
   return (
     <Suspense>
@@ -68,7 +107,7 @@ function EventDetailInner() {
   const [retourRemise, setRetourRemise] = useState("NON");
   const [escompteDemande, setEscompteDemande] = useState("NON");
   const [financement, setFinancement] = useState("NON");
-  const [ongletPaiement, setOngletPaiement] = useState<"frais" | "titres" | "attaches">("frais");
+  const [ongletPaiement, setOngletPaiement] = useState<"frais" | "titres" | "attaches" | "generes">("frais");
   const [ongletPaiementTop, setOngletPaiementTop] = useState<"detail" | "tracking">("detail");
   const [ongletAcceptationTop, setOngletAcceptationTop] = useState<"detail" | "tracking">("detail");
   const [ongletRetourTop, setOngletRetourTop] = useState<"detail" | "tracking">("detail");
@@ -1143,10 +1182,11 @@ FRANCE</p>
                 { id: "frais", label: "Répartition des frais" },
                 { id: "titres", label: "Titres d'importation" },
                 { id: "attaches", label: "Documents attachés" },
+                { id: "generes", label: "Documents générés" },
               ].map((t) => (
                 <button
                   key={t.id}
-                  onClick={() => setOngletPaiement(t.id as "frais" | "titres" | "attaches")}
+                  onClick={() => setOngletPaiement(t.id as "frais" | "titres" | "attaches" | "generes")}
                   className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
                     ongletPaiement === t.id
                       ? "border-orange-600 text-orange-600"
@@ -1329,6 +1369,28 @@ FRANCE</p>
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {ongletPaiement === "generes" && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { nom: "Bordereau d'instruction", reference: `BORD-${event.reference}` },
+                  { nom: "SWIFT", reference: event.swifts?.[0] ? `${event.swifts[0].type} - ${event.swifts[0].reference}` : `SWIFT-${event.reference}` },
+                ].map((doc, index) => (
+                  <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                    <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition shrink-0">
+                      <FileText size={16} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{doc.nom}</p>
+                      <p className="text-xs text-gray-500 truncate">{doc.reference}</p>
+                    </div>
+                    <button className="ml-auto text-gray-400 hover:text-rose-600 transition shrink-0" title={`Télécharger ${doc.nom}`} aria-label={`Télécharger ${doc.nom}`}>
+                      <Download size={18} />
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -1852,6 +1914,17 @@ FRANCE</p>
             )}
           </div>
         )}
+
+        {/* Documents générés - Acceptation, Retour des documents, Correspondance, Frais et commission, Ecritures comptables manuelles, Modification et Ajustement */}
+        {(
+          (event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail") ||
+          (event.nature === "Retour des documents" && ongletRetourTop === "detail") ||
+          event.nature === "Correspondance" ||
+          event.nature === "Frais et commission" ||
+          event.nature === "Ecritures comptables manuelles" ||
+          event.nature === "Modification de la remise" ||
+          event.nature === "Ajustement de la remise"
+        ) && <DocumentsGeneres event={event} />}
 
         {/* Boutons d'action - mode réponse */}
         {modeReponse && !reponseValidee && (

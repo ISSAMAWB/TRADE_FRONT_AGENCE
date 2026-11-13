@@ -297,7 +297,7 @@ function Info({ label, value }: { label: string; value: string }) {
 }
 
 function RepartitionDocumentsAttaches({ data, event }: { data: any; event: EvenementTrade }) {
-  const [sousOnglet, setSousOnglet] = useState<"frais" | "recus" | "attaches">("frais");
+  const [sousOnglet, setSousOnglet] = useState<"frais" | "recus" | "attaches" | "generes">("frais");
 
   return (
     <div className="bg-white rounded-xl border border-[#e4e7ec] p-5 shadow-sm" style={{ fontFamily: "Manrope, Helvetica, Arial, sans-serif" }}>
@@ -306,10 +306,11 @@ function RepartitionDocumentsAttaches({ data, event }: { data: any; event: Evene
           { id: "frais", label: "Répartition des frais" },
           { id: "recus", label: "Documents reçus" },
           { id: "attaches", label: "Documents attachés" },
+          { id: "generes", label: "Documents générés" },
         ].map((t) => (
           <button
             key={t.id}
-            onClick={() => setSousOnglet(t.id as "frais" | "recus" | "attaches")}
+            onClick={() => setSousOnglet(t.id as "frais" | "recus" | "attaches" | "generes")}
             className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider border-b-2 transition ${
               sousOnglet === t.id
                 ? "border-[#ea580c] text-[#ea580c]"
@@ -417,6 +418,28 @@ function RepartitionDocumentsAttaches({ data, event }: { data: any; event: Evene
               <Download size={18} />
             </button>
           </div>
+        </div>
+      )}
+
+      {sousOnglet === "generes" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            { nom: "Bordereau d'instruction", reference: `BORD-${event.reference}` },
+            { nom: "SWIFT", reference: event.swifts?.[0] ? `${event.swifts[0].type} - ${event.swifts[0].reference}` : `SWIFT-${event.reference}` },
+          ].map((doc, idx) => (
+            <div key={idx} className="flex items-center gap-3 p-4 border border-[#e4e7ec] rounded-xl hover:border-[#ea580c] hover:bg-[#fff4ed] cursor-pointer transition group">
+              <div className="w-10 h-10 rounded-lg bg-[#fff4ed] text-[#ea580c] flex items-center justify-center group-hover:bg-[#ea580c] group-hover:text-white transition">
+                <FileText size={16} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[#101828] truncate">{doc.nom}</p>
+                <p className="text-xs text-[#8b95a8]">{doc.reference}</p>
+              </div>
+              <button className="text-[#8b95a8] hover:text-[#ea580c] transition" title={`Télécharger ${doc.nom}`} aria-label={`Télécharger ${doc.nom}`}>
+                <Download size={18} />
+              </button>
+            </div>
+          ))}
         </div>
       )}
 
