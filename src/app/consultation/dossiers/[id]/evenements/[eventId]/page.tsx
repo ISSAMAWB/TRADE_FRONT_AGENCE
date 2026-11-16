@@ -52,7 +52,7 @@ function TrackingDocuments({ suivi }: { suivi: any[] }) {
   );
 }
 
-function DocumentsGeneres({ event }: { event: any }) {
+function DocumentsGeneresCards({ event }: { event: any }) {
   const docs = [
     { nom: "Bordereau d'instruction", reference: `BORD-${event.reference}` },
     {
@@ -63,12 +63,7 @@ function DocumentsGeneres({ event }: { event: any }) {
     },
   ];
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-1 h-6 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
-        <h2 className="text-lg font-semibold text-gray-900">Documents générés</h2>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {docs.map((doc, index) => (
           <div
             key={index}
@@ -86,7 +81,18 @@ function DocumentsGeneres({ event }: { event: any }) {
             </button>
           </div>
         ))}
+    </div>
+  );
+}
+
+function DocumentsGeneres({ event }: { event: any }) {
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-1 h-6 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
+        <h2 className="text-lg font-semibold text-gray-900">Documents générés</h2>
       </div>
+      <DocumentsGeneresCards event={event} />
     </div>
   );
 }
@@ -111,6 +117,7 @@ function EventDetailInner() {
   const [ongletPaiementTop, setOngletPaiementTop] = useState<"detail" | "tracking">("detail");
   const [ongletAcceptationTop, setOngletAcceptationTop] = useState<"detail" | "tracking">("detail");
   const [ongletRetourTop, setOngletRetourTop] = useState<"detail" | "tracking">("detail");
+  const [ongletDocs, setOngletDocs] = useState<"attaches" | "generes">("attaches");
   const dossierId = params.id as string;
   const eventId = params.eventId as string;
 
@@ -794,15 +801,29 @@ FRANCE</p>
         )}
 
 
-        {/* Documents attachés - pour Acceptation & Aval de la traite */}
+        {/* Documents attachés / Documents générés - pour Acceptation & Aval de la traite */}
         {event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
+            <div className="flex flex-wrap border-b border-gray-200 mb-6">
+              {[
+                { id: "attaches", label: "Documents attachés" },
+                { id: "generes", label: "Documents générés" },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setOngletDocs(t.id as "attaches" | "generes")}
+                  className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
+                    ongletDocs === t.id
+                      ? "border-orange-600 text-orange-600"
+                      : "border-transparent text-gray-500 hover:text-gray-900"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
             </div>
 
-            {(
+            {ongletDocs === "attaches" && (
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
@@ -822,6 +843,8 @@ FRANCE</p>
                 </div>
               </div>
             )}
+
+            {ongletDocs === "generes" && <DocumentsGeneresCards event={event} />}
           </div>
         )}
 
@@ -1396,28 +1419,45 @@ FRANCE</p>
           </div>
         )}
 
-        {/* Documents attachés - uniquement pour Correspondance */}
+        {/* Documents attachés / Documents générés - uniquement pour Correspondance */}
         {event.nature === "Correspondance" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex flex-wrap border-b border-gray-200 mb-6">
               {[
-                { name: "Message SWIFT MT799", icon: <FileText size={16} /> },
-              ].map((doc, index) => (
-                <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
-                  <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
-                    {doc.icon}
-                  </div>
-                  <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{doc.name}</span>
-                  <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
-                    <Download size={18} />
-                  </button>
-                </div>
+                { id: "attaches", label: "Documents attachés" },
+                { id: "generes", label: "Documents générés" },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setOngletDocs(t.id as "attaches" | "generes")}
+                  className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
+                    ongletDocs === t.id
+                      ? "border-orange-600 text-orange-600"
+                      : "border-transparent text-gray-500 hover:text-gray-900"
+                  }`}
+                >
+                  {t.label}
+                </button>
               ))}
             </div>
+            {ongletDocs === "attaches" && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { name: "Message SWIFT MT799", icon: <FileText size={16} /> },
+                ].map((doc, index) => (
+                  <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                    <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
+                      {doc.icon}
+                    </div>
+                    <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{doc.name}</span>
+                    <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
+                      <Download size={18} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {ongletDocs === "generes" && <DocumentsGeneresCards event={event} />}
           </div>
         )}
         {/* Écritures comptables - uniquement pour Ecritures comptables manuelles */}
@@ -1489,30 +1529,47 @@ FRANCE</p>
           </div>
         )}
 
-        {/* Documents attachés - uniquement pour Ecritures comptables manuelles */}
+        {/* Documents attachés / Documents générés - uniquement pour Ecritures comptables manuelles */}
         {event.nature === "Ecritures comptables manuelles" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
+            <div className="flex flex-wrap border-b border-gray-200 mb-6">
+              {[
+                { id: "attaches", label: "Documents attachés" },
+                { id: "generes", label: "Documents générés" },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setOngletDocs(t.id as "attaches" | "generes")}
+                  className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
+                    ongletDocs === t.id
+                      ? "border-orange-600 text-orange-600"
+                      : "border-transparent text-gray-500 hover:text-gray-900"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
             </div>
-            {event.swifts && event.swifts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {event.swifts.map((swift, index) => (
-                  <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
-                    <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
-                      <FileText size={16} />
+            {ongletDocs === "attaches" && (
+              event.swifts && event.swifts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {event.swifts.map((swift, index) => (
+                    <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                      <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
+                        <FileText size={16} />
+                      </div>
+                      <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{swift.type} - {swift.reference}</span>
+                      <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
+                        <Download size={18} />
+                      </button>
                     </div>
-                    <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{swift.type} - {swift.reference}</span>
-                    <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
-                      <Download size={18} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
+              )
             )}
+            {ongletDocs === "generes" && <DocumentsGeneresCards event={event} />}
           </div>
         )}
       
@@ -1596,30 +1653,47 @@ FRANCE</p>
           </div>
         )}
 
-      {/* Documents attachés - uniquement pour Frais et commission */}
+      {/* Documents attachés / Documents générés - uniquement pour Frais et commission */}
         {event.nature === "Frais et commission" && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
+            <div className="flex flex-wrap border-b border-gray-200 mb-6">
+              {[
+                { id: "attaches", label: "Documents attachés" },
+                { id: "generes", label: "Documents générés" },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setOngletDocs(t.id as "attaches" | "generes")}
+                  className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
+                    ongletDocs === t.id
+                      ? "border-orange-600 text-orange-600"
+                      : "border-transparent text-gray-500 hover:text-gray-900"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
             </div>
-            {event.swifts && event.swifts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {event.swifts.map((swift, index) => (
-                  <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
-                    <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
-                      <FileText size={16} />
+            {ongletDocs === "attaches" && (
+              event.swifts && event.swifts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {event.swifts.map((swift, index) => (
+                    <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 cursor-pointer transition-all group">
+                      <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-200 transition">
+                        <FileText size={16} />
+                      </div>
+                      <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{swift.type} - {swift.reference}</span>
+                      <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
+                        <Download size={18} />
+                      </button>
                     </div>
-                    <span className="text-sm font-medium text-gray-900 group-hover:text-rose-700 transition">{swift.type} - {swift.reference}</span>
-                    <button className="ml-auto text-gray-400 hover:text-rose-600 transition">
-                      <Download size={18} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500 text-sm">Aucun document associé</div>
+              )
             )}
+            {ongletDocs === "generes" && <DocumentsGeneresCards event={event} />}
           </div>
         )}
 
@@ -1845,10 +1919,34 @@ FRANCE</p>
           (event.nature === "Retour des documents" && ongletRetourTop === "detail")
         ) && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
-            </div>
+            {event.nature === "Retour des documents" ? (
+              <div className="flex flex-wrap border-b border-gray-200 mb-6">
+                {[
+                  { id: "attaches", label: "Documents attachés" },
+                  { id: "generes", label: "Documents générés" },
+                ].map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setOngletDocs(t.id as "attaches" | "generes")}
+                    className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
+                      ongletDocs === t.id
+                        ? "border-orange-600 text-orange-600"
+                        : "border-transparent text-gray-500 hover:text-gray-900"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-6 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"></div>
+                <h2 className="text-lg font-semibold text-gray-900">Documents attachés</h2>
+              </div>
+            )}
+            {event.nature === "Retour des documents" && ongletDocs === "generes" && <DocumentsGeneresCards event={event} />}
+            {(event.nature !== "Retour des documents" || ongletDocs === "attaches") && (
+            <>
             {event.swifts && event.swifts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {event.swifts.map((swift, index) => (
@@ -1912,16 +2010,13 @@ FRANCE</p>
                 )}
               </>
             )}
+            </>
+            )}
           </div>
         )}
 
-        {/* Documents générés - Acceptation, Retour des documents, Correspondance, Frais et commission, Ecritures comptables manuelles, Modification et Ajustement */}
+        {/* Documents générés - Modification et Ajustement (rendu générique) */}
         {(
-          (event.nature === "Acceptation & Aval de la traite" && ongletAcceptationTop === "detail") ||
-          (event.nature === "Retour des documents" && ongletRetourTop === "detail") ||
-          event.nature === "Correspondance" ||
-          event.nature === "Frais et commission" ||
-          event.nature === "Ecritures comptables manuelles" ||
           event.nature === "Modification de la remise" ||
           event.nature === "Ajustement de la remise"
         ) && <DocumentsGeneres event={event} />}
