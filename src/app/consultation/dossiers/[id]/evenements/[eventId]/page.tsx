@@ -184,7 +184,7 @@ function EventDetailInner() {
               <ArrowLeft size={20} className="text-gray-600" />
             </button>
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">{event.expiration?.libelleEvenement || event.nature}</h1>
+              <h1 className="text-xl font-semibold text-gray-900">{event.expiration?.libelleEvenement || (event.nature === "Retour des documents" ? "Demande de retour des documents" : event.nature)}</h1>
               <p className="text-sm text-gray-500">{event.reference} · {new Date(event.dateCreation).toLocaleDateString('fr-FR')}</p>
             </div>
           </div>
@@ -1702,7 +1702,7 @@ FRANCE</p>
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"></div>
-              <h2 className="text-lg font-semibold text-gray-900">Détails du retour des documents</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Détails de la demande du retour des documents</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gray-50 rounded-lg p-4">
